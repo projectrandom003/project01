@@ -21,6 +21,7 @@ var _prompt_label: Label
 var _toast_box: VBoxContainer
 var _touch_interact: Button
 var _hint_label: Label
+var _minimap: Minimap
 
 var _prompt_timer: float = 0.0
 var _refresh_timer: float = 0.0
@@ -34,6 +35,7 @@ func _ready() -> void:
 	theme = UITheme.build()
 
 	_build_top_bar()
+	_build_minimap()
 	_build_party_panel()
 	_build_actions()
 	_build_prompt()
@@ -227,6 +229,16 @@ func _build_top_bar() -> void:
 	_currency_box = UIFactory.hbox(8)
 	_currency_box.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(_currency_box)
+
+
+func _build_minimap() -> void:
+	_minimap = Minimap.new()
+	_minimap.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	_minimap.offset_left = -180
+	_minimap.offset_right = -20
+	_minimap.offset_top = 90
+	_minimap.offset_bottom = 250
+	add_child(_minimap)
 
 
 func _build_party_panel() -> void:
