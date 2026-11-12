@@ -409,6 +409,54 @@ func ascend(uid: String) -> bool:
 	return true
 
 
+func awakening_info(uid: String) -> Dictionary:
+	var instance := _find_instance(uid)
+	if instance == null:
+		return { "ok": false, "reason": "Character not found." }
+	if instance.awakening >= CharacterInstance.MAX_AWAKENING:
+		return { "ok": false, "reason": "Already fully awakened." }
+	if instance.dupes < 2:
+		return { "ok": false, "reason": "Need 2 duplicate copies (have %d)." % instance.dupes }
+	return { "ok": true, "dupes_needed": 2, "current": instance.awakening, "next": instance.awakening + 1 }
+
+
+func awaken(uid: String) -> bool:
+	var info := awakening_info(uid)
+	if not bool(info.get("ok", false)):
+		return false
+	var instance := _find_instance(uid)
+	if instance == null:
+		return false
+	instance.dupes -= int(info.dupes_needed)
+	instance.awakening += 1
+	EventBus.roster_changed.emit()
+	queue_save()
+	return true
+
+
+func add_bond(uid: String, amount: int) -> void:
+	if amount <= 0:
+		return
+	var instance := _find_instance(uid)
+	if instance == null:
+		return
+	instance.bond = mini(instance.bond + amount, 100)
+	EventBus.roster_changed.emit()
+	queue_save()
+
+
+func bond_level(uid: String) -> int:
+	var instance := _find_instance(uid)
+	if instance == null:
+		return 0
+	return int(instance.bond / 10)
+
+
+func bond_bonus_atk(uid: String) -> float:
+	return float(bond_level(uid)) * 0.02
+
+
+
 func equip_item(uid: String, item_id: String) -> bool:
 	var instance := _find_instance(uid)
 	if instance == null:
@@ -600,6 +648,9 @@ func complete_quest(quest_id: String) -> bool:
 	grant_reward_items(rewards.get("items", {}))
 	if int(rewards.get("xp", 0)) > 0:
 		add_party_xp(int(rewards.get("xp", 0)))
+	# Bond gain: quest completion strengthens bonds.
+	for uid in party:
+		add_bond(uid, 5)
 	var entry: Dictionary = quests[quest_id]
 	entry.state = "complete"
 	entry.step = definition.get("steps", []).size()
@@ -691,6 +742,9 @@ func apply_battle_result(group_id: String, victory: bool) -> Dictionary:
 	add_currency("crystals", int(rewards.crystals))
 	grant_reward_items(rewards.items)
 	add_party_xp(int(rewards.xp))
+	# Bond gain: small amount per battle victory.
+	for uid in party:
+		add_bond(uid, 2)
 	for enemy_id in group.get("quest_kills", {}).keys():
 		record_kill(str(enemy_id), int(group["quest_kills"][enemy_id]))
 	EventBus.toast_requested.emit("Victory — +%d gold, +%d crystals" % [rewards.gold, rewards.crystals])

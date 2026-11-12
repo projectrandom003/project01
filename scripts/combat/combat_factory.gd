@@ -37,6 +37,8 @@ static func build_from_character(instance: CharacterInstance, collection_bonus: 
 	unit.speed = definition.effective_stat("spd", instance.level, instance.ascension) * (1.0 + 0.02 * (instance.level - 1))
 	unit.crit_chance = definition.effective_stat("crit", instance.level, instance.ascension)
 	unit.crit_mult = definition.effective_stat("crit_dmg", instance.level, instance.ascension)
+	# Bond bonus: small ATK increase per bond level.
+	unit.atk *= (1.0 + GameState.bond_bonus_atk(instance.uid))
 	unit.skills = definition.skills.duplicate()
 	unit.ultimate = definition.ultimate
 	unit.passive_id = definition.passive_id

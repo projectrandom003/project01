@@ -7,10 +7,10 @@
     "rarity": "epic",
     "role": "Ranged Support",
     "base": {
-      "hp": 980,
-      "atk": 74,
-      "def": 42,
-      "spd": 62,
+      "hp": 48,
+      "atk": 14,
+      "def": 8,
+      "spd": 14,
       "crit": 0.08,
       "crit_dmg": 1.4
     },
@@ -34,9 +34,9 @@
     },
     "portrait_seed": 11,
     "growth": {
-      "hp": 16,
-      "atk": 4,
-      "def": 3,
+      "hp": 3,
+      "atk": 2,
+      "def": 1,
       "spd": 2,
       "crit": 0.004,
       "crit_dmg": 0.01
@@ -50,10 +50,10 @@
     "rarity": "rare",
     "role": "Bruiser",
     "base": {
-      "hp": 1180,
-      "atk": 78,
-      "def": 58,
-      "spd": 40,
+      "hp": 50,
+      "atk": 13,
+      "def": 9,
+      "spd": 11,
       "crit": 0.06,
       "crit_dmg": 1.35
     },
@@ -77,9 +77,9 @@
     },
     "portrait_seed": 23,
     "growth": {
-      "hp": 14,
-      "atk": 4,
-      "def": 4,
+      "hp": 4,
+      "atk": 2,
+      "def": 2,
       "spd": 1,
       "crit": 0.003,
       "crit_dmg": 0.008
@@ -93,10 +93,10 @@
     "rarity": "legendary",
     "role": "Healer",
     "base": {
-      "hp": 1040,
-      "atk": 82,
-      "def": 50,
-      "spd": 58,
+      "hp": 55,
+      "atk": 14,
+      "def": 12,
+      "spd": 14,
       "crit": 0.07,
       "crit_dmg": 1.5
     },
@@ -120,10 +120,10 @@
     },
     "portrait_seed": 37,
     "growth": {
-      "hp": 24,
-      "atk": 5,
-      "def": 4,
-      "spd": 2,
+      "hp": 5,
+      "atk": 2,
+      "def": 2,
+      "spd": 1,
       "crit": 0.005,
       "crit_dmg": 0.012
     }
@@ -136,10 +136,10 @@
     "rarity": "legendary",
     "role": "Mage",
     "base": {
-      "hp": 940,
-      "atk": 96,
-      "def": 38,
-      "spd": 60,
+      "hp": 50,
+      "atk": 17,
+      "def": 8,
+      "spd": 15,
       "crit": 0.1,
       "crit_dmg": 1.5
     },
@@ -163,9 +163,9 @@
     },
     "portrait_seed": 41,
     "growth": {
-      "hp": 20,
-      "atk": 6,
-      "def": 4,
+      "hp": 4,
+      "atk": 3,
+      "def": 1,
       "spd": 2,
       "crit": 0.005,
       "crit_dmg": 0.012
@@ -179,10 +179,10 @@
     "rarity": "epic",
     "role": "Healer",
     "base": {
-      "hp": 1020,
-      "atk": 70,
-      "def": 46,
-      "spd": 56,
+      "hp": 53,
+      "atk": 12,
+      "def": 10,
+      "spd": 13,
       "crit": 0.05,
       "crit_dmg": 1.4
     },
@@ -206,10 +206,10 @@
     },
     "portrait_seed": 53,
     "growth": {
-      "hp": 19,
-      "atk": 4,
-      "def": 3,
-      "spd": 2,
+      "hp": 4,
+      "atk": 1,
+      "def": 2,
+      "spd": 1,
       "crit": 0.004,
       "crit_dmg": 0.01
     }
@@ -222,10 +222,10 @@
     "rarity": "mythic",
     "role": "Damage",
     "base": {
-      "hp": 1120,
-      "atk": 108,
-      "def": 52,
-      "spd": 54,
+      "hp": 53,
+      "atk": 20,
+      "def": 12,
+      "spd": 15,
       "crit": 0.12,
       "crit_dmg": 1.6
     },
@@ -249,11 +249,11 @@
     },
     "portrait_seed": 67,
     "growth": {
-      "hp": 19,
-      "atk": 9,
-      "def": 5,
-      "spd": 2,
-      "crit": 0.009,
+      "hp": 5,
+      "atk": 3,
+      "def": 2,
+      "spd": 1,
+      "crit": 0.007,
       "crit_dmg": 0.015
     }
   },
@@ -265,10 +265,10 @@
     "rarity": "common",
     "role": "Tank",
     "base": {
-      "hp": 1120,
-      "atk": 62,
-      "def": 64,
-      "spd": 38,
+      "hp": 50,
+      "atk": 8,
+      "def": 8,
+      "spd": 9,
       "crit": 0.04,
       "crit_dmg": 1.3
     },
@@ -292,10 +292,10 @@
     },
     "portrait_seed": 71,
     "growth": {
-      "hp": 12,
-      "atk": 2,
-      "def": 3,
-      "spd": 1,
+      "hp": 3,
+      "atk": 1,
+      "def": 2,
+      "spd": 0,
       "crit": 0.002,
       "crit_dmg": 0.005
     }
@@ -308,10 +308,10 @@
     "rarity": "rare",
     "role": "Support",
     "base": {
-      "hp": 880,
-      "atk": 66,
-      "def": 40,
-      "spd": 68,
+      "hp": 48,
+      "atk": 10,
+      "def": 9,
+      "spd": 13,
       "crit": 0.06,
       "crit_dmg": 1.35
     },
@@ -335,10 +335,10 @@
     },
     "portrait_seed": 83,
     "growth": {
-      "hp": 12,
-      "atk": 3,
-      "def": 3,
-      "spd": 1,
+      "hp": 3,
+      "atk": 1,
+      "def": 2,
+      "spd": 2,
       "crit": 0.003,
       "crit_dmg": 0.008
     }
@@ -351,10 +351,10 @@
     "rarity": "epic",
     "role": "Assassin",
     "base": {
-      "hp": 900,
-      "atk": 92,
-      "def": 34,
-      "spd": 70,
+      "hp": 45,
+      "atk": 17,
+      "def": 6,
+      "spd": 15,
       "crit": 0.14,
       "crit_dmg": 1.4
     },
@@ -378,10 +378,10 @@
     },
     "portrait_seed": 97,
     "growth": {
-      "hp": 11,
-      "atk": 6,
-      "def": 3,
-      "spd": 3,
+      "hp": 3,
+      "atk": 2,
+      "def": 1,
+      "spd": 2,
       "crit": 0.006,
       "crit_dmg": 0.01
     }
@@ -394,10 +394,10 @@
     "rarity": "epic",
     "role": "Controller",
     "base": {
-      "hp": 960,
-      "atk": 84,
-      "def": 44,
-      "spd": 64,
+      "hp": 48,
+      "atk": 14,
+      "def": 10,
+      "spd": 13,
       "crit": 0.08,
       "crit_dmg": 1.4
     },
@@ -421,9 +421,9 @@
     },
     "portrait_seed": 101,
     "growth": {
-      "hp": 18,
-      "atk": 4,
-      "def": 3,
+      "hp": 3,
+      "atk": 1,
+      "def": 2,
       "spd": 2,
       "crit": 0.004,
       "crit_dmg": 0.01
@@ -437,10 +437,10 @@
     "rarity": "legendary",
     "role": "Tank",
     "base": {
-      "hp": 1560,
-      "atk": 70,
-      "def": 86,
-      "spd": 28,
+      "hp": 60,
+      "atk": 14,
+      "def": 13,
+      "spd": 12,
       "crit": 0.03,
       "crit_dmg": 1.5
     },
@@ -464,10 +464,10 @@
     },
     "portrait_seed": 113,
     "growth": {
-      "hp": 30,
-      "atk": 4,
-      "def": 6,
-      "spd": 2,
+      "hp": 5,
+      "atk": 2,
+      "def": 2,
+      "spd": 1,
       "crit": 0.005,
       "crit_dmg": 0.012
     }
@@ -480,10 +480,10 @@
     "rarity": "rare",
     "role": "Damage",
     "base": {
-      "hp": 1020,
-      "atk": 88,
-      "def": 44,
-      "spd": 56,
+      "hp": 43,
+      "atk": 14,
+      "def": 7,
+      "spd": 12,
       "crit": 0.09,
       "crit_dmg": 1.35
     },
@@ -507,11 +507,11 @@
     },
     "portrait_seed": 127,
     "growth": {
-      "hp": 10,
-      "atk": 4,
-      "def": 3,
+      "hp": 3,
+      "atk": 2,
+      "def": 1,
       "spd": 1,
-      "crit": 0.0045,
+      "crit": 0.004,
       "crit_dmg": 0.008
     }
   }

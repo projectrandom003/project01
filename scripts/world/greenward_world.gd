@@ -311,30 +311,8 @@ func _load_chunk(coord: Vector2i) -> void:
 		data.water.z_index = 1
 		terrain_layer.add_child(data.water)
 
-	# Water collision: per-tile circles on layer 1, skipping tiles near bridges.
-	var water_body: StaticBody2D = null
-	var water_tiles: Array = data.get("water_tiles", [])
-	if water_tiles.size() > 0:
-		water_body = StaticBody2D.new()
-		water_body.name = "WaterCollision"
-		water_body.collision_layer = 1
-		water_body.collision_mask = 0
-		for tile_center in water_tiles:
-			var center: Vector2 = tile_center
-			var skip := false
-			for bp in _bridge_positions:
-				if center.distance_to(bp) <= _bridge_radius:
-					skip = true
-					break
-			if skip:
-				continue
-			var shape_node := CollisionShape2D.new()
-			var circle := CircleShape2D.new()
-			circle.radius = 16.0
-			shape_node.shape = circle
-			shape_node.position = center
-			water_body.add_child(shape_node)
-		terrain_layer.add_child(water_body)
+	# Water is traversable but slows movement. No collision bodies are created;
+	# water detection uses is_water_world() for speed reduction and visual effects.
 
 	var prop_nodes: Array = []
 	for entry in data.props:
@@ -351,7 +329,6 @@ func _load_chunk(coord: Vector2i) -> void:
 		"terrain": data.terrain,
 		"water": data.water,
 		"props": prop_nodes,
-		"water_body": water_body,
 	}
 
 
@@ -361,9 +338,6 @@ func _unload_chunk(coord: Vector2i) -> void:
 		var node: Node = data.get(key, null)
 		if node != null and is_instance_valid(node):
 			node.queue_free()
-	var water_body: Node = data.get("water_body", null)
-	if water_body != null and is_instance_valid(water_body):
-		water_body.queue_free()
 	for prop in data.get("props", []):
 		if is_instance_valid(prop):
 			prop.queue_free()

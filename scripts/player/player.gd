@@ -1,4 +1,4 @@
-﻿class_name Player
+class_name Player
 extends CharacterBody2D
 ## Eight-direction isometric player controller.
 ## Keyboard, controller and touch joystick all feed the same input vector, so
@@ -31,6 +31,8 @@ var nearby_interactable: Interactable = null
 var _zoom: float = 1.1
 var _scan_accumulator: float = 0.0
 var _glow_timer: float = 0.0
+var _in_water: bool = false
+var _water_surface: Sprite2D = null
 var _name_label: Label
 var _glow: PointLight2D
 
@@ -116,6 +118,16 @@ func _physics_process(delta: float) -> void:
 
 	var sprinting := Input.is_action_pressed("sprint")
 	var speed := RUN_SPEED if sprinting else WALK_SPEED
+	# Water slows movement: check world water detection.
+	var world := get_tree().get_first_node_in_group("world")
+	var in_water := false
+	if world != null and world.has_method("is_water_world"):
+		in_water = bool(world.is_water_world(global_position))
+	if in_water != _in_water:
+		_in_water = in_water
+		_update_water_visual(in_water)
+	if in_water:
+		speed *= 0.4
 	if input_vector.length_squared() > 0.001:
 		velocity = velocity.move_toward(input_vector * speed, ACCELERATION * delta)
 		if absf(input_vector.x) > 0.08:
@@ -164,6 +176,30 @@ func _set_zoom(value: float) -> void:
 	_zoom = clampf(value, MIN_ZOOM, MAX_ZOOM)
 	if camera != null:
 		camera.zoom = Vector2.ONE * _zoom
+
+
+func _update_water_visual(in_water: bool) -> void:
+	if visual != null:
+		if in_water:
+			visual.position = Vector2(0, 6)
+			visual.modulate = Color(0.7, 0.85, 1.0, 0.85)
+		else:
+			visual.position = Vector2.ZERO
+			visual.modulate = Color.WHITE
+	# Water surface ripple overlay
+	if in_water:
+		if _water_surface == null:
+			_water_surface = Sprite2D.new()
+			_water_surface.texture = ProceduralArt.white_pixel()
+			_water_surface.scale = Vector2(24, 4)
+			_water_surface.position = Vector2(0, -4)
+			_water_surface.modulate = Color(0.4, 0.7, 0.9, 0.5)
+			_water_surface.z_index = 5
+			add_child(_water_surface)
+	else:
+		if _water_surface != null and is_instance_valid(_water_surface):
+			_water_surface.queue_free()
+			_water_surface = null
 
 
 func _scan_for_interactable() -> void:

@@ -288,6 +288,22 @@ func _show_detail(uid: String) -> void:
 	stats.add_child(_stat_row("Power", int(round(_power_score(definition, multiplier)))))
 	_detail.add_child(stats)
 
+	# Stat preview: next level.
+	if not instance.is_max_level():
+		var next_level := instance.level + 1
+		var next_mult := instance.power_multiplier() * GameState.collection_bonus()
+		var next_hp := int(round(definition.effective_stat("hp", next_level, instance.ascension) * next_mult))
+		var next_atk := int(round(definition.effective_stat("atk", next_level, instance.ascension) * next_mult))
+		var next_def := int(round(definition.effective_stat("def", next_level, instance.ascension) * next_mult))
+		var next_spd := int(round(definition.effective_stat("spd", next_level, instance.ascension) * (1.0 + 0.02 * (next_level - 1))))
+		_detail.add_child(UIFactory.label("NEXT LEVEL (Lv %d)" % next_level, 10, UITheme.TEXT_FAINT))
+		var preview := UIFactory.hbox(8)
+		preview.add_child(UIFactory.label("HP %d" % next_hp, 10, UITheme.GREEN))
+		preview.add_child(UIFactory.label("ATK %d" % next_atk, 10, UITheme.GREEN))
+		preview.add_child(UIFactory.label("DEF %d" % next_def, 10, UITheme.GREEN))
+		preview.add_child(UIFactory.label("SPD %d" % next_spd, 10, UITheme.GREEN))
+		_detail.add_child(preview)
+
 	# Equipped items (P3).
 	_detail.add_child(UIFactory.label("EQUIPPED", 10, UITheme.TEXT_FAINT))
 	var equip_box := UIFactory.vbox(4)
@@ -371,6 +387,20 @@ func _show_detail(uid: String) -> void:
 		ascend_button.text = "Ascend — %s gold · %d dew" % [UIFactory.number(int(ascension.gold)), int(ascension.dew)]
 	ascend_button.pressed.connect(func() -> void: _ascend(instance.uid))
 	actions.add_child(ascend_button)
+
+	# Awakening interface.
+	var awaken_info := GameState.awakening_info(instance.uid)
+	var awaken_button := UIFactory.button("Awaken", false)
+	if not bool(awaken_info.get("ok", false)):
+		awaken_button.disabled = true
+		awaken_button.tooltip_text = str(awaken_info.get("reason", "Cannot awaken."))
+		awaken_button.text = "Awaken — locked"
+	else:
+		awaken_button.text = "Awaken (%d dupes)" % int(awaken_info.dupes_needed)
+	awaken_button.pressed.connect(func() -> void: _awaken(instance.uid))
+	actions.add_child(awaken_button)
+	_detail.add_child(UIFactory.label("Awakening %d / %d  ·  Bond %d (Lv %d)" % [instance.awakening, CharacterInstance.MAX_AWAKENING, instance.bond, GameState.bond_level(instance.uid)], 10, UITheme.TEXT_FAINT))
+
 	_detail.add_child(actions)
 
 
@@ -421,6 +451,16 @@ func _ascend(uid: String) -> void:
 		_show_detail(uid)
 	else:
 		EventBus.toast_requested.emit("Ascension failed.")
+		_show_detail(uid)
+
+
+func _awaken(uid: String) -> void:
+	if GameState.awaken(uid):
+		EventBus.toast_requested.emit("Awakening successful.")
+		_rebuild_grid()
+		_show_detail(uid)
+	else:
+		EventBus.toast_requested.emit("Could not awaken.")
 		_show_detail(uid)
 
 
