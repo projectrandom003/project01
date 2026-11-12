@@ -22,7 +22,7 @@ extends Node2D
 const DEFAULT_REGION_ID := "greenward"
 var region_id: String = DEFAULT_REGION_ID
 var entry_point: String = ""
-const SAVE_POSITION_INTERVAL := 8.0
+const SAVE_POSITION_INTERVAL := 1.0
 
 # Atmosphere / performance caps (bounded; sourced from GreenwardStyle where
 # meaningful). No unbounded node spawning anywhere below.

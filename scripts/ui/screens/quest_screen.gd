@@ -166,11 +166,9 @@ func _show_detail(quest_id: String) -> void:
 	var track_button := UIFactory.button("Untrack" if tracked else "Track on HUD", not tracked)
 	track_button.pressed.connect(func() -> void:
 		if tracked:
-			GameState.flags.erase("tracked_quest")
+			GameState.untrack_quest()
 		else:
-			GameState.flags["tracked_quest"] = quest_id
-		GameState.queue_save()
-		EventBus.quest_updated.emit(quest_id)
+			GameState.set_tracked_quest(quest_id)
 		_rebuild_list()
 		_show_detail(quest_id)
 	)

@@ -23,6 +23,7 @@ var _touch_interact: Button
 var _hint_label: Label
 
 var _prompt_timer: float = 0.0
+var _refresh_timer: float = 0.0
 var _last_prompt: String = ""
 var _toasts: Array = []
 
@@ -52,6 +53,10 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_prompt_timer += delta
+	_refresh_timer += delta
+	if _refresh_timer >= 0.5:
+		_refresh_timer = 0.0
+		refresh_quest()
 	if _prompt_timer < 0.12:
 		return
 	_prompt_timer = 0.0
