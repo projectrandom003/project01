@@ -7,6 +7,8 @@ var _detail: VBoxContainer
 var _cards: Dictionary = {}
 var _selected_uid: String = ""
 var _filter: String = "all"
+var _ascend_armed: bool = false
+var _ascend_armed_uid: String = ""
 
 # Phase 5 presentation counters. ZERO final portraits exist; every PortraitView
 # here still renders the procedural fallback. These track the additive rarity
@@ -206,12 +208,15 @@ func _show_detail(uid: String) -> void:
 	_visual_theme_lines = 0
 	var instance := _find_instance(uid)
 	if instance == null:
+		_ascend_armed_uid = ""
+		_ascend_armed = false
 		_detail.add_child(UIFactory.label("No character selected.", 13, UITheme.TEXT_DIM))
 		return
 	var definition: CharacterDef = ContentDB.get_character(instance.char_id)
 	if definition == null:
 		_detail.add_child(UIFactory.label("Missing character definition.", 13, UITheme.DANGER))
 		return
+	_ascend_armed = (_ascend_armed_uid == instance.uid)
 
 	var portrait_center := CenterContainer.new()
 	var portrait := PortraitView.new()
@@ -264,6 +269,14 @@ func _show_detail(uid: String) -> void:
 	progression.add_child(UIFactory.chip("Awakening %d / %d" % [instance.awakening, CharacterInstance.MAX_AWAKENING], UITheme.TEAL))
 	_detail.add_child(progression)
 
+	# XP / level-up progress (P2).
+	var xp_needed := GameState.xp_to_next(instance.level)
+	var xp_bar := UIFactory.bar(UITheme.TEAL, 8)
+	xp_bar.max_value = maxf(1.0, float(xp_needed))
+	xp_bar.value = clampf(float(instance.xp), 0.0, float(xp_needed))
+	_detail.add_child(xp_bar)
+	_detail.add_child(UIFactory.label("XP %d / %d" % [instance.xp, xp_needed], 10, UITheme.TEXT_FAINT))
+
 	var multiplier := instance.power_multiplier() * GameState.collection_bonus()
 	var stats := UIFactory.grid(2, 4)
 	stats.add_child(_stat_row("HP", int(round(definition.stat("hp") * multiplier))))
@@ -273,6 +286,22 @@ func _show_detail(uid: String) -> void:
 	stats.add_child(_stat_row("Crit", "%.1f%%" % (definition.stat("crit") * 100.0)))
 	stats.add_child(_stat_row("Power", int(round(_power_score(definition, multiplier)))))
 	_detail.add_child(stats)
+
+	# Equipped items (P3).
+	_detail.add_child(UIFactory.label("EQUIPPED", 10, UITheme.TEXT_FAINT))
+	var equip_box := UIFactory.vbox(4)
+	for slot in CharacterInstance.SLOTS:
+		var item_id := instance.equipped_item(slot)
+		var item_name := "—"
+		if not item_id.is_empty():
+			var item: Dictionary = ContentDB.get_item(item_id)
+			item_name = str(item.get("name", item_id))
+		var row := UIFactory.hbox(6)
+		row.add_child(UIFactory.label(slot.capitalize(), 11, UITheme.TEXT_DIM))
+		row.add_child(UIFactory.spacer())
+		row.add_child(UIFactory.label(item_name, 11, UITheme.TEXT if not item_id.is_empty() else UITheme.TEXT_FAINT))
+		equip_box.add_child(row)
+	_detail.add_child(equip_box)
 
 	var skill_ids: Array = definition.skills.duplicate()
 	if not definition.ultimate.is_empty():
@@ -317,11 +346,26 @@ func _show_detail(uid: String) -> void:
 	actions.add_child(party_button)
 
 	var ascension := GameState.ascension_info(instance.uid)
+	var levelup_button := UIFactory.button("Gain 100 XP", true)
+	levelup_button.pressed.connect(func() -> void:
+		var result: Dictionary = GameState.add_xp_to_character(instance, 100)
+		var gained := int(result.get("levels", 0))
+		if gained > 0:
+			EventBus.toast_requested.emit("Level up! +%d level(s)" % gained)
+		else:
+			EventBus.toast_requested.emit("+100 XP")
+		_show_detail(instance.uid)
+	)
+	actions.add_child(levelup_button)
+
 	var ascend_button := UIFactory.button("Ascend", false)
 	if not bool(ascension.get("ok", false)):
 		ascend_button.disabled = true
 		ascend_button.tooltip_text = str(ascension.get("reason", "Cannot ascend yet."))
 		ascend_button.text = "Ascend — locked"
+	elif _ascend_armed and _ascend_armed_uid == instance.uid:
+		ascend_button.text = "Press again to Ascend"
+		ascend_button.add_theme_color_override("font_color", UITheme.DANGER)
 	else:
 		ascend_button.text = "Ascend — %s gold · %d dew" % [UIFactory.number(int(ascension.gold)), int(ascension.dew)]
 	ascend_button.pressed.connect(func() -> void: _ascend(instance.uid))
@@ -363,12 +407,20 @@ func _toggle_party(uid: String) -> void:
 
 
 func _ascend(uid: String) -> void:
+	if _ascend_armed_uid != uid:
+		_ascend_armed_uid = uid
+		_ascend_armed = true
+		_show_detail(uid)
+		return
+	_ascend_armed_uid = ""
+	_ascend_armed = false
 	if GameState.ascend(uid):
 		EventBus.toast_requested.emit("Ascension successful.")
 		_rebuild_grid()
 		_show_detail(uid)
 	else:
 		EventBus.toast_requested.emit("Ascension failed.")
+		_show_detail(uid)
 
 
 func _find_instance(uid: String) -> CharacterInstance:

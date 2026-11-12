@@ -1,4 +1,4 @@
-﻿class_name GameScreen
+class_name GameScreen
 extends Node
 ## Top-level controller for the playable slice.
 ##
@@ -282,6 +282,8 @@ func open_screen(screen_id: String) -> void:
 			screen = InventoryScreen.new()
 		"quests":
 			screen = QuestScreen.new()
+		"map":
+			screen = MapScreen.new()
 		_:
 			push_warning("[GameScreen] Unknown screen: " + screen_id)
 			return

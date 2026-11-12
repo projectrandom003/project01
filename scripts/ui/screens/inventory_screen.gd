@@ -199,6 +199,17 @@ func _show_detail(item_id: String) -> void:
 		var equipped_by := _equipped_by(item_id)
 		if not equipped_by.is_empty():
 			_detail.add_child(UIFactory.label("Equipped by: " + ", ".join(equipped_by), 11, UITheme.TEAL))
+			for instance in GameState.roster:
+				var definition: CharacterDef = ContentDB.get_character(instance.char_id)
+				if definition == null:
+					continue
+				for slot in CharacterInstance.SLOTS:
+					if instance.equipped_item(slot) == item_id:
+						var unequip_button := UIFactory.small_button("Unequip from " + definition.display_name)
+						var uid: String = instance.uid
+						var slot_name: String = slot
+						unequip_button.pressed.connect(func() -> void: _unequip(uid, slot_name))
+						_detail.add_child(unequip_button)
 		var target_row := UIFactory.vbox(4)
 		target_row.add_child(UIFactory.label("Equip to", 11, UITheme.TEXT_FAINT))
 		var picker := OptionButton.new()
@@ -254,6 +265,15 @@ func _equipped_by(item_id: String) -> Array:
 				result.append(definition.display_name)
 				break
 	return result
+
+
+func _unequip(uid: String, slot: String) -> void:
+	if GameState.unequip_item(uid, slot):
+		EventBus.toast_requested.emit("Item unequipped.")
+		_rebuild_grid()
+		_show_detail(_selected_item)
+	else:
+		EventBus.toast_requested.emit("Could not unequip that item.")
 
 
 func _equip(item_id: String) -> void:

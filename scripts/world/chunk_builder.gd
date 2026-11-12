@@ -94,6 +94,7 @@ static func build(
 	var terrain_colors: Array = []
 	var water_transforms: Array = []
 	var water_colors: Array = []
+	var water_tiles: Array = []
 	var detail_transforms: Array = []
 	var detail_instance_colors: Array = []
 	var props: Array = []
@@ -128,6 +129,7 @@ static func build(
 					wcolor = wcolor.lerp(foam_color, (0.25 - depth) * 0.45) # shoreline foam in the shallows
 				water_transforms.append(transform)
 				water_colors.append(wcolor * Color(1, 1, 1, 0.86))
+				water_tiles.append(center)
 				# A few lily pads / foam flecks near the river banks (detail layer).
 				if river_dist <= RIVER_HALF_WIDTH + 1.0 and rng.randf() < detail_density * 0.5:
 					var wc: Color = detail_palette[5] if rng.randf() < 0.5 else detail_palette[6]
@@ -231,6 +233,7 @@ static func build(
 		"terrain": terrain_node,
 		"water": water_node,
 		"props": props,
+		"water_tiles": water_tiles,
 		"detail": detail_node,
 	}
 

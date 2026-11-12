@@ -1,4 +1,4 @@
-﻿class_name RoamingMonster
+class_name RoamingMonster
 extends Interactable
 ## A visible world monster that roams, notices the player and starts a battle.
 ## It is intentionally NOT a fake battle: it requests a real encounter from the
@@ -166,10 +166,15 @@ func _process(delta: float) -> void:
 	if distance < 210.0:
 		var to_player := _player.position - position
 		if distance > 55.0:
-			position = position.move_toward(_player.position, move_speed * 1.9 * delta)
-			visual.walking = true
-			visual.set_move_direction(to_player)
-			visual.play(ANIM_RUN)
+			if _target_walkable(_player.position):
+				position = position.move_toward(_player.position, move_speed * 1.9 * delta)
+				visual.walking = true
+				visual.set_move_direction(to_player)
+				visual.play(ANIM_RUN)
+			else:
+				visual.walking = false
+				visual.set_move_direction(to_player)
+				visual.play(ANIM_IDLE)
 		else:
 			visual.walking = false
 			visual.set_move_direction(to_player)
@@ -178,9 +183,17 @@ func _process(delta: float) -> void:
 		_roam_timer -= delta
 		if _roam_timer <= 0.0:
 			_roam_timer = randf_range(2.0, 5.0)
-			var offset := Vector2(randf_range(-roam_radius, roam_radius), randf_range(-roam_radius, roam_radius))
-			_roam_target = home_position + offset
-		if position.distance_to(_roam_target) > 4.0:
+			var found := false
+			for _attempt in 8:
+				var offset := Vector2(randf_range(-roam_radius, roam_radius), randf_range(-roam_radius, roam_radius))
+				var candidate := home_position + offset
+				if _target_walkable(candidate):
+					_roam_target = candidate
+					found = true
+					break
+			if not found:
+				_roam_target = position
+		if position.distance_to(_roam_target) > 4.0 and _target_walkable(_roam_target):
 			var to_target := _roam_target - position
 			position = position.move_toward(_roam_target, move_speed * delta)
 			visual.walking = true
@@ -234,3 +247,18 @@ func _defeat() -> void:
 	_roam_target = home_position
 	_spawn_grace = 2.0
 	_engagement_cooldown = 0.0
+
+
+func _world() -> Node:
+	if not is_inside_tree():
+		return null
+	return get_tree().get_first_node_in_group("world")
+
+
+func _target_walkable(pos: Vector2) -> bool:
+	var w := _world()
+	if w == null or not is_instance_valid(w):
+		return true
+	if not w.has_method("is_walkable"):
+		return true
+	return bool(w.is_walkable(pos))

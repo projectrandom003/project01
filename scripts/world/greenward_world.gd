@@ -88,6 +88,8 @@ var _animated_props: Array = []
 var _interactive_props: Array = []
 var _lights: Array = []
 var _prop_kind_counts: Dictionary = {}
+var _bridge_positions: Array = []
+var _bridge_radius: float = 40.0
 var _texture_keys: Dictionary = {}
 
 # PART 5 (World Presentation): cached visual-standards validation + region tint.
@@ -144,6 +146,9 @@ func _ready() -> void:
 	# PART 5: validate the visual STANDARD/CONTRACT once and apply the region
 	# tint to ambient/fog. AFTER atmosphere setup, BEFORE streaming / world_ready.
 	apply_visual_standards()
+
+	add_to_group("world")
+	add_to_group("greenward_world")
 
 	var grid := IsoMath.world_to_grid(player.position)
 	current_center = streamer.center_chunk(grid)
@@ -306,6 +311,31 @@ func _load_chunk(coord: Vector2i) -> void:
 		data.water.z_index = 1
 		terrain_layer.add_child(data.water)
 
+	# Water collision: per-tile circles on layer 1, skipping tiles near bridges.
+	var water_body: StaticBody2D = null
+	var water_tiles: Array = data.get("water_tiles", [])
+	if water_tiles.size() > 0:
+		water_body = StaticBody2D.new()
+		water_body.name = "WaterCollision"
+		water_body.collision_layer = 1
+		water_body.collision_mask = 0
+		for tile_center in water_tiles:
+			var center: Vector2 = tile_center
+			var skip := false
+			for bp in _bridge_positions:
+				if center.distance_to(bp) <= _bridge_radius:
+					skip = true
+					break
+			if skip:
+				continue
+			var shape_node := CollisionShape2D.new()
+			var circle := CircleShape2D.new()
+			circle.radius = 16.0
+			shape_node.shape = circle
+			shape_node.position = center
+			water_body.add_child(shape_node)
+		terrain_layer.add_child(water_body)
+
 	var prop_nodes: Array = []
 	for entry in data.props:
 		var variant := int(entry.get("variant", 0))
@@ -321,6 +351,7 @@ func _load_chunk(coord: Vector2i) -> void:
 		"terrain": data.terrain,
 		"water": data.water,
 		"props": prop_nodes,
+		"water_body": water_body,
 	}
 
 
@@ -330,10 +361,49 @@ func _unload_chunk(coord: Vector2i) -> void:
 		var node: Node = data.get(key, null)
 		if node != null and is_instance_valid(node):
 			node.queue_free()
+	var water_body: Node = data.get("water_body", null)
+	if water_body != null and is_instance_valid(water_body):
+		water_body.queue_free()
 	for prop in data.get("props", []):
 		if is_instance_valid(prop):
 			prop.queue_free()
 	loaded_chunks.erase(coord)
+
+
+# --------------------------------------------------------------- water / walkability
+func is_water_world(world_pos: Vector2) -> bool:
+	if elevation == null:
+		return false
+	var grid := IsoMath.world_to_grid(world_pos)
+	var elev := elevation.get_noise_2d(grid.x, grid.y)
+	var wl := get_water_level()
+	return elev < wl
+
+func is_walkable(world_pos: Vector2) -> bool:
+	if not is_water_world(world_pos):
+		return true
+	return is_near_bridge(world_pos)
+
+func is_near_bridge(world_pos: Vector2) -> bool:
+	for bp in _bridge_positions:
+		if world_pos.distance_to(bp) <= _bridge_radius:
+			return true
+	return false
+
+func world_to_grid(world_pos) -> Vector2:
+	return IsoMath.world_to_grid(world_pos)
+
+func get_water_level() -> float:
+	var biome: Variant = region.get("biome", {})
+	if typeof(biome) != TYPE_DICTIONARY:
+		biome = {}
+	return float(biome.get("water_level", -0.22))
+
+func get_bridge_positions() -> Array:
+	return _bridge_positions
+
+func get_bridge_radius() -> float:
+	return _bridge_radius
 
 
 # ---------------------------------- main-thread chunk preparation (PART 5)
@@ -434,6 +504,8 @@ func _make_prop_sprite(type: String, world_position: Vector2, scale_value: float
 
 
 func _add_prop(type: String, grid_position: Vector2, scale_value: float = 1.0, flip: bool = false, variant: int = 0) -> Sprite2D:
+	if "bridge" in type or type == "wooden_bridge" or type == "stone_bridge":
+		_bridge_positions.append(IsoMath.grid_to_world(grid_position.x, grid_position.y))
 	var sprite := _make_prop_sprite(type, IsoMath.grid_to_world(grid_position.x, grid_position.y), scale_value, flip, variant)
 	if sprite != null:
 		entities.add_child(sprite)

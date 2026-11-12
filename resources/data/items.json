@@ -67,6 +67,7 @@
     "category": "equipment",
     "slot": "weapon",
     "rarity": "epic",
+    "level": 2,
     "element": "wind",
     "stats": { "atk": 24, "spd": 4 },
     "description": "A living bow cut from a branch that agreed to be cut.",
@@ -77,6 +78,7 @@
     "category": "equipment",
     "slot": "armor",
     "rarity": "rare",
+    "level": 1,
     "stats": { "hp": 120, "def": 16 },
     "description": "Moss woven so tightly it remembers being bark.",
     "color": "#6f8f5a"
@@ -86,6 +88,7 @@
     "category": "equipment",
     "slot": "accessory",
     "rarity": "rare",
+    "level": 1,
     "stats": { "spd": 9, "crit": 0.04 },
     "description": "A small wooden charm carved with a road that has no end.",
     "color": "#c9a45a"
@@ -95,6 +98,7 @@
     "category": "equipment",
     "slot": "weapon",
     "rarity": "legendary",
+    "level": 3,
     "element": "fire",
     "stats": { "atk": 38, "crit": 0.06 },
     "description": "Forged in the last hour of a sun that no longer exists.",

@@ -461,6 +461,8 @@ static func _validate_items(data: Dictionary) -> Array[String]:
 			var stats = _require(item, "stats", "dictionary", path, file, errors)
 			if typeof(stats) == TYPE_DICTIONARY:
 				_validate_equipment_stats(stats, path + ".stats", file, errors)
+			if item.has("level"):
+				_require_int(item, "level", path, file, errors, 1)
 		else:
 			if item.has("slot"):
 				_err(errors, file, path + ".slot", "%s items must not define an equipment slot" % category)
@@ -664,6 +666,9 @@ static func _validate_quests(data: Dictionary, context: Dictionary) -> Array[Str
 				var step_type := _require_enum(step_dict, "type", QUEST_STEP_TYPES, step_path, file, errors)
 				var target := _require_nonempty_string(step_dict, "target", step_path, file, errors)
 				_require_nonempty_string(step_dict, "text", step_path, file, errors)
+				var step_grid: Variant = step_dict.get("grid", null)
+				if step_grid != null:
+					_validate_grid(step_grid, step_path + ".grid", file, errors)
 				if step_type == "talk" and not target.is_empty() and not dialogues.has(target):
 					_err(errors, file, step_path + ".target", "references missing dialogue '%s'" % target)
 				if step_type == "kill":

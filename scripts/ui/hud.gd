@@ -127,7 +127,7 @@ func refresh_party() -> void:
 func refresh_quest() -> void:
 	if _quest_label == null:
 		return
-	var tracked := str(GameState.flags.get("tracked_quest", ""))
+	var tracked := GameState.tracked_quest()
 	if tracked.is_empty() or GameState.quest_state(tracked) == "not_started":
 		_quest_label.visible = false
 		return
@@ -139,8 +139,26 @@ func refresh_quest() -> void:
 	var step_text := str(step.get("text", "Quest complete"))
 	if GameState.quest_state(tracked) == "complete":
 		step_text = "Complete"
-	_quest_label.text = "◆  %s — %s" % [str(definition.get("name", tracked)), step_text]
+	var distance := GameState.distance_to_tracked()
+	var arrow := _quest_arrow()
+	var suffix := ""
+	if not tracked.is_empty() and GameState.quest_state(tracked) == "active" and distance > 0.0:
+		suffix = "  (%s %.0fm)" % [arrow, distance / 16.0]
+	_quest_label.text = "◆  %s — %s%s" % [str(definition.get("name", tracked)), step_text, suffix]
 	_quest_label.visible = true
+
+
+func _quest_arrow() -> String:
+	# Returns a coarse 8-direction arrow toward the tracked quest destination.
+	var dir := GameState.direction_to_tracked()
+	if dir.length_squared() < 0.0001:
+		return "•"
+	var angle := dir.angle()
+	if angle < 0.0:
+		angle += TAU
+	var sector := int(round(angle / (PI * 0.25))) % 8
+	var arrows := ["→", "↘", "↓", "↙", "←", "↖", "↑", "↗"]
+	return arrows[sector]
 
 
 func show_toast(message: String) -> void:
@@ -238,6 +256,7 @@ func _build_actions() -> void:
 		{ "id": "collection", "text": "Roster" },
 		{ "id": "inventory", "text": "Inventory" },
 		{ "id": "quests", "text": "Quests" },
+		{ "id": "map", "text": "Map" },
 	]
 	for entry in entries:
 		var screen_id := str(entry.id)

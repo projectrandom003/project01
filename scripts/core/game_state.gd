@@ -431,6 +431,20 @@ func equip_item(uid: String, item_id: String) -> bool:
 	return true
 
 
+func unequip_item(uid: String, slot: String) -> bool:
+	var instance := _find_instance(uid)
+	if instance == null:
+		return false
+	var current := instance.equipped_item(slot)
+	if current.is_empty():
+		return false
+	instance.unequip(slot)
+	add_item(current, 1)
+	EventBus.roster_changed.emit()
+	queue_save()
+	return true
+
+
 # ------------------------------------------------------------------- quests
 
 func quest_state(quest_id: String) -> String:
@@ -450,6 +464,67 @@ func quest_step(quest_id: String) -> Dictionary:
 	if index < 0 or index >= steps.size():
 		return {}
 	return steps[index]
+
+
+func tracked_quest() -> String:
+	return str(flags.get("tracked_quest", ""))
+
+
+func set_tracked_quest(quest_id: String) -> void:
+	if quest_id.is_empty():
+		untrack_quest()
+		return
+	flags["tracked_quest"] = quest_id
+	queue_save()
+	EventBus.quest_updated.emit(quest_id)
+
+
+func untrack_quest() -> void:
+	flags.erase("tracked_quest")
+	queue_save()
+
+
+func quest_destination(quest_id: String) -> Vector2:
+	# Returns the world-space destination of the currently active step, or
+	# Vector2.ZERO if unknown. Used by the HUD tracker and the world map.
+	if quest_id.is_empty():
+		return Vector2.ZERO
+	var step := quest_step(quest_id)
+	if step.is_empty():
+		return Vector2.ZERO
+	var grid: Variant = step.get("grid", null)
+	if typeof(grid) == TYPE_ARRAY and (grid as Array).size() == 2:
+		var g: Array = grid
+		return IsoMath.grid_to_world(float(g[0]), float(g[1]))
+	# Fall back to the region spawn grid if no explicit grid was authored.
+	var region: Dictionary = ContentDB.get_region("greenward")
+	var spawn: Array = region.get("spawn_grid", [8, 8])
+	return IsoMath.grid_to_world(float(spawn[0]), float(spawn[1]))
+
+
+func distance_to_tracked() -> float:
+	var qid := tracked_quest()
+	if qid.is_empty() or quest_state(qid) != "active":
+		return 0.0
+	var player := _find_player_position()
+	return player.distance_to(quest_destination(qid))
+
+
+func direction_to_tracked() -> Vector2:
+	var qid := tracked_quest()
+	if qid.is_empty() or quest_state(qid) != "active":
+		return Vector2.ZERO
+	var player := _find_player_position()
+	var delta := quest_destination(qid) - player
+	if delta.length_squared() < 0.0001:
+		return Vector2.ZERO
+	return delta.normalized()
+
+
+func _find_player_position() -> Vector2:
+	if has_player_position:
+		return player_position
+	return Vector2.ZERO
 
 
 func start_quest(quest_id: String, giver_id: String = "") -> bool:
