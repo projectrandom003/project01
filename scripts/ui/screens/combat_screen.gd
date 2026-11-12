@@ -18,7 +18,6 @@ var _skills_box: HFlowContainer
 var _log_label: RichTextLabel
 var _title_label: Label
 var _round_label: Label
-var _actor_label: Label
 var _hint_label: Label
 var _auto_button: Button
 var _speed_button: Button
@@ -34,6 +33,10 @@ var _boss_bar_container: VBoxContainer = null
 var _boss_name_label: Label = null
 var _boss_hp_bar: ProgressBar = null
 var _boss_phase_label: Label = null
+var _hp_bar: ProgressBar = null
+var _energy_bar: ProgressBar = null
+var _status_label: Label = null
+var _actor_label: Label = null
 var _camera_shake_timer: float = 0.0
 var _camera_shake_intensity: float = 0.0
 var _claimed: bool = false
@@ -115,14 +118,15 @@ func _build_background() -> void:
 
 
 func _build_layout() -> void:
-	var margin := UIFactory.margin(20)
+	var margin := UIFactory.margin(16)
 	UIFactory.set_full_rect(margin)
 	add_child(margin)
-	var root := UIFactory.vbox(8)
+	var root := UIFactory.vbox(6)
 	margin.add_child(root)
 
+	# ===== TOP: compact header + turn order =====
 	var header := UIFactory.hbox(10)
-	_title_label = UIFactory.heading("Battle", 24, UITheme.GOLD_BRIGHT)
+	_title_label = UIFactory.heading("Battle", 20, UITheme.GOLD_BRIGHT)
 	_boss_bar_container = null
 	_boss_name_label = null
 	_boss_hp_bar = null
@@ -130,20 +134,20 @@ func _build_layout() -> void:
 	_camera_shake_timer = 0.0
 	_camera_shake_intensity = 0.0
 	header.add_child(_title_label)
-	_round_label = UIFactory.label("Round 1", 11, UITheme.TEXT_DIM)
+	_round_label = UIFactory.label("Round 1", 10, UITheme.TEXT_DIM)
 	header.add_child(_round_label)
 	header.add_child(UIFactory.spacer())
 	_auto_button = UIFactory.small_button("Auto: Off", UITheme.TEXT_DIM)
 	_auto_button.toggle_mode = true
-	_auto_button.custom_minimum_size = Vector2(96, 32)
+	_auto_button.custom_minimum_size = Vector2(80, 28)
 	_auto_button.toggled.connect(_on_auto_toggled)
 	header.add_child(_auto_button)
-	_speed_button = UIFactory.small_button("1Ã— speed", UITheme.TEAL)
-	_speed_button.custom_minimum_size = Vector2(96, 32)
+	_speed_button = UIFactory.small_button("1x", UITheme.TEAL)
+	_speed_button.custom_minimum_size = Vector2(60, 28)
 	_speed_button.pressed.connect(_cycle_speed)
 	header.add_child(_speed_button)
 	var retreat := UIFactory.button("Retreat", false, true)
-	retreat.custom_minimum_size = Vector2(100, 34)
+	retreat.custom_minimum_size = Vector2(80, 28)
 	retreat.pressed.connect(_confirm_retreat)
 	header.add_child(retreat)
 	root.add_child(header)
@@ -151,81 +155,98 @@ func _build_layout() -> void:
 	# Boss health bar (hidden by default).
 	_boss_bar_container = UIFactory.vbox(4)
 	_boss_bar_container.visible = false
-	var boss_bar_panel := UIFactory.panel(Color("#1a0a0a"), Color(UITheme.DANGER.r, UITheme.DANGER.g, UITheme.DANGER.b, 0.6), 10, 1, 8)
+	var boss_bar_panel := UIFactory.panel(Color("#1a0a0a"), Color(UITheme.DANGER.r, UITheme.DANGER.g, UITheme.DANGER.b, 0.6), 8, 1, 6)
 	_boss_bar_container.add_child(boss_bar_panel)
-	var boss_bar_inner := UIFactory.vbox(4)
+	var boss_bar_inner := UIFactory.vbox(2)
 	boss_bar_panel.add_child(boss_bar_inner)
-	_boss_name_label = UIFactory.heading("Boss", 18, UITheme.DANGER)
+	_boss_name_label = UIFactory.heading("Boss", 16, UITheme.DANGER)
 	_boss_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	boss_bar_inner.add_child(_boss_name_label)
-	_boss_hp_bar = UIFactory.bar(UITheme.DANGER, 12)
-	_boss_hp_bar.custom_minimum_size = Vector2(0, 16)
+	_boss_hp_bar = UIFactory.bar(UITheme.DANGER, 10)
+	_boss_hp_bar.custom_minimum_size = Vector2(0, 14)
 	boss_bar_inner.add_child(_boss_hp_bar)
-	_boss_phase_label = UIFactory.label("Phase 1", 10, UITheme.TEXT_DIM)
+	_boss_phase_label = UIFactory.label("Phase 1", 9, UITheme.TEXT_DIM)
 	_boss_phase_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	boss_bar_inner.add_child(_boss_phase_label)
 	root.add_child(_boss_bar_container)
 
-	var turn_panel := UIFactory.panel(Color(0.05, 0.075, 0.13, 0.75), UITheme.BORDER_SOFT, 8, 1, 6)
-	var turn_row := UIFactory.hbox(8)
-	turn_row.add_child(UIFactory.label("TURN ORDER", 9, UITheme.TEXT_FAINT))
-	_turn_box = UIFactory.hbox(6)
+	# Turn order timeline (compact).
+	var turn_panel := UIFactory.panel(Color(0.05, 0.075, 0.13, 0.7), UITheme.BORDER_SOFT, 6, 1, 4)
+	var turn_row := UIFactory.hbox(6)
+	turn_row.add_child(UIFactory.label("TURN", 8, UITheme.TEXT_FAINT))
+	_turn_box = UIFactory.hbox(4)
 	turn_row.add_child(_turn_box)
 	turn_panel.add_child(turn_row)
 	root.add_child(turn_panel)
 
+	# ===== CENTER: large battlefield =====
 	var battlefield := UIFactory.vbox(4)
 	battlefield.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	root.add_child(battlefield)
 
+	# Enemy side (right, larger for bosses).
 	var enemy_section := UIFactory.vbox(2)
-	enemy_section.add_child(UIFactory.label("ENEMIES", 9, UITheme.TEXT_FAINT))
-	_enemy_row = UIFactory.hbox(10)
+	enemy_section.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_enemy_row = UIFactory.hbox(12)
 	_enemy_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	_enemy_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	enemy_section.add_child(_enemy_row)
 	battlefield.add_child(enemy_section)
-	battlefield.add_child(UIFactory.spacer(false))
+
+	# Party side (left).
 	var party_section := UIFactory.vbox(2)
-	party_section.add_child(UIFactory.label("YOUR PARTY", 9, UITheme.TEXT_FAINT))
 	_party_row = UIFactory.hbox(10)
 	_party_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	party_section.add_child(_party_row)
 	battlefield.add_child(party_section)
 
-	var bottom := UIFactory.hbox(12)
-	bottom.custom_minimum_size = Vector2(0, 168)
+	# ===== BOTTOM: active character info + skills =====
+	var bottom := UIFactory.hbox(10)
+	bottom.custom_minimum_size = Vector2(0, 180)
 	root.add_child(bottom)
 
-	var actions_panel := UIFactory.panel(Color("#0b1220"), UITheme.BORDER_SOFT, 10, 1, 10)
-	actions_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	bottom.add_child(actions_panel)
-	var actions := UIFactory.vbox(6)
-	actions_panel.add_child(actions)
-	_actor_label = UIFactory.label("Preparing...", 14, UITheme.TEXT)
-	actions.add_child(_actor_label)
-	_skills_box = HFlowContainer.new()
-	_skills_box.add_theme_constant_override("h_separation", 8)
-	_skills_box.add_theme_constant_override("v_separation", 6)
-	_skills_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	actions.add_child(_skills_box)
-	_hint_label = UIFactory.label("", 11, UITheme.TEXT_DIM)
-	actions.add_child(_hint_label)
+	# Active character info panel.
+	var info_panel := UIFactory.panel(Color("#0b1220"), UITheme.BORDER_SOFT, 8, 1, 8)
+	info_panel.custom_minimum_size = Vector2(280, 0)
+	bottom.add_child(info_panel)
+	var info_box := UIFactory.vbox(4)
+	info_panel.add_child(info_box)
+	_actor_label = UIFactory.heading("Preparing...", 14, UITheme.TEXT)
+	info_box.add_child(_actor_label)
+	_hp_bar = UIFactory.bar(UITheme.GREEN, 10)
+	_hp_bar.custom_minimum_size = Vector2(0, 12)
+	info_box.add_child(_hp_bar)
+	_energy_bar = UIFactory.bar(UITheme.GOLD, 6)
+	_energy_bar.custom_minimum_size = Vector2(0, 8)
+	info_box.add_child(_energy_bar)
+	_status_label = UIFactory.label("", 9, UITheme.TEAL)
+	info_box.add_child(_status_label)
 
-	var log_panel := UIFactory.panel(Color("#0a101c"), UITheme.BORDER_SOFT, 10, 1, 8)
-	log_panel.custom_minimum_size = Vector2(340, 0)
+	# Skills panel.
+	var skills_panel := UIFactory.panel(Color("#0b1220"), UITheme.BORDER_SOFT, 8, 1, 8)
+	skills_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bottom.add_child(skills_panel)
+	_skills_box = HFlowContainer.new()
+	_skills_box.add_theme_constant_override("h_separation", 6)
+	_skills_box.add_theme_constant_override("v_separation", 4)
+	_skills_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	skills_panel.add_child(_skills_box)
+	_hint_label = UIFactory.label("", 10, UITheme.TEXT_DIM)
+	skills_panel.add_child(_hint_label)
+
+	# Log panel.
+	var log_panel := UIFactory.panel(Color("#0a101c"), UITheme.BORDER_SOFT, 8, 1, 6)
+	log_panel.custom_minimum_size = Vector2(260, 0)
 	bottom.add_child(log_panel)
 	var log_box := UIFactory.vbox(4)
 	log_panel.add_child(log_box)
-	log_box.add_child(UIFactory.label("BATTLE LOG", 9, UITheme.TEXT_FAINT))
-	_log_label = UIFactory.rich("", 10, UITheme.TEXT_DIM)
+	log_box.add_child(UIFactory.label("BATTLE LOG", 8, UITheme.TEXT_FAINT))
+	_log_label = UIFactory.rich("", 9, UITheme.TEXT_DIM)
 	_log_label.fit_content = false
 	_log_label.scroll_active = true
 	_log_label.scroll_following = true
 	_log_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	log_box.add_child(_log_label)
-
-
-# ------------------------------------------------------------------ battle
 
 func _start_battle() -> void:
 	_resolved = false
@@ -574,6 +595,15 @@ func _refresh_cards() -> void:
 				_boss_hp_bar.value = u.hp
 				if _boss_phase_label != null:
 					_boss_phase_label.text = "Phase %d" % (u.triggered_phases.size() + 1)
+	# Update active character info panel.
+	if engine.current_actor() != null and _hp_bar != null:
+		var active: Combatant = engine.current_actor()
+		_hp_bar.max_value = maxf(1.0, active.max_hp)
+		_hp_bar.value = clampf(active.hp, 0.0, active.max_hp)
+		_energy_bar.max_value = maxf(1.0, active.max_energy)
+		_energy_bar.value = clampf(active.energy, 0.0, active.max_energy)
+		_actor_label.text = active.display_name
+		_status_label.text = UIFactory.status_text(active)
 	for index in _card_by_index.keys():
 		var card: CombatUnitCard = _card_by_index[index]
 		var unit: Combatant = engine.combatants[int(index)]
