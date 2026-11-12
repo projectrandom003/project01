@@ -405,12 +405,20 @@ func _handle_damage(event: Dictionary) -> void:
 		suffix += " RESIST"
 	_log("[color=#ff9f9f]%s takes %d damage%s.[/color]" % [str(event.get("target_name", "Unit")), amount, suffix])
 	if card != null:
-		var color := UITheme.DANGER
+		var element := str(event.get("element", "neutral"))
+		var color := UITheme.element_color(element)
+		if color == UITheme.TEXT_DIM:
+			color = UITheme.DANGER
 		if crit:
 			color = UITheme.GOLD_BRIGHT
 		elif advantage == "Advantage":
 			color = UITheme.GREEN
-		card.flash(Color(1.4, 0.9, 0.9, 1.0))
+		elif advantage == "Resisted":
+			color = UITheme.TEXT_DIM
+		var elem_color := UITheme.element_color(element)
+		if elem_color == UITheme.TEXT_DIM:
+			elem_color = Color(1.4, 0.9, 0.9, 1.0)
+		card.flash(elem_color)
 		_float_text(card, "-%d%s" % [amount, "!" if crit else ""], color)
 		if crit or amount > 50:
 			_camera_shake(4.0 if crit else 2.0, 0.2)
