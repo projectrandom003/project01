@@ -39,6 +39,7 @@ var _status_label: Label = null
 var _actor_label: Label = null
 var _camera_shake_timer: float = 0.0
 var _camera_shake_intensity: float = 0.0
+var _animating: bool = false
 var _claimed: bool = false
 var _turn_token: int = 0
 var _speed: float = 1.0
@@ -330,8 +331,11 @@ func _process_events(events: Array) -> void:
 				var skill_name := str(event.get("skill_name", "skill"))
 				_log("[color=#7fe3e0]%s uses %s.[/color]" % [actor_name, skill_name])
 				var actor_card: CombatUnitCard = _card_for_uid(str(event.get("actor_uid", "")))
+				var target_uid := str(event.get("target_uid", ""))
+				var target_card: CombatUnitCard = _card_for_uid(target_uid) if not target_uid.is_empty() else null
 				if actor_card != null:
 					actor_card.flash(Color(1.3, 1.3, 1.3, 1.0))
+				_animate_attack(actor_card, target_card)
 			"damage":
 				_handle_damage(event)
 			"heal":
@@ -408,6 +412,8 @@ func _handle_damage(event: Dictionary) -> void:
 			color = UITheme.GREEN
 		card.flash(Color(1.4, 0.9, 0.9, 1.0))
 		_float_text(card, "-%d%s" % [amount, "!" if crit else ""], color)
+		if crit or amount > 50:
+			_camera_shake(4.0 if crit else 2.0, 0.2)
 
 
 func _schedule_enemy_turn() -> void:
@@ -659,9 +665,36 @@ func _float_text(card: CombatUnitCard, text: String, color: Color) -> void:
 	label.position = local + Vector2(card.size.x * 0.5 - 24.0, 8.0)
 	var tween := create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(label, "position:y", label.position.y - 52.0, 0.8)
-	tween.tween_property(label, "modulate:a", 0.0, 0.8).set_delay(0.18)
+	tween.tween_property(label, "position:y", label.position.y - 60.0, 0.9).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0, 0.9).set_delay(0.2)
+	if "!" in text:
+		label.scale = Vector2(1.4, 1.4)
+		tween.tween_property(label, "scale", Vector2.ONE, 0.3).set_trans(Tween.TRANS_ELASTIC)
 	tween.chain().tween_callback(label.queue_free)
+
+
+func _animate_attack(attacker: CombatUnitCard, target: CombatUnitCard) -> void:
+	if attacker == null or not is_instance_valid(attacker):
+		return
+	var origin := attacker.position
+	var tween := create_tween()
+	# Anticipation: slight scale up.
+	tween.tween_property(attacker, "scale", Vector2(1.08, 1.08), 0.08)
+	# Move toward target.
+	if target != null and is_instance_valid(target):
+		var target_pos := target.position
+		var direction := (target_pos - origin).normalized()
+		var approach := origin + direction * minf(60.0, origin.distance_to(target_pos) * 0.4)
+		tween.tween_property(attacker, "position", approach, 0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tween.tween_interval(0.05)
+		# Return to origin.
+		tween.tween_property(attacker, "position", origin, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(attacker, "scale", Vector2.ONE, 0.1)
+	# Target hit reaction (scale punch).
+	if target != null and is_instance_valid(target):
+		var punch := create_tween()
+		punch.tween_property(target, "scale", Vector2(1.12, 0.88), 0.06)
+		punch.tween_property(target, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_ELASTIC)
 
 
 func _show_banner(text: String) -> void:
