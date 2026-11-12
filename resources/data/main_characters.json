@@ -1,0 +1,126 @@
+{
+  "lilith": {
+    "name": "Lilith",
+    "title": "The Little Sister",
+    "race": "Spirit",
+    "element": "water",
+    "rarity": "legendary",
+    "role": "Ghost Support",
+    "main_character": true,
+    "playable": false,
+    "recruited_by_default": false,
+    "base": {
+      "hp": 46,
+      "atk": 12,
+      "def": 7,
+      "spd": 13,
+      "crit": 0.07,
+      "crit_dmg": 1.4
+    },
+    "growth": {
+      "hp": 3,
+      "atk": 1,
+      "def": 1,
+      "spd": 2,
+      "crit": 0.004,
+      "crit_dmg": 0.01
+    },
+    "skills": [
+      "frost_bind",
+      "tidal_caress"
+    ],
+    "ultimate": "abyssal_hymn",
+    "passive": {
+      "name": "Thirteen Winters",
+      "id": "small_miracles",
+      "text": "The cold she carries gentles her allies; her healing mends a little more than it should."
+    },
+    "lore": "A white-haired, blue-eyed ghost who stopped aging at thirteen. Lilith remembers the shape of a home she can no longer enter and follows her brother because he is the only warm thing left in the world.",
+    "palette": {
+      "hair": "#f2f5fa",
+      "primary": "#6f8fbf",
+      "secondary": "#b9d4e8",
+      "accent": "#7fd4ff",
+      "skin": "#e8eef7"
+    },
+    "portrait_seed": 13,
+    "assets": {
+      "asset_folder": "res://assets/characters/main/little_sister",
+      "reference_sheet": "res://assets/characters/main/little_sister/reference_sheet.png",
+      "reference_dimensions": [
+        1536,
+        1024
+      ],
+      "reference_format": "RGB PNG (no alpha)",
+      "reference_role": "Design reference sheet. Not a cut-out portrait.",
+      "portrait_target": "res://assets/characters/main/little_sister/portrait.png",
+      "portrait_target_dimensions": [
+        256,
+        384
+      ],
+      "portrait_status": "missing"
+    }
+  },
+  "gerald": {
+    "name": "Gerald",
+    "title": "The Flamebound Guardian",
+    "race": "Human",
+    "element": "fire",
+    "rarity": "legendary",
+    "role": "Armored Bruiser",
+    "main_character": true,
+    "playable": false,
+    "recruited_by_default": false,
+    "base": {
+      "hp": 54,
+      "atk": 15,
+      "def": 11,
+      "spd": 10,
+      "crit": 0.06,
+      "crit_dmg": 1.45
+    },
+    "growth": {
+      "hp": 4,
+      "atk": 2,
+      "def": 2,
+      "spd": 1,
+      "crit": 0.003,
+      "crit_dmg": 0.01
+    },
+    "skills": [
+      "ember_lance",
+      "cinder_veil"
+    ],
+    "ultimate": "blazing_charge",
+    "passive": {
+      "name": "Oath of Ash",
+      "id": "nothing_to_lose",
+      "text": "He has already buried everything but her. The lower his health, the harder he strikes."
+    },
+    "lore": "Lilith's older brother. A masked warrior in blackened plate whose seams glow with banked orange flame. He does not speak of the night she died, and the fire answers for him.",
+    "palette": {
+      "hair": "#eef1f6",
+      "primary": "#1b1a1f",
+      "secondary": "#e0702a",
+      "accent": "#ff9a3c",
+      "skin": "#d9c3b0"
+    },
+    "portrait_seed": 31,
+    "assets": {
+      "asset_folder": "res://assets/characters/main/guardian",
+      "reference_sheet": "res://assets/characters/main/guardian/reference_sheet.png",
+      "reference_dimensions": [
+        1536,
+        1024
+      ],
+      "reference_format": "RGB PNG (no alpha)",
+      "reference_role": "Design reference sheet. Not a cut-out portrait.",
+      "portrait_target": "res://assets/characters/main/guardian/portrait.png",
+      "portrait_target_dimensions": [
+        256,
+        384
+      ],
+      "portrait_status": "missing"
+    }
+  }
+}

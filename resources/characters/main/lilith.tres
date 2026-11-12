@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MainCharacterProfile" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/main_character_profile.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/characters/main/little_sister/reference_sheet.png" id="2_sheet"]
+
+[resource]
+script = ExtResource("1_script")
+character_id = "lilith"
+asset_folder = "res://assets/characters/main/little_sister"
+reference_sheet = ExtResource("2_sheet")
+portrait_target = "res://assets/characters/main/little_sister/portrait.png"
+note = "Lilith - white-haired, blue-eyed ghost girl who died at age 13. Design reference sheet only; no cut-out portrait exists yet."
