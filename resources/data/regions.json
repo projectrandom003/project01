@@ -7,47 +7,164 @@
     "tile_height": 32,
     "load_radius": 2,
     "noise_seed": 1337,
-    "spawn_grid": [8, 8],
+    "spawn_grid": [
+      8,
+      8
+    ],
     "biome": {
       "water_level": -0.22,
       "deep_water_level": -0.34,
-      "grass_colors": ["#4f7a46", "#568449", "#5c8c4f", "#4a7243"],
+      "grass_colors": [
+        "#4f7a46",
+        "#568449",
+        "#5c8c4f",
+        "#4a7243"
+      ],
       "path_color": "#8a7a55",
       "water_shallow": "#3f8f96",
       "water_deep": "#1f5568"
     },
     "props": [
-      { "type": "glade_tree", "weight": 0.5, "min_elevation": -0.1 },
-      { "type": "ancient_tree", "weight": 0.08, "min_elevation": 0.0 },
-      { "type": "rock", "weight": 0.18, "min_elevation": -0.05 },
-      { "type": "flower", "weight": 0.5, "min_elevation": -0.1 },
-      { "type": "mushroom", "weight": 0.22, "min_elevation": -0.1 },
-      { "type": "crystal", "weight": 0.05, "min_elevation": 0.1 }
+      {
+        "type": "glade_tree",
+        "weight": 0.5,
+        "min_elevation": -0.1
+      },
+      {
+        "type": "ancient_tree",
+        "weight": 0.08,
+        "min_elevation": 0.0
+      },
+      {
+        "type": "rock",
+        "weight": 0.18,
+        "min_elevation": -0.05
+      },
+      {
+        "type": "flower",
+        "weight": 0.5,
+        "min_elevation": -0.1
+      },
+      {
+        "type": "mushroom",
+        "weight": 0.22,
+        "min_elevation": -0.1
+      },
+      {
+        "type": "crystal",
+        "weight": 0.05,
+        "min_elevation": 0.1
+      }
     ],
     "clearing_radius": 4.5,
     "pois": [
-      { "id": "glade_village", "name": "Whispering Glade", "grid": [8, 8], "type": "village" },
-      { "id": "east_clearing", "name": "The Hollowed Grove", "grid": [26, 16], "type": "boss" },
-      { "id": "stone_circle", "name": "The Listening Stones", "grid": [2, 20], "type": "ruin" }
+      {
+        "id": "glade_village",
+        "name": "Whispering Glade",
+        "grid": [
+          8,
+          8
+        ],
+        "type": "village"
+      },
+      {
+        "id": "east_clearing",
+        "name": "The Hollowed Grove",
+        "grid": [
+          26,
+          16
+        ],
+        "type": "boss"
+      },
+      {
+        "id": "stone_circle",
+        "name": "The Listening Stones",
+        "grid": [
+          2,
+          20
+        ],
+        "type": "ruin"
+      }
     ],
     "spawns": [
-      { "group": "glade_mossling_pack", "grid": [4, 6], "radius": 3, "count": 2 },
-      { "group": "thornhound_hunt", "grid": [13, 11], "radius": 4, "count": 2 },
-      { "group": "fae_ambush", "grid": [1, 15], "radius": 3, "count": 1 },
-      { "group": "corrupted_treant", "grid": [26, 16], "radius": 1, "count": 1 },
-      { "group": "elder_hollow", "grid": [32, 22], "radius": 1, "count": 1 }
+      {
+        "group": "glade_mossling_pack",
+        "grid": [
+          4,
+          6
+        ],
+        "radius": 3,
+        "count": 2
+      },
+      {
+        "group": "thornhound_hunt",
+        "grid": [
+          13,
+          11
+        ],
+        "radius": 4,
+        "count": 2
+      },
+      {
+        "group": "fae_ambush",
+        "grid": [
+          1,
+          15
+        ],
+        "radius": 3,
+        "count": 1
+      },
+      {
+        "group": "corrupted_treant",
+        "grid": [
+          26,
+          16
+        ],
+        "radius": 1,
+        "count": 1
+      },
+      {
+        "group": "elder_hollow",
+        "grid": [
+          32,
+          22
+        ],
+        "radius": 1,
+        "count": 1
+      },
+      {
+        "group": "fallen_matron_encounter",
+        "grid": [
+          18,
+          22
+        ],
+        "radius": 1,
+        "count": 1
+      }
     ],
-    "world_origin": [0.0, 0.0],
+    "world_origin": [
+      0.0,
+      0.0
+    ],
     "environment": {
       "zone": "temperate_forest",
-      "weather_bias": ["clear", "mist"],
+      "weather_bias": [
+        "clear",
+        "mist"
+      ],
       "fog_density": 0.18,
       "ambient_tint": "#7fe3e0",
       "ambient_music": ""
     },
     "entry_points": {
-      "village": [8, 8],
-      "moonpetal_path": [30, 8]
+      "village": [
+        8,
+        8
+      ],
+      "moonpetal_path": [
+        30,
+        8
+      ]
     },
     "connections": [
       {
@@ -68,45 +185,129 @@
     "tile_height": 32,
     "load_radius": 1,
     "noise_seed": 24601,
-    "spawn_grid": [6, 6],
+    "spawn_grid": [
+      6,
+      6
+    ],
     "biome": {
       "water_level": -0.2,
       "deep_water_level": -0.36,
-      "grass_colors": ["#6b7a9c", "#7d8bb0", "#5a6a8c", "#909dba"],
+      "grass_colors": [
+        "#6b7a9c",
+        "#7d8bb0",
+        "#5a6a8c",
+        "#909dba"
+      ],
       "path_color": "#8a86a8",
       "water_shallow": "#4a6fa5",
       "water_deep": "#28335e"
     },
     "props": [
-      { "type": "birch_tree", "weight": 0.55, "min_elevation": -0.1 },
-      { "type": "willow_tree", "weight": 0.18, "min_elevation": -0.05 },
-      { "type": "moss_rock", "weight": 0.18, "min_elevation": -0.1 },
-      { "type": "flower_cluster", "weight": 0.42, "min_elevation": -0.1 },
-      { "type": "glow_mushroom", "weight": 0.2, "min_elevation": -0.1 },
-      { "type": "crystal_cluster", "weight": 0.06, "min_elevation": 0.1 },
-      { "type": "reeds", "weight": 0.24, "min_elevation": -0.2 },
-      { "type": "spirit_bloom", "weight": 0.14, "min_elevation": -0.05 }
+      {
+        "type": "birch_tree",
+        "weight": 0.55,
+        "min_elevation": -0.1
+      },
+      {
+        "type": "willow_tree",
+        "weight": 0.18,
+        "min_elevation": -0.05
+      },
+      {
+        "type": "moss_rock",
+        "weight": 0.18,
+        "min_elevation": -0.1
+      },
+      {
+        "type": "flower_cluster",
+        "weight": 0.42,
+        "min_elevation": -0.1
+      },
+      {
+        "type": "glow_mushroom",
+        "weight": 0.2,
+        "min_elevation": -0.1
+      },
+      {
+        "type": "crystal_cluster",
+        "weight": 0.06,
+        "min_elevation": 0.1
+      },
+      {
+        "type": "reeds",
+        "weight": 0.24,
+        "min_elevation": -0.2
+      },
+      {
+        "type": "spirit_bloom",
+        "weight": 0.14,
+        "min_elevation": -0.05
+      }
     ],
     "clearing_radius": 3.5,
     "pois": [
-      { "id": "hollow_gate", "name": "Moonpetal Gate", "grid": [6, 6], "type": "village" },
-      { "id": "silver_pool", "name": "The Silver Pool", "grid": [12, 12], "type": "landmark" }
+      {
+        "id": "hollow_gate",
+        "name": "Moonpetal Gate",
+        "grid": [
+          6,
+          6
+        ],
+        "type": "village"
+      },
+      {
+        "id": "silver_pool",
+        "name": "The Silver Pool",
+        "grid": [
+          12,
+          12
+        ],
+        "type": "landmark"
+      }
     ],
     "spawns": [
-      { "group": "glade_mossling_pack", "grid": [10, 8], "radius": 3, "count": 2 },
-      { "group": "fae_ambush", "grid": [13, 11], "radius": 2, "count": 1 }
+      {
+        "group": "glade_mossling_pack",
+        "grid": [
+          10,
+          8
+        ],
+        "radius": 3,
+        "count": 2
+      },
+      {
+        "group": "fae_ambush",
+        "grid": [
+          13,
+          11
+        ],
+        "radius": 2,
+        "count": 1
+      }
     ],
-    "world_origin": [4096.0, 0.0],
+    "world_origin": [
+      4096.0,
+      0.0
+    ],
     "environment": {
       "zone": "moonlit_vale",
-      "weather_bias": ["mist", "clear"],
+      "weather_bias": [
+        "mist",
+        "clear"
+      ],
       "fog_density": 0.32,
       "ambient_tint": "#9db4ff",
       "ambient_music": ""
     },
     "entry_points": {
-      "hollow_gate": [6, 6],
-      "silver_pool": [12, 12]
+      "hollow_gate": [
+        6,
+        6
+      ],
+      "silver_pool": [
+        12,
+        12
+      ]
     },
     "connections": [
       {

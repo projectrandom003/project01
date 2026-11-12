@@ -3,42 +3,124 @@
     "name": "Mossling Ambush",
     "region": "greenward",
     "level": 1,
-    "enemies": ["mossling", "mossling", "glade_wisp"],
-    "rewards": { "gold": 45, "xp": 60, "crystals": 10, "items": { "glade_sap": 1 } },
-    "quest_kills": { "mossling": 2, "glade_wisp": 1 }
+    "enemies": [
+      "mossling",
+      "mossling",
+      "glade_wisp"
+    ],
+    "rewards": {
+      "gold": 45,
+      "xp": 60,
+      "crystals": 10,
+      "items": {
+        "glade_sap": 1
+      }
+    },
+    "quest_kills": {
+      "mossling": 2,
+      "glade_wisp": 1
+    }
   },
   "thornhound_hunt": {
     "name": "Thornhound Hunt",
     "region": "greenward",
     "level": 2,
-    "enemies": ["thornhound", "mossling"],
-    "rewards": { "gold": 60, "xp": 80, "crystals": 12, "items": { "moonpetal": 1 } },
-    "quest_kills": { "thornhound": 1, "mossling": 1 }
+    "enemies": [
+      "thornhound",
+      "mossling"
+    ],
+    "rewards": {
+      "gold": 60,
+      "xp": 80,
+      "crystals": 12,
+      "items": {
+        "moonpetal": 1
+      }
+    },
+    "quest_kills": {
+      "thornhound": 1,
+      "mossling": 1
+    }
   },
   "fae_ambush": {
     "name": "Fae Ambush",
     "region": "greenward",
     "level": 3,
-    "enemies": ["fae_marauder", "glade_wisp", "glade_wisp"],
-    "rewards": { "gold": 70, "xp": 95, "crystals": 15, "items": { "glade_sap": 2 } },
-    "quest_kills": { "fae_marauder": 1, "glade_wisp": 2 }
+    "enemies": [
+      "fae_marauder",
+      "glade_wisp",
+      "glade_wisp"
+    ],
+    "rewards": {
+      "gold": 70,
+      "xp": 95,
+      "crystals": 15,
+      "items": {
+        "glade_sap": 2
+      }
+    },
+    "quest_kills": {
+      "fae_marauder": 1,
+      "glade_wisp": 2
+    }
   },
   "corrupted_treant": {
     "name": "The Hollowed Guardian",
     "region": "greenward",
     "level": 4,
-    "enemies": ["corrupted_treant"],
-    "rewards": { "gold": 180, "xp": 220, "crystals": 40, "items": { "dew_of_awakening": 1 } },
-    "quest_kills": { "corrupted_treant": 1 },
+    "enemies": [
+      "corrupted_treant"
+    ],
+    "rewards": {
+      "gold": 180,
+      "xp": 220,
+      "crystals": 40,
+      "items": {
+        "dew_of_awakening": 1
+      }
+    },
+    "quest_kills": {
+      "corrupted_treant": 1
+    },
     "elite": true
   },
   "elder_hollow": {
     "name": "The Elder Hollow",
     "region": "greenward",
     "level": 6,
-    "enemies": ["elder_hollow"],
-    "rewards": { "gold": 500, "xp": 650, "crystals": 120, "items": { "ancient_coins": 2, "dew_of_awakening": 2 } },
-    "quest_kills": { "elder_hollow": 1 },
+    "enemies": [
+      "elder_hollow"
+    ],
+    "rewards": {
+      "gold": 500,
+      "xp": 650,
+      "crystals": 120,
+      "items": {
+        "ancient_coins": 2,
+        "dew_of_awakening": 2
+      }
+    },
+    "quest_kills": {
+      "elder_hollow": 1
+    },
     "boss": true
+  },
+  "fallen_matron_encounter": {
+    "name": "The Fallen Matron",
+    "boss": true,
+    "level": 8,
+    "enemies": [
+      "fallen_matron"
+    ],
+    "rewards": {
+      "gold": 1000,
+      "xp": 1500,
+      "crystals": 200,
+      "items": {
+        "ancient_coins": 3,
+        "dew_of_awakening": 3
+      }
+    },
+    "region": "greenward"
   }
 }

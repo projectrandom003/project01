@@ -159,5 +159,53 @@
       "secondary": "#8fbf6a",
       "accent": "#e8ffb0"
     }
+  },
+  "fallen_matron": {
+    "name": "The Fallen Matron",
+    "element": "dark",
+    "rarity": "mythic",
+    "role": "Boss",
+    "base": {
+      "hp": 600,
+      "atk": 28,
+      "def": 16,
+      "spd": 14,
+      "crit": 0.1,
+      "crit_dmg": 1.6
+    },
+    "skills": [
+      "corruption_bolt",
+      "shadow_lash",
+      "soul_drain"
+    ],
+    "ultimate": "matron_verdict",
+    "phases": [
+      {
+        "hp_below": 0.66,
+        "message": "The Fallen Matron's silver hair ignites with purple fire. Her corruption deepens.",
+        "status": {
+          "id": "atk_up",
+          "turns": 99,
+          "potency": 0.25
+        }
+      },
+      {
+        "hp_below": 0.33,
+        "message": "The Matron screams. The ivory dress cracks, revealing the void beneath.",
+        "status": {
+          "id": "spd_up",
+          "turns": 99,
+          "potency": 0.4
+        }
+      }
+    ],
+    "lore": "Once a guardian of the glade, now consumed by the hollow corruption. Her silver hair once caught moonlight; now it burns with purple fire. The ivory dress she wore in life is cracked and stained with void energy.",
+    "palette": {
+      "hair": "#c8c8d8",
+      "skin": "#e8d8c8",
+      "primary": "#1a1a2e",
+      "secondary": "#f5f0e8",
+      "accent": "#9b59b6"
+    }
   }
 }
