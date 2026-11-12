@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: "4.7.2"
+  GODOT_BIN: godot
+
+jobs:
+  verify:
+    name: Content, tests and smoke build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Godot ${{ env.GODOT_VERSION }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends unzip libfontconfig1 libxcursor1 libxinerama1 libxrandr2 libxi6 libgl1
+          curl -fsSL -o godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          chmod +x "Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+          sudo mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" /usr/local/bin/godot
+          godot --version
+
+      - name: Import project
+        run: godot --headless --path . --editor --quit
+
+      - name: Validate content JSON
+        run: godot --headless --path . --script res://tools/validate_content.gd
+
+      - name: Run automated test suite
+        run: godot --headless --path . res://tests/test_runner.tscn
+
+      - name: Smoke test game scene
+        run: godot --headless --path . res://scenes/game.tscn --quit-after 240
+
+      - name: Export pack smoke build
+        run: |
+          mkdir -p build
+          godot --headless --path . --export-pack "Linux/X11" build/project-fantasy.pck
+          test -s build/project-fantasy.pck
+
+      - name: Upload export smoke artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-fantasy-smoke-pck
+          path: build/project-fantasy.pck
+          if-no-files-found: error
+          retention-days: 7

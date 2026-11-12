@@ -1,0 +1,142 @@
+{
+  "elder_maelin": {
+    "start": "greet",
+    "start_rules": [
+      { "if": "quest_ready:glade_whisper", "node": "turnin_glade" },
+      { "if": "quest_state:glade_whisper:active", "node": "in_progress" },
+      { "if": "quest_state:glade_whisper:complete", "node": "after_glade" }
+    ],
+    "nodes": {
+      "greet": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "You walked out of the mist like you were expected. Sit. The glade has been speaking in its sleep, and I do not like the words.",
+        "choices": [
+          { "text": "What troubles the glade?", "next": "quest_intro" },
+          { "text": "Who are you?", "next": "lore_maelin" },
+          { "text": "I should go.", "next": "" }
+        ]
+      },
+      "lore_maelin": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "A gardener, once. Now I keep the stories the trees forget. The young ones call me Elder because I am the only one who still remembers their names.",
+        "choices": [
+          { "text": "What troubles the glade?", "next": "quest_intro" },
+          { "text": "I should go.", "next": "" }
+        ]
+      },
+      "quest_intro": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "The mosslings no longer sleep. They walk in patterns that spell a name I have not heard in three hundred years. Calm three of them, and I will tell you what the roots are dreaming.",
+        "choices": [
+          { "text": "I will calm them.", "next": "accepted", "action": "start_quest:glade_whisper" },
+          { "text": "I need to prepare first.", "next": "" }
+        ]
+      },
+      "accepted": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "Do not kill what can be calmed. And if you hear the roots whisper your own name — do not answer.",
+        "next": ""
+      },
+      "in_progress": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "Three mosslings. Listen for the ones whose moss has gone grey — they are the ones dreaming too loudly.",
+        "choices": [
+          { "text": "I will return when it is done.", "next": "" }
+        ]
+      },
+      "turnin_glade": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "You calmed them. Good. But the dream did not stop — it only turned over. The Hollowed Guardian at the eastern edge has taken root in something that is not soil.",
+        "choices": [
+          { "text": "Here is what I found.", "next": "quest_reward", "action": "complete_quest:glade_whisper" }
+        ]
+      },
+      "quest_reward": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "Take these. Moonpetals for the road, and a bow that still remembers being a branch. The Guardian will not come to us. You will have to go to it.",
+        "choices": [
+          { "text": "Tell me about the Guardian.", "next": "quest2_intro" },
+          { "text": "I will go.", "next": "" }
+        ]
+      },
+      "quest2_intro": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "It was the first tree of Greenward. Now it is a wound with bark around it. End its watch, and bring me what sleeps inside. Do not let it keep dreaming.",
+        "choices": [
+          { "text": "I will end its watch.", "next": "accepted2", "action": "start_quest:hollow_roots" },
+          { "text": "Not yet.", "next": "" }
+        ]
+      },
+      "accepted2": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "The eastern clearing. Follow the grey moss. And traveler — if it speaks with your voice, it is only remembering how.",
+        "next": ""
+      },
+      "after_glade": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "The glade is quieter. Not healed — quieter. That is the most honest thing a forest can be.",
+        "choices": [
+          { "text": "About the Guardian...", "next": "quest2_intro" },
+          { "text": "I will keep watch.", "next": "" }
+        ]
+      }
+    }
+  },
+  "merchant_sera": {
+    "start": "greet",
+    "nodes": {
+      "greet": {
+        "speaker": "Sera Quill",
+        "portrait": { "hair": "#c96f3a", "primary": "#5a3a2a", "secondary": "#e8c27a", "accent": "#ffd27a", "skin": "#e8b890" },
+        "text": "A traveler with a real face! Buy something. Or don't. The mosslings are terrible customers and I am lonely.",
+        "choices": [
+          { "text": "What do you sell?", "next": "shop" },
+          { "text": "Any news?", "next": "news" },
+          { "text": "Maybe later.", "next": "" }
+        ]
+      },
+      "shop": {
+        "speaker": "Sera Quill",
+        "portrait": { "hair": "#c96f3a", "primary": "#5a3a2a", "secondary": "#e8c27a", "accent": "#ffd27a", "skin": "#e8b890" },
+        "text": "Glade sap, moonpetals, and one very stubborn charm that keeps finding its way back to my pocket. The shop proper opens once the caravan road is safe.",
+        "next": ""
+      },
+      "news": {
+        "speaker": "Sera Quill",
+        "portrait": { "hair": "#c96f3a", "primary": "#5a3a2a", "secondary": "#e8c27a", "accent": "#ffd27a", "skin": "#e8b890" },
+        "text": "They say the Elder Hollow woke up. They also say the moon is a hole. I sell to both rumors equally.",
+        "next": ""
+      }
+    }
+  },
+  "wanderer_pip": {
+    "start": "greet",
+    "nodes": {
+      "greet": {
+        "speaker": "Pip",
+        "portrait": { "hair": "#f2e2a8", "primary": "#3f5a6b", "secondary": "#8fd9c4", "accent": "#ffeaa0", "skin": "#f6e3cf" },
+        "text": "You can see the floating islands from here if you squint. My grandmother says they are pieces of a promise somebody broke.",
+        "choices": [
+          { "text": "What is this place?", "next": "lore" },
+          { "text": "Farewell.", "next": "" }
+        ]
+      },
+      "lore": {
+        "speaker": "Pip",
+        "portrait": { "hair": "#f2e2a8", "primary": "#3f5a6b", "secondary": "#8fd9c4", "accent": "#ffeaa0", "skin": "#f6e3cf" },
+        "text": "The Whispering Glade. Greenward's oldest wound, dressed in flowers. Stay on the paths and you'll be fine. Mostly.",
+        "next": ""
+      }
+    }
+  }
+}

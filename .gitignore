@@ -1,0 +1,27 @@
+# Godot generated files
+.godot/
+*.translation
+
+# Exports and builds
+build/
+dist/
+export/
+*.exe
+*.pck
+*.zip
+*.apk
+*.aab
+*.ipa
+
+# Temporary and editor files
+*.tmp
+*.temp
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local secrets / environment
+.env
+.env.*

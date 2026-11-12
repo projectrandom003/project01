@@ -1,0 +1,400 @@
+{
+  "gale_shot": {
+    "name": "Gale Shot",
+    "description": "A wind-carved arrow that strikes a single foe. High critical chance.",
+    "element": "wind",
+    "kind": "damage",
+    "power": 92,
+    "target": "single_enemy",
+    "crit_bonus": 0.12,
+    "energy_gain": 22
+  },
+  "zephyr_blessing": {
+    "name": "Zephyr Blessing",
+    "description": "The glade's breath hastens every ally.",
+    "element": "wind",
+    "kind": "buff",
+    "power": 0,
+    "target": "all_allies",
+    "statuses": [
+      { "id": "spd_up", "chance": 1.0, "turns": 3, "potency": 0.25 },
+      { "id": "atk_up", "chance": 1.0, "turns": 3, "potency": 0.12 }
+    ],
+    "energy_gain": 20
+  },
+  "thorn_lash": {
+    "name": "Thorn Lash",
+    "description": "Barbed roots tear at a foe and leave poison behind.",
+    "element": "earth",
+    "kind": "damage",
+    "power": 86,
+    "target": "single_enemy",
+    "statuses": [
+      { "id": "poison", "chance": 0.6, "turns": 3, "potency": 0.05 }
+    ],
+    "energy_gain": 22
+  },
+  "stone_bulwark": {
+    "name": "Stone Bulwark",
+    "description": "Raise a rampart of living stone around the whole team.",
+    "element": "earth",
+    "kind": "shield",
+    "power": 24,
+    "target": "all_allies",
+    "statuses": [
+      { "id": "def_up", "chance": 1.0, "turns": 3, "potency": 0.2 }
+    ],
+    "energy_gain": 18
+  },
+  "dawn_mend": {
+    "name": "Dawn Mend",
+    "description": "Warm dawnlight closes wounds and washes away afflictions.",
+    "element": "light",
+    "kind": "heal",
+    "power": 38,
+    "target": "single_ally",
+    "cleanse": true,
+    "energy_gain": 20
+  },
+  "radiance": {
+    "name": "Radiance",
+    "description": "A burst of holy light scorches every enemy.",
+    "element": "light",
+    "kind": "damage",
+    "power": 66,
+    "target": "all_enemies",
+    "energy_gain": 24
+  },
+  "umbral_rend": {
+    "name": "Umbral Rend",
+    "description": "A claw of living shadow tears through armor.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 100,
+    "target": "single_enemy",
+    "statuses": [
+      { "id": "def_down", "chance": 0.8, "turns": 3, "potency": 0.25 }
+    ],
+    "energy_gain": 22
+  },
+  "nightfall": {
+    "name": "Nightfall",
+    "description": "A wave of hungry dark blinds and cuts every foe.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 60,
+    "target": "all_enemies",
+    "statuses": [
+      { "id": "blind", "chance": 0.45, "turns": 2, "potency": 0.3 }
+    ],
+    "energy_gain": 24
+  },
+  "tidal_caress": {
+    "name": "Tidal Caress",
+    "description": "Cool water heals an ally and leaves a renewing tide.",
+    "element": "water",
+    "kind": "heal",
+    "power": 36,
+    "target": "single_ally",
+    "statuses": [
+      { "id": "regen", "chance": 1.0, "turns": 3, "potency": 0.05 }
+    ],
+    "energy_gain": 20
+  },
+  "frost_bind": {
+    "name": "Frost Bind",
+    "description": "A lance of frozen tide slows a foe.",
+    "element": "water",
+    "kind": "damage",
+    "power": 72,
+    "target": "single_enemy",
+    "statuses": [
+      { "id": "spd_down", "chance": 0.7, "turns": 3, "potency": 0.25 }
+    ],
+    "energy_gain": 22
+  },
+  "ember_lance": {
+    "name": "Ember Lance",
+    "description": "A spear of compressed flame.",
+    "element": "fire",
+    "kind": "damage",
+    "power": 96,
+    "target": "single_enemy",
+    "statuses": [
+      { "id": "burn", "chance": 0.35, "turns": 2, "potency": 0.06 }
+    ],
+    "energy_gain": 22
+  },
+  "cinder_veil": {
+    "name": "Cinder Veil",
+    "description": "A cloak of cinders sharpens the caster's attacks.",
+    "element": "fire",
+    "kind": "buff",
+    "power": 0,
+    "target": "self",
+    "statuses": [
+      { "id": "atk_up", "chance": 1.0, "turns": 3, "potency": 0.3 }
+    ],
+    "energy_gain": 20
+  },
+  "shield_bash": {
+    "name": "Shield Bash",
+    "description": "A blunt golden shield slams into a foe, sometimes stunning.",
+    "element": "light",
+    "kind": "damage",
+    "power": 64,
+    "target": "single_enemy",
+    "statuses": [
+      { "id": "stun", "chance": 0.3, "turns": 1, "potency": 1.0 }
+    ],
+    "energy_gain": 20
+  },
+  "rally_cry": {
+    "name": "Rally Cry",
+    "description": "A shouted oath lifts the whole team's attack.",
+    "element": "light",
+    "kind": "buff",
+    "power": 0,
+    "target": "all_allies",
+    "statuses": [
+      { "id": "atk_up", "chance": 1.0, "turns": 3, "potency": 0.22 }
+    ],
+    "energy_gain": 18
+  },
+  "wishlight": {
+    "name": "Wishlight",
+    "description": "A lantern's wish mends every ally a little.",
+    "element": "light",
+    "kind": "heal",
+    "power": 22,
+    "target": "all_allies",
+    "energy_gain": 20
+  },
+  "blood_waltz": {
+    "name": "Blood Waltz",
+    "description": "A spinning cut that drinks the target's warmth.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 84,
+    "target": "single_enemy",
+    "lifesteal": 0.35,
+    "energy_gain": 22
+  },
+  "web_bind": {
+    "name": "Web Bind",
+    "description": "Silken threads pin a foe in place.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 54,
+    "target": "single_enemy",
+    "statuses": [
+      { "id": "stun", "chance": 0.45, "turns": 1, "potency": 1.0 }
+    ],
+    "energy_gain": 20
+  },
+  "venom_bite": {
+    "name": "Venom Bite",
+    "description": "A quick bite that leaves a cruel venom.",
+    "element": "earth",
+    "kind": "damage",
+    "power": 74,
+    "target": "single_enemy",
+    "statuses": [
+      { "id": "poison", "chance": 0.8, "turns": 4, "potency": 0.06 }
+    ],
+    "energy_gain": 22
+  },
+  "tempest_dance": {
+    "name": "Tempest Dance",
+    "description": "Lyra becomes the storm and lets it choose every target at once.",
+    "element": "wind",
+    "kind": "damage",
+    "power": 125,
+    "target": "all_enemies",
+    "ultimate": true
+  },
+  "worldroot": {
+    "name": "Worldroot",
+    "description": "The roots of the world itself rise to shelter the team.",
+    "element": "earth",
+    "kind": "shield",
+    "power": 42,
+    "target": "all_allies",
+    "ultimate": true,
+    "statuses": [
+      { "id": "def_up", "chance": 1.0, "turns": 3, "potency": 0.3 }
+    ]
+  },
+  "starfall": {
+    "name": "Starfall",
+    "description": "Seraphine opens the sky and lets the morning fall on her enemies.",
+    "element": "light",
+    "kind": "damage",
+    "power": 190,
+    "target": "all_enemies",
+    "ultimate": true
+  },
+  "eclipse_requiem": {
+    "name": "Eclipse Requiem",
+    "description": "A hymn to a moon that never rises. It drains the life from every foe.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 150,
+    "target": "all_enemies",
+    "lifesteal": 0.25,
+    "ultimate": true
+  },
+  "abyssal_hymn": {
+    "name": "Abyssal Hymn",
+    "description": "The deep reef answers Coralyn's song with healing tides.",
+    "element": "water",
+    "kind": "heal",
+    "power": 45,
+    "target": "all_allies",
+    "ultimate": true,
+    "statuses": [
+      { "id": "shield", "chance": 1.0, "turns": 3, "potency": 0.18 }
+    ]
+  },
+  "inferno_crown": {
+    "name": "Inferno Crown",
+    "description": "Ignis crowns a single foe in the fire of a dead kingdom.",
+    "element": "fire",
+    "kind": "damage",
+    "power": 260,
+    "target": "single_enemy",
+    "ultimate": true,
+    "statuses": [
+      { "id": "burn", "chance": 1.0, "turns": 3, "potency": 0.08 }
+    ]
+  },
+  "aegis_dawn": {
+    "name": "Aegis Dawn",
+    "description": "Mira raises an oath made visible: a wall of golden light.",
+    "element": "light",
+    "kind": "shield",
+    "power": 50,
+    "target": "all_allies",
+    "ultimate": true,
+    "statuses": [
+      { "id": "regen", "chance": 1.0, "turns": 3, "potency": 0.04 }
+    ]
+  },
+  "thousand_lanterns": {
+    "name": "Thousand Lanterns",
+    "description": "Every wish Thistle ever collected lights at once.",
+    "element": "light",
+    "kind": "heal",
+    "power": 40,
+    "target": "all_allies",
+    "cleanse": true,
+    "ultimate": true,
+    "statuses": [
+      { "id": "atk_up", "chance": 1.0, "turns": 2, "potency": 0.15 }
+    ]
+  },
+  "crimson_eclipse": {
+    "name": "Crimson Eclipse",
+    "description": "Vespera's waltz ends with a single, impossible cut.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 230,
+    "target": "single_enemy",
+    "lifesteal": 0.4,
+    "ultimate": true
+  },
+  "silk_dominion": {
+    "name": "Silk Dominion",
+    "description": "The web closes. Every foe feels the weaver's patience.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 92,
+    "target": "all_enemies",
+    "ultimate": true,
+    "statuses": [
+      { "id": "stun", "chance": 0.35, "turns": 1, "potency": 1.0 }
+    ]
+  },
+  "blazing_charge": {
+    "name": "Blazing Charge",
+    "description": "Kael burns everything behind him and everything ahead.",
+    "element": "fire",
+    "kind": "damage",
+    "power": 210,
+    "target": "single_enemy",
+    "ultimate": true,
+    "statuses": [
+      { "id": "atk_up", "chance": 1.0, "turns": 2, "potency": 0.2 }
+    ]
+  },
+  "moss_slam": {
+    "name": "Moss Slam",
+    "description": "A heavy, damp slam.",
+    "element": "earth",
+    "kind": "damage",
+    "power": 70,
+    "target": "single_enemy",
+    "energy_gain": 20
+  },
+  "spark": {
+    "name": "Spark",
+    "description": "A stinging mote of wild magic.",
+    "element": "wind",
+    "kind": "damage",
+    "power": 62,
+    "target": "single_enemy",
+    "energy_gain": 20
+  },
+  "hollow_wail": {
+    "name": "Hollow Wail",
+    "description": "A sound from inside the earth. It hurts to hear.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 58,
+    "target": "all_enemies",
+    "statuses": [
+      { "id": "atk_down", "chance": 0.5, "turns": 2, "potency": 0.2 }
+    ],
+    "energy_gain": 20
+  },
+  "root_crush": {
+    "name": "Root Crush",
+    "description": "Ancient roots close around a single victim.",
+    "element": "earth",
+    "kind": "damage",
+    "power": 105,
+    "target": "single_enemy",
+    "statuses": [
+      { "id": "stun", "chance": 0.25, "turns": 1, "potency": 1.0 }
+    ],
+    "energy_gain": 22
+  },
+  "shadow_feint": {
+    "name": "Shadow Feint",
+    "description": "A cut from a direction that should not exist.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 88,
+    "target": "single_enemy",
+    "crit_bonus": 0.2,
+    "energy_gain": 22
+  },
+  "bark_ward": {
+    "name": "Bark Ward",
+    "description": "The treant hardens its bark.",
+    "element": "earth",
+    "kind": "shield",
+    "power": 20,
+    "target": "self",
+    "energy_gain": 15
+  },
+  "hollow_verdict": {
+    "name": "Hollow Verdict",
+    "description": "The Elder Hollow judges every intruder at once.",
+    "element": "earth",
+    "kind": "damage",
+    "power": 120,
+    "target": "all_enemies",
+    "ultimate": true
+  }
+}

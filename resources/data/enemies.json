@@ -1,0 +1,72 @@
+{
+  "mossling": {
+    "name": "Mossling",
+    "element": "earth",
+    "rarity": "common",
+    "role": "Minion",
+    "base": { "hp": 300, "atk": 34, "def": 22, "spd": 24, "crit": 0.03 },
+    "skills": ["moss_slam"],
+    "ultimate": "",
+    "lore": "A clump of moss that grew a grudge. Harmless alone; the glade is never alone.",
+    "palette": { "primary": "#4f6b3a", "secondary": "#8fbf6a", "accent": "#d9ff9f" }
+  },
+  "glade_wisp": {
+    "name": "Glade Wisp",
+    "element": "wind",
+    "rarity": "common",
+    "role": "Minion",
+    "base": { "hp": 220, "atk": 40, "def": 12, "spd": 36, "crit": 0.05 },
+    "skills": ["spark"],
+    "ultimate": "",
+    "lore": "A lost thought of the forest, still looking for the mind that made it.",
+    "palette": { "primary": "#7fd9c4", "secondary": "#b9f6ff", "accent": "#ffffff" }
+  },
+  "thornhound": {
+    "name": "Thornhound",
+    "element": "earth",
+    "rarity": "rare",
+    "role": "Hunter",
+    "base": { "hp": 380, "atk": 46, "def": 26, "spd": 32, "crit": 0.08 },
+    "skills": ["thorn_lash"],
+    "ultimate": "",
+    "lore": "A hound of briar and patience. It does not chase. It is simply already ahead of you.",
+    "palette": { "primary": "#5a4a2e", "secondary": "#8fbf6a", "accent": "#ffd27a" }
+  },
+  "fae_marauder": {
+    "name": "Fae Marauder",
+    "element": "dark",
+    "rarity": "rare",
+    "role": "Skirmisher",
+    "base": { "hp": 320, "atk": 50, "def": 18, "spd": 38, "crit": 0.12 },
+    "skills": ["shadow_feint"],
+    "ultimate": "",
+    "lore": "A courtless fae making a living from the edges of a dying story.",
+    "palette": { "primary": "#3b1f4e", "secondary": "#a87bd4", "accent": "#ff6fae" }
+  },
+  "corrupted_treant": {
+    "name": "Corrupted Treant",
+    "element": "earth",
+    "rarity": "epic",
+    "role": "Elite",
+    "base": { "hp": 980, "atk": 58, "def": 42, "spd": 18, "crit": 0.04 },
+    "skills": ["root_crush", "bark_ward"],
+    "ultimate": "hollow_verdict",
+    "lore": "Something hollow took root inside an old guardian. It still tries to protect the glade — from everything.",
+    "palette": { "primary": "#4a4030", "secondary": "#8fbf6a", "accent": "#c8ff8f" }
+  },
+  "elder_hollow": {
+    "name": "The Elder Hollow",
+    "element": "earth",
+    "rarity": "mythic",
+    "role": "World Boss",
+    "base": { "hp": 2400, "atk": 76, "def": 52, "spd": 22, "crit": 0.06 },
+    "skills": ["root_crush", "hollow_wail", "bark_ward"],
+    "ultimate": "hollow_verdict",
+    "phases": [
+      { "hp_below": 0.6, "message": "The Elder Hollow splits its bark. Something inside is awake.", "status": { "id": "atk_up", "turns": 99, "potency": 0.35 } },
+      { "hp_below": 0.25, "message": "The glade holds its breath. The Hollow stops pretending to be a tree.", "status": { "id": "spd_up", "turns": 99, "potency": 0.5 } }
+    ],
+    "lore": "The first tree of Greenward, hollowed out by a grief older than the elves. It does not hate the living. It simply cannot remember how to let them go.",
+    "palette": { "primary": "#2f3a28", "secondary": "#8fbf6a", "accent": "#e8ffb0" }
+  }
+}

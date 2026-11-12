@@ -1,0 +1,34 @@
+{
+  "glade_whisper": {
+    "name": "The Glade's Whisper",
+    "region": "greenward",
+    "summary": "Elder Maelin says the mosslings no longer sleep. Something under the roots is dreaming them awake.",
+    "steps": [
+      { "type": "talk", "target": "elder_maelin", "text": "Hear Elder Maelin's request" },
+      { "type": "kill", "target": "mossling", "count": 3, "text": "Calm corrupted mosslings" },
+      { "type": "talk", "target": "elder_maelin", "text": "Return to Elder Maelin" }
+    ],
+    "rewards": {
+      "gold": 300,
+      "crystals": 120,
+      "xp": 150,
+      "items": { "moonpetal": 3, "gladewood_bow": 1 }
+    }
+  },
+  "hollow_roots": {
+    "name": "What Sleeps Beneath",
+    "region": "greenward",
+    "summary": "The corruption has a source. Elder Maelin believes it is the Hollowed Guardian at the edge of the glade.",
+    "requires": "glade_whisper",
+    "steps": [
+      { "type": "kill", "target": "corrupted_treant", "count": 1, "text": "Defeat the Hollowed Guardian" },
+      { "type": "talk", "target": "elder_maelin", "text": "Tell Elder Maelin what you found" }
+    ],
+    "rewards": {
+      "gold": 700,
+      "crystals": 200,
+      "xp": 400,
+      "items": { "dew_of_awakening": 2, "hollow_heart": 1 }
+    }
+  }
+}

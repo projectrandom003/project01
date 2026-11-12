@@ -1,0 +1,110 @@
+{
+  "gold": {
+    "name": "Gold",
+    "category": "currency",
+    "description": "Common coin of Aetheria. Used for upgrades and everyday purchases.",
+    "icon": "coin",
+    "color": "#e8c27a"
+  },
+  "gems": {
+    "name": "Gems",
+    "category": "currency",
+    "description": "Rare crystalline currency. Premium purchases only after platform compliance is approved.",
+    "icon": "gem",
+    "color": "#a87bd4"
+  },
+  "crystals": {
+    "name": "Summoning Crystals",
+    "category": "currency",
+    "description": "Earned through play. Spent on character summons.",
+    "icon": "crystal",
+    "color": "#7fe3e0"
+  },
+  "guild_tokens": {
+    "name": "Guild Tokens",
+    "category": "currency",
+    "description": "Earned through guild activity and spent in the guild shop.",
+    "icon": "token",
+    "color": "#c9a45a"
+  },
+  "ancient_coins": {
+    "name": "Ancient Coins",
+    "category": "currency",
+    "description": "Relics of a kingdom older than the six regions.",
+    "icon": "ancient_coin",
+    "color": "#d9ff9f"
+  },
+  "event_tokens": {
+    "name": "Event Tokens",
+    "category": "currency",
+    "description": "Earned during live events and traded for limited rewards.",
+    "icon": "event",
+    "color": "#ff8fb3"
+  },
+  "moonpetal": {
+    "name": "Moonpetal",
+    "category": "material",
+    "rarity": "rare",
+    "description": "A pale flower that only opens under a moonless sky. Used in ascension.",
+    "color": "#b9f6ff"
+  },
+  "glade_sap": {
+    "name": "Glade Sap",
+    "category": "material",
+    "rarity": "common",
+    "description": "Warm amber sap from the oldest trees of Greenward.",
+    "color": "#e8c27a"
+  },
+  "dew_of_awakening": {
+    "name": "Dew of Awakening",
+    "category": "material",
+    "rarity": "epic",
+    "description": "Collected at dawn from the leaves of sleeping guardians.",
+    "color": "#9df5cf"
+  },
+  "gladewood_bow": {
+    "name": "Gladewood Bow",
+    "category": "equipment",
+    "slot": "weapon",
+    "rarity": "epic",
+    "element": "wind",
+    "stats": { "atk": 24, "spd": 4 },
+    "description": "A living bow cut from a branch that agreed to be cut.",
+    "color": "#8fbf6a"
+  },
+  "mossweave_vest": {
+    "name": "Mossweave Vest",
+    "category": "equipment",
+    "slot": "armor",
+    "rarity": "rare",
+    "stats": { "hp": 120, "def": 16 },
+    "description": "Moss woven so tightly it remembers being bark.",
+    "color": "#6f8f5a"
+  },
+  "wayfarer_charm": {
+    "name": "Wayfarer Charm",
+    "category": "equipment",
+    "slot": "accessory",
+    "rarity": "rare",
+    "stats": { "spd": 9, "crit": 0.04 },
+    "description": "A small wooden charm carved with a road that has no end.",
+    "color": "#c9a45a"
+  },
+  "sunfire_blade": {
+    "name": "Sunfire Blade",
+    "category": "equipment",
+    "slot": "weapon",
+    "rarity": "legendary",
+    "element": "fire",
+    "stats": { "atk": 38, "crit": 0.06 },
+    "description": "Forged in the last hour of a sun that no longer exists.",
+    "color": "#ff9f5a"
+  },
+  "hollow_heart": {
+    "name": "Hollow Heart",
+    "category": "material",
+    "rarity": "legendary",
+    "description": "A seed from the Elder Hollow. It beats, faintly, when held.",
+    "color": "#c8ff8f"
+  }
+}
