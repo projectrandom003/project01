@@ -71,51 +71,122 @@ func _unhandled_input(event: InputEvent) -> void:
 # ------------------------------------------------------------------ build UI
 
 func _build_background() -> void:
-	var gradient := Gradient.new()
-	gradient.colors = PackedColorArray([
-		Color("#050810"),
-		Color("#0a0f1e"),
-		Color("#120a1e"),
-		Color("#080510"),
-		Color("#030408"),
+	# Deep gothic sky gradient.
+	var sky_gradient := Gradient.new()
+	sky_gradient.colors = PackedColorArray([
+		Color("#03050a"),
+		Color("#080c18"),
+		Color("#0e0a1a"),
+		Color("#06040e"),
+		Color("#020306"),
 	])
-	gradient.offsets = PackedFloat32Array([0.0, 0.25, 0.5, 0.75, 1.0])
-	var texture := GradientTexture2D.new()
-	texture.gradient = gradient
-	texture.fill = GradientTexture2D.FILL_LINEAR
-	texture.fill_from = Vector2(0.0, 0.0)
-	texture.fill_to = Vector2(1.0, 1.0)
-	var rect := TextureRect.new()
-	rect.texture = texture
-	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	rect.stretch_mode = TextureRect.STRETCH_SCALE
-	UIFactory.set_full_rect(rect)
-	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(rect)
+	sky_gradient.offsets = PackedFloat32Array([0.0, 0.2, 0.45, 0.75, 1.0])
+	var sky_texture := GradientTexture2D.new()
+	sky_texture.gradient = sky_gradient
+	sky_texture.fill = GradientTexture2D.FILL_LINEAR
+	sky_texture.fill_from = Vector2(0.0, 0.0)
+	sky_texture.fill_to = Vector2(0.0, 1.0)
+	var sky_rect := TextureRect.new()
+	sky_rect.texture = sky_texture
+	sky_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	sky_rect.stretch_mode = TextureRect.STRETCH_SCALE
+	UIFactory.set_full_rect(sky_rect)
+	sky_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(sky_rect)
 
-	# Vignette overlay.
+	# Stone floor plane (bottom 35% of screen).
+	var floor_rect := ColorRect.new()
+	floor_rect.color = Color("#0d0b0f")
+	floor_rect.anchor_left = 0.0
+	floor_rect.anchor_right = 1.0
+	floor_rect.anchor_top = 0.65
+	floor_rect.anchor_bottom = 1.0
+	floor_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(floor_rect)
+
+	# Floor tile lines (horizontal).
+	for i in range(6):
+		var line := ColorRect.new()
+		line.color = Color(0.15, 0.12, 0.18, 0.4)
+		line.anchor_left = 0.0
+		line.anchor_right = 1.0
+		line.anchor_top = 0.65 + float(i) * 0.058
+		line.anchor_bottom = 0.65 + float(i) * 0.058 + 0.002
+		line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(line)
+
+	# Floor tile lines (vertical, perspective).
+	for i in range(8):
+		var vline := ColorRect.new()
+		vline.color = Color(0.12, 0.10, 0.15, 0.3)
+		var x_pos := 0.05 + float(i) * 0.13
+		vline.anchor_left = x_pos
+		vline.anchor_right = x_pos + 0.003
+		vline.anchor_top = 0.65
+		vline.anchor_bottom = 1.0
+		vline.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(vline)
+
+	# Ground shadow under characters (dark gradient).
+	var shadow_gradient := Gradient.new()
+	shadow_gradient.colors = PackedColorArray([Color(0, 0, 0, 0.0), Color(0, 0, 0, 0.5)])
+	shadow_gradient.offsets = PackedFloat32Array([0.0, 1.0])
+	var shadow_tex := GradientTexture2D.new()
+	shadow_tex.gradient = shadow_gradient
+	shadow_tex.fill = GradientTexture2D.FILL_LINEAR
+	shadow_tex.fill_from = Vector2(0.5, 0.0)
+	shadow_tex.fill_to = Vector2(0.5, 1.0)
+	var shadow_rect := TextureRect.new()
+	shadow_rect.texture = shadow_tex
+	shadow_rect.anchor_left = 0.0
+	shadow_rect.anchor_right = 1.0
+	shadow_rect.anchor_top = 0.6
+	shadow_rect.anchor_bottom = 1.0
+	shadow_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	shadow_rect.stretch_mode = TextureRect.STRETCH_SCALE
+	shadow_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(shadow_rect)
+
+	# Vignette overlay (stronger).
 	var vignette := ColorRect.new()
-	vignette.color = Color(0, 0, 0, 0.35)
+	vignette.color = Color(0, 0, 0, 0.45)
 	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	UIFactory.set_full_rect(vignette)
 	add_child(vignette)
 
-	# Subtle animated particles.
+	# Atmospheric particles (floating embers/dust).
 	var particles := CPUParticles2D.new()
-	particles.amount = 20
-	particles.lifetime = 4.0
+	particles.amount = 30
+	particles.lifetime = 6.0
 	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
-	particles.emission_rect_extents = Vector2(640, 360)
-	particles.direction = Vector2(0, -1)
-	particles.initial_velocity_min = 5.0
-	particles.initial_velocity_max = 15.0
-	particles.gravity = Vector2(0, -5)
-	particles.scale_amount_min = 0.5
-	particles.scale_amount_max = 1.5
-	particles.color = Color(0.6, 0.4, 0.9, 0.3)
+	particles.emission_rect_extents = Vector2(640, 200)
+	particles.direction = Vector2(0.2, -1)
+	particles.initial_velocity_min = 8.0
+	particles.initial_velocity_max = 25.0
+	particles.gravity = Vector2(2, -3)
+	particles.scale_amount_min = 0.3
+	particles.scale_amount_max = 1.0
+	particles.color = Color(0.7, 0.5, 0.9, 0.25)
 	particles.z_index = 1
-	particles.position = Vector2(640, 360)
+	particles.position = Vector2(640, 300)
 	add_child(particles)
+
+	# Second particle layer (darker dust).
+	var dust := CPUParticles2D.new()
+	dust.amount = 15
+	dust.lifetime = 8.0
+	dust.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+	dust.emission_rect_extents = Vector2(640, 360)
+	dust.direction = Vector2(-0.1, -0.5)
+	dust.initial_velocity_min = 3.0
+	dust.initial_velocity_max = 8.0
+	dust.gravity = Vector2(-1, -2)
+	dust.scale_amount_min = 0.5
+	dust.scale_amount_max = 2.0
+	dust.color = Color(0.3, 0.25, 0.4, 0.15)
+	dust.z_index = 1
+	dust.position = Vector2(640, 360)
+	add_child(dust)
 
 
 func _build_layout() -> void:
