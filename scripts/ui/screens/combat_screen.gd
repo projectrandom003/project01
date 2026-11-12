@@ -323,7 +323,7 @@ func _process_events(events: Array) -> void:
 		match event_type:
 			"round":
 				_round_label.text = "Round %d" % int(event.get("round", 1))
-				_log("[color=#9aa8c2]â€” Round %d â€”[/color]" % int(event.get("round", 1)))
+				_log("[color=#9aa8c2]— Round %d —[/color]" % int(event.get("round", 1)))
 			"turn":
 				_log("[color=#e9eef9]%s's turn.[/color]" % str(event.get("actor_name", "Unit")))
 			"action":
@@ -463,10 +463,10 @@ func _refresh_skills() -> void:
 		_hint_label.text = ""
 		return
 	if actor.team != CombatEngine.PLAYER_TEAM:
-		_actor_label.text = "Enemy turn â€” " + actor.display_name
+		_actor_label.text = "Enemy turn — " + actor.display_name
 		_hint_label.text = "The glade holds its breath."
 		return
-	_actor_label.text = "%s â€” choose an action" % actor.display_name
+	_actor_label.text = "%s — choose an action" % actor.display_name
 	_hint_label.text = "Esc cancels targeting" if _targeting else "Damage skills target one foe unless stated otherwise."
 	for skill_id in actor.skills:
 		var skill: SkillDef = ContentDB.get_skill(str(skill_id))
@@ -484,7 +484,7 @@ func _add_skill_button(skill: SkillDef, actor: Combatant) -> void:
 	var detail := "%s | %s | PWR %d | %s" % [skill.element.capitalize(), skill.kind.capitalize(), int(skill.power), energy_text]
 	var text := "%s\n%s" % [skill.display_name, detail]
 	if skill.ultimate:
-		text = "ULTIMATE Â· %s\n%s" % [skill.display_name, detail]
+		text = "ULTIMATE · %s\n%s" % [skill.display_name, detail]
 	var button := UIFactory.button(text, skill.ultimate)
 	button.custom_minimum_size = Vector2(158, 46)
 	button.add_theme_font_size_override("font_size", 11)
@@ -584,7 +584,7 @@ func _cycle_speed() -> void:
 		_speed = 2.4
 	else:
 		_speed = 1.0
-	_speed_button.text = ("%.1fÃ— speed" % _speed).replace(".0Ã—", "Ã—")
+	_speed_button.text = ("%.1f× speed" % _speed).replace(".0×", "×")
 
 
 # ------------------------------------------------------------------ visuals
@@ -629,14 +629,14 @@ func _update_turn_order() -> void:
 	UIFactory.clear(_turn_box)
 	var preview := engine.upcoming_turns(6)
 	if preview.is_empty():
-		_turn_box.add_child(UIFactory.label("â€”", 10, UITheme.TEXT_FAINT))
+		_turn_box.add_child(UIFactory.label("—", 10, UITheme.TEXT_FAINT))
 		return
 	for index in preview.size():
 		var entry: Dictionary = preview[index]
 		var color := UITheme.TEAL if int(entry.get("team", 0)) == CombatEngine.PLAYER_TEAM else UITheme.DANGER
 		_turn_box.add_child(UIFactory.chip(str(entry.get("name", "?")), color))
 		if index < preview.size() - 1:
-			_turn_box.add_child(UIFactory.label("â€º", 10, UITheme.TEXT_FAINT))
+			_turn_box.add_child(UIFactory.label("›", 10, UITheme.TEXT_FAINT))
 
 
 func _card_for_uid(uid: String) -> CombatUnitCard:
@@ -805,7 +805,7 @@ func _show_result(victory: bool) -> void:
 		for item_id in _pending_rewards.get("items", {}).keys():
 			var item: Dictionary = ContentDB.get_item(str(item_id))
 			box.add_child(UIFactory.label(
-				"â€¢ %s Ã—%d" % [str(item.get("name", item_id)), int(_pending_rewards["items"][item_id])],
+				"• %s ×%d" % [str(item.get("name", item_id)), int(_pending_rewards["items"][item_id])],
 				12,
 				UITheme.TEXT_DIM
 			))
