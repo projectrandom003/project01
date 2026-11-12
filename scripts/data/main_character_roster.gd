@@ -1,15 +1,15 @@
 class_name MainCharacterRoster
 extends RefCounted
-## Additive, read-only registry for the two main protagonists (Lilith, Gerald).
-##
-## This registry is deliberately OUTSIDE ContentDB: it does not add characters to
-## the gacha pools, the starting roster, the party, combat or save data. It lets
-## the protagonists be authored, previewed and wired in later without touching
-## the twelve collectible placeholder characters or any gameplay system.
+## Read-only registry for the two main protagonists (Lilith, Gerald).
 ##
 ## Full definitions live in resources/data/main_characters.json using the same
-## schema as ContentDB's characters.json, so a future round can promote an entry
-## into characters.json without rewriting it.
+## schema as ContentDB's characters.json. ContentDB merges these entries into its
+## live character table at boot, so both protagonists are registered playable
+## characters and the starting party, portraits, combat and saves resolve them
+## through the normal ContentDB API.
+##
+## The registry remains the asset/authoring view: it is the only place that
+## knows about the design reference sheets and the future portrait paths.
 ##
 ## Assets live under res://assets/characters/main/<folder>/ and are design
 ## reference sheets, not cut-out portraits. portrait_texture() only ever returns
@@ -61,8 +61,10 @@ static func is_main_character(character_id: String) -> bool:
 	return bool(get_entry(character_id).get("main_character", false))
 
 
-## True once an entry is promoted into the live ContentDB roster. Today this is
-## always false: the protagonists are authored but not recruited.
+## True when a running ContentDB exposes this entry as a playable character.
+## ContentDB merges the protagonists in at boot; in `--script` tools there is
+## no ContentDB instance, so this returns false even though the game registers
+## them. Use a scene-based tool to observe the live value.
 static func is_in_content_db(character_id: String) -> bool:
 	var db := _content_db()
 	return db != null and db.characters.has(character_id)
@@ -146,7 +148,8 @@ static func report() -> Dictionary:
 		"ids": ids(),
 		"count": ids().size(),
 		"per_character": per_character,
-		"note": "Additive registry. Not loaded by ContentDB; no gacha, party, combat or save changes.",
+		"content_db_running": _content_db() != null,
+		"note": "Asset/authoring view for the protagonists. ContentDB merges the same definitions into its live roster; in_content_db requires a running ContentDB.",
 	}
 
 

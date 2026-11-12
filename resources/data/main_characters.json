@@ -7,8 +7,8 @@
     "rarity": "legendary",
     "role": "Ghost Support",
     "main_character": true,
-    "playable": false,
-    "recruited_by_default": false,
+    "playable": true,
+    "recruited_by_default": true,
     "base": {
       "hp": 46,
       "atk": 12,
@@ -69,8 +69,8 @@
     "rarity": "legendary",
     "role": "Armored Bruiser",
     "main_character": true,
-    "playable": false,
-    "recruited_by_default": false,
+    "playable": true,
+    "recruited_by_default": true,
     "base": {
       "hp": 54,
       "atk": 15,

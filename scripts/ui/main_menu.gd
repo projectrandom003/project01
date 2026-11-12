@@ -6,7 +6,7 @@ extends Control
 signal play_requested
 signal quit_requested
 
-const STARTERS := ["mira_sol", "kael", "bramble"]
+const STARTERS := ["gerald", "lilith", "kael"]
 
 var _play_button: Button
 var _reset_button: Button
@@ -91,7 +91,7 @@ func _build_body(root: VBoxContainer) -> void:
 	features.add_child(_feature("Streamed isometric world", "Chunked terrain, props, water and a day/night cycle.", UITheme.TEAL))
 	features.add_child(_feature("Turn-based battles", "Elemental weaknesses, status effects, ultimates and boss phases.", UITheme.DANGER))
 	features.add_child(_feature("Summoning & collection", "Data-driven banners, pity, awakening and ascension.", UITheme.VIOLET))
-	features.add_child(_feature("Original content", "Twelve characters, six enemy types, two story quests.", UITheme.GREEN))
+	features.add_child(_feature("Original content", "Fourteen characters, six enemy types, two story quests.", UITheme.GREEN))
 	left.add_child(features)
 
 	_summary_label = UIFactory.label("", 12, UITheme.GOLD)

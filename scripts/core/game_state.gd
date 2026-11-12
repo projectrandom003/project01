@@ -8,6 +8,12 @@ extends Node
 ## those decisions behind the server boundary (see documentation/BACKEND.md).
 
 const PARTY_MAX := 4
+## The starting trio. Order is the initial party order shown in the UI.
+const STARTING_CHARACTERS := ["gerald", "lilith", "kael"]
+## Former starters. Their definitions stay in content data (art specs and
+## banner validation reference them), but new_game() never grants them and
+## legacy saves are migrated to the new trio.
+const REMOVED_CHARACTERS := ["mira_sol", "bramble"]
 const MAX_PROFILE_LEVEL := 60
 
 var profile: Dictionary = {}
@@ -85,9 +91,8 @@ func new_game(player_name: String = "Wanderer") -> void:
 	player_region = "greenward"
 	region_positions = {}
 	_uid_counter = 0
-	add_character("mira_sol")
-	add_character("kael")
-	add_character("bramble")
+	for character_id in STARTING_CHARACTERS:
+		add_character(character_id)
 	save_now()
 	EventBus.roster_changed.emit()
 	EventBus.party_changed.emit()
@@ -134,19 +139,44 @@ func _load_from_dict(data: Dictionary) -> void:
 	if profile.is_empty():
 		return
 	roster.clear()
+	var removed_uids: Dictionary = {}
+	var refunded_items: Dictionary = {}
 	for entry in data.get("roster", []):
 		if typeof(entry) != TYPE_DICTIONARY:
 			continue
 		var instance := CharacterInstance.from_dict(entry)
 		if ContentDB.get_character(instance.char_id) == null or instance.uid.is_empty():
 			continue
+		if REMOVED_CHARACTERS.has(instance.char_id):
+			# Legacy save: retire the former starter and return equipped items
+			# to the inventory so nothing the player earned is lost.
+			removed_uids[instance.uid] = true
+			for slot in instance.equipment.keys():
+				var item_id := str(instance.equipment[slot])
+				if not item_id.is_empty():
+					refunded_items[item_id] = int(refunded_items.get(item_id, 0)) + 1
+			continue
 		roster.append(instance)
+	# Saves made before this roster change may not own the new starters.
+	_ensure_starting_characters()
 	party.clear()
+	var party_had_removed := false
 	for uid in data.get("party", []):
-		if _find_instance(str(uid)) != null and not party.has(str(uid)):
-			party.append(str(uid))
-	_fill_party()
+		var text := str(uid)
+		if removed_uids.has(text):
+			party_had_removed = true
+			continue
+		if _find_instance(text) != null and not party.has(text):
+			party.append(text)
+	if party_had_removed:
+		# Rebuild from the starting trio instead of silently promoting
+		# unrelated characters into the slots freed by the old starters.
+		_reset_party_to_starters()
+	else:
+		_fill_party()
 	inventory = data.get("inventory", {})
+	for item_id in refunded_items.keys():
+		inventory[item_id] = int(inventory.get(item_id, 0)) + int(refunded_items[item_id])
 	quests = data.get("quests", {})
 	pity = data.get("pity", {})
 	flags = data.get("flags", {})
@@ -271,6 +301,28 @@ func owns_character(character_id: String) -> bool:
 		if instance.char_id == character_id:
 			return true
 	return false
+
+
+## Grants any missing starting character directly (no duplicate/awakening
+## bookkeeping) so new and migrated saves always own the full trio.
+func _ensure_starting_characters() -> void:
+	for character_id in STARTING_CHARACTERS:
+		if owns_character(character_id):
+			continue
+		if ContentDB.get_character(character_id) == null:
+			push_error("[GameState] Missing starting character definition: " + character_id)
+			continue
+		roster.append(CharacterInstance.create(character_id, _make_uid()))
+
+
+## Replaces the party with the starting trio in canonical order.
+func _reset_party_to_starters() -> void:
+	party.clear()
+	for character_id in STARTING_CHARACTERS:
+		for instance in roster:
+			if instance.char_id == character_id:
+				party.append(instance.uid)
+				break
 
 
 func add_character(character_id: String) -> Dictionary:

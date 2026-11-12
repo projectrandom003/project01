@@ -2,9 +2,10 @@
 
 > **Status: REFERENCE SHEET ONLY.** The design reference sheet is imported and
 > usable as a `Texture2D`. No cut-out portrait, sprite sheet or combat asset
-> exists yet. This character is authored but **not recruited, not in the gacha
-> pool, and not in any save**. The twelve collectible placeholder characters are
-> unchanged.
+> exists yet. This character is a **starting party member**: recruited by
+> default, registered in ContentDB and saved with the player's roster. They are
+> not in the gacha pool. The twelve collectible placeholder characters are
+> otherwise unchanged.
 
 ## Identity (`resources/data/main_characters.json`)
 
@@ -18,7 +19,7 @@
 | rarity | legendary |
 | role | Ghost Support |
 | main_character | true |
-| playable | false (authored, not recruited) |
+| playable | true (starting party member) |
 
 ## Design brief (from the supplied reference sheet)
 

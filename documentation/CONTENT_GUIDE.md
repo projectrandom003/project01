@@ -174,7 +174,7 @@ Passive tuning values (multipliers, HP thresholds, shield/burn/lifesteal fractio
 3. Add the ID to at least one banner pool in `banners.json`, otherwise it can never be summoned.
 4. Give it a unique `portrait_seed` so procedural portraits differ.
 5. Restart and confirm the boot count increased by one and validation is clean.
-6. If the character should be owned from the start, add `GameState.add_character("id")` in `new_game()` — do not hardcode it in UI.
+6. If the character should be owned from the start, add its id to `GameState.STARTING_CHARACTERS` (currently `gerald`, `lilith`, `kael`) — do not hardcode it in UI.
 
 ### Character art assets (Phase 5 — specifications, not artwork)
 

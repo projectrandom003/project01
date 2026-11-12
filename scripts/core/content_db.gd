@@ -33,6 +33,7 @@ func _ready() -> void:
 func _load_all() -> void:
 	skills = _load_defs("skills.json", "skill")
 	characters = _load_defs("characters.json", "character")
+	_load_main_characters()
 	enemies = _load_defs("enemies.json", "enemy")
 	enemy_groups = _read_json("enemy_groups.json")
 	items = _read_json("items.json")
@@ -68,6 +69,25 @@ func _load_defs(file_name: String, kind: String) -> Dictionary:
 			"enemy":
 				result[key] = _enemy_def(key, entry)
 	return result
+
+
+## Main protagonists live in main_characters.json so the twelve collectible
+## art-pipeline characters keep their authored specs. Merging them here makes
+## ContentDB.get_character("gerald"/"lilith") resolve for the starting party,
+## portraits, combat and saves while keeping one definition per character.
+func _load_main_characters() -> void:
+	var raw := _read_json("main_characters.json")
+	if raw.is_empty():
+		return
+	# Same strict schema as characters.json, validated against the live skills.
+	var skills_raw := _read_json("skills.json")
+	for message in ContentValidator.validate_document("characters.json", raw, { "skills.json": skills_raw }):
+		validation_errors.append(str(message))
+	for key in raw.keys():
+		var entry: Variant = raw[key]
+		if typeof(entry) != TYPE_DICTIONARY:
+			continue
+		characters[str(key)] = CharacterDef.from_dict(str(key), entry)
 
 
 func _enemy_def(enemy_id: String, data: Dictionary) -> Dictionary:
