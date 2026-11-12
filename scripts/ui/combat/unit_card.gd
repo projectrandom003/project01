@@ -18,6 +18,7 @@ var _boss_badge: Label
 var _current: bool = false
 var _targetable: bool = false
 var _selected: bool = false
+var _hp_tween: Tween = null
 
 
 func setup(p_unit: Combatant) -> void:
@@ -98,7 +99,11 @@ func refresh() -> void:
 	if unit == null:
 		return
 	_hp_bar.max_value = maxf(1.0, unit.max_hp)
-	_hp_bar.value = clampf(unit.hp, 0.0, unit.max_hp)
+	var target_hp := clampf(unit.hp, 0.0, unit.max_hp)
+	if _hp_tween != null and is_instance_valid(_hp_tween):
+		_hp_tween.kill()
+	_hp_tween = create_tween()
+	_hp_tween.tween_property(_hp_bar, "value", target_hp, 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	_hp_label.text = "%d/%d" % [int(ceil(unit.hp)), int(round(unit.max_hp))]
 	_energy_bar.max_value = maxf(1.0, unit.max_energy)
 	_energy_bar.value = clampf(unit.energy, 0.0, unit.max_energy)
