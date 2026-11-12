@@ -69,12 +69,13 @@ func _unhandled_input(event: InputEvent) -> void:
 func _build_background() -> void:
 	var gradient := Gradient.new()
 	gradient.colors = PackedColorArray([
-		Color("#070b15"),
-		Color("#0d1626"),
-		Color("#121a2c"),
-		Color("#080c16"),
+		Color("#050810"),
+		Color("#0a0f1e"),
+		Color("#120a1e"),
+		Color("#080510"),
+		Color("#030408"),
 	])
-	gradient.offsets = PackedFloat32Array([0.0, 0.42, 0.72, 1.0])
+	gradient.offsets = PackedFloat32Array([0.0, 0.25, 0.5, 0.75, 1.0])
 	var texture := GradientTexture2D.new()
 	texture.gradient = gradient
 	texture.fill = GradientTexture2D.FILL_LINEAR
@@ -87,6 +88,30 @@ func _build_background() -> void:
 	UIFactory.set_full_rect(rect)
 	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(rect)
+
+	# Vignette overlay.
+	var vignette := ColorRect.new()
+	vignette.color = Color(0, 0, 0, 0.35)
+	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	UIFactory.set_full_rect(vignette)
+	add_child(vignette)
+
+	# Subtle animated particles.
+	var particles := CPUParticles2D.new()
+	particles.amount = 20
+	particles.lifetime = 4.0
+	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+	particles.emission_rect_extents = Vector2(640, 360)
+	particles.direction = Vector2(0, -1)
+	particles.initial_velocity_min = 5.0
+	particles.initial_velocity_max = 15.0
+	particles.gravity = Vector2(0, -5)
+	particles.scale_amount_min = 0.5
+	particles.scale_amount_max = 1.5
+	particles.color = Color(0.6, 0.4, 0.9, 0.3)
+	particles.z_index = 1
+	particles.position = Vector2(640, 360)
+	add_child(particles)
 
 
 func _build_layout() -> void:
