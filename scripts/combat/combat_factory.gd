@@ -31,12 +31,12 @@ static func build_from_character(instance: CharacterInstance, collection_bonus: 
 	unit.level = instance.level
 	unit.palette = definition.palette
 	var mult := instance.power_multiplier() * collection_bonus
-	unit.max_hp = definition.stat("hp") * mult * PLAYER_HP_SCALE
-	unit.atk = definition.stat("atk") * mult
-	unit.defense = definition.stat("def") * mult
-	unit.speed = definition.stat("spd") * (1.0 + 0.02 * (instance.level - 1))
-	unit.crit_chance = definition.stat("crit")
-	unit.crit_mult = 1.6
+	unit.max_hp = definition.effective_stat("hp", instance.level, instance.ascension) * mult * PLAYER_HP_SCALE
+	unit.atk = definition.effective_stat("atk", instance.level, instance.ascension) * mult
+	unit.defense = definition.effective_stat("def", instance.level, instance.ascension) * mult
+	unit.speed = definition.effective_stat("spd", instance.level, instance.ascension) * (1.0 + 0.02 * (instance.level - 1))
+	unit.crit_chance = definition.effective_stat("crit", instance.level, instance.ascension)
+	unit.crit_mult = definition.effective_stat("crit_dmg", instance.level, instance.ascension)
 	unit.skills = definition.skills.duplicate()
 	unit.ultimate = definition.ultimate
 	unit.passive_id = definition.passive_id
@@ -58,6 +58,8 @@ static func _apply_equipment(unit: Combatant, instance: CharacterInstance) -> vo
 		unit.defense += float(stats.get("def", 0))
 		unit.speed += float(stats.get("spd", 0))
 		unit.crit_chance += float(stats.get("crit", 0))
+		if stats.has("crit_dmg"):
+			unit.crit_mult += float(stats.get("crit_dmg", 0))
 		# The first elemental item (weapon slots are checked first) defines the
 		# wielder's resonance element. The combat engine turns that into damage.
 		if unit.equipment_element.is_empty():

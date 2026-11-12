@@ -33,7 +33,7 @@ const STATUS_IDS := [
 ]
 const ITEM_CATEGORIES := ["currency", "material", "equipment"]
 const EQUIPMENT_SLOTS := ["weapon", "armor", "accessory"]
-const EQUIPMENT_STATS := ["hp", "atk", "def", "spd", "crit"]
+const EQUIPMENT_STATS := ["hp", "atk", "def", "spd", "crit", "crit_dmg"]
 const QUEST_STEP_TYPES := ["talk", "kill"]
 const BANNER_TYPES := ["standard", "limited"]
 # The full set of Phase-3 prop kinds ProceduralArt / GreenwardStyle can paint.
@@ -175,6 +175,10 @@ static func _validate_characters(data: Dictionary, context: Dictionary) -> Array
 		var base = _require(character, "base", "dictionary", path, file, errors)
 		if typeof(base) == TYPE_DICTIONARY:
 			_validate_stats(base, path + ".base", file, errors)
+		if character.has("growth"):
+			var growth = character.get("growth", null)
+			if typeof(growth) == TYPE_DICTIONARY:
+				_validate_growth(growth, path + ".growth", file, errors)
 
 		var skill_list = _require(character, "skills", "array", path, file, errors)
 		if typeof(skill_list) == TYPE_ARRAY:
@@ -1197,6 +1201,20 @@ static func _validate_stats(base: Dictionary, path: String, file: String, errors
 	for key in ["hp", "atk", "def", "spd"]:
 		_require_number(base, key, path, file, errors, 0.0001)
 	_require_number(base, "crit", path, file, errors, 0.0, 1.0)
+	if base.has("crit_dmg"):
+		_require_number(base, "crit_dmg", path, file, errors, 1.0)
+
+
+static func _validate_growth(growth: Dictionary, path: String, file: String, errors: Array[String]) -> void:
+	for raw_key in growth.keys():
+		var key := str(raw_key)
+		var growth_path := path + "." + key
+		var value: Variant = growth[raw_key]
+		if typeof(value) != TYPE_FLOAT and typeof(value) != TYPE_INT:
+			_err(errors, file, growth_path, "expected a number")
+			continue
+		if float(value) < 0.0:
+			_err(errors, file, growth_path, "growth must be >= 0")
 
 
 static func _validate_palette(

@@ -81,6 +81,17 @@ func _run() -> void:
 	_test_asset_status_honesty()
 	_test_state()
 	await _test_ui()
+	# --- Phase 6 Round 3A: character progression ---
+	_test_progression_xp()
+	_test_progression_leveling()
+	_test_progression_max_level()
+	_test_progression_stat_growth()
+	_test_progression_ascension()
+	_test_progression_insufficient_materials()
+	_test_progression_insufficient_gold()
+	_test_progression_save_load()
+	_test_progression_invalid_upgrade()
+	_test_progression_combat_stats()
 
 	_restore()
 
@@ -3407,3 +3418,142 @@ func _test_asset_status_honesty() -> void:
 		and int(c1["missing"]) == int(c2["missing"]) and int(c1["total"]) == int(c2["total"]),
 		"CharacterAssetRegistry.report() counts deterministic across two calls")
 	check(int(r1["total"]) == int(r2["total"]), "report() total deterministic")
+
+# ------------------------------------------------------------------- Phase 6 Round 3A: character progression
+
+func _test_progression_xp() -> void:
+	check(GameState.xp_to_next(1) == 100, "XP to next at level 1 is 100")
+	check(GameState.xp_to_next(2) == 185, "XP to next at level 2 is 185")
+	check(GameState.xp_to_next(20) == 100 + 19 * 85, "XP formula scales with level")
+
+	var instance := _find_test_instance()
+	if instance == null:
+		check(false, "Find test instance for XP test")
+		return
+	var start_xp := instance.xp
+	var result: Dictionary = GameState.add_xp_to_character(instance, 50)
+	check(int(result.get("levels", -1)) == 0, "50 XP does not level up from 0")
+	check(instance.xp == start_xp + 50, "XP accumulates correctly")
+	check(GameState.xp_to_next(1) > 0, "XP requirement positive")
+
+func _test_progression_leveling() -> void:
+	var instance := _find_test_instance()
+	if instance == null:
+		check(false, "Find test instance for leveling test")
+		return
+	var start_level := instance.level
+	var xp_needed := GameState.xp_to_next(instance.level)
+	var result: Dictionary = GameState.add_xp_to_character(instance, xp_needed)
+	check(int(result.get("levels", 0)) >= 1, "Full XP grants at least 1 level")
+	check(instance.level > start_level, "Level increases after enough XP")
+	check(instance.xp >= 0, "XP non-negative after level up")
+
+func _test_progression_max_level() -> void:
+	var instance := _find_test_instance()
+	if instance == null:
+		check(false, "Find test instance for max level test")
+		return
+	instance.level = instance.level_cap()
+	instance.xp = 9999
+	var result: Dictionary = GameState.add_xp_to_character(instance, 10000)
+	check(instance.level == instance.level_cap(), "Level does not exceed cap")
+	check(instance.xp == 0, "XP reset to 0 at max level")
+	check(instance.is_max_level(), "is_max_level true at cap")
+
+func _test_progression_stat_growth() -> void:
+	var def: CharacterDef = ContentDB.get_character("lyra_vey")
+	check(def != null, "Lyra def exists")
+	var growth: Dictionary = def.growth
+	check(not growth.is_empty(), "Growth data present")
+	check(float(growth.get("hp", 0)) > 0, "HP growth positive")
+	check(float(growth.get("atk", 0)) > 0, "ATK growth positive")
+	var base_hp := def.stat("hp")
+	var eff_hp_l1 := def.effective_stat("hp", 1, 0)
+	check(near(base_hp, eff_hp_l1), "Level 1 effective stat equals base")
+	var eff_hp_l2 := def.effective_stat("hp", 2, 0)
+	check(eff_hp_l2 > eff_hp_l1, "Level 2 HP > Level 1 HP")
+
+func _test_progression_ascension() -> void:
+	var instance := _find_test_instance()
+	if instance == null:
+		check(false, "Find test instance for ascension test")
+		return
+	instance.level = instance.level_cap()
+	var info: Dictionary = GameState.ascension_info(instance.uid)
+	check(info.has("ok"), "ascension_info returns ok key")
+	var result := GameState.ascend(instance.uid)
+	if bool(info.get("ok", false)):
+		check(result == true, "Ascension succeeds when requirements met")
+	else:
+		check(result == false, "Ascension fails when requirements not met")
+
+func _test_progression_insufficient_materials() -> void:
+	var instance := _find_test_instance()
+	if instance == null:
+		check(false, "Find test instance for materials test")
+		return
+	instance.level = instance.level_cap()
+	var saved_dew := GameState.item_count("dew_of_awakening")
+	GameState.remove_item("dew_of_awakening", saved_dew)
+	var result := GameState.ascend(instance.uid)
+	check(result == false, "Ascension fails without dew of awakening")
+	GameState.add_item("dew_of_awakening", saved_dew)
+
+func _test_progression_insufficient_gold() -> void:
+	var instance := _find_test_instance()
+	if instance == null:
+		check(false, "Find test instance for gold test")
+		return
+	instance.level = instance.level_cap()
+	GameState.add_item("dew_of_awakening", 5)
+	var saved_gold := GameState.currency("gold")
+	GameState.spend_currency("gold", saved_gold)
+	var result := GameState.ascend(instance.uid)
+	check(result == false, "Ascension fails without gold")
+	GameState.add_currency("gold", saved_gold)
+
+func _test_progression_save_load() -> void:
+	var instance := _find_test_instance()
+	if instance == null:
+		check(false, "Find test instance for save/load test")
+		return
+	var original_level := instance.level
+	var original_xp := instance.xp
+	var original_ascension := instance.ascension
+	var dict := instance.to_dict()
+	var restored := CharacterInstance.from_dict(dict)
+	check(restored.level == original_level, "Level persists in to_dict/from_dict")
+	check(restored.xp == original_xp, "XP persists in to_dict/from_dict")
+	check(restored.ascension == original_ascension, "Ascension persists in to_dict/from_dict")
+	check(restored.uid == instance.uid, "UID persists")
+	check(restored.char_id == instance.char_id, "char_id persists")
+
+func _test_progression_invalid_upgrade() -> void:
+	var result := GameState.equip_item("nonexistent_uid", "gold")
+	check(result == false, "Equip fails for invalid UID")
+	var instance := _find_test_instance()
+	if instance == null:
+		check(false, "Find test instance for invalid upgrade test")
+		return
+	var result2 := GameState.equip_item(instance.uid, "gold")
+	check(result2 == false, "Equip fails for non-equipment item")
+	var result3 := GameState.unequip_item(instance.uid, "weapon")
+	check(true, "Unequip does not crash on empty slot")
+
+func _test_progression_combat_stats() -> void:
+	var instance := _find_test_instance()
+	if instance == null:
+		check(false, "Find test instance for combat stats test")
+		return
+	var units := CombatFactory.player_units()
+	check(units.size() > 0, "player_units returns units")
+	var unit = units[0]
+	check(unit.max_hp > 0, "Combatant has positive HP")
+	check(unit.atk > 0, "Combatant has positive ATK")
+	check(unit.crit_mult >= 1.0, "Combatant crit_mult >= 1.0")
+
+func _find_test_instance() -> CharacterInstance:
+	for instance in GameState.roster:
+		return instance
+	return null
+

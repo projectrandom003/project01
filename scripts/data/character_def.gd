@@ -11,6 +11,7 @@ var element: String = ""
 var rarity: String = ""
 var role: String = ""
 var base: Dictionary = {}
+var growth: Dictionary = {}
 var skills: Array = []
 var ultimate: String = ""
 var passive_id: String = ""
@@ -31,6 +32,7 @@ static func from_dict(character_id: String, data: Dictionary) -> CharacterDef:
 	def.rarity = str(data.get("rarity", "common"))
 	def.role = str(data.get("role", "Adventurer"))
 	def.base = data.get("base", {})
+	def.growth = data.get("growth", {})
 	def.skills = data.get("skills", [])
 	def.ultimate = str(data.get("ultimate", ""))
 	var passive: Dictionary = data.get("passive", {})
@@ -45,6 +47,24 @@ static func from_dict(character_id: String, data: Dictionary) -> CharacterDef:
 
 func stat(stat_name: String) -> float:
 	return float(base.get(stat_name, 0.0))
+
+
+func growth_stat(stat_name: String) -> float:
+	return float(growth.get(stat_name, 0.0))
+
+
+func effective_stat(stat_name: String, level: int, ascension: int) -> float:
+	var base_val := float(base.get(stat_name, 0.0))
+	var growth_val := float(growth.get(stat_name, 0.0))
+	var ascension_mult := 1.0 + 0.10 * ascension
+	var level_mult := 1.0 + 0.085 * (level - 1)
+	if stat_name in ["hp", "atk", "def"]:
+		return (base_val + growth_val * (level - 1)) * ascension_mult
+	if stat_name == "spd":
+		return (base_val + growth_val * (level - 1)) * (1.0 + 0.02 * (level - 1))
+	if stat_name in ["crit", "crit_dmg"]:
+		return base_val + growth_val * (level - 1) + 0.005 * ascension
+	return base_val + growth_val * (level - 1)
 
 
 func color_of(key: String, fallback: String = "#ffffff") -> Color:

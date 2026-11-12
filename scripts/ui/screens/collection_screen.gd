@@ -279,11 +279,12 @@ func _show_detail(uid: String) -> void:
 
 	var multiplier := instance.power_multiplier() * GameState.collection_bonus()
 	var stats := UIFactory.grid(2, 4)
-	stats.add_child(_stat_row("HP", int(round(definition.stat("hp") * multiplier))))
-	stats.add_child(_stat_row("Attack", int(round(definition.stat("atk") * multiplier))))
-	stats.add_child(_stat_row("Defense", int(round(definition.stat("def") * multiplier))))
-	stats.add_child(_stat_row("Speed", int(round(definition.stat("spd") * (1.0 + 0.02 * (instance.level - 1))))))
-	stats.add_child(_stat_row("Crit", "%.1f%%" % (definition.stat("crit") * 100.0)))
+	stats.add_child(_stat_row("HP", int(round(definition.effective_stat("hp", instance.level, instance.ascension) * multiplier))))
+	stats.add_child(_stat_row("Attack", int(round(definition.effective_stat("atk", instance.level, instance.ascension) * multiplier))))
+	stats.add_child(_stat_row("Defense", int(round(definition.effective_stat("def", instance.level, instance.ascension) * multiplier))))
+	stats.add_child(_stat_row("Speed", int(round(definition.effective_stat("spd", instance.level, instance.ascension) * (1.0 + 0.02 * (instance.level - 1))))))
+	stats.add_child(_stat_row("Crit", "%.1f%%" % (definition.effective_stat("crit", instance.level, instance.ascension) * 100.0)))
+	stats.add_child(_stat_row("Crit Dmg", "%.2fx" % definition.effective_stat("crit_dmg", instance.level, instance.ascension)))
 	stats.add_child(_stat_row("Power", int(round(_power_score(definition, multiplier)))))
 	_detail.add_child(stats)
 

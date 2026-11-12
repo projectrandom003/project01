@@ -6,8 +6,18 @@
     "element": "wind",
     "rarity": "epic",
     "role": "Ranged Support",
-    "base": { "hp": 980, "atk": 74, "def": 42, "spd": 62, "crit": 0.08 },
-    "skills": ["gale_shot", "zephyr_blessing"],
+    "base": {
+      "hp": 980,
+      "atk": 74,
+      "def": 42,
+      "spd": 62,
+      "crit": 0.08,
+      "crit_dmg": 1.4
+    },
+    "skills": [
+      "gale_shot",
+      "zephyr_blessing"
+    ],
     "ultimate": "tempest_dance",
     "passive": {
       "name": "Whisperstep",
@@ -15,8 +25,22 @@
       "text": "Allies gain 8% Speed while Lyra is alive."
     },
     "lore": "Last warden of a glade that no longer remembers her name. Lyra speaks to the wind and listens to what it refuses to say.",
-    "palette": { "hair": "#d8e8c8", "primary": "#2f6b4f", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#f3d7c0" },
-    "portrait_seed": 11
+    "palette": {
+      "hair": "#d8e8c8",
+      "primary": "#2f6b4f",
+      "secondary": "#c9a45a",
+      "accent": "#9df5cf",
+      "skin": "#f3d7c0"
+    },
+    "portrait_seed": 11,
+    "growth": {
+      "hp": 16,
+      "atk": 4,
+      "def": 3,
+      "spd": 2,
+      "crit": 0.004,
+      "crit_dmg": 0.01
+    }
   },
   "bramble": {
     "name": "Bramble",
@@ -25,8 +49,18 @@
     "element": "earth",
     "rarity": "rare",
     "role": "Bruiser",
-    "base": { "hp": 1180, "atk": 78, "def": 58, "spd": 40, "crit": 0.06 },
-    "skills": ["thorn_lash", "stone_bulwark"],
+    "base": {
+      "hp": 1180,
+      "atk": 78,
+      "def": 58,
+      "spd": 40,
+      "crit": 0.06,
+      "crit_dmg": 1.35
+    },
+    "skills": [
+      "thorn_lash",
+      "stone_bulwark"
+    ],
     "ultimate": "worldroot",
     "passive": {
       "name": "Rooted",
@@ -34,8 +68,22 @@
       "text": "Bramble takes 10% less damage while below half health."
     },
     "lore": "A fox-eared drifter raised by the bramble hedges. She apologizes to every tree she cuts and means it every time.",
-    "palette": { "hair": "#c96f3a", "primary": "#5a4a2e", "secondary": "#8fbf6a", "accent": "#ffd27a", "skin": "#f0c8a8" },
-    "portrait_seed": 23
+    "palette": {
+      "hair": "#c96f3a",
+      "primary": "#5a4a2e",
+      "secondary": "#8fbf6a",
+      "accent": "#ffd27a",
+      "skin": "#f0c8a8"
+    },
+    "portrait_seed": 23,
+    "growth": {
+      "hp": 14,
+      "atk": 4,
+      "def": 4,
+      "spd": 1,
+      "crit": 0.003,
+      "crit_dmg": 0.008
+    }
   },
   "seraphine": {
     "name": "Seraphine Ael",
@@ -44,8 +92,18 @@
     "element": "light",
     "rarity": "legendary",
     "role": "Healer",
-    "base": { "hp": 1040, "atk": 82, "def": 50, "spd": 58, "crit": 0.07 },
-    "skills": ["dawn_mend", "radiance"],
+    "base": {
+      "hp": 1040,
+      "atk": 82,
+      "def": 50,
+      "spd": 58,
+      "crit": 0.07,
+      "crit_dmg": 1.5
+    },
+    "skills": [
+      "dawn_mend",
+      "radiance"
+    ],
     "ultimate": "starfall",
     "passive": {
       "name": "Dawnkeeper",
@@ -53,8 +111,22 @@
       "text": "The first healing skill each battle costs no turn energy."
     },
     "lore": "The last ember of a sun that set before the world was named. Seraphine carries its warmth in her hands and gives it away freely.",
-    "palette": { "hair": "#fff2c4", "primary": "#f2ead7", "secondary": "#d9b45c", "accent": "#ffe9a3", "skin": "#f7ddc9" },
-    "portrait_seed": 37
+    "palette": {
+      "hair": "#fff2c4",
+      "primary": "#f2ead7",
+      "secondary": "#d9b45c",
+      "accent": "#ffe9a3",
+      "skin": "#f7ddc9"
+    },
+    "portrait_seed": 37,
+    "growth": {
+      "hp": 24,
+      "atk": 5,
+      "def": 4,
+      "spd": 2,
+      "crit": 0.005,
+      "crit_dmg": 0.012
+    }
   },
   "nyx": {
     "name": "Nyx Vaelora",
@@ -63,8 +135,18 @@
     "element": "dark",
     "rarity": "legendary",
     "role": "Mage",
-    "base": { "hp": 940, "atk": 96, "def": 38, "spd": 60, "crit": 0.10 },
-    "skills": ["umbral_rend", "nightfall"],
+    "base": {
+      "hp": 940,
+      "atk": 96,
+      "def": 38,
+      "spd": 60,
+      "crit": 0.1,
+      "crit_dmg": 1.5
+    },
+    "skills": [
+      "umbral_rend",
+      "nightfall"
+    ],
     "ultimate": "eclipse_requiem",
     "passive": {
       "name": "Hollow Crown",
@@ -72,8 +154,22 @@
       "text": "Dark skills deal 15% more damage to enemies with a debuff."
     },
     "lore": "A queen who traded her reflection for a throne. The moon she rules over is a hole in the sky, and it is always full.",
-    "palette": { "hair": "#2a1533", "primary": "#3b1f4e", "secondary": "#a87bd4", "accent": "#ff6fae", "skin": "#e8cdd8" },
-    "portrait_seed": 41
+    "palette": {
+      "hair": "#2a1533",
+      "primary": "#3b1f4e",
+      "secondary": "#a87bd4",
+      "accent": "#ff6fae",
+      "skin": "#e8cdd8"
+    },
+    "portrait_seed": 41,
+    "growth": {
+      "hp": 20,
+      "atk": 6,
+      "def": 4,
+      "spd": 2,
+      "crit": 0.005,
+      "crit_dmg": 0.012
+    }
   },
   "coralyn": {
     "name": "Coralyn Tide",
@@ -82,8 +178,18 @@
     "element": "water",
     "rarity": "epic",
     "role": "Healer",
-    "base": { "hp": 1020, "atk": 70, "def": 46, "spd": 56, "crit": 0.05 },
-    "skills": ["tidal_caress", "frost_bind"],
+    "base": {
+      "hp": 1020,
+      "atk": 70,
+      "def": 46,
+      "spd": 56,
+      "crit": 0.05,
+      "crit_dmg": 1.4
+    },
+    "skills": [
+      "tidal_caress",
+      "frost_bind"
+    ],
     "ultimate": "abyssal_hymn",
     "passive": {
       "name": "Tidecall",
@@ -91,8 +197,22 @@
       "text": "Healing skills also grant a small shield."
     },
     "lore": "Coralyn left the deep reef to learn why the tides kept whispering a name that was not hers. She still hums it when she is afraid.",
-    "palette": { "hair": "#7fe3e0", "primary": "#1f6f8f", "secondary": "#ffb3c7", "accent": "#b9f6ff", "skin": "#f4d9cd" },
-    "portrait_seed": 53
+    "palette": {
+      "hair": "#7fe3e0",
+      "primary": "#1f6f8f",
+      "secondary": "#ffb3c7",
+      "accent": "#b9f6ff",
+      "skin": "#f4d9cd"
+    },
+    "portrait_seed": 53,
+    "growth": {
+      "hp": 19,
+      "atk": 4,
+      "def": 3,
+      "spd": 2,
+      "crit": 0.004,
+      "crit_dmg": 0.01
+    }
   },
   "ignis": {
     "name": "Ignis Karroth",
@@ -101,8 +221,18 @@
     "element": "fire",
     "rarity": "mythic",
     "role": "Damage",
-    "base": { "hp": 1120, "atk": 108, "def": 52, "spd": 54, "crit": 0.12 },
-    "skills": ["ember_lance", "cinder_veil"],
+    "base": {
+      "hp": 1120,
+      "atk": 108,
+      "def": 52,
+      "spd": 54,
+      "crit": 0.12,
+      "crit_dmg": 1.6
+    },
+    "skills": [
+      "ember_lance",
+      "cinder_veil"
+    ],
     "ultimate": "inferno_crown",
     "passive": {
       "name": "Ashen Wake",
@@ -110,8 +240,22 @@
       "text": "Critical hits burn the target for 2 turns."
     },
     "lore": "The last heir of a kingdom that burned itself to keep him warm. Ignis wears its crown of cinders and has never once apologized.",
-    "palette": { "hair": "#ff7a3c", "primary": "#3a1414", "secondary": "#d9a441", "accent": "#ffb347", "skin": "#e8b28f" },
-    "portrait_seed": 67
+    "palette": {
+      "hair": "#ff7a3c",
+      "primary": "#3a1414",
+      "secondary": "#d9a441",
+      "accent": "#ffb347",
+      "skin": "#e8b28f"
+    },
+    "portrait_seed": 67,
+    "growth": {
+      "hp": 19,
+      "atk": 9,
+      "def": 5,
+      "spd": 2,
+      "crit": 0.009,
+      "crit_dmg": 0.015
+    }
   },
   "mira_sol": {
     "name": "Mira Sol",
@@ -120,8 +264,18 @@
     "element": "light",
     "rarity": "common",
     "role": "Tank",
-    "base": { "hp": 1120, "atk": 62, "def": 64, "spd": 38, "crit": 0.04 },
-    "skills": ["shield_bash", "rally_cry"],
+    "base": {
+      "hp": 1120,
+      "atk": 62,
+      "def": 64,
+      "spd": 38,
+      "crit": 0.04,
+      "crit_dmg": 1.3
+    },
+    "skills": [
+      "shield_bash",
+      "rally_cry"
+    ],
     "ultimate": "aegis_dawn",
     "passive": {
       "name": "Hold the Line",
@@ -129,8 +283,22 @@
       "text": "Allies behind Mira take 6% less damage."
     },
     "lore": "A squire who never got knighted because the kingdom ran out of knights before it ran out of wars. She keeps the oath anyway.",
-    "palette": { "hair": "#e8c27a", "primary": "#c9d2e0", "secondary": "#d9b45c", "accent": "#fff0b8", "skin": "#f0cbb0" },
-    "portrait_seed": 71
+    "palette": {
+      "hair": "#e8c27a",
+      "primary": "#c9d2e0",
+      "secondary": "#d9b45c",
+      "accent": "#fff0b8",
+      "skin": "#f0cbb0"
+    },
+    "portrait_seed": 71,
+    "growth": {
+      "hp": 12,
+      "atk": 2,
+      "def": 3,
+      "spd": 1,
+      "crit": 0.002,
+      "crit_dmg": 0.005
+    }
   },
   "thistle": {
     "name": "Thistle",
@@ -139,8 +307,18 @@
     "element": "wind",
     "rarity": "rare",
     "role": "Support",
-    "base": { "hp": 880, "atk": 66, "def": 40, "spd": 68, "crit": 0.06 },
-    "skills": ["wishlight", "zephyr_blessing"],
+    "base": {
+      "hp": 880,
+      "atk": 66,
+      "def": 40,
+      "spd": 68,
+      "crit": 0.06,
+      "crit_dmg": 1.35
+    },
+    "skills": [
+      "wishlight",
+      "zephyr_blessing"
+    ],
     "ultimate": "thousand_lanterns",
     "passive": {
       "name": "Small Miracles",
@@ -148,8 +326,22 @@
       "text": "At the start of battle, grant the team 10 energy."
     },
     "lore": "A wisp born from a child's wish on a winter night. Thistle collects abandoned wishes in a lantern and lights them when someone needs hope.",
-    "palette": { "hair": "#f2e2a8", "primary": "#3f5a6b", "secondary": "#8fd9c4", "accent": "#ffeaa0", "skin": "#f6e3cf" },
-    "portrait_seed": 83
+    "palette": {
+      "hair": "#f2e2a8",
+      "primary": "#3f5a6b",
+      "secondary": "#8fd9c4",
+      "accent": "#ffeaa0",
+      "skin": "#f6e3cf"
+    },
+    "portrait_seed": 83,
+    "growth": {
+      "hp": 12,
+      "atk": 3,
+      "def": 3,
+      "spd": 1,
+      "crit": 0.003,
+      "crit_dmg": 0.008
+    }
   },
   "vespera": {
     "name": "Vespera Noct",
@@ -158,8 +350,18 @@
     "element": "dark",
     "rarity": "epic",
     "role": "Assassin",
-    "base": { "hp": 900, "atk": 92, "def": 34, "spd": 70, "crit": 0.14 },
-    "skills": ["umbral_rend", "blood_waltz"],
+    "base": {
+      "hp": 900,
+      "atk": 92,
+      "def": 34,
+      "spd": 70,
+      "crit": 0.14,
+      "crit_dmg": 1.4
+    },
+    "skills": [
+      "umbral_rend",
+      "blood_waltz"
+    ],
     "ultimate": "crimson_eclipse",
     "passive": {
       "name": "Sanguine Waltz",
@@ -167,8 +369,22 @@
       "text": "Heals for 20% of all damage dealt."
     },
     "lore": "Vespera attends every funeral in Nocturne, dressed in white. Nobody has ever seen her leave before the last candle goes out.",
-    "palette": { "hair": "#d8d8e8", "primary": "#2a1a2e", "secondary": "#8f2f4f", "accent": "#ff8fb3", "skin": "#f0e0e0" },
-    "portrait_seed": 97
+    "palette": {
+      "hair": "#d8d8e8",
+      "primary": "#2a1a2e",
+      "secondary": "#8f2f4f",
+      "accent": "#ff8fb3",
+      "skin": "#f0e0e0"
+    },
+    "portrait_seed": 97,
+    "growth": {
+      "hp": 11,
+      "atk": 6,
+      "def": 3,
+      "spd": 3,
+      "crit": 0.006,
+      "crit_dmg": 0.01
+    }
   },
   "arachnia": {
     "name": "Arachnia Silk",
@@ -177,8 +393,18 @@
     "element": "dark",
     "rarity": "epic",
     "role": "Controller",
-    "base": { "hp": 960, "atk": 84, "def": 44, "spd": 64, "crit": 0.08 },
-    "skills": ["web_bind", "venom_bite"],
+    "base": {
+      "hp": 960,
+      "atk": 84,
+      "def": 44,
+      "spd": 64,
+      "crit": 0.08,
+      "crit_dmg": 1.4
+    },
+    "skills": [
+      "web_bind",
+      "venom_bite"
+    ],
     "ultimate": "silk_dominion",
     "passive": {
       "name": "Patient Weaver",
@@ -186,8 +412,22 @@
       "text": "Stunned enemies take 20% more damage from Arachnia."
     },
     "lore": "Arachne of the eighth strand, who wove a tapestry of every road in Aetheria and then hid the one that leads to her.",
-    "palette": { "hair": "#3a2a4a", "primary": "#4a2f5a", "secondary": "#b07fd4", "accent": "#c8ff8f", "skin": "#e8c8d8" },
-    "portrait_seed": 101
+    "palette": {
+      "hair": "#3a2a4a",
+      "primary": "#4a2f5a",
+      "secondary": "#b07fd4",
+      "accent": "#c8ff8f",
+      "skin": "#e8c8d8"
+    },
+    "portrait_seed": 101,
+    "growth": {
+      "hp": 18,
+      "atk": 4,
+      "def": 3,
+      "spd": 2,
+      "crit": 0.004,
+      "crit_dmg": 0.01
+    }
   },
   "terra": {
     "name": "Terra Rootheart",
@@ -196,8 +436,18 @@
     "element": "earth",
     "rarity": "legendary",
     "role": "Tank",
-    "base": { "hp": 1560, "atk": 70, "def": 86, "spd": 28, "crit": 0.03 },
-    "skills": ["stone_bulwark", "thorn_lash"],
+    "base": {
+      "hp": 1560,
+      "atk": 70,
+      "def": 86,
+      "spd": 28,
+      "crit": 0.03,
+      "crit_dmg": 1.5
+    },
+    "skills": [
+      "stone_bulwark",
+      "thorn_lash"
+    ],
     "ultimate": "worldroot",
     "passive": {
       "name": "Deep Roots",
@@ -205,8 +455,22 @@
       "text": "Terra cannot be moved by knockback and gains 15% Defense."
     },
     "lore": "She was a mountain before she was a woman, and she still dreams in stone. When she speaks, the ground answers first.",
-    "palette": { "hair": "#6f8f5a", "primary": "#4a4030", "secondary": "#8fbf6a", "accent": "#d9ff9f", "skin": "#c9a88a" },
-    "portrait_seed": 113
+    "palette": {
+      "hair": "#6f8f5a",
+      "primary": "#4a4030",
+      "secondary": "#8fbf6a",
+      "accent": "#d9ff9f",
+      "skin": "#c9a88a"
+    },
+    "portrait_seed": 113,
+    "growth": {
+      "hp": 30,
+      "atk": 4,
+      "def": 6,
+      "spd": 2,
+      "crit": 0.005,
+      "crit_dmg": 0.012
+    }
   },
   "kael": {
     "name": "Kael Ashford",
@@ -215,8 +479,18 @@
     "element": "fire",
     "rarity": "rare",
     "role": "Damage",
-    "base": { "hp": 1020, "atk": 88, "def": 44, "spd": 56, "crit": 0.09 },
-    "skills": ["ember_lance", "rally_cry"],
+    "base": {
+      "hp": 1020,
+      "atk": 88,
+      "def": 44,
+      "spd": 56,
+      "crit": 0.09,
+      "crit_dmg": 1.35
+    },
+    "skills": [
+      "ember_lance",
+      "rally_cry"
+    ],
     "ultimate": "blazing_charge",
     "passive": {
       "name": "Nothing to Lose",
@@ -224,7 +498,21 @@
       "text": "Deals 12% more damage below 40% health."
     },
     "lore": "A sellsword who burned his banner and kept the sword. He fights for anyone with coin, and for one person without it.",
-    "palette": { "hair": "#4a3020", "primary": "#5a3a2a", "secondary": "#c96f3a", "accent": "#ffcf6a", "skin": "#e8b890" },
-    "portrait_seed": 127
+    "palette": {
+      "hair": "#4a3020",
+      "primary": "#5a3a2a",
+      "secondary": "#c96f3a",
+      "accent": "#ffcf6a",
+      "skin": "#e8b890"
+    },
+    "portrait_seed": 127,
+    "growth": {
+      "hp": 10,
+      "atk": 4,
+      "def": 3,
+      "spd": 1,
+      "crit": 0.0045,
+      "crit_dmg": 0.008
+    }
   }
 }
