@@ -419,7 +419,10 @@ func _handle_damage(event: Dictionary) -> void:
 		if elem_color == UITheme.TEXT_DIM:
 			elem_color = Color(1.4, 0.9, 0.9, 1.0)
 		card.flash(elem_color)
-		_float_text(card, "-%d%s" % [amount, "!" if crit else ""], color)
+		get_tree().create_timer(0.35).timeout.connect(func() -> void:
+			if is_instance_valid(card):
+				_float_text(card, "-%d%s" % [amount, "!" if crit else ""], color)
+		)
 		if crit or amount > 50:
 			_camera_shake(4.0 if crit else 2.0, 0.2)
 
@@ -686,23 +689,35 @@ func _animate_attack(attacker: CombatUnitCard, target: CombatUnitCard) -> void:
 		return
 	var origin := attacker.position
 	var tween := create_tween()
-	# Anticipation: slight scale up.
-	tween.tween_property(attacker, "scale", Vector2(1.08, 1.08), 0.08)
-	# Move toward target.
+	# Anticipation: scale up and slight pull back.
+	tween.tween_property(attacker, "scale", Vector2(1.15, 1.15), 0.1).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_interval(0.05)
+	# Move toward target (dramatic approach).
 	if target != null and is_instance_valid(target):
 		var target_pos := target.position
 		var direction := (target_pos - origin).normalized()
-		var approach := origin + direction * minf(60.0, origin.distance_to(target_pos) * 0.4)
-		tween.tween_property(attacker, "position", approach, 0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-		tween.tween_interval(0.05)
+		var approach := origin + direction * minf(120.0, origin.distance_to(target_pos) * 0.6)
+		tween.tween_property(attacker, "position", approach, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tween.tween_interval(0.08)
+		# Impact flash on target.
+		if target != null and is_instance_valid(target):
+			target.self_modulate = Color(2.0, 2.0, 2.0, 1.0)
+			var flash_tween := create_tween()
+			flash_tween.tween_property(target, "self_modulate", Color.WHITE, 0.25)
+		# Knockback: target moves slightly away.
+		if target != null and is_instance_valid(target):
+			var knockback := target.position + direction * 15.0
+			var kb_tween := create_tween()
+			kb_tween.tween_property(target, "position", knockback, 0.08).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			kb_tween.tween_property(target, "position", target_pos, 0.15).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 		# Return to origin.
-		tween.tween_property(attacker, "position", origin, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.tween_property(attacker, "scale", Vector2.ONE, 0.1)
+		tween.tween_property(attacker, "position", origin, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(attacker, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_ELASTIC)
 	# Target hit reaction (scale punch).
 	if target != null and is_instance_valid(target):
 		var punch := create_tween()
-		punch.tween_property(target, "scale", Vector2(1.12, 0.88), 0.06)
-		punch.tween_property(target, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_ELASTIC)
+		punch.tween_property(target, "scale", Vector2(1.2, 0.85), 0.06)
+		punch.tween_property(target, "scale", Vector2.ONE, 0.15).set_trans(Tween.TRANS_ELASTIC)
 
 
 func _show_banner(text: String) -> void:
