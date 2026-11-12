@@ -1,4 +1,4 @@
-﻿class_name CombatScreen
+class_name CombatScreen
 extends Control
 ## Turn-based battle overlay. The CombatEngine is pure and deterministic; this
 ## screen only translates its event stream into cards, numbers and log lines.
@@ -474,9 +474,8 @@ func _refresh_skills() -> void:
 
 func _add_skill_button(skill: SkillDef, actor: Combatant) -> void:
 	# Show the skill's kind + power more legibly; keep the ULTIMATE prefix.
-	var detail := "%s Â· %s Â· PWR %d" % [
-		skill.element.capitalize(), skill.kind.capitalize(), int(skill.power)
-	]
+	var energy_text := "FREE" if skill.energy_gain <= 0 else "%d EN" % int(skill.energy_gain)
+	var detail := "%s | %s | PWR %d | %s" % [skill.element.capitalize(), skill.kind.capitalize(), int(skill.power), energy_text]
 	var text := "%s\n%s" % [skill.display_name, detail]
 	if skill.ultimate:
 		text = "ULTIMATE Â· %s\n%s" % [skill.display_name, detail]
