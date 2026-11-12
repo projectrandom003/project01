@@ -419,6 +419,8 @@ func _handle_damage(event: Dictionary) -> void:
 		if elem_color == UITheme.TEXT_DIM:
 			elem_color = Color(1.4, 0.9, 0.9, 1.0)
 		card.flash(elem_color)
+		# Spawn elemental burst at target position.
+		_spawn_elemental_burst(card.global_position - global_position + card.size * 0.5, element)
 		get_tree().create_timer(0.35).timeout.connect(func() -> void:
 			if is_instance_valid(card):
 				_float_text(card, "-%d%s" % [amount, "!" if crit else ""], color)
@@ -659,6 +661,33 @@ func _card_for_uid(uid: String) -> CombatUnitCard:
 	var card = _card_by_index.get(unit.combat_index, null)
 	return card as CombatUnitCard
 
+
+func _spawn_elemental_burst(pos: Vector2, element: String) -> void:
+	var color := UITheme.element_color(element)
+	if color == UITheme.TEXT_DIM:
+		color = Color(0.8, 0.8, 0.8)
+	var particles := CPUParticles2D.new()
+	particles.amount = 16
+	particles.lifetime = 0.6
+	particles.one_shot = true
+	particles.explosiveness = 0.9
+	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+	particles.emission_sphere_radius = 8.0
+	particles.direction = Vector2(0, -1)
+	particles.initial_velocity_min = 40.0
+	particles.initial_velocity_max = 120.0
+	particles.gravity = Vector2(0, 80)
+	particles.scale_amount_min = 0.4
+	particles.scale_amount_max = 1.2
+	particles.color = color
+	particles.z_index = 40
+	particles.position = pos
+	add_child(particles)
+	particles.emitting = true
+	get_tree().create_timer(1.0).timeout.connect(func() -> void:
+		if is_instance_valid(particles):
+			particles.queue_free()
+	)
 
 func _float_text(card: CombatUnitCard, text: String, color: Color) -> void:
 	if card == null or not is_instance_valid(card):
