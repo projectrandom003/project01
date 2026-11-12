@@ -30,6 +30,12 @@ var _pending_skill: SkillDef = null
 var _target_team: int = -1
 var _targeting: bool = false
 var _resolved: bool = false
+var _boss_bar_container: VBoxContainer = null
+var _boss_name_label: Label = null
+var _boss_hp_bar: ProgressBar = null
+var _boss_phase_label: Label = null
+var _camera_shake_timer: float = 0.0
+var _camera_shake_intensity: float = 0.0
 var _claimed: bool = false
 var _turn_token: int = 0
 var _speed: float = 1.0
@@ -92,6 +98,12 @@ func _build_layout() -> void:
 
 	var header := UIFactory.hbox(10)
 	_title_label = UIFactory.heading("Battle", 24, UITheme.GOLD_BRIGHT)
+	_boss_bar_container = null
+	_boss_name_label = null
+	_boss_hp_bar = null
+	_boss_phase_label = null
+	_camera_shake_timer = 0.0
+	_camera_shake_intensity = 0.0
 	header.add_child(_title_label)
 	_round_label = UIFactory.label("Round 1", 11, UITheme.TEXT_DIM)
 	header.add_child(_round_label)
@@ -110,6 +122,24 @@ func _build_layout() -> void:
 	retreat.pressed.connect(_confirm_retreat)
 	header.add_child(retreat)
 	root.add_child(header)
+
+	# Boss health bar (hidden by default).
+	_boss_bar_container = UIFactory.vbox(4)
+	_boss_bar_container.visible = false
+	var boss_bar_panel := UIFactory.panel(Color("#1a0a0a"), Color(UITheme.DANGER.r, UITheme.DANGER.g, UITheme.DANGER.b, 0.6), 10, 1, 8)
+	_boss_bar_container.add_child(boss_bar_panel)
+	var boss_bar_inner := UIFactory.vbox(4)
+	boss_bar_panel.add_child(boss_bar_inner)
+	_boss_name_label = UIFactory.heading("Boss", 18, UITheme.DANGER)
+	_boss_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	boss_bar_inner.add_child(_boss_name_label)
+	_boss_hp_bar = UIFactory.bar(UITheme.DANGER, 12)
+	_boss_hp_bar.custom_minimum_size = Vector2(0, 16)
+	boss_bar_inner.add_child(_boss_hp_bar)
+	_boss_phase_label = UIFactory.label("Phase 1", 10, UITheme.TEXT_DIM)
+	_boss_phase_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	boss_bar_inner.add_child(_boss_phase_label)
+	root.add_child(_boss_bar_container)
 
 	var turn_panel := UIFactory.panel(Color(0.05, 0.075, 0.13, 0.75), UITheme.BORDER_SOFT, 8, 1, 6)
 	var turn_row := UIFactory.hbox(8)
@@ -197,6 +227,11 @@ func _start_battle() -> void:
 
 	var player_units := CombatFactory.player_units()
 	var enemy_units := CombatFactory.enemy_units(group_id)
+	var has_boss := false
+	for eu in enemy_units:
+		if eu.is_boss:
+			has_boss = true
+			break
 	if player_units.is_empty() or enemy_units.is_empty():
 		push_error("[CombatScreen] Battle has no units.")
 		_claim(false)
@@ -204,6 +239,17 @@ func _start_battle() -> void:
 
 	engine = CombatEngine.new()
 	engine.setup(player_units, enemy_units, randi())
+	if has_boss:
+		for eu in enemy_units:
+			if eu.is_boss:
+				if _boss_name_label != null:
+					_boss_name_label.text = eu.display_name
+				if _boss_hp_bar != null:
+					_boss_hp_bar.max_value = eu.max_hp
+					_boss_hp_bar.value = eu.hp
+				if _boss_bar_container != null:
+					_boss_bar_container.visible = true
+				_show_banner("Boss: " + eu.display_name)
 	for index in engine.combatants.size():
 		var unit: Combatant = engine.combatants[index]
 		var card := CombatUnitCard.new()
@@ -272,6 +318,7 @@ func _process_events(events: Array) -> void:
 			"phase":
 				_log("[color=#ffc95e]%s[/color]" % str(event.get("message", "The boss changes.")))
 				_show_banner(str(event.get("message", "PHASE CHANGE")))
+				_camera_shake(10.0, 0.5)
 			"victory":
 				_refresh_cards()
 				_finish_battle(true)
@@ -494,6 +541,14 @@ func _cycle_speed() -> void:
 func _refresh_cards() -> void:
 	if engine == null:
 		return
+	if _boss_hp_bar != null and _boss_hp_bar.visible:
+		for index in _card_by_index.keys():
+			var c: CombatUnitCard = _card_by_index[index]
+			var u: Combatant = engine.combatants[int(index)]
+			if u.is_boss and u.is_alive():
+				_boss_hp_bar.value = u.hp
+				if _boss_phase_label != null:
+					_boss_phase_label.text = "Phase %d" % (u.triggered_phases.size() + 1)
 	for index in _card_by_index.keys():
 		var card: CombatUnitCard = _card_by_index[index]
 		var unit: Combatant = engine.combatants[int(index)]
@@ -585,6 +640,23 @@ func _log(line: String) -> void:
 
 
 # ------------------------------------------------------------------ finish
+
+func _process(delta: float) -> void:
+	if _camera_shake_timer > 0.0:
+		_camera_shake_timer -= delta
+		var offset := Vector2(randf_range(-_camera_shake_intensity, _camera_shake_intensity), randf_range(-_camera_shake_intensity, _camera_shake_intensity))
+		if _boss_bar_container != null:
+			_boss_bar_container.position = offset
+		if _camera_shake_timer <= 0.0:
+			_camera_shake_intensity = 0.0
+			if _boss_bar_container != null:
+				_boss_bar_container.position = Vector2.ZERO
+
+
+func _camera_shake(intensity: float, duration: float) -> void:
+	_camera_shake_intensity = maxf(_camera_shake_intensity, intensity)
+	_camera_shake_timer = maxf(_camera_shake_timer, duration)
+
 
 func _finish_battle(victory: bool) -> void:
 	if _resolved:
