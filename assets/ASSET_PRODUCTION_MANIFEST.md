@@ -1,6 +1,7 @@
 # PROJECT FANTASY — Asset Production Manifest (Part 6)
 
-> **ZERO final assets exist.** All shipped visuals are RUNTIME PROCEDURAL PLACEHOLDER art.
+> **Lilith is the ONE final playable character.** All shipped visuals for the 12
+> collectible characters are RUNTIME PROCEDURAL PLACEHOLDER art.
 > This manifest tracks EVERY expected character asset as FINAL / TEMPORARY / MISSING, computed
 > from disk by `scripts/art/character_asset_registry.gd` (`CharacterAssetRegistry`). It is a contract,
 > not a gallery: NO image/binary art file was created in this phase.

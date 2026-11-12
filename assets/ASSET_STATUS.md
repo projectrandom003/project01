@@ -1,6 +1,6 @@
 # PROJECT FANTASY — Asset Status (`assets/`)
 
-> **ZERO final painted assets ship with this build. There is also NO audio.**
+> **Lilith is the ONE final playable character; the 12 collectibles are ZERO final painted assets. There is also NO audio.**
 > Every class below is served by a **procedural placeholder** that IS present and
 > rendering right now (`TEMPORARY`), while the expected **final painted file is
 > MISSING** from disk. These are two orthogonal facts: the fallback exists, the
@@ -36,7 +36,12 @@
 
 ## What actually exists on disk
 
-* `icon.svg` + `icon.svg.import` (the app icon) — the only image files in the repo.
+* `icon.svg` + `icon.svg.import` (the app icon) — the only image file tracked by `AssetManifest`.
+* `assets/characters/lilith/` — Lilith's final playable art: `world_sheet.tres`
+  (72 animations / 432 frames), `portrait.png` (256x384),
+  `combat_sprite.png` (128x192), `full_body_illustration.png` (1024x2048) and
+  the per-state `<state>_sheet.png` atlases. Tracked by
+  `MainCharacterRoster`, NOT by `AssetManifest`.
 * **No** `.png` / `.webp` / `.jpg` / `.tres` / sprite sheets / audio anywhere else.
 * All prop textures, character frames, glows and lights are generated at runtime
   by `scripts/world/procedural_art.gd` / `procedural_actor_frames.gd`.

@@ -17,6 +17,15 @@ const FRICTION := 2100.0
 const MIN_ZOOM := 0.72
 const MAX_ZOOM := 1.85
 
+## The Wanderer's original hero palette (unchanged placeholder identity).
+const HERO_PALETTE := {
+	"hair": "#5a3a2a",
+	"primary": "#2f4a6b",
+	"secondary": "#c9a45a",
+	"accent": "#7fe3e0",
+	"skin": "#f0cbb0",
+}
+
 # Animation state ids (mirror CharacterAnimator.State / ActorVisual.S_*).
 const ANIM_IDLE := 0
 const ANIM_WALK := 1
@@ -27,6 +36,9 @@ var input_enabled: bool = true
 var visual: ActorVisual
 var camera: Camera2D
 var nearby_interactable: Interactable = null
+## "" = the Wanderer placeholder avatar. Any other value is a party character id
+## whose validated world_sheet.tres is driving the Sprite2D.
+var avatar_id: String = ""
 
 var _zoom: float = 1.1
 var _scan_accumulator: float = 0.0
@@ -54,20 +66,14 @@ func _ready() -> void:
 	visual = ActorVisual.new()
 	# Hero palette kept as stable String literals (matches GreenwardStyle.MAGIC /
 	# CANOPY accents; there is no character-palette entry in GreenwardStyle).
-	var hero_palette := {
-		"hair": "#5a3a2a",
-		"primary": "#2f4a6b",
-		"secondary": "#c9a45a",
-		"accent": "#7fe3e0",
-		"skin": "#f0cbb0",
-	}
-	visual.setup(hero_palette, ActorVisual.Kind.HUMAN, "player", "Human", "wind")
+	visual.setup(HERO_PALETTE, ActorVisual.Kind.HUMAN, "player", "Human", "wind")
 	add_child(visual)
 	# Phase-2: register the ONE fully integrated demonstration character. The
 	# in-memory SpriteFrames sheet is TEMPORARY procedural art (no painted
 	# assets exist yet) but exercises the whole SpriteFramesActorSource path.
 	# Its is_temporary() is TRUE, so visual.using_temporary_art stays TRUE.
-	visual.set_frame_source(DemoCharacterFrames.new("player", hero_palette))
+	# The starting party's real disk-backed avatars are one Tab press away.
+	visual.set_frame_source(DemoCharacterFrames.new("player", HERO_PALETTE))
 
 	_name_label = Label.new()
 	_name_label.text = str(GameState.profile.get("name", "Wanderer"))
@@ -165,11 +171,80 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("switch_avatar"):
+		if event is InputEventKey and event.echo:
+			return
+		if input_enabled:
+			cycle_avatar()
+			get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_set_zoom(_zoom - 0.08)
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			_set_zoom(_zoom + 0.08)
+
+
+# ------------------------------------------------------------ avatar switching
+
+## The Wanderer ("") plus every party member that has a real, fully validated
+## disk SpriteFrames. Characters with only procedural art are not listed, so a
+## switch can never downgrade the player to a placeholder silhouette.
+func available_avatars() -> Array[String]:
+	var ids: Array[String] = [""]
+	for instance in GameState.party_instances():
+		var character_id := str(instance.char_id)
+		if character_id.is_empty() or ids.has(character_id):
+			continue
+		var source := SpriteFramesActorSource.from_disk(character_id)
+		if source != null and source.has_frames() and source.validate_sheets().is_empty():
+			ids.append(character_id)
+	return ids
+
+
+## Cycle the world avatar and return the newly active id ("" = Wanderer).
+func cycle_avatar() -> String:
+	var ids := available_avatars()
+	if ids.size() <= 1:
+		EventBus.toast_requested.emit("No other playable avatars in the party yet.")
+		return avatar_id
+	var index := ids.find(avatar_id)
+	var next_id := ids[(index + 1) % ids.size()] if index >= 0 else ids[0]
+	set_avatar(next_id)
+	return avatar_id
+
+
+## Drive the world actor as `character_id`. "" restores the Wanderer demo art.
+func set_avatar(character_id: String) -> void:
+	if visual == null:
+		return
+	if character_id.is_empty():
+		avatar_id = ""
+		visual.setup(HERO_PALETTE, ActorVisual.Kind.HUMAN, "player", "Human", "wind")
+		visual.set_frame_source(DemoCharacterFrames.new("player", HERO_PALETTE))
+		if _name_label != null:
+			_name_label.text = str(GameState.profile.get("name", "Wanderer"))
+		EventBus.toast_requested.emit("Now playing as the Wanderer")
+		return
+	var definition := ContentDB.get_character(character_id)
+	if definition == null or definition.id.is_empty():
+		return
+	var kind := ActorVisual.Kind.HUMAN
+	if definition.race == "Spirit":
+		kind = ActorVisual.Kind.SPIRIT
+	elif definition.race == "Monster":
+		kind = ActorVisual.Kind.MONSTER
+	visual.setup(definition.palette, kind, character_id, definition.race, definition.element)
+	var report := visual.configure_character(character_id)
+	if not bool(report.get("registered", false)):
+		# No validated sheet after all: stay on the Wanderer rather than leaving
+		# the previous avatar's textures on screen under a new name.
+		set_avatar("")
+		return
+	avatar_id = character_id
+	if _name_label != null:
+		_name_label.text = definition.display_name
+	EventBus.toast_requested.emit("Now playing as " + definition.display_name)
 
 
 func _set_zoom(value: float) -> void:

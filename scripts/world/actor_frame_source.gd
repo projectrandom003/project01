@@ -138,6 +138,14 @@ func is_looping(state: int) -> bool:
 	return CharacterAnimator.looping_for(state)
 
 
+## TRUE by default == the renderer may mirror the sprite horizontally from the
+## actor's `facing` sign. The procedural fallback draws ONE silhouette and relies
+## on mirroring. A production 8-direction sheet already encodes left/right in its
+## direction rows, so it overrides this to FALSE to avoid double-mirroring.
+func mirrors_by_facing() -> bool:
+	return true
+
+
 ## TRUE by default == placeholder art. A production SpriteFramesActorSource
 ## overrides this to return false.
 func is_temporary() -> bool:

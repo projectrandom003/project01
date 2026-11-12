@@ -135,6 +135,12 @@ func is_temporary() -> bool:
 	return not loaded_from_disk
 
 
+## Real sheets address all 8 directions explicitly, so the renderer must NOT
+## mirror them from the actor's facing sign (that would flip LEFT into RIGHT).
+func mirrors_by_facing() -> bool:
+	return false
+
+
 func source_label() -> String:
 	if loaded_from_disk:
 		return "spriteframes:%s" % sheet_path

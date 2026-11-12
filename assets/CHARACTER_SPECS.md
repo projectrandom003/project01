@@ -1,6 +1,7 @@
 # PROJECT FANTASY — First 12 Character Art Specs
 
-> **ZERO final assets exist.** All shipped visuals are RUNTIME PROCEDURAL PLACEHOLDER art.
+> **Lilith is the ONE final playable character.** All shipped visuals for the 12
+> collectible characters are RUNTIME PROCEDURAL PLACEHOLDER art.
 > This is a human-readable index of the 12 authored art SPECIFICATIONS (contracts), not a gallery.
 > Machine-readable source: `scripts/art/character_art_spec.gd` (`CharacterArtSpec`).
 

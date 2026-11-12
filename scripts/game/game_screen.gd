@@ -152,6 +152,7 @@ func _build_ui() -> void:
 	hud.screen_requested.connect(open_screen)
 	hud.menu_requested.connect(_open_pause_menu)
 	hud.interact_requested.connect(_interact)
+	hud.switch_avatar_requested.connect(_switch_avatar)
 
 
 func _connect_signals() -> void:
@@ -225,6 +226,14 @@ func _interact() -> void:
 	if not world.player.input_enabled:
 		return
 	world.player.try_interact()
+
+
+func _switch_avatar() -> void:
+	if world == null or world.player == null:
+		return
+	if not world.player.input_enabled:
+		return
+	world.player.cycle_avatar()
 
 
 # ------------------------------------------------------------------ dialogue

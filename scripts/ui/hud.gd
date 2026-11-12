@@ -9,6 +9,7 @@ extends Control
 signal screen_requested(screen_id: String)
 signal menu_requested
 signal interact_requested
+signal switch_avatar_requested
 
 var joystick: TouchJoystick
 var _area_label: Label
@@ -20,6 +21,7 @@ var _prompt_panel: PanelContainer
 var _prompt_label: Label
 var _toast_box: VBoxContainer
 var _touch_interact: Button
+var _touch_switch: Button
 var _hint_label: Label
 var _minimap: Minimap
 
@@ -287,7 +289,7 @@ func _build_actions() -> void:
 	menu.pressed.connect(func() -> void: menu_requested.emit())
 	actions.add_child(menu)
 
-	_hint_label = UIFactory.label("WASD move  ·  E interact  ·  Esc menu", 10, UITheme.TEXT_FAINT)
+	_hint_label = UIFactory.label("WASD move  ·  E interact  ·  Tab switch hero  ·  Esc menu", 10, UITheme.TEXT_FAINT)
 	_hint_label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	_hint_label.offset_left = -320
 	_hint_label.offset_right = -20
@@ -344,3 +346,13 @@ func _build_touch() -> void:
 	_touch_interact.visible = false
 	_touch_interact.pressed.connect(func() -> void: interact_requested.emit())
 	add_child(_touch_interact)
+
+	_touch_switch = UIFactory.button("Switch", true)
+	_touch_switch.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	_touch_switch.offset_left = -158
+	_touch_switch.offset_right = -20
+	_touch_switch.offset_top = -412
+	_touch_switch.offset_bottom = -366
+	_touch_switch.visible = TouchInput.using_touch
+	_touch_switch.pressed.connect(func() -> void: switch_avatar_requested.emit())
+	add_child(_touch_switch)

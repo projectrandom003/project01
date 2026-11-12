@@ -73,13 +73,28 @@ func _check_new_game() -> void:
 
 
 func _check_portraits() -> void:
-	for character_id in ["gerald", "lilith", "kael"]:
+	for character_id in ["gerald", "kael"]:
 		var definition := ContentDB.get_character(character_id)
 		var view := PortraitView.new()
 		view.setup_character(definition)
 		var report := view.portrait_report()
 		_check("portrait fallback active: " + character_id, bool(report.get("fallback_active", false)), str(report))
 		view.free()
+	# Lilith is the first protagonist with final playable art: a real 256x384
+	# portrait, so the procedural fallback must NOT be active.
+	var lilith := ContentDB.get_character("lilith")
+	var lilith_view := PortraitView.new()
+	lilith_view.setup_character(lilith)
+	var lilith_report := lilith_view.portrait_report()
+	_check("lilith uses final portrait", not bool(lilith_report.get("fallback_active", true)), str(lilith_report))
+	lilith_view.free()
+	_check("lilith portrait texture loads", MainCharacterRoster.portrait_texture("lilith") != null)
+	_check("lilith portrait status is portrait_ready", MainCharacterRoster.asset_status("lilith") == "portrait_ready", MainCharacterRoster.asset_status("lilith"))
+	_check("lilith world sheet exposes 72 animations", MainCharacterRoster.world_sheet("lilith") != null and MainCharacterRoster.world_sheet("lilith").get_animation_names().size() == 72)
+	_check("lilith world art is runtime-ready", MainCharacterRoster.world_art_ready("lilith"))
+	_check("lilith combat sprite loads", MainCharacterRoster._texture_ready(MainCharacterRoster.combat_sprite_path("lilith")))
+	_check("lilith full-body art loads", MainCharacterRoster._texture_ready(MainCharacterRoster.full_body_path("lilith")))
+	_check("lilith art status is final", MainCharacterRoster.art_status("lilith") == "final", MainCharacterRoster.art_status("lilith"))
 
 
 func _legacy_save() -> Dictionary:

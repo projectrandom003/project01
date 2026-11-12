@@ -1,6 +1,6 @@
 # PROJECT FANTASY — Character Art Pipeline (Part 1 contract)
 
-> **ZERO final assets exist.** Every shipped visual is RUNTIME PROCEDURAL PLACEHOLDER art generated in code.
+> **Lilith is the ONE final playable character.** Every other shipped visual is RUNTIME PROCEDURAL PLACEHOLDER art generated in code.
 > This document and `scripts/art/character_art_pipeline.gd` (`CharacterArtPipeline`) are a pure CONTRACT /
 > SPECIFICATION for FUTURE external generation. No image/binary art file was created in this phase.
 > Authoritative docs: `documentation/ART_PIPELINE.md`, `documentation/VISUAL_STYLE.md`.

@@ -1,9 +1,13 @@
 # PROJECT FANTASY — Art Asset Pipeline (`assets/`)
 
-> **Honest status:** This build ships **ZERO final painted assets** and **no audio**.
-> Everything you see is procedural placeholder art generated at runtime. This
+> **Honest status:** This build ships **ZERO final painted assets for the 12 collectible characters** and **no audio**.
+> Everything you see for them is procedural placeholder art generated at runtime. This
 > folder is the *contract* for dropping in real art, not a gallery of finished
 > work. See [`ASSET_STATUS.md`](ASSET_STATUS.md) for the per-class status table.
+>
+> **Exception:** `assets/characters/lilith/` holds final imported playable art for
+> Lilith (72 world animations, portrait, combat sprite, full-body illustration).
+> See [`characters/main/little_sister/SPEC.md`](characters/main/little_sister/SPEC.md).
 >
 > Authoritative docs: [`../documentation/ART_PIPELINE.md`](../documentation/ART_PIPELINE.md)
 > and [`../documentation/VISUAL_STYLE.md`](../documentation/VISUAL_STYLE.md).

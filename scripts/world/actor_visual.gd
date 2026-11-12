@@ -239,6 +239,12 @@ func _hide_sprite() -> void:
 	_last_sprite_key = -1
 
 
+## Production 8-direction sheets must not be mirrored from `facing`; the
+## procedural fallback and any single-silhouette source still are.
+func _mirrors_by_facing() -> bool:
+	return frame_source == null or frame_source.mirrors_by_facing()
+
+
 func _apply_sprite_geometry() -> void:
 	if _sprite == null or _sprite.texture == null:
 		return
@@ -249,7 +255,7 @@ func _apply_sprite_geometry() -> void:
 	# bottom-centre offset matching SPRITE_SPECS.anchor
 	_sprite.offset = Vector2(-float(tex.get_width()) * anchor.x, -float(tex.get_height()) * anchor.y)
 	_sprite.scale = Vector2.ONE * visual_scale
-	_sprite.flip_h = facing < 0.0
+	_sprite.flip_h = facing < 0.0 and _mirrors_by_facing()
 
 
 func _update_sprite_frame() -> void:
@@ -379,7 +385,7 @@ func _reconcile_compat() -> void:
 	if facing != _last_facing:
 		_last_facing = facing
 		if _sprite != null and _sprite_active:
-			_sprite.flip_h = facing < 0.0
+			_sprite.flip_h = facing < 0.0 and _mirrors_by_facing()
 
 
 # ------------------------------------------------------------------ drawing

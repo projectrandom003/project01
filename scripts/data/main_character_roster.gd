@@ -9,11 +9,13 @@ extends RefCounted
 ## through the normal ContentDB API.
 ##
 ## The registry remains the asset/authoring view: it is the only place that
-## knows about the design reference sheets and the future portrait paths.
+## knows about the design reference sheets, the playable-art folders and the
+## runtime world sheets.
 ##
-## Assets live under res://assets/characters/main/<folder>/ and are design
-## reference sheets, not cut-out portraits. portrait_texture() only ever returns
-## a real 256x384 RGBA8 portrait, so it stays null until an artist supplies one.
+## Design references live under res://assets/characters/main/<folder>/; playable
+## art lives under res://assets/characters/<id>/. portrait_texture() only ever
+## returns a real 256x384 RGBA8 portrait, so a protagonist without one stays
+## null and keeps the procedural fallback.
 
 const DATA_PATH := "res://resources/data/main_characters.json"
 const PORTRAIT_W := 256
@@ -94,6 +96,50 @@ static func portrait_path(character_id: String) -> String:
 	return str(_assets(character_id).get("portrait_target", ""))
 
 
+## Folder holding the playable (in-game) art. Falls back to the design-reference
+## folder for protagonists that only have a reference sheet.
+static func playable_folder(character_id: String) -> String:
+	var folder := str(_assets(character_id).get("playable_folder", ""))
+	return folder if not folder.is_empty() else asset_folder(character_id)
+
+
+static func world_sheet_path(character_id: String) -> String:
+	return str(_assets(character_id).get("world_sheet", ""))
+
+
+static func combat_sprite_path(character_id: String) -> String:
+	return str(_assets(character_id).get("combat_sprite", ""))
+
+
+static func full_body_path(character_id: String) -> String:
+	return str(_assets(character_id).get("full_body_illustration", ""))
+
+
+## The runtime SpriteFrames for the world actor, or null when no validated sheet
+## exists yet. Never throws on a missing/corrupt resource.
+static func world_sheet(character_id: String) -> SpriteFrames:
+	var path := world_sheet_path(character_id)
+	if path.is_empty() or not ResourceLoader.exists(path):
+		return null
+	var loaded: Resource = load(path)
+	return loaded as SpriteFrames
+
+
+## True when a playable world sheet exists AND exposes every (state, direction)
+## animation the runtime animator asks for.
+static func world_art_ready(character_id: String) -> bool:
+	var sheet := world_sheet(character_id)
+	if sheet == null:
+		return false
+	var names := sheet.get_animation_names()
+	for raw_state in CharacterAnimator.EXTENDED_STATES:
+		var state_name := CharacterAnimator.state_name(int(raw_state))
+		for raw_dir in CharacterAnimator.ALL_DIRECTIONS:
+			if not names.has(StringName("%s_%d" % [state_name, int(raw_dir)])):
+				return false
+	return true
+
+
 ## A future 256x384 RGBA8 cut-out portrait, or null. Never returns the reference
 ## sheet, so callers can safely treat null as "keep the procedural fallback".
 static func portrait_texture(character_id: String) -> Texture2D:
@@ -119,6 +165,12 @@ static func asset_status(character_id: String) -> String:
 	return "missing"
 
 
+## Authoring status declared in JSON ("final", "placeholder", "missing"). This is
+## metadata only; world_art_ready()/portrait_texture() are the on-disk truth.
+static func art_status(character_id: String) -> String:
+	return str(_assets(character_id).get("art_status", "missing"))
+
+
 # ---------------------------------------------------------------------- report
 
 ## Deterministic, honest status snapshot for tooling and documentation.
@@ -128,17 +180,27 @@ static func report() -> Dictionary:
 		var entry := get_entry(character_id)
 		var def := get_definition(character_id)
 		var ref := reference_texture(character_id)
+		var sheet := world_sheet(character_id)
 		per_character[character_id] = {
 			"name": def.display_name if def != null else character_id,
 			"element": def.element if def != null else "",
 			"rarity": def.rarity if def != null else "",
 			"asset_folder": asset_folder(character_id),
+			"playable_folder": playable_folder(character_id),
 			"reference_sheet": reference_sheet_path(character_id),
 			"reference_loaded": ref != null,
 			"reference_size": [ref.get_width(), ref.get_height()] if ref != null else [0, 0],
 			"portrait_target": portrait_path(character_id),
 			"portrait_ready": portrait_texture(character_id) != null,
 			"asset_status": asset_status(character_id),
+			"world_sheet": world_sheet_path(character_id),
+			"world_animations": sheet.get_animation_names().size() if sheet != null else 0,
+			"world_art_ready": world_art_ready(character_id),
+			"combat_sprite": combat_sprite_path(character_id),
+			"combat_sprite_ready": _texture_ready(combat_sprite_path(character_id)),
+			"full_body_illustration": full_body_path(character_id),
+			"full_body_ready": _texture_ready(full_body_path(character_id)),
+			"art_status": art_status(character_id),
 			"in_content_db": is_in_content_db(character_id),
 			"playable": bool(entry.get("playable", false)),
 			"recruited_by_default": bool(entry.get("recruited_by_default", false)),
@@ -173,6 +235,14 @@ static func _assets(character_id: String) -> Dictionary:
 	if typeof(value) != TYPE_DICTIONARY:
 		return {}
 	return value
+
+
+## True when `path` is a loadable Texture2D. Missing paths are simply false.
+static func _texture_ready(path: String) -> bool:
+	if path.is_empty() or not ResourceLoader.exists(path):
+		return false
+	var loaded: Resource = load(path)
+	return loaded is Texture2D
 
 
 static func _content_db() -> Node:

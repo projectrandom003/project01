@@ -1,8 +1,10 @@
 # PROJECT FANTASY — Generation Prompts (FUTURE external generation)
 
 > **These are PREPARATION prompts for FUTURE external image generation.**
-> **NO final artwork was generated or fabricated in this phase.** ZERO final assets exist; all shipped
-> visuals are runtime procedural placeholder art. The files below are text contracts only.
+> **NO final artwork was generated or fabricated for the 12 collectible characters.** All shipped
+> visuals for them are runtime procedural placeholder art. The files below are text contracts only.
+> (Lilith's playable art IS final and lives in `assets/characters/lilith/` — see
+> `assets/characters/main/little_sister/SPEC.md`.)
 
 ## 1. GLOBAL STYLE ANCHOR (prepend to EVERY prompt)
 
