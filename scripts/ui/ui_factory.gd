@@ -83,11 +83,14 @@ static func button(text_value: String, primary: bool = false, danger: bool = fal
 	if danger:
 		node.add_theme_stylebox_override("normal", UITheme.style(Color("#2a1420"), Color("#6b2a3c"), 8, 1, 10))
 		node.add_theme_stylebox_override("hover", UITheme.style(Color("#3a1a2a"), UITheme.DANGER, 8, 1, 10))
+		node.add_theme_stylebox_override("pressed", UITheme.style(Color("#170b12"), Color("#ff8298"), 8, 2, 10))
+		node.add_theme_stylebox_override("focus", UITheme.style(Color("#3a1a2a"), Color("#ffc2cc"), 8, 2, 10))
 		node.add_theme_color_override("font_color", Color("#ffc2cc"))
 	elif primary:
 		node.add_theme_stylebox_override("normal", UITheme.style(Color("#2a2415"), UITheme.GOLD, 8, 1, 10))
 		node.add_theme_stylebox_override("hover", UITheme.style(Color("#3a321d"), UITheme.GOLD_BRIGHT, 8, 1, 10))
-		node.add_theme_stylebox_override("pressed", UITheme.style(Color("#1a1710"), UITheme.GOLD_BRIGHT, 8, 1, 10))
+		node.add_theme_stylebox_override("pressed", UITheme.style(Color("#1a1710"), UITheme.GOLD_BRIGHT, 8, 2, 10))
+		node.add_theme_stylebox_override("focus", UITheme.style(Color("#3a321d"), Color("#fff0bd"), 8, 2, 10))
 		node.add_theme_color_override("font_color", UITheme.GOLD_BRIGHT)
 	return node
 

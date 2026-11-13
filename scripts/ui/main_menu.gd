@@ -41,7 +41,7 @@ func _ready() -> void:
 
 	# Cover the concept image's non-interactive painted menu and place live
 	# buttons over it. Save/reset/play/quit continue to use the existing signals.
-	var menu_panel := UIFactory.panel(Color(0.012, 0.009, 0.025, 0.91), Color(0.78, 0.58, 0.68, 0.58), 18, 1, 22, true)
+	var menu_panel := UIFactory.panel(Color(0.008, 0.006, 0.018, 0.995), Color(0.78, 0.58, 0.68, 0.82), 18, 2, 26, true)
 	menu_panel.name = "LiveMenuPanel"
 	menu_panel.anchor_left = 0.495
 	menu_panel.anchor_right = 0.735
@@ -57,22 +57,34 @@ func _ready() -> void:
 	menu_panel.add_child(column)
 	column.add_child(UIFactory.label("✦  THE JOURNEY AWAITS  ✦", 10, UITheme.GOLD_BRIGHT))
 	var continue_button := UIFactory.button("Continue Journey" if GameState.loaded_from_save else "Begin Journey", true)
-	continue_button.custom_minimum_size = Vector2(0, 56)
+	continue_button.name = "ContinueJourneyButton"
+	continue_button.custom_minimum_size = Vector2(0, 58)
 	continue_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	continue_button.focus_mode = Control.FOCUS_ALL
+	continue_button.tooltip_text = "Continue your saved adventure" if GameState.loaded_from_save else "Begin a new adventure"
 	continue_button.pressed.connect(_on_play)
+	_play_button = continue_button
 	column.add_child(continue_button)
 	column.add_child(UIFactory.separator())
 	var reset := UIFactory.button("Reset Journey", false, true)
-	reset.custom_minimum_size = Vector2(0, 44)
+	reset.name = "ResetJourneyButton"
+	reset.custom_minimum_size = Vector2(0, 46)
 	reset.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	reset.focus_mode = Control.FOCUS_ALL
+	reset.tooltip_text = "Erase the current save (confirmation required)"
 	reset.pressed.connect(_on_reset)
 	_reset_button = reset
 	column.add_child(reset)
 	var quit := UIFactory.button("Quit", false, true)
-	quit.custom_minimum_size = Vector2(0, 42)
+	quit.name = "QuitGameButton"
+	quit.custom_minimum_size = Vector2(0, 44)
 	quit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	quit.focus_mode = Control.FOCUS_ALL
+	quit.tooltip_text = "Close Reverie"
 	quit.pressed.connect(func() -> void: quit_requested.emit())
 	column.add_child(quit)
+	continue_button.grab_focus()
+
 	var hint := UIFactory.label("A STORY OF TWO SOULS", 9, Color("#aaa0b7"))
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(hint)
@@ -86,10 +98,10 @@ func _layout_art_menu() -> void:
 		return
 	# Keep the panel aligned with the illustrated menu on common widescreen
 	# layouts, while preserving a usable minimum width on smaller windows.
-	var panel_width := clampf(size.x * 0.24, 300.0, 410.0)
-	var panel_height := clampf(size.y * 0.51, 390.0, 560.0)
+	var panel_width := clampf(size.x * 0.255, 340.0, 460.0)
+	var panel_height := clampf(size.y * 0.54, 420.0, 590.0)
 	panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	panel.position = Vector2(size.x * 0.495, size.y * 0.385)
+	panel.position = Vector2(size.x * 0.49, size.y * 0.365)
 	panel.size = Vector2(panel_width, panel_height)
 
 func _build_navigation(layout: HBoxContainer) -> void:
@@ -207,6 +219,8 @@ func _layout_party() -> void:
 		visual.z_index = i
 
 func _refresh_summary() -> void:
+	if _play_button != null:
+		_play_button.text = "Continue Journey" if GameState.loaded_from_save else "Begin Journey"
 	if _summary_label == null:
 		return
 	var profile: Dictionary = GameState.profile
@@ -223,10 +237,8 @@ func _refresh_summary() -> void:
 		UIFactory.number(GameState.currency("gold")),
 		UIFactory.number(GameState.currency("crystals")),
 	]
-	if GameState.loaded_from_save:
-		_play_button.text = "Continue Journey"
-	else:
-		_play_button.text = "Begin Journey"
+	if _play_button != null:
+		_play_button.text = "Continue Journey" if GameState.loaded_from_save else "Begin Journey"
 
 func _on_play() -> void:
 	play_requested.emit()
