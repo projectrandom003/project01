@@ -295,7 +295,7 @@ def motion_of(frames: list[Image.Image]) -> list[tuple[int, int]]:
 
 
 def build_sheet(state: str, front: list[Image.Image], views: dict,
-                scale: float, rows: list) -> Image.Image:
+                scale: float, rows: list, character_id: str = "") -> Image.Image:
     n = STATE_FRAMES[state]
     motion = motion_of(front)
     atlas = Image.new("RGBA", (n * CELL_W, 8 * CELL_H), (0, 0, 0, 0))
@@ -324,6 +324,28 @@ def build_sheet(state: str, front: list[Image.Image], views: dict,
             if k:
                 sprite = shear_image(sprite, k, ground_row(sprite))
             cell = ground(sprite)
+            if character_id == "lilith" and state in ("walk", "run"):
+                # Lilith travels as a spirit: animate a buoyant hover cycle,
+                # not a footfall. Transform the complete cut-out around its
+                # visual centre so the spectral tail rises and falls with her.
+                phase = 2.0 * math.pi * i / max(1, n)
+                amplitude = 3.6 if state == "run" else 2.7
+                bob = int(round(math.sin(phase) * amplitude))
+                sway = int(round(math.sin(phase + math.pi / 2.0) * (1.8 if state == "run" else 1.2)))
+                angle = math.sin(phase) * (3.2 if state == "run" else 2.2)
+                factor = 1.0 + math.sin(phase + math.pi / 2.0) * (0.022 if state == "run" else 0.016)
+                cell = cell.rotate(angle, resample=Image.Resampling.BICUBIC,
+                                   center=(CELL_W // 2, CELL_H // 2), expand=False)
+                if abs(factor - 1.0) > 0.001:
+                    scaled = cell.resize((int(CELL_W * factor), int(CELL_H * factor)),
+                                         Image.Resampling.LANCZOS)
+                    fitted = Image.new("RGBA", (CELL_W, CELL_H), (0, 0, 0, 0))
+                    fitted.alpha_composite(scaled, ((CELL_W - scaled.width) // 2,
+                                                    (CELL_H - scaled.height) // 2))
+                    cell = fitted
+                floated = Image.new("RGBA", (CELL_W, CELL_H), (0, 0, 0, 0))
+                floated.alpha_composite(cell, (sway, bob))
+                cell = floated
             atlas.paste(cell, (i * CELL_W, row * CELL_H), cell)
     return atlas
 
@@ -372,7 +394,7 @@ def main() -> None:
 
     for state in STATE_FRAMES:
         front = build_state_frames(norm, state, cfg, STATE_PLAN[character_id])
-        atlas = build_sheet(state, front, norm_views, scale, ROWS[character_id])
+        atlas = build_sheet(state, front, norm_views, scale, ROWS[character_id], character_id)
         path = os.path.join(out_dir, "%s_sheet.png" % state)
         atlas.save(path)
         print("[sheet] wrote %s_sheet.png %dx%d" % (state, atlas.width, atlas.height))
