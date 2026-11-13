@@ -75,7 +75,29 @@ class ChamberAtmosphere extends Control:
 
 func _ready() -> void:
 	super._ready()
-	var art_path := "res://assets/ui/backgrounds/summoning_chamber_background.svg"
+	# OverlayScreen normally dims the whole scene and places an opaque glass
+	# panel over it. Summoning is a full-scene destination: soften that dimmer
+	# and turn the shell panel into translucent glass so the chamber is visible.
+	var shell_dim := get_child(0) as ColorRect
+	if shell_dim != null:
+		shell_dim.color = Color(0.01, 0.012, 0.035, 0.24)
+	var shell_margin := get_child(1) as MarginContainer
+	if shell_margin != null and shell_margin.get_child_count() > 0:
+		var shell_panel := shell_margin.get_child(0) as PanelContainer
+		if shell_panel != null:
+			var glass := StyleBoxFlat.new()
+			glass.bg_color = Color(0.025, 0.018, 0.055, 0.58)
+			glass.border_color = Color(0.72, 0.56, 0.91, 0.52)
+			glass.set_border_width_all(1)
+			glass.set_corner_radius_all(16)
+			glass.content_margin_left = 18
+			glass.content_margin_right = 18
+			glass.content_margin_top = 18
+			glass.content_margin_bottom = 18
+			shell_panel.add_theme_stylebox_override("panel", glass)
+	# Dedicated static summoning key art. Keep this pass intentionally still;
+	# ambient particles and cinematic animation will be layered in separately.
+	var art_path := "res://assets/ui/backgrounds/reverie_summoning_chamber.jpg"
 	if ResourceLoader.exists(art_path):
 		var backdrop := TextureRect.new()
 		backdrop.name = "SummoningChamberIllustration"
@@ -86,11 +108,6 @@ func _ready() -> void:
 		UIFactory.set_full_rect(backdrop)
 		add_child(backdrop)
 		move_child(backdrop, 0)
-	var atmosphere := ChamberAtmosphere.new()
-	atmosphere.name = "AnimatedSummoningAtmosphere"
-	UIFactory.set_full_rect(atmosphere)
-	atmosphere.z_index = 1
-	add_child(atmosphere)
 
 class SummonSigil extends Control:
 	var elapsed := 0.0
