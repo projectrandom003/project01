@@ -41,7 +41,7 @@ func _ready() -> void:
 
 	# Cover the concept image's non-interactive painted menu and place live
 	# buttons over it. Save/reset/play/quit continue to use the existing signals.
-	var menu_panel := UIFactory.panel(Color(0.008, 0.006, 0.018, 0.995), Color(0.78, 0.58, 0.68, 0.82), 18, 2, 26, true)
+	var menu_panel := UIFactory.panel(Color(0.008, 0.006, 0.018, 0.0), Color(0.78, 0.58, 0.68, 0.0), 0, 0, 8, false)
 	menu_panel.name = "LiveMenuPanel"
 	menu_panel.anchor_left = 0.495
 	menu_panel.anchor_right = 0.735
@@ -53,37 +53,35 @@ func _ready() -> void:
 	menu_panel.offset_bottom = 0
 	add_child(menu_panel)
 
-	var column := UIFactory.vbox(13)
+	var column := UIFactory.vbox(12)
 	menu_panel.add_child(column)
-	column.add_child(UIFactory.label("✦  THE JOURNEY AWAITS  ✦", 10, UITheme.GOLD_BRIGHT))
-	var continue_button := UIFactory.button("Continue Journey" if GameState.loaded_from_save else "Begin Journey", true)
+	var continue_button := UIFactory.button("✧   CONTINUE   ✧" if GameState.loaded_from_save else "✧   BEGIN JOURNEY   ✧", false)
+	_style_ornate_menu_button(continue_button, Color("#e9c6f3"), true)
 	continue_button.name = "ContinueJourneyButton"
-	continue_button.custom_minimum_size = Vector2(0, 58)
+	continue_button.custom_minimum_size = Vector2(0, 54)
+	continue_button.add_theme_font_size_override("font_size", 19)
 	continue_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	continue_button.focus_mode = Control.FOCUS_ALL
 	continue_button.tooltip_text = "Continue your saved adventure" if GameState.loaded_from_save else "Begin a new adventure"
 	continue_button.pressed.connect(_on_play)
 	_play_button = continue_button
 	column.add_child(continue_button)
-	column.add_child(UIFactory.separator())
-	var reset := UIFactory.button("Reset Journey", false, true)
-	reset.add_theme_stylebox_override("normal", UITheme.style(Color("#17111d"), Color("#80505f"), 10, 1, 14))
-	reset.add_theme_color_override("font_color", Color("#e8bdc8"))
+	var reset := UIFactory.button("❖   NEW JOURNEY   ❖", false)
+	_style_ornate_menu_button(reset, Color("#c6a6cf"), false)
 	reset.name = "ResetJourneyButton"
-	reset.custom_minimum_size = Vector2(0, 46)
+	reset.custom_minimum_size = Vector2(0, 50)
+	reset.add_theme_font_size_override("font_size", 17)
 	reset.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	reset.focus_mode = Control.FOCUS_ALL
-	reset.tooltip_text = "Erase the current save (confirmation required)"
+	reset.tooltip_text = "Start a new journey. Press again to confirm and erase the current save."
 	reset.pressed.connect(_on_reset)
 	_reset_button = reset
 	column.add_child(reset)
-	var quit := UIFactory.button("Quit", false, false)
-	quit.add_theme_stylebox_override("normal", UITheme.style(Color("#111522"), Color("#55536a"), 10, 1, 14))
-	quit.add_theme_stylebox_override("hover", UITheme.style(Color("#202033"), Color("#aaa0bd"), 10, 1, 14))
-	quit.add_theme_stylebox_override("pressed", UITheme.style(Color("#0b0e18"), Color("#d8cde8"), 10, 2, 14))
-	quit.add_theme_color_override("font_color", Color("#c8c1d5"))
+	var quit := UIFactory.button("✥   QUIT   ✥", false)
+	_style_ornate_menu_button(quit, Color("#b4a6c8"), false)
 	quit.name = "QuitGameButton"
-	quit.custom_minimum_size = Vector2(0, 44)
+	quit.custom_minimum_size = Vector2(0, 48)
+	quit.add_theme_font_size_override("font_size", 17)
 	quit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	quit.focus_mode = Control.FOCUS_ALL
 	quit.tooltip_text = "Close Reverie"
@@ -91,7 +89,7 @@ func _ready() -> void:
 	column.add_child(quit)
 	continue_button.grab_focus()
 
-	var hint := UIFactory.label("A STORY OF TWO SOULS", 9, Color("#aaa0b7"))
+	var hint := UIFactory.label("A  S T O R Y  O F  T W O  S O U L S", 8, Color("#b9a8c8"))
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(hint)
 
@@ -104,10 +102,10 @@ func _layout_art_menu() -> void:
 		return
 	# Keep the panel aligned with the illustrated menu on common widescreen
 	# layouts, while preserving a usable minimum width on smaller windows.
-	var panel_width := clampf(size.x * 0.255, 340.0, 460.0)
-	var panel_height := clampf(size.y * 0.54, 420.0, 590.0)
+	var panel_width := clampf(size.x * 0.24, 330.0, 410.0)
+	var panel_height := clampf(size.y * 0.45, 360.0, 430.0)
 	panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	panel.position = Vector2(size.x * 0.49, size.y * 0.365)
+	panel.position = Vector2(size.x * 0.505, size.y * 0.405)
 	panel.size = Vector2(panel_width, panel_height)
 
 func _build_navigation(layout: HBoxContainer) -> void:
@@ -226,7 +224,7 @@ func _layout_party() -> void:
 
 func _refresh_summary() -> void:
 	if _play_button != null:
-		_play_button.text = "Continue Journey" if GameState.loaded_from_save else "Begin Journey"
+		_play_button.text = "✧   CONTINUE   ✧" if GameState.loaded_from_save else "✧   BEGIN JOURNEY   ✧"
 	if _summary_label == null:
 		return
 	var profile: Dictionary = GameState.profile
@@ -246,19 +244,33 @@ func _refresh_summary() -> void:
 	if _play_button != null:
 		_play_button.text = "Continue Journey" if GameState.loaded_from_save else "Begin Journey"
 
+func _style_ornate_menu_button(button: Button, accent: Color, primary: bool) -> void:
+	var normal_bg := Color(0.025, 0.018, 0.045, 0.76)
+	var hover_bg := Color(0.12, 0.075, 0.15, 0.94)
+	var pressed_bg := Color(0.18, 0.11, 0.20, 0.98)
+	button.add_theme_stylebox_override("normal", UITheme.style(normal_bg, Color(accent.r, accent.g, accent.b, 0.68), 7, 1, 16))
+	button.add_theme_stylebox_override("hover", UITheme.style(hover_bg, Color(accent.r, accent.g, accent.b, 1.0), 7, 2, 16, true))
+	button.add_theme_stylebox_override("pressed", UITheme.style(pressed_bg, Color(accent.r, accent.g, accent.b, 1.0), 7, 2, 16))
+	button.add_theme_stylebox_override("focus", UITheme.style(Color(0.08, 0.05, 0.12, 0.85), Color("#fff0d8"), 7, 2, 16))
+	button.add_theme_color_override("font_color", Color("#f1e5f1") if primary else Color("#d7c7dd"))
+	button.add_theme_color_override("font_hover_color", Color("#ffffff"))
+	button.add_theme_color_override("font_pressed_color", Color("#fff0dc"))
+	button.flat = false
+
+
 func _on_play() -> void:
 	play_requested.emit()
 
 func _on_reset() -> void:
 	if not _reset_armed:
 		_reset_armed = true
-		_reset_button.text = "Press again to erase save"
+		_reset_button.text = "✦  CONFIRM NEW JOURNEY  ✦"
 		_reset_button.add_theme_color_override("font_color", UITheme.DANGER)
 		return
 	GameState.reset_progress()
 	GameState.loaded_from_save = false
 	_reset_armed = false
-	_reset_button.text = "Reset Journey"
+	_reset_button.text = "❖   NEW JOURNEY   ❖"
 	_reset_button.add_theme_color_override("font_color", UITheme.DANGER)
 	_build_party_showcase()
 	_refresh_summary()
