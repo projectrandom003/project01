@@ -7,11 +7,11 @@ extends SceneTree
 ## Input : assets/characters/<id>/<state>_sheet.png
 ##         (per-state atlas: <frames>*96 wide x 8*128 tall, 8 direction rows)
 ## Output: assets/characters/<id>/world_sheet.tres
-##         (72 animations: <state>_<dir>; walk/run 64 frames per direction)
+##         (72 animations: <state>_<dir>; walk/run 16 frames per direction)
 ##
 ## Frame counts, fps and loop flags come from CharacterAnimator so this script
-## cannot drift from the runtime contract. Walk/run are 64-frame high-smoothness loops.
-## Exits 0 only when all 72 animations and 1344 frames validate.
+## cannot drift from the runtime contract. Walk/run are 16-frame loops.
+## Exits 0 only when all 72 animations and 576 frames validate.
 
 const DEFAULT_CHARACTER := "lilith"
 const FRAME_W := 96
@@ -92,7 +92,7 @@ func _initialize() -> void:
 			push_error("[SpriteFrames] " + e)
 		quit(1)
 		return
-	if names != 72 or frame_total != 1344 or source.is_temporary():
+	if names != 72 or frame_total != 576 or source.is_temporary():
 		push_error("[SpriteFrames] unexpected sheet totals")
 		quit(1)
 		return

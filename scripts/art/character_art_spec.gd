@@ -537,7 +537,7 @@ static func _portrait_prompt(d: Dictionary) -> String:
 
 
 static func _sheet_prompt(d: Dictionary) -> String:
-	return "%s\n\nSUBJECT: 8-direction world sprite sheet for %s (%s), %s. 96x128 px frames, bottom-centre anchor (0.5, 1.0), feet on ONE identical baseline across every frame/state/direction, 1-2 px dark ink outline, transparent RGBA8. Palette: %s. Visual theme: %s.\nLAYOUT: per-state atlas = <frames> columns x 8 direction rows (row 0 DOWN ... row 7 DOWN_LEFT), 0-based columns; states idle 5 frames @ 9 fps loop, walk 64 @ 60 loop, run 64 @ 64 loop, interact 6 @ 12, attack 6 @ 15, damage 2 @ 12, victory 8 @ 12, defeat 6 @ 10, cast 7 @ 12 (all one-shots unless noted). Slice into a SpriteFrames .tres with animations <state>_<dir> and cast_<dir>, speed = fps, loop = loop flag.\nOUTPUT SPEC: transparent RGBA8 PNG atlas(es) sliced to a SpriteFrames .tres, 96x128 frames, Linear filter + mipmaps on, feet on ONE baseline, no baked text." % [
+	return "%s\n\nSUBJECT: 8-direction world sprite sheet for %s (%s), %s. 96x128 px frames, bottom-centre anchor (0.5, 1.0), feet on ONE identical baseline across every frame/state/direction, 1-2 px dark ink outline, transparent RGBA8. Palette: %s. Visual theme: %s.\nLAYOUT: per-state atlas = <frames> columns x 8 direction rows (row 0 DOWN ... row 7 DOWN_LEFT), 0-based columns; states idle 5 frames @ 9 fps loop, walk 16 @ 12 loop, run 16 @ 16 loop, interact 6 @ 12, attack 6 @ 15, damage 2 @ 12, victory 8 @ 12, defeat 6 @ 10, cast 7 @ 12 (all one-shots unless noted). Slice into a SpriteFrames .tres with animations <state>_<dir> and cast_<dir>, speed = fps, loop = loop flag.\nOUTPUT SPEC: transparent RGBA8 PNG atlas(es) sliced to a SpriteFrames .tres, 96x128 frames, Linear filter + mipmaps on, feet on ONE baseline, no baked text." % [
 		STYLE_ANCHOR,
 		str(d.get("display_name", "")), str(d.get("title", "")), str(d.get("role", "")),
 		_palette_line(d), str(d.get("visual_theme", "")),
@@ -557,8 +557,8 @@ func _vfx_prompt() -> String:
 
 static func _animation_requirements(d: Dictionary) -> Dictionary:
 	var states: Array[String] = ["idle", "walk", "run", "interact", "attack", "damage", "victory", "defeat", "cast"]
-	var frame_counts := {"idle": 5, "walk": 64, "run": 64, "interact": 6, "attack": 6, "damage": 2, "victory": 8, "defeat": 6, "cast": 7}
-	var fps := {"idle": 9.0, "walk": 60.0, "run": 64.0, "interact": 12.0, "attack": 15.0, "damage": 12.0, "victory": 12.0, "defeat": 10.0, "cast": 12.0}
+	var frame_counts := {"idle": 5, "walk": 16, "run": 16, "interact": 6, "attack": 6, "damage": 2, "victory": 8, "defeat": 6, "cast": 7}
+	var fps := {"idle": 9.0, "walk": 12.0, "run": 16.0, "interact": 12.0, "attack": 15.0, "damage": 12.0, "victory": 12.0, "defeat": 10.0, "cast": 12.0}
 	var looping := {"idle": true, "walk": true, "run": true, "interact": false, "attack": false, "damage": false, "victory": false, "defeat": false, "cast": false}
 	var anims: Array[String] = []
 	for st in states:

@@ -95,7 +95,7 @@ func _check_sheet_contract(character_id: String) -> void:
 					tex.get_width() == 96 and tex.get_height() == 128,
 					"%dx%d" % [tex.get_width(), tex.get_height()])
 				frame_total += 1
-	_check("%s sheet frame total == 1344" % character_id, frame_total == 1344, str(frame_total))
+	_check("%s sheet frame total == 576" % character_id, frame_total == 576, str(frame_total))
 
 
 func _check_avatar_switching() -> void:

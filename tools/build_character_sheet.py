@@ -49,7 +49,7 @@ BODY_H = 100            # character height in pixels
 SHEAR = 0.17            # horizontal shear for the 3/4 (diagonal) rows
 
 STATE_FRAMES = {
-    "idle": 5, "walk": 64, "run": 64, "interact": 6, "attack": 6,
+    "idle": 5, "walk": 16, "run": 16, "interact": 6, "attack": 6,
     "damage": 2, "victory": 8, "defeat": 6, "cast": 7,
 }
 

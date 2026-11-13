@@ -31,8 +31,8 @@ extends RefCounted
 ##  * Directions: 8 (left/right flip alone is enough for the slice). Each
 ##    state is authored for all 8 directions for production.
 ##  * Per-state frames / fps / loop:
-##      IDLE     5 @  9 fps  loop       WALK    64 @ 60 fps  loop
-##      RUN     64 @ 64 fps  loop       INTERACT 6 @ 12 fps  one-shot
+##      IDLE     5 @  9 fps  loop       WALK    16 @ 12 fps  loop
+##      RUN     16 @ 16 fps  loop       INTERACT 6 @ 12 fps  one-shot
 ##      ATTACK   6 @ 15 fps  one-shot   DAMAGE   2 @ 12 fps  one-shot
 ##      VICTORY  8 @ 12 fps  one-shot   DEFEAT   6 @ 10 fps  one-shot (death)
 ##  * Sheet layout: one row per direction (8 rows), one column per frame;
@@ -66,8 +66,8 @@ States (8 ints): 0 IDLE, 1 WALK, 2 RUN, 3 INTERACT, 4 ATTACK, 5 DAMAGE, 6 VICTOR
 Directions (8 ints): 0 DOWN, 1 DOWN_RIGHT, 2 RIGHT, 3 UP_RIGHT, 4 UP, 5 UP_LEFT, 6 LEFT, 7 DOWN_LEFT. Author every state for all 8 directions in production (left/right flip alone is enough for the slice).
 Per-state frames / fps / loop (authoritative: CharacterAnimator.STATE_FRAMES / STATE_FPS / STATE_LOOPING):
   IDLE     5 @  9 fps  loop
-  WALK    64 @ 60 fps  loop
-  RUN     64 @ 64 fps  loop
+  WALK    16 @ 12 fps  loop
+  RUN     16 @ 16 fps  loop
   INTERACT 6 @ 12 fps  one-shot
   ATTACK   6 @ 15 fps  one-shot
   DAMAGE   2 @ 12 fps  one-shot

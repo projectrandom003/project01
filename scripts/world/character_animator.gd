@@ -100,8 +100,8 @@ const DIRECTION_NAMES: Dictionary = {
 # single source of truth shared with ActorFrameSource and the sprite sheets.
 const STATE_FPS: Dictionary = {
 	State.IDLE: 9.0,
-	State.WALK: 60.0,
-	State.RUN: 64.0,
+	State.WALK: 12.0,
+	State.RUN: 16.0,
 	State.INTERACT: 12.0,
 	State.ATTACK: 15.0,
 	State.DAMAGE: 12.0,
@@ -111,8 +111,8 @@ const STATE_FPS: Dictionary = {
 
 const STATE_FRAMES: Dictionary = {
 	State.IDLE: 5,
-	State.WALK: 64,
-	State.RUN: 64,
+	State.WALK: 16,
+	State.RUN: 16,
 	State.INTERACT: 6,
 	State.ATTACK: 6,
 	State.DAMAGE: 2,
