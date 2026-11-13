@@ -218,7 +218,7 @@ const PHASES := {
 # TIMING RECONCILED (Phase 3 / Step 4): every value below is the authoritative
 # CharacterAnimator.STATE_FRAMES / STATE_FPS / STATE_LOOPING, in state order
 # IDLE(0) WALK(1) RUN(2) INTERACT(3) ATTACK(4) DAMAGE(5) VICTORY(6) DEFEAT(7):
-#   frames 5,7,7,6,6,2,8,6   fps 9,12,14,12,15,12,12,10
+#   frames 5,64,64,6,6,2,8,6   fps 9,60,64,12,15,12,12,10
 #   loop   true,true,true,false,false,false,false,false
 # The animator, ActorFrameSource, ProceduralActorFrames and these specs MUST stay
 # in lockstep; do not edit one without the others.
@@ -238,7 +238,7 @@ const SPRITE_SPECS := {
 		"ATTACK": 15, "DAMAGE": 12, "VICTORY": 12, "DEFEAT": 10,
 	},
 	"frames": {
-		"IDLE": 5, "WALK": 7, "RUN": 7, "INTERACT": 6,
+		"IDLE": 5, "WALK": 64, "RUN": 64, "INTERACT": 6,
 		"ATTACK": 6, "DAMAGE": 2, "VICTORY": 8, "DEFEAT": 6,
 	},
 	"loop": {

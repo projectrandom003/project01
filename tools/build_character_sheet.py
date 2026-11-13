@@ -49,7 +49,7 @@ BODY_H = 100            # character height in pixels
 SHEAR = 0.17            # horizontal shear for the 3/4 (diagonal) rows
 
 STATE_FRAMES = {
-    "idle": 5, "walk": 7, "run": 7, "interact": 6, "attack": 6,
+    "idle": 5, "walk": 64, "run": 64, "interact": 6, "attack": 6,
     "damage": 2, "victory": 8, "defeat": 6, "cast": 7,
 }
 
@@ -369,7 +369,7 @@ def write_previews(out_dir: str) -> None:
                   for i in range(n)]
         frames = [f.convert("P", palette=Image.ADAPTIVE) for f in frames]
         frames[0].save(os.path.join(prev, "%s.gif" % state), save_all=True,
-                       append_images=frames[1:], duration=int(1000 / 12.0), loop=True)
+                       append_images=frames[1:], duration=(20 if state in ("walk", "run") else int(1000 / 12.0)), loop=True)
     sheet.convert("RGB").save(os.path.join(prev, "preview_sheet.png"))
     atlas = Image.open(os.path.join(out_dir, "idle_sheet.png")).convert("RGBA")
     atlas.crop((0, 0, 5 * CELL_W, 8 * CELL_H)).save(
