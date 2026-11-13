@@ -67,6 +67,8 @@ func _ready() -> void:
 	column.add_child(continue_button)
 	column.add_child(UIFactory.separator())
 	var reset := UIFactory.button("Reset Journey", false, true)
+	reset.add_theme_stylebox_override("normal", UITheme.style(Color("#17111d"), Color("#80505f"), 10, 1, 14))
+	reset.add_theme_color_override("font_color", Color("#e8bdc8"))
 	reset.name = "ResetJourneyButton"
 	reset.custom_minimum_size = Vector2(0, 46)
 	reset.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -75,7 +77,11 @@ func _ready() -> void:
 	reset.pressed.connect(_on_reset)
 	_reset_button = reset
 	column.add_child(reset)
-	var quit := UIFactory.button("Quit", false, true)
+	var quit := UIFactory.button("Quit", false, false)
+	quit.add_theme_stylebox_override("normal", UITheme.style(Color("#111522"), Color("#55536a"), 10, 1, 14))
+	quit.add_theme_stylebox_override("hover", UITheme.style(Color("#202033"), Color("#aaa0bd"), 10, 1, 14))
+	quit.add_theme_stylebox_override("pressed", UITheme.style(Color("#0b0e18"), Color("#d8cde8"), 10, 2, 14))
+	quit.add_theme_color_override("font_color", Color("#c8c1d5"))
 	quit.name = "QuitGameButton"
 	quit.custom_minimum_size = Vector2(0, 44)
 	quit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
