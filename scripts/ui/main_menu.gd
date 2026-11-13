@@ -20,9 +20,6 @@ func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	theme = UITheme.build()
 
-	# The generated title artwork already contains the REVERIE logo and chapter
-	# illustration. Keep those as art, while replacing its painted menu with
-	# real Godot controls in the same visual area.
 	var artwork := TextureRect.new()
 	artwork.name = "ReverieTitleArtwork"
 	artwork.texture = load("res://assets/ui/backgrounds/reverie_title_screen.jpg") as Texture2D
@@ -34,79 +31,145 @@ func _ready() -> void:
 
 	var shade := ColorRect.new()
 	shade.name = "TitleArtworkReadabilityShade"
-	shade.color = Color(0.012, 0.009, 0.028, 0.12)
+	shade.color = Color(0.012, 0.009, 0.028, 0.08)
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	UIFactory.set_full_rect(shade)
 	add_child(shade)
 
-	# Cover the concept image's non-interactive painted menu and place live
-	# buttons over it. Save/reset/play/quit continue to use the existing signals.
-	var menu_panel := UIFactory.panel(Color(0.008, 0.006, 0.018, 0.0), Color(0.78, 0.58, 0.68, 0.0), 0, 0, 8, false)
-	menu_panel.name = "LiveMenuPanel"
-	menu_panel.anchor_left = 0.495
-	menu_panel.anchor_right = 0.735
-	menu_panel.anchor_top = 0.385
-	menu_panel.anchor_bottom = 0.895
-	menu_panel.offset_left = 0
-	menu_panel.offset_right = 0
-	menu_panel.offset_top = 0
-	menu_panel.offset_bottom = 0
-	add_child(menu_panel)
-
-	var column := UIFactory.vbox(12)
-	menu_panel.add_child(column)
-	var continue_button := UIFactory.button("✧   CONTINUE   ✧" if GameState.loaded_from_save else "✧   BEGIN JOURNEY   ✧", false)
-	_style_ornate_menu_button(continue_button, Color("#e9c6f3"), true)
-	continue_button.name = "ContinueJourneyButton"
-	continue_button.custom_minimum_size = Vector2(0, 54)
-	continue_button.add_theme_font_size_override("font_size", 19)
-	continue_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	continue_button.focus_mode = Control.FOCUS_ALL
-	continue_button.tooltip_text = "Continue your saved adventure" if GameState.loaded_from_save else "Begin a new adventure"
-	continue_button.pressed.connect(_on_play)
-	_play_button = continue_button
-	column.add_child(continue_button)
-	var reset := UIFactory.button("❖   NEW JOURNEY   ❖", false)
-	_style_ornate_menu_button(reset, Color("#c6a6cf"), false)
-	reset.name = "ResetJourneyButton"
-	reset.custom_minimum_size = Vector2(0, 50)
-	reset.add_theme_font_size_override("font_size", 17)
-	reset.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	reset.focus_mode = Control.FOCUS_ALL
-	reset.tooltip_text = "Start a new journey. Press again to confirm and erase the current save."
-	reset.pressed.connect(_on_reset)
-	_reset_button = reset
-	column.add_child(reset)
-	var quit := UIFactory.button("✥   QUIT   ✥", false)
-	_style_ornate_menu_button(quit, Color("#b4a6c8"), false)
-	quit.name = "QuitGameButton"
-	quit.custom_minimum_size = Vector2(0, 48)
-	quit.add_theme_font_size_override("font_size", 17)
-	quit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	quit.focus_mode = Control.FOCUS_ALL
-	quit.tooltip_text = "Close Reverie"
-	quit.pressed.connect(func() -> void: quit_requested.emit())
-	column.add_child(quit)
-	continue_button.grab_focus()
-
-	var hint := UIFactory.label("A  S T O R Y  O F  T W O  S O U L S", 8, Color("#b9a8c8"))
-	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	column.add_child(hint)
-
+	# Six live hit areas are aligned to the six illustrated menu plaques.
+	# Their faces retain the artwork's dark glass / filigree character.
+	var menu_specs := [
+		{"name": "ContinueButton", "text": "CONTINUE", "y": 0.475, "accent": Color("#f0d5f5"), "action": "continue"},
+		{"name": "NewJourneyButton", "text": "▤   NEW JOURNEY", "y": 0.552, "accent": Color("#d9b9e7"), "action": "new"},
+		{"name": "LoadGameButton", "text": "♜   LOAD GAME", "y": 0.628, "accent": Color("#d9b9e7"), "action": "load"},
+		{"name": "SettingsButton", "text": "⚙   SETTINGS", "y": 0.700, "accent": Color("#d9b9e7"), "action": "settings"},
+		{"name": "ExtrasButton", "text": "✥   EXTRAS", "y": 0.772, "accent": Color("#d9b9e7"), "action": "extras"},
+		{"name": "QuitGameButton", "text": "✧   QUIT", "y": 0.844, "accent": Color("#c5b7d8"), "action": "quit"},
+	]
+	for spec in menu_specs:
+		var button := Button.new()
+		button.name = str(spec.name)
+		button.text = str(spec.text)
+		button.focus_mode = Control.FOCUS_ALL
+		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		button.add_theme_font_size_override("font_size", 17)
+		button.add_theme_color_override("font_color", Color("#f0e5f3"))
+		button.add_theme_color_override("font_hover_color", Color("#ffffff"))
+		button.add_theme_color_override("font_pressed_color", Color("#fff0dc"))
+		_style_ornate_menu_button(button, spec.accent, str(spec.action) == "continue")
+		if str(spec.action) == "continue" or str(spec.action) == "load":
+			button.disabled = not SaveService.has_save()
+		button.set_meta("menu_action", str(spec.action))
+		button.pressed.connect(_on_menu_action.bind(str(spec.action)))
+		add_child(button)
+		if spec.action == "continue":
+			_play_button = button
+		if spec.action == "new":
+			_reset_button = button
+	continue_button_focus()
 	resized.connect(_layout_art_menu)
 	_layout_art_menu()
 
 func _layout_art_menu() -> void:
-	var panel := get_node_or_null("LiveMenuPanel") as Control
-	if panel == null:
+	# Coordinates are normalized to the 16:9 reference artwork. Each live
+	# button occupies exactly one painted plaque, rather than a shared panel.
+	var rows := [0.475, 0.552, 0.628, 0.700, 0.772, 0.844]
+	var names := ["ContinueButton", "NewJourneyButton", "LoadGameButton", "SettingsButton", "ExtrasButton", "QuitGameButton"]
+	for i in range(names.size()):
+		var button := get_node_or_null(names[i]) as Button
+		if button == null:
+			continue
+		button.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		button.anchor_left = 0.505
+		button.anchor_right = 0.704
+		button.anchor_top = rows[i] - 0.030
+		button.anchor_bottom = rows[i] + 0.030
+		button.offset_left = 0
+		button.offset_right = 0
+		button.offset_top = 0
+		button.offset_bottom = 0
+
+
+func continue_button_focus() -> void:
+	if _play_button != null:
+		_play_button.grab_focus()
+
+
+func _on_menu_action(action: String) -> void:
+	match action:
+		"continue":
+			_on_play()
+		"new":
+			_on_new_journey()
+		"load":
+			if SaveService.has_save():
+				GameState.loaded_from_save = true
+				_on_play()
+			else:
+				EventBus.toast_requested.emit("No saved journey found. Begin a new journey first.")
+		"settings":
+			_show_settings()
+		"extras":
+			_show_extras()
+		"quit":
+			quit_requested.emit()
+
+
+func _on_new_journey() -> void:
+	if GameState.loaded_from_save and not _reset_armed:
+		_reset_armed = true
+		_reset_button.text = "CONFIRM NEW JOURNEY?"
+		_reset_button.add_theme_color_override("font_color", Color("#ffb7c5"))
+		EventBus.toast_requested.emit("Select New Journey again to erase the current save.")
 		return
-	# Keep the panel aligned with the illustrated menu on common widescreen
-	# layouts, while preserving a usable minimum width on smaller windows.
-	var panel_width := clampf(size.x * 0.24, 330.0, 410.0)
-	var panel_height := clampf(size.y * 0.45, 360.0, 430.0)
-	panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	panel.position = Vector2(size.x * 0.505, size.y * 0.405)
-	panel.size = Vector2(panel_width, panel_height)
+	if GameState.loaded_from_save:
+		GameState.reset_progress()
+		GameState.loaded_from_save = false
+	_reset_armed = false
+	_on_play()
+
+
+func _show_settings() -> void:
+	var dialog := AcceptDialog.new()
+	dialog.title = "Settings"
+	dialog.dialog_text = "Adjust your journey's presentation."
+	var content := UIFactory.vbox(12)
+	content.custom_minimum_size = Vector2(340, 0)
+	var audio_label := UIFactory.label("MASTER VOLUME", 11, UITheme.GOLD_BRIGHT)
+	content.add_child(audio_label)
+	var volume := HSlider.new()
+	volume.min_value = 0.0
+	volume.max_value = 1.0
+	volume.step = 0.01
+	var master_bus := AudioServer.get_bus_index("Master")
+	volume.value = db_to_linear(AudioServer.get_bus_volume_db(master_bus)) if master_bus >= 0 else 1.0
+	volume.value_changed.connect(func(value: float) -> void:
+		if master_bus >= 0:
+			AudioServer.set_bus_volume_db(master_bus, linear_to_db(maxf(value, 0.001)))
+	)
+	content.add_child(volume)
+	var fullscreen := CheckButton.new()
+	fullscreen.text = "Fullscreen"
+	fullscreen.button_pressed = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
+	fullscreen.toggled.connect(func(enabled: bool) -> void:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if enabled else DisplayServer.WINDOW_MODE_WINDOWED)
+	)
+	content.add_child(fullscreen)
+	dialog.add_child(content)
+	add_child(dialog)
+	dialog.confirmed.connect(dialog.queue_free)
+	dialog.canceled.connect(dialog.queue_free)
+	dialog.popup_centered()
+
+
+func _show_extras() -> void:
+	var dialog := AcceptDialog.new()
+	dialog.title = "Reverie — Extras"
+	dialog.dialog_text = "A story of two souls.\n\nCreated with love for dark fantasy, forgotten memories, and the bond between Gerald and Lilith.\n\nREVERIE  •  v0.2.1"
+	add_child(dialog)
+	dialog.confirmed.connect(dialog.queue_free)
+	dialog.canceled.connect(dialog.queue_free)
+	dialog.popup_centered()
 
 func _build_navigation(layout: HBoxContainer) -> void:
 	var panel := UIFactory.panel(Color(0.012, 0.018, 0.038, 0.78), Color(0.78, 0.68, 0.48, 0.34), 22, 1, 30, true)
@@ -245,18 +308,21 @@ func _refresh_summary() -> void:
 		_play_button.text = "✧   CONTINUE   ✧" if GameState.loaded_from_save else "✧   BEGIN JOURNEY   ✧"
 
 func _style_ornate_menu_button(button: Button, accent: Color, primary: bool) -> void:
-	# The title artwork has its own painted labels beneath the live controls.
-	# Keep the ornate button faces fully opaque so those labels never bleed through.
-	var normal_bg := Color(0.018, 0.012, 0.035, 1.0)
-	var hover_bg := Color(0.075, 0.045, 0.105, 1.0)
-	var pressed_bg := Color(0.12, 0.075, 0.15, 1.0)
-	button.add_theme_stylebox_override("normal", UITheme.style(normal_bg, Color(accent.r, accent.g, accent.b, 0.68), 7, 1, 16))
-	button.add_theme_stylebox_override("hover", UITheme.style(hover_bg, Color(accent.r, accent.g, accent.b, 1.0), 7, 2, 16, true))
-	button.add_theme_stylebox_override("pressed", UITheme.style(pressed_bg, Color(accent.r, accent.g, accent.b, 1.0), 7, 2, 16))
-	button.add_theme_stylebox_override("focus", UITheme.style(Color(0.08, 0.05, 0.12, 0.85), Color("#fff0d8"), 7, 2, 16))
-	button.add_theme_color_override("font_color", Color("#f1e5f1") if primary else Color("#d7c7dd"))
+	# The dark glass face masks the illustration's printed lettering while the
+	# live hitbox sits precisely over the matching plaque and icon.
+	var normal_bg := Color("#100d1c")
+	var hover_bg := Color("#25182d")
+	var pressed_bg := Color("#33203b")
+	var edge := Color(accent.r, accent.g, accent.b, 0.92)
+	button.add_theme_stylebox_override("normal", UITheme.style(normal_bg, edge, 18, 1, 10))
+	button.add_theme_stylebox_override("hover", UITheme.style(hover_bg, Color("#fff0ff"), 18, 2, 10, true))
+	button.add_theme_stylebox_override("pressed", UITheme.style(pressed_bg, Color("#fff0dc"), 18, 2, 10))
+	button.add_theme_stylebox_override("disabled", UITheme.style(Color("#100d1c"), Color("#51445d"), 18, 1, 10))
+	button.add_theme_stylebox_override("focus", UITheme.style(hover_bg, Color("#fff0d8"), 18, 2, 10))
+	button.add_theme_color_override("font_color", Color("#fff0fa") if primary else Color("#e0d1e8"))
 	button.add_theme_color_override("font_hover_color", Color("#ffffff"))
 	button.add_theme_color_override("font_pressed_color", Color("#fff0dc"))
+	button.add_theme_color_override("font_disabled_color", Color("#82788c"))
 	button.flat = false
 
 
