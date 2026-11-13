@@ -394,7 +394,7 @@ func _process(delta: float) -> void:
 		_update_locomotion_pose(delta)
 		# A frame-backed sprite does not need the procedural _draw() pass every
 		# rendered frame. Redraw only for a changed frame, cast aura or hit flash.
-		if (character_id == "kael") or (animator.state == S_CAST) or hit_flash > 0.0:
+		if (character_id == "kael") or (character_id == "lilith") or (animator.state == S_CAST) or hit_flash > 0.0:
 			queue_redraw()
 	else:
 		# Procedural fallback uses anim_time for its limbs, bob and effects.
@@ -538,6 +538,8 @@ func _draw() -> void:
 			_draw_cast_aura(1.0)
 		if character_id == "kael":
 			_draw_kael_combat_fx()
+		if character_id == "lilith":
+			_draw_lilith_spectral_fx()
 		if hit_flash > 0.0:
 			draw_circle(Vector2(0, -24.0 * visual_scale), 20.0 * visual_scale, Color(1, 1, 1, hit_flash * 0.35))
 		return
@@ -586,6 +588,89 @@ func _draw_cast_aura(intensity: float) -> void:
 ## moving, a sword crescent timed to the attack's impact frames, and a layered
 ## crimson seal during CAST. These are additive overlays; the authored sprite
 ## frames remain the source of truth for his silhouette and sword pose.
+
+## Lilith's spectral effects are deliberately cool, soft and weightless.
+## Her magic reads as moonlit spirit energy rather than fire or physical impacts.
+func _draw_lilith_spectral_fx() -> void:
+	if animator == null:
+		return
+	var state := animator.state
+	var frame_count := float(maxi(1, animator.frame_count()))
+	var progress := clampf((float(animator.frame) + animator.elapsed * animator.fps() * animator.speed_scale) / frame_count, 0.0, 1.0)
+	var cyan := Color("#74dcff")
+	var ice := Color("#d8f6ff")
+	var blue := Color("#398cff")
+	var violet := Color("#8c8dff")
+	var center := Vector2(0.0, -35.0 * visual_scale)
+
+	if state == S_IDLE:
+		var pulse := 0.5 + 0.5 * sin(anim_time * 2.1)
+		draw_circle(center + Vector2(0, 3) * visual_scale, (13.0 + pulse * 3.0) * visual_scale, Color(cyan.r, cyan.g, cyan.b, 0.045 + pulse * 0.035))
+		for i in 7:
+			var phase := anim_time * (0.48 + float(i % 3) * 0.11) + float(i) * TAU / 7.0
+			var orbit := Vector2(cos(phase) * (15.0 + 2.5 * sin(phase * 1.7)), sin(phase * 1.25) * 13.0 - 5.0)
+			var p := center + orbit * visual_scale
+			var alpha := 0.25 + 0.30 * (0.5 + 0.5 * sin(phase * 1.8))
+			draw_circle(p, (1.0 + 0.45 * pulse) * visual_scale, Color(ice.r, ice.g, ice.b, alpha))
+			draw_line(p, p + Vector2(-1.0, -3.5) * visual_scale, Color(cyan.r, cyan.g, cyan.b, alpha * 0.65), 0.8 * visual_scale)
+	elif state == S_WALK or state == S_RUN:
+		var strength := 1.0 if state == S_RUN else 0.68
+		for i in 6:
+			var phase := anim_time * (7.0 + float(i % 3)) + float(i) * 1.8
+			var p := Vector2(-9.0 - fposmod(anim_time * 10.0 + float(i) * 8.0, 17.0), -7.0 - fposmod(anim_time * (15.0 + float(i % 3)) + float(i) * 12.0, 34.0))
+			draw_circle(p * visual_scale, (0.75 + 0.35 * sin(phase)) * visual_scale, Color(cyan.r, cyan.g, cyan.b, 0.34 * strength))
+			draw_line(p * visual_scale, (p + Vector2(-3.0, 2.0)) * visual_scale, Color(ice.r, ice.g, ice.b, 0.22 * strength), 0.8 * visual_scale)
+	elif state == S_ATTACK:
+		var sweep_alpha := smoothstep(0.16, 0.42, progress) * (1.0 - smoothstep(0.68, 0.91, progress))
+		if sweep_alpha > 0.01:
+			var angle := lerpf(-1.25, 0.72, clampf((progress - 0.16) / 0.70, 0.0, 1.0))
+			var origin := Vector2(5.0, -42.0) * visual_scale
+			var radius := 29.0 * visual_scale
+			draw_arc(origin, radius, angle - 1.08, angle + 0.72, 32, Color(blue.r, blue.g, blue.b, 0.82 * sweep_alpha), 3.2 * visual_scale, true)
+			draw_arc(origin, radius - 4.0 * visual_scale, angle - 0.92, angle + 0.55, 28, Color(ice.r, ice.g, ice.b, 0.78 * sweep_alpha), 1.25 * visual_scale, true)
+			draw_circle(origin + Vector2(cos(angle + 0.72), sin(angle + 0.72)) * radius, 2.0 * visual_scale * sweep_alpha, Color(ice.r, ice.g, ice.b, sweep_alpha))
+			var impact := smoothstep(0.43, 0.51, progress) * (1.0 - smoothstep(0.57, 0.69, progress))
+			if impact > 0.01:
+				draw_circle(origin, (7.0 + 15.0 * impact) * visual_scale, Color(cyan.r, cyan.g, cyan.b, 0.18 * impact))
+				for i in 8:
+					var ray := Vector2.RIGHT.rotated(TAU * float(i) / 8.0 + anim_time)
+					draw_line(origin + ray * 5.0 * visual_scale, origin + ray * (13.0 + 8.0 * impact) * visual_scale, Color(ice.r, ice.g, ice.b, 0.68 * impact), 1.0 * visual_scale)
+	elif state == S_CAST:
+		var gather := smoothstep(0.0, 0.38, progress)
+		var release := smoothstep(0.56, 0.82, progress) * (1.0 - smoothstep(0.9, 1.0, progress))
+		var ground := Vector2(0, -3.0) * visual_scale
+		var radius := lerpf(8.0, 30.0, gather) * visual_scale
+		var spin := anim_time * 0.75
+		draw_arc(ground, radius, spin, spin + TAU, 40, Color(cyan.r, cyan.g, cyan.b, 0.28 + 0.46 * (1.0 - release)), 1.8 * visual_scale, true)
+		draw_arc(ground, radius * 0.72, -spin * 1.7, -spin * 1.7 + TAU, 36, Color(violet.r, violet.g, violet.b, 0.42), 1.0 * visual_scale, true)
+		for i in 8:
+			var a := TAU * float(i) / 8.0 + spin
+			var ray := Vector2(cos(a), sin(a) * 0.48) * radius
+			draw_line(ground + ray * 0.78, ground + ray, Color(ice.r, ice.g, ice.b, 0.7), 1.1 * visual_scale)
+		if release > 0.01:
+			for i in 12:
+				var a := TAU * float(i) / 12.0 + spin * 0.6
+				var p := Vector2(cos(a) * (8.0 + float(i % 3) * 5.0), -8.0 - fposmod(anim_time * 19.0 + float(i) * 9.0, 67.0))
+				draw_circle(p * visual_scale, 1.1 * visual_scale, Color(ice.r, ice.g, ice.b, 0.72 * release))
+			draw_line(Vector2(0, -5) * visual_scale, Vector2(0, -66) * visual_scale, Color(cyan.r, cyan.g, cyan.b, 0.24 * release), 7.0 * visual_scale)
+			draw_line(Vector2(0, -5) * visual_scale, Vector2(0, -58) * visual_scale, Color(ice.r, ice.g, ice.b, 0.56 * release), 1.4 * visual_scale)
+	elif state == S_DAMAGE:
+		var recoil := 1.0 - progress
+		draw_arc(center, (13.0 + 17.0 * (1.0 - recoil)) * visual_scale, 0.0, TAU, 32, Color(cyan.r, cyan.g, cyan.b, 0.42 * recoil), 1.8 * visual_scale, true)
+		for i in 6:
+			var a := TAU * float(i) / 6.0
+			var ray := Vector2.RIGHT.rotated(a)
+			draw_line(center + ray * 8.0 * visual_scale, center + ray * (15.0 + 8.0 * recoil) * visual_scale, Color(ice.r, ice.g, ice.b, 0.48 * recoil), 1.0 * visual_scale)
+	elif state == S_VICTORY:
+		for i in 9:
+			var a := TAU * float(i) / 9.0 + anim_time * 0.42
+			var p := center + Vector2(cos(a) * 24.0, sin(a) * 29.0) * visual_scale
+			draw_circle(p, (1.1 + 0.45 * sin(anim_time * 2.0 + float(i))) * visual_scale, Color(ice.r, ice.g, ice.b, 0.58))
+	elif state == S_DEFEAT:
+		for i in 10:
+			var p := Vector2(cos(float(i) * 2.4) * (7.0 + float(i % 3) * 5.0), -5.0 - fposmod(anim_time * 6.0 + float(i) * 9.0, 48.0))
+			draw_circle(p * visual_scale, 1.0 * visual_scale, Color(cyan.r, cyan.g, cyan.b, 0.34))
+
 func _draw_kael_combat_fx() -> void:
 	if animator == null:
 		return
