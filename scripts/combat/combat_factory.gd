@@ -55,13 +55,15 @@ static func _apply_equipment(unit: Combatant, instance: CharacterInstance) -> vo
 			continue
 		var item: Dictionary = ContentDB.get_item(item_id)
 		var stats: Dictionary = item.get("stats", {})
-		unit.max_hp += float(stats.get("hp", 0))
-		unit.atk += float(stats.get("atk", 0))
-		unit.defense += float(stats.get("def", 0))
-		unit.speed += float(stats.get("spd", 0))
-		unit.crit_chance += float(stats.get("crit", 0))
+		var enhancement := GameState.gear_level(instance.uid, slot)
+		var enhancement_mult := 1.0 + 0.08 * float(enhancement)
+		unit.max_hp += float(stats.get("hp", 0)) * enhancement_mult
+		unit.atk += float(stats.get("atk", 0)) * enhancement_mult
+		unit.defense += float(stats.get("def", 0)) * enhancement_mult
+		unit.speed += float(stats.get("spd", 0)) * enhancement_mult
+		unit.crit_chance += float(stats.get("crit", 0)) * enhancement_mult
 		if stats.has("crit_dmg"):
-			unit.crit_mult += float(stats.get("crit_dmg", 0))
+			unit.crit_mult += float(stats.get("crit_dmg", 0)) * enhancement_mult
 		# The first elemental item (weapon slots are checked first) defines the
 		# wielder's resonance element. The combat engine turns that into damage.
 		if unit.equipment_element.is_empty():
@@ -76,7 +78,9 @@ static func enemy_units(group_id: String) -> Array:
 	if group.is_empty():
 		return units
 	var level := maxi(1, int(group.get("level", 1)))
-	var level_mult := 1.0 + 0.15 * (level - 1)
+	# Early Greenward encounters are onboarding fights. Keep level-1 enemies
+	# forgiving, then ramp gradually; bosses and elites retain full stats.
+	var level_mult := 0.82 + 0.08 * float(level - 1) if level <= 3 and not bool(group.get("boss", false)) and not bool(group.get("elite", false)) else 1.0 + 0.15 * float(level - 1)
 	var seen: Dictionary = {}
 	for enemy_id in group.get("enemies", []):
 		var definition: Dictionary = ContentDB.get_enemy(str(enemy_id))

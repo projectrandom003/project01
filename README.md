@@ -4,7 +4,7 @@ An original anime-fantasy MMORPG vertical slice built with **Godot 4.7** and **G
 
 The playable milestone is **Greenward**, a streamed isometric forest region (Phase 4 adds a small second region, **Moonpetal Hollow**): walk a village hub, talk to NPCs, accept quests, fight roaming monsters in turn-based battles, summon new characters, manage a party, and save your journey locally.
 
-> **Status: offline vertical slice + Phase 5 (character art and visual production).** This is a real, runnable game slice, not a mock-up. **Phase 2** added strict JSON validation, mechanical character passives, equipment resonance, enforced quest prerequisites and a CI/export pipeline; **Phase 3** added a single-source art direction (`GreenwardStyle` + `VISUAL_STYLE.md`), 47 prop kinds, richer terrain/river/bridges/waterfalls, 5 visually distinct locations, fog/lighting/weather architecture, animated & interactive props and an 8-state × 8-direction animation architecture; **Phase 4** added exactly TWO regions with a `RegionGraph`, validated transitions and per-region saves, a REAL art asset pipeline (`AssetManifest` + `SpriteFramesActorSource`) with an honest placeholder-only status, an ADDITIVE 9th `CAST` animation state with sprite-sheet support and ONE TEMPORARY procedural demonstration character, 6 new prop kinds (53 at that checkpoint) and bounded frame-sliced background chunk preparation (NO threads). **Phase 5** re-scoped to **character art and visual production**: a 10-kind production art pipeline (`CharacterArtPipeline`), 12 complete authored character specs (`CharacterArtSpec` + `assets/characters/<id>/SPEC.md` + generation prompts), premium Legendary/Mythic rarity presentation, a real-portrait seam with procedural fallback, 9 states × 8 directions sprite-sheet registration (72 animations), `WorldVisualStandards` (6 categories) and 4 new prop kinds (**57 total**) — on top of a **`1374 passed, 0 failed`** suite (all 954 prior tests preserved). **Phase 6** produced the FIRST final playable character art, now covering all three protagonists: **Gerald**, **Lilith** and **Kael** each have a complete set (8 directions × 9 states = 72 animations, 256×384 portrait, combat sprite, full-body illustration) extracted from their supplied Project Fantasy concept sheets by `tools/extract_character_sheet.py` / `tools/build_character_sheet.py` / `tools/build_character_static.py` and imported through the existing `SpriteFramesActorSource` / `PortraitAssetSource` seams. **The 12 collectible characters remain procedural placeholder art** and their specs + prompts are PREPARATION for future external art. Multiplayer, accounts, trading, PvP and server-authoritative progression are **not implemented** yet. **All art is intentionally procedural placeholder art** except the three protagonists' final playable sets (no audio). **NO visual testing** was performed (all verification is `--headless` with Godot's dummy renderer). See [Limitations](#limitations).
+> **Status: offline vertical slice + final playable protagonist art integration.** This is a real, runnable game slice, not a mock-up. **Phase 2** added strict JSON validation, mechanical character passives, equipment resonance, enforced quest prerequisites and a CI/export pipeline; **Phase 3** added a single-source art direction (`GreenwardStyle` + `VISUAL_STYLE.md`), 47 prop kinds, richer terrain/river/bridges/waterfalls, 5 visually distinct locations, fog/lighting/weather architecture, animated props, inspectable lore objects, persistent gathering nodes and an 8-state × 8-direction animation architecture; **Phase 4** added exactly TWO regions with a `RegionGraph`, validated transitions and per-region saves, a REAL art asset pipeline (`AssetManifest` + `SpriteFramesActorSource`) with an honest placeholder-only status, an ADDITIVE 9th `CAST` animation state with sprite-sheet support and ONE TEMPORARY procedural demonstration character, 6 new prop kinds (53 at that checkpoint) and bounded frame-sliced background chunk preparation (NO threads). **Phase 5** re-scoped to **character art and visual production**: a 10-kind production art pipeline (`CharacterArtPipeline`), 12 complete authored character specs (`CharacterArtSpec` + `assets/characters/<id>/SPEC.md` + generation prompts), premium Legendary/Mythic rarity presentation, a real-portrait seam with procedural fallback, 9 states × 8 directions sprite-sheet registration (72 animations), `WorldVisualStandards` (6 categories) and 4 new prop kinds (**57 total**) — on top of a **`1374 passed, 0 failed`** suite (all 954 prior tests preserved). **The latest art integration** produced the FIRST final playable character art, now covering all three protagonists: **Gerald**, **Lilith** and **Kael** each have a complete set (8 directions × 9 states = 72 animations, 256×384 portrait, combat sprite, full-body illustration) extracted from their supplied Project Fantasy concept sheets by `tools/extract_character_sheet.py` / `tools/build_character_sheet.py` / `tools/build_character_static.py` and imported through the existing `SpriteFramesActorSource` / `PortraitAssetSource` seams. **The 12 collectible characters remain procedural placeholder art** and their specs + prompts are PREPARATION for future external art. Multiplayer, accounts, trading, PvP and server-authoritative progression are **not implemented** yet. **Most generic world and roster art remains procedural**; exceptions are the three protagonists' final playable sets and the Fallen Matron's three boss-phase cutouts (no audio). **NO visual testing** was performed (all verification is `--headless` with Godot's dummy renderer). See [Limitations](#limitations).
 
 ---
 
@@ -52,7 +52,7 @@ Export pack smoke build (after a one-time editor import; see CI):
 godot --headless --path . --export-pack "Linux/X11" build/project-fantasy.pck
 ```
 
-Expected test output: `0 failed` and exit code `0`; the current total is **1374 passed, 0 failed** (236 Phase 1 baseline + 111 Phase 2 + 203 Phase 3 + 404 Phase 4 + 420 Phase 5), with all 954 prior tests preserved. `236` is the Phase 1 baseline and `347` / `550` / `954` are past checkpoints; `1374` is the ONLY current total. See [Testing](documentation/TESTING.md) for the exact current total, breakdown and commands.
+Expected test output: `0 failed` and exit code `0`; the current total is **1478 passed, 0 failed**. `1374` is the Phase 5 checkpoint, not the current total. The current suite also covers playable protagonist art, persistent gathering rewards, monster bonus drops and reward preview/claim consistency. See [Testing](documentation/TESTING.md) for the current total and focused scene-verification commands.
 
 The runner snapshots and restores the local save, so tests do not destroy a real journey.
 
@@ -86,8 +86,8 @@ All input actions are registered at runtime in `scripts/core/input_setup.gd`, so
 - Richer terrain (moisture/elevation blend, beach band, shoreline foam), a meandering noise-derived RIVER ribbon with waterfalls and wooden + stone bridges.
 - **5 visually distinct locations**: the village hub, Listening Stones ruins, the Hollowed Grove (corrupted palette), the Moonpetal Shrine glade, and the decorative river.
 - Atmospheric `fog.gdshader` veil (layered below the HUD), `GreenwardStyle.phase()`-driven day/night lighting and `WeatherDirector` weather architecture (CLEAR/MIST/RAIN/POLLEN_BLOOM).
-- Phase-driven lighting, fireflies, pollen motes, ambient wildlife (butterflies/moths/birds), animated props (bob/sway/pulse/flicker/drift) and non-destructive interactive props (highlight + toast; no `GameState` mutation).
-- **8-state × 8-direction character animation (+ ADDITIVE 9th `CAST` state)** (`CharacterAnimator` + `ActorFrameSource`), sprite-sheet support via `SpriteFramesActorSource` and an `ActorVisual.set_frame_source()` seam for real painted sprites; current frames (including the ONE TEMPORARY procedural demo character) are clearly-marked placeholders.
+- Phase-driven lighting, fireflies, pollen motes, ambient wildlife (butterflies/moths/birds), animated props (bob/sway/pulse/flicker/drift) and interactive props: lore objects are inspect-only, while explicitly configured gathering nodes grant persistent inventory materials.
+- **8-state × 8-direction character animation (+ ADDITIVE 9th `CAST` state)** (`CharacterAnimator` + `ActorFrameSource`), sprite-sheet support via `SpriteFramesActorSource` and an `ActorVisual.set_frame_source()` seam for real painted sprites; the three playable protagonists use their final imported sheets; the generic Wanderer, NPCs, monsters and collectible roster still use procedural fallbacks where no finished sheet exists.
 - Procedurally generated props, village huts, waypoint, NPCs and roaming monsters; Y-sorted actors and props, camera smoothing, zoom limits.
 - Mobile caps (48 props/chunk, ~26 mobile; ≤300 particles; fog/rain disabled on mobile), cached textures and off-screen animated-prop gating.
 - Keyboard, gamepad and touch input; automatic touch UI.
@@ -343,7 +343,7 @@ PREPARATION, not finished artwork.
   `animation_names()` (72), `validate_asset()`, `import_settings()`,
   `replacement_seams()`. `assets/CHARACTER_ART_PIPELINE.md`.
 
-### All 12 characters READY for artwork (specs complete, ZERO final assets)
+### All 12 collectible roster characters READY for artwork (specs complete; roster assets still procedural)
 
 - `scripts/art/character_art_spec.gd` (`CharacterArtSpec`) holds ONE authored
   spec per id (`lyra_vey`, `bramble`, `seraphine`, `nyx`, `coralyn`, `ignis`,
@@ -356,7 +356,9 @@ PREPARATION, not finished artwork.
   `assets/CHARACTER_SPECS.md` + 12 × `assets/characters/<id>/SPEC.md` +
   `assets/GENERATION_PROMPTS.md` (global style anchor + 12 prompts + exact output
   specs for FUTURE external generation). **These specs are complete and the
-  characters are READY for artwork — but ZERO final assets exist.**
+  collectible roster's portraits / combat art / full-body art are still pending.
+  These 12 collectible-art slots are separate from the final playable avatar
+  sets for Gerald, Lilith and Kael.**
 
 ### Character presentation
 
@@ -378,9 +380,10 @@ PREPARATION, not finished artwork.
   `animation_names()` / `registration_report()`; all 9 states (8 core + additive
   CAST) × 8 directions = **72 animations**. `ActorVisual.configure_character()` /
   `character_art_report()`; `WorldNPC` / `RoamingMonster` call it.
-  `ProceduralActorFrames` REMAINS the active fallback (no real sheets exist); the
-  Phase-4 `from_disk()` leak fix is preserved (ZERO leaked RIDs); player demo
-  untouched (`using_temporary_art == true`).
+  `ProceduralActorFrames` remains the fallback for generic NPCs, monsters and
+  collectible roster characters. The player-controlled protagonists use their
+  separate final imported sheets (Gerald, Lilith and Kael, 72 animations each);
+  the Phase-4 `from_disk()` leak fix is preserved (ZERO leaked RIDs).
 
 ### World visual standards and 57 prop kinds
 
@@ -569,6 +572,7 @@ Honest list of what is **not** in this build:
 - [Backend and database](documentation/BACKEND.md) — recommended server stack, authority boundaries and schema.
 - [Art pipeline](documentation/ART_PIPELINE.md) — replacing placeholders with production assets.
 - [Visual style guide](documentation/VISUAL_STYLE.md) — canonical art direction, palettes, animation and sprite specs (Phase 3 guide + §12 Phase 4 + §13 Phase 5 status).
+- [World environment design](documentation/WORLD_ENVIRONMENT_DESIGN.md) — regional art direction and the current explorable-world visual overhaul.
 - [Testing](documentation/TESTING.md) — automated suite and manual QA checklist.
 - [Content guide](documentation/CONTENT_GUIDE.md) — adding characters, skills, enemies, banners and quests.
 

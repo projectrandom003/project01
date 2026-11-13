@@ -19,6 +19,78 @@ var _reveal_animations: int = 0
 var _result_cards: int = 0
 
 
+func _ready() -> void:
+	super._ready()
+	var art_path := "res://assets/ui/backgrounds/summoning_chamber_background.svg"
+	if ResourceLoader.exists(art_path):
+		var backdrop := TextureRect.new()
+		backdrop.name = "SummoningChamberIllustration"
+		backdrop.texture = load(art_path) as Texture2D
+		backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		UIFactory.set_full_rect(backdrop)
+		add_child(backdrop)
+		move_child(backdrop, 0)
+
+class SummonSigil extends Control:
+	var elapsed := 0.0
+	var glow := Color("#b58cff")
+	func _process(delta: float) -> void:
+		elapsed += delta
+		queue_redraw()
+	func _draw() -> void:
+		var center := size * 0.5
+		var radius := minf(size.x, size.y) * (0.20 + 0.12 * clampf(elapsed / 1.8, 0.0, 1.0))
+		var pulse := 1.0 + 0.045 * sin(elapsed * 5.0)
+		for ring in range(3):
+			var r := radius * (0.66 + float(ring) * 0.22) * pulse
+			draw_arc(center, r, elapsed * (0.18 if ring % 2 == 0 else -0.14), elapsed * (0.18 if ring % 2 == 0 else -0.14) + TAU * 0.88, 96, Color(glow.r, glow.g, glow.b, 0.42 - float(ring) * 0.08), 2.0)
+		for i in range(8):
+			var angle := TAU * float(i) / 8.0 + elapsed * 0.22
+			var inner := center + Vector2(cos(angle), sin(angle)) * radius * 0.62
+			var outer := center + Vector2(cos(angle), sin(angle)) * radius * 1.08
+			draw_line(inner, outer, Color(glow.r, glow.g, glow.b, 0.45), 2.0)
+			draw_circle(outer, 3.0 + 1.5 * sin(elapsed * 4.0 + i), Color("#fff0c8"))
+		draw_circle(center, 12.0 + 5.0 * sin(elapsed * 6.0), Color(glow.r, glow.g, glow.b, 0.75))
+
+
+
+class FeaturedStage extends Control:
+	var accent := Color("#b58cff")
+	var elapsed := 0.0
+
+	func _process(delta: float) -> void:
+		elapsed += delta
+		queue_redraw()
+
+	func _draw() -> void:
+		var c := size * Vector2(0.5, 0.53)
+		var radius := minf(size.x * 0.43, size.y * 0.46)
+		var pulse := 1.0 + sin(elapsed * 1.35) * 0.018
+		draw_circle(c, radius * 0.94, Color(accent.r, accent.g, accent.b, 0.035))
+		for ring in range(4):
+			var r := radius * (0.43 + ring * 0.145) * pulse
+			draw_arc(c, r, elapsed * (0.035 if ring % 2 == 0 else -0.025), elapsed * (0.035 if ring % 2 == 0 else -0.025) + TAU * 0.91, 96, Color(accent.r, accent.g, accent.b, 0.30 - ring * 0.045), 1.4)
+		for i in range(12):
+			var a := TAU * float(i) / 12.0 + elapsed * 0.025
+			var inner := c + Vector2.RIGHT.rotated(a) * radius * 0.48
+			var outer := c + Vector2.RIGHT.rotated(a) * radius * 0.72
+			draw_line(inner, outer, Color(accent.r, accent.g, accent.b, 0.34), 1.2)
+			draw_circle(outer, 2.0 if i % 3 else 3.0, Color("#f4dfb1", 0.78))
+		# A shallow ritual dais gives the portrait a deliberate visual anchor.
+		var floor_y := size.y * 0.89
+		draw_colored_polygon(PackedVector2Array([
+			Vector2(size.x * 0.16, floor_y), Vector2(size.x * 0.5, floor_y - 18),
+			Vector2(size.x * 0.84, floor_y), Vector2(size.x * 0.5, floor_y + 18)
+		]), Color(0.13, 0.12, 0.22, 0.88))
+		draw_polyline(PackedVector2Array([
+			Vector2(size.x * 0.16, floor_y), Vector2(size.x * 0.5, floor_y - 18),
+			Vector2(size.x * 0.84, floor_y), Vector2(size.x * 0.5, floor_y + 18),
+			Vector2(size.x * 0.16, floor_y)
+		]), Color(accent.r, accent.g, accent.b, 0.52), 1.5)
+
+
 func _init() -> void:
 	screen_title = "Summon"
 	screen_subtitle = "Call a new bond into the glade"
@@ -85,28 +157,44 @@ func _rebuild_main() -> void:
 	var featured_rarity := featured_def.rarity if featured_def != null else "legendary"
 	_featured_id = featured_id
 	_featured_premium = UITheme.is_premium_rarity(featured_rarity)
-	var portrait_center := CenterContainer.new()
-	var portrait := PortraitView.new()
-	portrait.custom_minimum_size = Vector2(260, 310)
-	if featured_def != null:
-		portrait.setup_character(featured_def)  # ZERO final portraits -> procedural fallback
-	else:
-		portrait.setup({}, "Human", "neutral", "legendary", 0)
-	portrait_center.add_child(portrait)
-
-	# Rarity-tinted backdrop panel behind the featured PortraitView. Pure UI
-	# decoration from UITheme.rarity_effect; it implies NO real artwork.
+	# Rarity-tinted feature stage. The stage is a real sized composition layer,
+	# not a tiny icon sitting in an oversized empty panel.
 	var featured_effect := UITheme.rarity_effect(featured_rarity)
 	var featured_glow: Color = featured_effect.get("glow", UITheme.GOLD_BRIGHT)
 	var featured_aura := clampf(float(featured_effect.get("aura", 0.0)), 0.0, 1.0)
 	var portrait_backdrop := UIFactory.panel(
-		Color("#0a0f1c").lerp(Color(featured_glow.r, featured_glow.g, featured_glow.b, 1.0), 0.05 + featured_aura * 0.10),
-		Color(featured_glow.r, featured_glow.g, featured_glow.b, 0.30 + featured_aura * 0.35),
+		Color("#090d1a").lerp(Color(featured_glow.r, featured_glow.g, featured_glow.b, 1.0), 0.06 + featured_aura * 0.12),
+		Color(featured_glow.r, featured_glow.g, featured_glow.b, 0.42 + featured_aura * 0.38),
 		14,
-		1 + (1 if _featured_premium else 0),
+		2 if _featured_premium else 1,
 		8
 	)
-	portrait_backdrop.add_child(portrait_center)
+	var stage_layer := Control.new()
+	stage_layer.custom_minimum_size = Vector2(0, 330)
+	stage_layer.clip_contents = true
+	portrait_backdrop.add_child(stage_layer)
+	var stage := FeaturedStage.new()
+	stage.accent = featured_glow
+	UIFactory.set_full_rect(stage)
+	stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stage_layer.add_child(stage)
+	var portrait_center := CenterContainer.new()
+	UIFactory.set_full_rect(portrait_center)
+	portrait_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stage_layer.add_child(portrait_center)
+	var portrait := PortraitView.new()
+	portrait.custom_minimum_size = Vector2(252, 292)
+	portrait.show_frame = false
+	if featured_def != null:
+		portrait.setup_character(featured_def)
+		var featured_portrait_path := "res://assets/portraits/summon/%s.png" % featured_def.id
+		if ResourceLoader.exists(featured_portrait_path):
+			var featured_texture := load(featured_portrait_path) as Texture2D
+			if featured_texture != null:
+				portrait.set_portrait_texture(featured_texture)
+	else:
+		portrait.setup({}, "Human", "neutral", "legendary", 0)
+	portrait_center.add_child(portrait)
 	art.add_child(portrait_backdrop)
 
 	var banner_name := UIFactory.heading(str(banner.get("name", _selected_banner)), 24, UITheme.GOLD_BRIGHT)
@@ -136,6 +224,9 @@ func _rebuild_main() -> void:
 				var theme_line := UIFactory.wrapped("ART THEME · " + theme_text, 10, UITheme.TEXT_FAINT)
 				theme_line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 				art.add_child(theme_line)
+
+	if featured_def != null:
+		art.add_child(_featured_skill_panel(featured_def))
 
 	# --------------------------------------------------------------- info column
 	var info := UIFactory.vbox(10)
@@ -223,6 +314,33 @@ func _rebuild_main() -> void:
 	info.add_child(buttons)
 
 
+func _featured_skill_panel(definition: CharacterDef) -> Control:
+	var panel := UIFactory.panel(Color("#100d1c"), Color(UITheme.VIOLET.r, UITheme.VIOLET.g, UITheme.VIOLET.b, 0.42), 10, 1, 10)
+	var box := UIFactory.vbox(6)
+	box.add_child(UIFactory.label("SIGNATURE ARTS", 10, UITheme.TEXT_FAINT))
+	var skill_ids: Array = definition.skills.duplicate()
+	skill_ids.append(definition.ultimate)
+	var labels := ["ACTIVE I", "ACTIVE II", "ULTIMATE"]
+	for index in mini(3, skill_ids.size()):
+		var skill_id := str(skill_ids[index])
+		var skill: SkillDef = ContentDB.get_skill(skill_id)
+		if skill == null:
+			continue
+		var entry := UIFactory.vbox(2)
+		var header := UIFactory.hbox(6)
+		var tier_color := UITheme.GOLD_BRIGHT if index == 2 else UITheme.VIOLET
+		header.add_child(UIFactory.label(labels[index], 9, tier_color))
+		header.add_child(UIFactory.spacer())
+		header.add_child(UIFactory.label(skill.display_name, 12, UITheme.TEXT))
+		entry.add_child(header)
+		entry.add_child(UIFactory.wrapped(skill.description, 10, UITheme.TEXT_DIM))
+		box.add_child(entry)
+		if index < mini(3, skill_ids.size()) - 1:
+			box.add_child(UIFactory.separator())
+	panel.add_child(box)
+	return panel
+
+
 func _pity_row(title: String, value: int, maximum: int, caption: String, color: Color) -> VBoxContainer:
 	var box := UIFactory.vbox(3)
 	var header := UIFactory.hbox(8)
@@ -242,8 +360,57 @@ func _pull(count: int) -> void:
 	if not bool(result.get("ok", false)):
 		EventBus.toast_requested.emit(str(result.get("error", "Summon failed.")))
 		return
-	_show_results(result.get("results", []))
+	var rolls: Array = result.get("results", [])
+	await _play_summon_reveal(rolls)
+	_show_results(rolls)
 	_refresh()
+
+
+func _play_summon_reveal(results: Array) -> void:
+	if _results_layer != null and is_instance_valid(_results_layer):
+		_results_layer.queue_free()
+	_results_layer = Control.new()
+	_results_layer.name = "SummonReveal"
+	_results_layer.z_index = 80
+	UIFactory.set_full_rect(_results_layer)
+	_results_layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(_results_layer)
+	var shade := ColorRect.new()
+	shade.color = Color(0.015, 0.008, 0.035, 0.94)
+	UIFactory.set_full_rect(shade)
+	_results_layer.add_child(shade)
+	var sigil := SummonSigil.new()
+	sigil.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	sigil.custom_minimum_size = Vector2(560, 460)
+	sigil.position -= sigil.custom_minimum_size * 0.5
+	var best_rank := 0
+	for roll in results:
+		best_rank = maxi(best_rank, int(GachaService.RARITY_RANK.get(str(roll.get("rarity", "common")), 0)))
+	if best_rank >= int(GachaService.RARITY_RANK.get("legendary", 4)):
+		sigil.glow = Color("#ffd47a")
+	elif best_rank >= int(GachaService.RARITY_RANK.get("epic", 2)):
+		sigil.glow = Color("#c18cff")
+	else:
+		sigil.glow = Color("#78c9e8")
+	_results_layer.add_child(sigil)
+	var title := UIFactory.heading("SUMMONING", 28, UITheme.GOLD_BRIGHT)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.anchor_left = 0.2
+	title.anchor_right = 0.8
+	title.anchor_top = 0.18
+	title.anchor_bottom = 0.27
+	_results_layer.add_child(title)
+	var subtitle := UIFactory.label("Ancient bonds answer the call…", 14, UITheme.TEXT_DIM)
+	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	subtitle.anchor_left = 0.2
+	subtitle.anchor_right = 0.8
+	subtitle.anchor_top = 0.78
+	subtitle.anchor_bottom = 0.86
+	_results_layer.add_child(subtitle)
+	await get_tree().create_timer(2.15).timeout
+	if is_instance_valid(_results_layer):
+		_results_layer.queue_free()
+	_results_layer = null
 
 
 func _show_results(results: Array) -> void:

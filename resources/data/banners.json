@@ -1,9 +1,9 @@
 {
   "glade_whispers": {
-    "name": "Whispers of the Glade",
-    "subtitle": "Standard summon — Greenward chapter",
+    "name": "Hollow Moon Overture",
+    "subtitle": "Featured summon — Nyx Vaelora",
     "type": "standard",
-    "featured": ["lyra_vey"],
+    "featured": ["nyx"],
     "featured_rate": 0.5,
     "rates": { "common": 0.52, "rare": 0.30, "epic": 0.13, "legendary": 0.045, "mythic": 0.005 },
     "hard_pity": 70,
@@ -19,10 +19,10 @@
     }
   },
   "crimson_covenant": {
-    "name": "Crimson Covenant",
-    "subtitle": "Limited summon — Crown of Cinders",
+    "name": "Scarlet Requiem",
+    "subtitle": "Limited summon — Vespera Noct",
     "type": "limited",
-    "featured": ["ignis"],
+    "featured": ["vespera"],
     "featured_rate": 0.5,
     "rates": { "common": 0.50, "rare": 0.31, "epic": 0.13, "legendary": 0.05, "mythic": 0.01 },
     "hard_pity": 80,

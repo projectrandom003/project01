@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="176" viewBox="0 0 192 176">
+<defs><linearGradient id="wall" x2="0" y2="1"><stop stop-color="#d2b98b"/><stop offset="1" stop-color="#806447"/></linearGradient><linearGradient id="roof" x2="0" y2="1"><stop stop-color="#59443d"/><stop offset="1" stop-color="#241f25"/></linearGradient><linearGradient id="wood" x2="1"><stop stop-color="#533b2e"/><stop offset=".5" stop-color="#9b7048"/><stop offset="1" stop-color="#3b2c28"/></linearGradient><radialGradient id="window"><stop stop-color="#ffe6a0"/><stop offset=".55" stop-color="#d9a95e"/><stop offset="1" stop-color="#644a39"/></radialGradient></defs>
+<ellipse cx="96" cy="162" rx="76" ry="9" fill="#111a17" opacity=".35"/>
+<path d="M35 79 L95 43 158 79 153 147 38 147Z" fill="url(#wall)" stroke="#392e29" stroke-width="3"/>
+<path d="M25 82 L93 22 169 80 158 91 94 43 35 92Z" fill="url(#roof)" stroke="#201d20" stroke-width="4"/>
+<path d="M31 81 L94 27 162 81" fill="none" stroke="#a17a54" stroke-width="4"/>
+<path d="M46 87 L46 145 M61 78 L61 147 M136 79 L136 146" stroke="#604936" stroke-width="3" opacity=".6"/>
+<path d="M82 147 L82 103 Q96 87 111 103 L111 147Z" fill="#342a28" stroke="#49342c" stroke-width="3"/>
+<path d="M89 147 L89 108 Q96 98 104 108 L104 147Z" fill="url(#wood)"/>
+<circle cx="102" cy="127" r="2" fill="#d9b878"/>
+<rect x="50" y="99" width="20" height="23" rx="2" fill="url(#window)" stroke="#4a352c" stroke-width="4"/>
+<path d="M60 99 V122 M50 110 H70" stroke="#50392c" stroke-width="3"/>
+<rect x="125" y="99" width="19" height="23" rx="2" fill="url(#window)" stroke="#4a352c" stroke-width="4"/>
+<path d="M134.5 99 V122 M125 110 H144" stroke="#50392c" stroke-width="3"/>
+<path d="M31 144 Q96 139 161 144 L158 153 Q96 159 35 153Z" fill="#493a31"/>
+<path d="M83 147 L112 147 L119 158 L76 158Z" fill="#78604a"/>
+<path d="M21 83 L37 68 47 76 35 94Z M148 70 L165 75 174 87 157 91Z" fill="#5e4938"/>
+<path d="M43 63 Q29 45 48 34 Q61 22 75 39 Q86 54 69 66Z M131 60 Q121 43 139 32 Q154 25 164 42 Q168 57 151 66Z" fill="#4e6b45"/>
+<g fill="#9baa69"><circle cx="49" cy="42" r="8"/><circle cx="62" cy="36" r="9"/><circle cx="145" cy="42" r="9"/><circle cx="157" cy="48" r="7"/></g>
+<path d="M29 153 Q18 145 22 135 M163 153 Q176 145 171 132" fill="none" stroke="#536b43" stroke-width="5" stroke-linecap="round"/>
+<g fill="#d5c18c"><circle cx="23" cy="129" r="2"/><circle cx="173" cy="127" r="2"/><circle cx="34" cy="158" r="2"/></g>
+</svg>

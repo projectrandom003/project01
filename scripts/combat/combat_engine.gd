@@ -384,6 +384,7 @@ func _deal_damage(actor: Combatant, skill: SkillDef, target: Combatant) -> Array
 		"absorbed": int(round(result.absorbed)),
 		"crit": crit,
 		"element": skill.element,
+		"skill_id": skill.id,
 		"element_mult": element_mult,
 		"advantage": ElementTable.label(element_mult),
 	})

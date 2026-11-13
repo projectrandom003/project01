@@ -86,6 +86,14 @@ func _rebuild_grid() -> void:
 				var category := str(item.get("category", "material"))
 				if _filter == "all" or category == _filter:
 					ids.append(str(item_id))
+	for instance in GameState.roster:
+		for slot in CharacterInstance.SLOTS:
+			var equipped_id: String = instance.equipped_item(slot)
+			if equipped_id.is_empty() or ids.has(equipped_id):
+				continue
+			var equipped_item: Dictionary = ContentDB.get_item(equipped_id)
+			if _filter == "all" or _filter == str(equipped_item.get("category", "")):
+				ids.append(equipped_id)
 	ids.sort_custom(func(a, b) -> bool:
 		var item_a: Dictionary = ContentDB.get_item(a)
 		var item_b: Dictionary = ContentDB.get_item(b)
@@ -131,7 +139,9 @@ func _make_card(item_id: String) -> PanelContainer:
 	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	box.add_child(name_label)
 	var count := GameState.currency(item_id) if str(item.get("category", "")) == "currency" else GameState.item_count(item_id)
-	var count_label := UIFactory.label("×%s" % UIFactory.number(count), 10, UITheme.TEXT_DIM)
+	var equipped_count := _equipped_by(item_id).size() if str(item.get("category", "")) == "equipment" else 0
+	var count_text := "Equipped" if count <= 0 and equipped_count > 0 else "×%s  ·  E%d" % [UIFactory.number(count), equipped_count] if equipped_count > 0 else "×%s" % UIFactory.number(count)
+	var count_label := UIFactory.label(count_text, 10, UITheme.TEAL if equipped_count > 0 else UITheme.TEXT_DIM)
 	count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(count_label)
 
@@ -196,6 +206,8 @@ func _show_detail(item_id: String) -> void:
 		_detail.add_child(stat_grid)
 
 	if category == "equipment":
+		var slot_id := str(item.get("slot", ""))
+		_detail.add_child(UIFactory.chip("SLOT  " + slot_id.capitalize(), UITheme.TEAL))
 		var equipped_by := _equipped_by(item_id)
 		if not equipped_by.is_empty():
 			_detail.add_child(UIFactory.label("Equipped by: " + ", ".join(equipped_by), 11, UITheme.TEAL))
@@ -230,7 +242,33 @@ func _show_detail(item_id: String) -> void:
 				_equip_target_uid = str(picker.get_item_metadata(selected))
 			)
 			_equip_target_uid = str(picker.get_item_metadata(0))
-		target_row.add_child(picker)
+			target_row.add_child(picker)
+			var comparison := _equipment_comparison(item, _equip_target_uid)
+			_detail.add_child(comparison)
+			var target_instance: CharacterInstance = null
+			for candidate in GameState.roster:
+				if candidate.uid == _equip_target_uid:
+					target_instance = candidate
+					break
+			if target_instance != null and target_instance.equipped_item(slot_id) == item_id:
+				var enhancement := GameState.gear_level(_equip_target_uid, slot_id)
+				_detail.add_child(UIFactory.label("ENHANCEMENT  +%d%% stats" % (enhancement * 8), 10, UITheme.GOLD))
+				var upgrade_info := GameState.gear_upgrade_info(_equip_target_uid, slot_id)
+				var upgrade_button := UIFactory.button(
+					"Enhance to +%d  ·  %d Gold  ·  %d Glade Sap" % [enhancement + 1, int(upgrade_info.get("gold", 0)), int(upgrade_info.get("sap", 0))], true
+				)
+				upgrade_button.disabled = not bool(upgrade_info.get("ok", false))
+				upgrade_button.tooltip_text = str(upgrade_info.get("reason", "Raises this gear's stats by 8% per level."))
+				upgrade_button.pressed.connect(func() -> void: _enhance(_equip_target_uid, slot_id))
+				_detail.add_child(upgrade_button)
+			picker.item_selected.connect(func(selected: int) -> void:
+				var old_comparison := _detail.get_node_or_null("EquipmentComparison")
+				if old_comparison != null:
+					old_comparison.queue_free()
+				var next_comparison := _equipment_comparison(item, str(picker.get_item_metadata(selected)))
+				next_comparison.name = "EquipmentComparison"
+				_detail.add_child(next_comparison)
+			)
 		var equip_button := UIFactory.button("Equip", true)
 		equip_button.disabled = amount <= 0 or index == 0
 		equip_button.pressed.connect(func() -> void: _equip(item_id))
@@ -242,6 +280,40 @@ func _show_detail(item_id: String) -> void:
 			11,
 			UITheme.TEXT_FAINT
 		))
+
+
+func _equipment_comparison(item: Dictionary, uid: String) -> VBoxContainer:
+	var box := UIFactory.vbox(4)
+	box.name = "EquipmentComparison"
+	box.add_child(UIFactory.label("COMPARISON · CURRENTLY EQUIPPED", 9, UITheme.TEXT_FAINT))
+	var instance: CharacterInstance = null
+	for candidate in GameState.roster:
+		if candidate.uid == uid:
+			instance = candidate
+			break
+	if instance == null:
+		box.add_child(UIFactory.label("Select a character to compare gear.", 10, UITheme.TEXT_DIM))
+		return box
+	var slot := str(item.get("slot", ""))
+	var current_id := instance.equipped_item(slot)
+	var current: Dictionary = ContentDB.get_item(current_id) if not current_id.is_empty() else {}
+	box.add_child(UIFactory.label(
+		"Equipped: %s" % str(current.get("name", "Empty slot")), 11, UITheme.TEXT
+	))
+	var next_stats: Dictionary = item.get("stats", {})
+	var old_stats: Dictionary = current.get("stats", {})
+	var keys: Array = next_stats.keys()
+	for key in old_stats.keys():
+		if not keys.has(key):
+			keys.append(key)
+	for key in keys:
+		var delta := float(next_stats.get(key, 0.0)) - float(old_stats.get(key, 0.0))
+		var sign := "+" if delta > 0.0 else "" if delta == 0.0 else ""
+		var tint := UITheme.GREEN if delta > 0.0 else UITheme.DANGER if delta < 0.0 else UITheme.TEXT_DIM
+		box.add_child(UIFactory.label("%s  %s%s" % [str(key).to_upper(), sign, str(delta)], 10, tint))
+	if current_id == str(item.get("id", "")):
+		box.add_child(UIFactory.label("Already equipped in this slot.", 10, UITheme.TEXT_DIM))
+	return box
 
 
 func _stat_row(title: String, value: String) -> PanelContainer:
@@ -265,6 +337,16 @@ func _equipped_by(item_id: String) -> Array:
 				result.append(definition.display_name)
 				break
 	return result
+
+
+func _enhance(uid: String, slot: String) -> void:
+	if GameState.enhance_gear(uid, slot):
+		EventBus.toast_requested.emit("Equipment enhanced! Stats increased by 8%.")
+		_rebuild_grid()
+		_show_detail(_selected_item)
+	else:
+		var info := GameState.gear_upgrade_info(uid, slot)
+		EventBus.toast_requested.emit(str(info.get("reason", "Could not enhance equipment.")))
 
 
 func _unequip(uid: String, slot: String) -> void:

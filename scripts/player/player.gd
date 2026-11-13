@@ -40,6 +40,14 @@ var nearby_interactable: Interactable = null
 ## whose validated world_sheet.tres is driving the Sprite2D.
 var avatar_id: String = ""
 
+# Canonical in-world height ratios. Kael is the 183 cm reference; these
+# ratios keep the three siblings visually consistent without changing hitboxes.
+const AVATAR_HEIGHT_SCALE := {
+	"kael": 1.0,
+	"gerald": 200.0 / 183.0,
+	"lilith": 130.0 / 183.0,
+}
+
 var _zoom: float = 1.1
 var _scan_accumulator: float = 0.0
 var _glow_timer: float = 0.0
@@ -68,12 +76,8 @@ func _ready() -> void:
 	# CANOPY accents; there is no character-palette entry in GreenwardStyle).
 	visual.setup(HERO_PALETTE, ActorVisual.Kind.HUMAN, "player", "Human", "wind")
 	add_child(visual)
-	# Phase-2: register the ONE fully integrated demonstration character. The
-	# in-memory SpriteFrames sheet is TEMPORARY procedural art (no painted
-	# assets exist yet) but exercises the whole SpriteFramesActorSource path.
-	# Its is_temporary() is TRUE, so visual.using_temporary_art stays TRUE.
-	# The starting party's real disk-backed avatars are one Tab press away.
-	visual.set_frame_source(DemoCharacterFrames.new("player", HERO_PALETTE))
+	# Do not attach the generic Wanderer demo frames here. The player must
+	# never render a placeholder before Kael's final playable art is selected.
 
 	_name_label = Label.new()
 	_name_label.text = str(GameState.profile.get("name", "Wanderer"))
@@ -90,7 +94,7 @@ func _ready() -> void:
 	camera = Camera2D.new()
 	camera.position = Vector2(0, -30)
 	camera.position_smoothing_enabled = true
-	camera.position_smoothing_speed = 7.0
+	camera.position_smoothing_speed = 12.0
 	camera.zoom = Vector2.ONE * _zoom
 	add_child(camera)
 	camera.make_current()
@@ -105,6 +109,9 @@ func _ready() -> void:
 	add_child(_glow)
 
 	_connect_visual_events()
+	# Kael is the canonical player-controlled protagonist. Start the world
+	# avatar with his validated playable art instead of the Wanderer demo.
+	set_avatar("kael")
 
 
 func _physics_process(delta: float) -> void:
@@ -133,7 +140,8 @@ func _physics_process(delta: float) -> void:
 		_in_water = in_water
 		_update_water_visual(in_water)
 	if in_water:
-		speed *= 0.4
+		# Swimming is deliberately slower than walking on land, but remains responsive.
+		speed *= 0.5
 	if input_vector.length_squared() > 0.001:
 		velocity = velocity.move_toward(input_vector * speed, ACCELERATION * delta)
 		if absf(input_vector.x) > 0.08:
@@ -143,14 +151,18 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-	# Drive the 8-direction animator + explicit locomotion state.
+	# Drive the 8-direction animator from actual movement. The authored
+	# locomotion sheets are 7 frames; a modest playback lift avoids the visibly
+	# stepped 12/14 fps cadence at normal game framerates without skipping poses.
+	var movement_ratio := clampf(velocity.length() / maxf(1.0, speed), 0.0, 1.0)
 	var moving := velocity.length() > 18.0
-	visual.set_move_direction(input_vector)
+	visual.set_move_direction(velocity.normalized() if moving else input_vector)
 	visual.walking = moving  # backward-compatible assignment
 	if moving:
-		visual.play(ANIM_RUN if sprinting else ANIM_WALK)
+		var locomotion_speed := (1.40 if sprinting else 1.36) * lerpf(0.90, 1.0, movement_ratio)
+		visual.play(ANIM_RUN if sprinting else ANIM_WALK, -1, locomotion_speed)
 	else:
-		visual.play(ANIM_IDLE)
+		visual.play(ANIM_IDLE, -1, 1.0)
 
 
 func _process(delta: float) -> void:
@@ -187,14 +199,17 @@ func _unhandled_input(event: InputEvent) -> void:
 
 # ------------------------------------------------------------ avatar switching
 
-## The Wanderer ("") plus every party member that has a real, fully validated
-## disk SpriteFrames. Characters with only procedural art are not listed, so a
-## switch can never downgrade the player to a placeholder silhouette.
+## The Tab cycle has a deliberate story order, independent of party/save order.
+## The Wanderer placeholder is never a selectable avatar.
 func available_avatars() -> Array[String]:
-	var ids: Array[String] = [""]
+	var party_ids: Array[String] = []
 	for instance in GameState.party_instances():
 		var character_id := str(instance.char_id)
-		if character_id.is_empty() or ids.has(character_id):
+		if not character_id.is_empty() and not party_ids.has(character_id):
+			party_ids.append(character_id)
+	var ids: Array[String] = []
+	for character_id in ["kael", "lilith", "gerald"]:
+		if not party_ids.has(character_id):
 			continue
 		var source := SpriteFramesActorSource.from_playable(character_id)
 		if source != null and source.has_frames() and source.validate_sheets().is_empty():
@@ -202,7 +217,7 @@ func available_avatars() -> Array[String]:
 	return ids
 
 
-## Cycle the world avatar and return the newly active id ("" = Wanderer).
+## Cycle through the validated party characters and return the newly active id.
 func cycle_avatar() -> String:
 	var ids := available_avatars()
 	if ids.size() <= 1:
@@ -214,17 +229,9 @@ func cycle_avatar() -> String:
 	return avatar_id
 
 
-## Drive the world actor as `character_id`. "" restores the Wanderer demo art.
+## Set the world actor to a real party character. Empty ids are rejected.
 func set_avatar(character_id: String) -> void:
-	if visual == null:
-		return
-	if character_id.is_empty():
-		avatar_id = ""
-		visual.setup(HERO_PALETTE, ActorVisual.Kind.HUMAN, "player", "Human", "wind")
-		visual.set_frame_source(DemoCharacterFrames.new("player", HERO_PALETTE))
-		if _name_label != null:
-			_name_label.text = str(GameState.profile.get("name", "Wanderer"))
-		EventBus.toast_requested.emit("Now playing as the Wanderer")
+	if visual == null or character_id.is_empty():
 		return
 	var definition := ContentDB.get_character(character_id)
 	if definition == null or definition.id.is_empty():
@@ -242,6 +249,9 @@ func set_avatar(character_id: String) -> void:
 		set_avatar("")
 		return
 	avatar_id = character_id
+	# Apply the canonical lore-height ratio through the sprite geometry API,
+	# preserving a stable ground/hover anchor during every animation pose.
+	visual.set_body_scale(float(AVATAR_HEIGHT_SCALE.get(character_id, 1.0)))
 	if _name_label != null:
 		_name_label.text = definition.display_name
 	EventBus.toast_requested.emit("Now playing as " + definition.display_name)
@@ -256,19 +266,19 @@ func _set_zoom(value: float) -> void:
 func _update_water_visual(in_water: bool) -> void:
 	if visual != null:
 		if in_water:
-			visual.position = Vector2(0, 6)
-			visual.modulate = Color(0.7, 0.85, 1.0, 0.85)
+			# Keep the original sprite pixels/colors intact. Lower the actor behind
+			# the waterline so roughly the lower half of the 128px sheet is submerged.
+			visual.position = Vector2(0, 44)
 		else:
 			visual.position = Vector2.ZERO
-			visual.modulate = Color.WHITE
 	# Water surface ripple overlay
 	if in_water:
 		if _water_surface == null:
 			_water_surface = Sprite2D.new()
 			_water_surface.texture = ProceduralArt.white_pixel()
-			_water_surface.scale = Vector2(24, 4)
-			_water_surface.position = Vector2(0, -4)
-			_water_surface.modulate = Color(0.4, 0.7, 0.9, 0.5)
+			_water_surface.scale = Vector2(46, 5)
+			_water_surface.position = Vector2(0, -20)
+			_water_surface.modulate = Color(0.35, 0.68, 0.86, 0.58)
 			_water_surface.z_index = 5
 			add_child(_water_surface)
 	else:

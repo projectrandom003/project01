@@ -8,11 +8,14 @@ extends Control
 signal closed
 
 const TURN_DELAY := 0.78
+const IMPACT_DELAY := 0.58
 
 var group_id: String = ""
 var engine: CombatEngine
+var _battlefield: Battlefield = null
 var _enemy_row: HBoxContainer
 var _party_row: HBoxContainer
+var _roster_box: VBoxContainer
 var _turn_box: HBoxContainer
 var _skills_box: HFlowContainer
 var _log_label: RichTextLabel
@@ -25,6 +28,7 @@ var _speed_button: Button
 var _enemy_cards: Array = []
 var _party_cards: Array = []
 var _card_by_index: Dictionary = {}
+var _roster_rows: Dictionary = {}
 var _pending_skill: SkillDef = null
 var _target_team: int = -1
 var _targeting: bool = false
@@ -46,6 +50,7 @@ var _speed: float = 1.0
 var _auto: bool = false
 var _log_lines: Array = []
 var _pending_rewards: Dictionary = {}
+var _cinematic_finish_delay: float = 0.0
 var _result_layer: Control = null
 var _confirm_layer: Control = null
 
@@ -209,13 +214,15 @@ func _build_layout() -> void:
 	_round_label = UIFactory.label("Round 1", 10, UITheme.TEXT_DIM)
 	header.add_child(_round_label)
 	header.add_child(UIFactory.spacer())
-	_auto_button = UIFactory.small_button("Auto: Off", UITheme.TEXT_DIM)
+	_auto_button = UIFactory.small_button("AUTO  OFF", UITheme.TEXT_DIM)
 	_auto_button.toggle_mode = true
-	_auto_button.custom_minimum_size = Vector2(80, 28)
+	_auto_button.custom_minimum_size = Vector2(92, 30)
+	_auto_button.tooltip_text = "Automatically choose skills and targets for your party"
 	_auto_button.toggled.connect(_on_auto_toggled)
 	header.add_child(_auto_button)
 	_speed_button = UIFactory.small_button("1x", UITheme.TEAL)
-	_speed_button.custom_minimum_size = Vector2(60, 28)
+	_speed_button.custom_minimum_size = Vector2(60, 30)
+	_speed_button.tooltip_text = "Cycle battle speed"
 	_speed_button.pressed.connect(_cycle_speed)
 	header.add_child(_speed_button)
 	var retreat := UIFactory.button("Retreat", false, true)
@@ -251,26 +258,17 @@ func _build_layout() -> void:
 	turn_panel.add_child(turn_row)
 	root.add_child(turn_panel)
 
-	# ===== CENTER: large battlefield =====
-	var battlefield := UIFactory.vbox(4)
-	battlefield.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	root.add_child(battlefield)
-
-	# Enemy side (right, larger for bosses).
-	var enemy_section := UIFactory.vbox(2)
-	enemy_section.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_enemy_row = UIFactory.hbox(12)
-	_enemy_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	_enemy_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	enemy_section.add_child(_enemy_row)
-	battlefield.add_child(enemy_section)
-
-	# Party side (left).
-	var party_section := UIFactory.vbox(2)
-	_party_row = UIFactory.hbox(10)
-	_party_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	party_section.add_child(_party_row)
-	battlefield.add_child(party_section)
+	# ===== CENTER: the battlefield =====
+	# Party on the left, enemies on the right, real sprites on the stage.
+	_battlefield = Battlefield.new()
+	_battlefield.arena_id = group_id
+	_battlefield.name = "Battlefield"
+	_battlefield.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_battlefield.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_battlefield.custom_minimum_size = Vector2(0, 280)
+	_battlefield.actor_clicked.connect(_on_battlefield_actor_clicked)
+	_battlefield.cinematic_impact.connect(_camera_shake)
+	root.add_child(_battlefield)
 
 	# ===== BOTTOM: active character info + skills =====
 	var bottom := UIFactory.hbox(10)
@@ -294,17 +292,29 @@ func _build_layout() -> void:
 	_status_label = UIFactory.label("", 9, UITheme.TEAL)
 	info_box.add_child(_status_label)
 
+	# Party roster (compact): every ally's portrait, name and HP.
+	var roster_panel := UIFactory.panel(Color("#0b1220"), UITheme.BORDER_SOFT, 8, 1, 8)
+	roster_panel.custom_minimum_size = Vector2(210, 0)
+	bottom.add_child(roster_panel)
+	var roster_box := UIFactory.vbox(3)
+	roster_panel.add_child(roster_box)
+	roster_box.add_child(UIFactory.label("PARTY", 8, UITheme.TEXT_FAINT))
+	_roster_box = UIFactory.vbox(2)
+	roster_box.add_child(_roster_box)
+
 	# Skills panel.
 	var skills_panel := UIFactory.panel(Color("#0b1220"), UITheme.BORDER_SOFT, 8, 1, 8)
 	skills_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom.add_child(skills_panel)
+	var skills_content := UIFactory.vbox(5)
+	skills_panel.add_child(skills_content)
 	_skills_box = HFlowContainer.new()
 	_skills_box.add_theme_constant_override("h_separation", 6)
 	_skills_box.add_theme_constant_override("v_separation", 4)
 	_skills_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	skills_panel.add_child(_skills_box)
+	skills_content.add_child(_skills_box)
 	_hint_label = UIFactory.label("", 10, UITheme.TEXT_DIM)
-	skills_panel.add_child(_hint_label)
+	skills_content.add_child(_hint_label)
 
 	# Log panel.
 	var log_panel := UIFactory.panel(Color("#0a101c"), UITheme.BORDER_SOFT, 8, 1, 6)
@@ -329,11 +339,6 @@ func _start_battle() -> void:
 	_log_lines.clear()
 	if _log_label != null:
 		_log_label.text = ""
-	UIFactory.clear(_enemy_row)
-	UIFactory.clear(_party_row)
-	_enemy_cards.clear()
-	_party_cards.clear()
-	_card_by_index.clear()
 
 	var group: Dictionary = ContentDB.get_enemy_group(group_id)
 	if group.is_empty():
@@ -368,27 +373,65 @@ func _start_battle() -> void:
 				if _boss_bar_container != null:
 					_boss_bar_container.visible = true
 				_show_banner("Boss: " + eu.display_name)
-	for index in engine.combatants.size():
-		var unit: Combatant = engine.combatants[index]
-		var card := CombatUnitCard.new()
-		card.setup(unit)
-		card.clicked.connect(_on_card_clicked)
-		_card_by_index[index] = card
+
+	# Stage the two teams: the party on the left, the enemies on the right.
+	var party_units: Array = []
+	var enemy_stage_units: Array = []
+	for unit in engine.combatants:
 		if unit.team == CombatEngine.PLAYER_TEAM:
-			_party_cards.append(card)
-			_party_row.add_child(card)
+			party_units.append(unit)
 		else:
-			_enemy_cards.append(card)
-			_enemy_row.add_child(card)
+			enemy_stage_units.append(unit)
+	if _battlefield != null:
+		_battlefield.setup(party_units, enemy_stage_units)
+	_build_roster(party_units)
 
 	_log("[color=#e8c27a]Battle begins.[/color]")
 	var events := engine.start()
-	_process_events(events)
+	await _process_events(events)
+
+
+## Compact party roster: portrait, name and HP for every ally.
+func _build_roster(units: Array) -> void:
+	if _roster_box == null:
+		return
+	UIFactory.clear(_roster_box)
+	_roster_rows.clear()
+	for unit in units:
+		var row := UIFactory.hbox(5)
+		row.mouse_filter = Control.MOUSE_FILTER_STOP
+		var portrait := PortraitView.new()
+		portrait.custom_minimum_size = Vector2(30, 38)
+		var definition := ContentDB.get_character(unit.def_id)
+		if definition != null:
+			portrait.setup_character(definition)
+		else:
+			portrait.setup(unit.palette, "Human", unit.element, unit.rarity, unit.def_id.hash())
+		row.add_child(portrait)
+		var column := UIFactory.vbox(1)
+		column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(column)
+		var name_label := UIFactory.label(unit.display_name, 10, UITheme.TEXT)
+		name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		column.add_child(name_label)
+		var hp_bar := UIFactory.bar(UITheme.GREEN, 6)
+		hp_bar.custom_minimum_size = Vector2(0, 7)
+		hp_bar.max_value = maxf(1.0, unit.max_hp)
+		hp_bar.value = clampf(unit.hp, 0.0, unit.max_hp)
+		column.add_child(hp_bar)
+		var hp_label := UIFactory.label("", 8, UITheme.TEXT_DIM)
+		column.add_child(hp_label)
+		_roster_rows[unit.uid] = { "bar": hp_bar, "label": hp_label, "row": row }
+		row.gui_input.connect(func(event: InputEvent) -> void:
+			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+				_on_roster_clicked(unit))
+		_roster_box.add_child(row)
 
 
 func _process_events(events: Array) -> void:
 	if _resolved:
 		return
+	var pending_deaths: Array[BattlefieldActor] = []
 	for event in events:
 		var event_type := str(event.get("type", ""))
 		match event_type:
@@ -401,21 +444,19 @@ func _process_events(events: Array) -> void:
 				var actor_name := str(event.get("actor_name", "Unit"))
 				var skill_name := str(event.get("skill_name", "skill"))
 				_log("[color=#7fe3e0]%s uses %s.[/color]" % [actor_name, skill_name])
-				var actor_card: CombatUnitCard = _card_for_uid(str(event.get("actor_uid", "")))
-				var target_uid := str(event.get("target_uid", ""))
-				var target_card: CombatUnitCard = _card_for_uid(target_uid) if not target_uid.is_empty() else null
-				if actor_card != null:
-					actor_card.flash(Color(1.3, 1.3, 1.3, 1.0))
-				_animate_attack(actor_card, target_card)
+				var actor: BattlefieldActor = _actor_for_uid(str(event.get("actor_uid", "")))
+				var target_uids: Array = event.get("target_uids", [])
+				var target_uid := str(target_uids[0]) if not target_uids.is_empty() else ""
+				var target: BattlefieldActor = _actor_for_uid(target_uid) if not target_uid.is_empty() else null
+				_animate_attack(actor, target, str(event.get("skill_id", "")), bool(event.get("ultimate", false)))
 			"damage":
 				_handle_damage(event)
 			"heal":
-				var heal_card := _card_for_uid(str(event.get("target_uid", "")))
+				var heal_actor: BattlefieldActor = _actor_for_uid(str(event.get("target_uid", "")))
 				var heal_amount := int(event.get("amount", 0))
 				if heal_amount > 0:
 					_log("[color=#8fe3a0]%s recovers %d HP.[/color]" % [str(event.get("target_name", "Unit")), heal_amount])
-					if heal_card != null:
-						_float_text(heal_card, "+%d" % heal_amount, UITheme.GREEN)
+					_float_text(heal_actor, "+%d" % heal_amount, UITheme.GREEN)
 			"shield":
 				_log("[color=#7fe3e0]%s gains a %d shield.[/color]" % [str(event.get("target_name", "Unit")), int(event.get("amount", 0))])
 			"status":
@@ -424,10 +465,10 @@ func _process_events(events: Array) -> void:
 				_log("[color=#ff9f9f]%s takes %d %s damage.[/color]" % [
 					str(event.get("target_name", "Unit")), int(event.get("amount", 0)), str(event.get("status", ""))
 				])
-				var tick_card := _card_for_uid(str(event.get("target_uid", "")))
-				if tick_card != null:
-					tick_card.flash(Color(1.4, 0.8, 0.8, 1.0))
-					_float_text(tick_card, "-%d" % int(event.get("amount", 0)), UITheme.DANGER)
+				var tick_actor: BattlefieldActor = _actor_for_uid(str(event.get("target_uid", "")))
+				if tick_actor != null:
+					tick_actor.take_hit()
+					_float_text(tick_actor, "-%d" % int(event.get("amount", 0)), UITheme.DANGER)
 			"miss":
 				_log("[color=#9aa8c2]%s misses.[/color]" % str(event.get("target_name", "Unit")))
 			"skip":
@@ -436,23 +477,53 @@ func _process_events(events: Array) -> void:
 				])
 			"death":
 				_log("[color=#ff7a8a]%s falls.[/color]" % str(event.get("target_name", "Unit")))
+				var fallen: BattlefieldActor = _actor_for_uid(str(event.get("target_uid", "")))
+				if _cinematic_finish_delay > 0.0:
+					if fallen != null:
+						pending_deaths.append(fallen)
+				elif _battlefield != null:
+					_battlefield.play_death(fallen)
 			"phase":
 				_log("[color=#ffc95e]%s[/color]" % str(event.get("message", "The boss changes.")))
 				_show_banner(str(event.get("message", "PHASE CHANGE")))
 				_camera_shake(10.0, 0.5)
+				if _battlefield != null:
+					var phase_number := 2
+					if engine != null:
+						for combatant in engine.combatants:
+							if combatant.is_boss and combatant.def_id == "fallen_matron":
+								phase_number = combatant.triggered_phases.size() + 1
+								break
+					_battlefield.play_matron_phase(phase_number)
 			"victory":
+				await _wait_for_cinematic_impact()
+				if not is_inside_tree():
+					return
+				_flush_pending_deaths(pending_deaths)
 				_refresh_cards()
+				if _battlefield != null:
+					_battlefield.play_victory_animations()
 				_finish_battle(true)
 				return
 			"defeat":
+				await _wait_for_cinematic_impact()
+				if not is_inside_tree():
+					return
+				_flush_pending_deaths(pending_deaths)
 				_refresh_cards()
 				_finish_battle(false)
 				return
+	# Keep the party HUD / turn progression in lockstep with the Matron's
+	# telegraphed pillar impact before exposing the next actor.
+	await _wait_for_cinematic_impact()
+	if not is_inside_tree() or _resolved:
+		return
+	_flush_pending_deaths(pending_deaths)
 	_refresh_cards()
 	_update_turn_order()
 	if _resolved:
 		return
-	var actor := engine.current_actor()
+	var actor: Combatant = engine.current_actor()
 	if actor == null:
 		return
 	_refresh_skills()
@@ -463,7 +534,7 @@ func _process_events(events: Array) -> void:
 
 
 func _handle_damage(event: Dictionary) -> void:
-	var card := _card_for_uid(str(event.get("target_uid", "")))
+	var actor := _actor_for_uid(str(event.get("target_uid", "")))
 	var amount := int(event.get("amount", 0))
 	var crit := bool(event.get("crit", false))
 	var advantage := str(event.get("advantage", "Neutral"))
@@ -475,7 +546,7 @@ func _handle_damage(event: Dictionary) -> void:
 	elif advantage == "Resisted":
 		suffix += " RESIST"
 	_log("[color=#ff9f9f]%s takes %d damage%s.[/color]" % [str(event.get("target_name", "Unit")), amount, suffix])
-	if card != null:
+	if actor != null:
 		var element := str(event.get("element", "neutral"))
 		var color := UITheme.element_color(element)
 		if color == UITheme.TEXT_DIM:
@@ -489,32 +560,62 @@ func _handle_damage(event: Dictionary) -> void:
 		var elem_color := UITheme.element_color(element)
 		if elem_color == UITheme.TEXT_DIM:
 			elem_color = Color(1.4, 0.9, 0.9, 1.0)
-		card.flash(elem_color)
-		# Spawn elemental burst at target position.
-		_spawn_elemental_burst(card.global_position - global_position + card.size * 0.5, element)
-		get_tree().create_timer(0.35).timeout.connect(func() -> void:
-			if is_instance_valid(card):
-				_float_text(card, "-%d%s" % [amount, "!" if crit else ""], color)
-		)
-		if crit or amount > 50:
-			_camera_shake(4.0 if crit else 2.0, 0.2)
+		# The attack choreography reaches impact after its anticipation and
+		# lunge. Delay the hit reaction to that exact point; status ticks keep
+		# their separate immediate reaction path.
+		var impact_delay := IMPACT_DELAY
+		var source: Combatant = engine.get_by_uid(str(event.get("actor_uid", ""))) if engine != null else null
+		if source != null and source.def_id == "fallen_matron" and str(event.get("skill_id", "")) == "matron_verdict":
+			# The Matron's cinematic telegraph lasts ~1.84s; land the damage on
+			# the vertical corruption pillars, not during the warning sigils.
+			impact_delay = 1.88
+			_cinematic_finish_delay = maxf(_cinematic_finish_delay, impact_delay)
+		get_tree().create_timer(impact_delay).timeout.connect(func() -> void:
+			if not is_instance_valid(actor):
+				return
+			actor.take_hit()
+			if _battlefield != null and is_instance_valid(_battlefield):
+				_battlefield.spawn_elemental_burst(actor.position + Vector2(0, -18.0), element)
+			if crit or amount > 50:
+				_camera_shake(4.0 if crit else 2.0, 0.2))
+		# Damage numbers share the exact same per-skill impact beat.
+		_float_text(actor, "-%d%s" % [amount, "!" if crit else ""], color, impact_delay)
 
 
 func _schedule_enemy_turn() -> void:
 	_turn_token += 1
 	var token := _turn_token
-	await get_tree().create_timer(TURN_DELAY / _speed).timeout
-	if not is_inside_tree() or token != _turn_token or _resolved or engine == null:
-		return
-	var actor := engine.current_actor()
+	var actor: Combatant = engine.current_actor() if engine != null else null
 	if actor == null or actor.team != CombatEngine.ENEMY_TEAM:
 		return
 	var decision := CombatAI.choose(engine, engine.current_actor_index)
 	var skill_id := str(decision.get("skill_id", ""))
 	if skill_id.is_empty():
 		return
+	var skill: SkillDef = ContentDB.get_skill(skill_id)
+	var skill_name := skill.display_name if skill != null else "Attack"
+	var telegraph_actor := _actor_for_uid(actor.uid)
+	if telegraph_actor != null:
+		telegraph_actor.set_intent(skill_name)
+	if _battlefield != null:
+		_battlefield.set_target_team(CombatEngine.PLAYER_TEAM, true)
+	_hint_label.text = "%s is preparing %s — brace for impact" % [actor.display_name, skill_name]
+	# Give the player a readable reaction window before the already-selected
+	# enemy action resolves. The intent is presentation only; CombatAI's chosen
+	# skill and target payload remain unchanged during the telegraph.
+	await get_tree().create_timer((TURN_DELAY + 0.72) / _speed).timeout
+	if not is_inside_tree() or token != _turn_token or _resolved or engine == null:
+		return
+	if telegraph_actor != null and is_instance_valid(telegraph_actor):
+		telegraph_actor.set_intent("")
+	if _battlefield != null:
+		_battlefield.set_target_team(-1, false)
+	var current: Combatant = engine.current_actor()
+	if current == null or current.team != CombatEngine.ENEMY_TEAM:
+		return
+	_hint_label.text = ""
 	var events := engine.execute(engine.current_actor_index, skill_id, decision.get("targets", []))
-	_process_events(events)
+	await _process_events(events)
 
 
 func _schedule_auto_player() -> void:
@@ -523,15 +624,24 @@ func _schedule_auto_player() -> void:
 	await get_tree().create_timer(TURN_DELAY / _speed).timeout
 	if not is_inside_tree() or token != _turn_token or _resolved or engine == null:
 		return
-	var actor := engine.current_actor()
+	var actor: Combatant = engine.current_actor()
 	if actor == null or actor.team != CombatEngine.PLAYER_TEAM:
 		return
 	var decision := CombatAI.choose(engine, engine.current_actor_index)
 	var skill_id := str(decision.get("skill_id", ""))
+	# Defensive fallback for a newly added character with an incomplete AI
+	# evaluation: Auto must never silently stall on a living player turn.
+	if skill_id.is_empty() and not actor.skills.is_empty():
+		skill_id = str(actor.skills[0])
+		var fallback_skill: SkillDef = ContentDB.get_skill(skill_id)
+		if fallback_skill != null and fallback_skill.target == "single_enemy":
+			var first_enemy := engine.living_indices(CombatEngine.ENEMY_TEAM)
+			decision["targets"] = [first_enemy[0]] if not first_enemy.is_empty() else []
 	if skill_id.is_empty():
+		_log("[color=#ffbf69]Auto could not find a usable skill for %s.[/color]" % actor.display_name)
 		return
 	var events := engine.execute(engine.current_actor_index, skill_id, decision.get("targets", []))
-	_process_events(events)
+	await _process_events(events)
 
 
 # ------------------------------------------------------------------ actions
@@ -541,17 +651,17 @@ func _refresh_skills() -> void:
 	_pending_skill = null
 	_targeting = false
 	_target_team = -1
-	var actor := engine.current_actor()
+	var actor: Combatant = engine.current_actor()
 	if actor == null or _resolved:
 		_actor_label.text = "Battle resolved."
 		_hint_label.text = ""
 		return
 	if actor.team != CombatEngine.PLAYER_TEAM:
 		_actor_label.text = "Enemy turn — " + actor.display_name
-		_hint_label.text = "The glade holds its breath."
+		_hint_label.text = "Watch enemy intent markers. Gold rings show the threatened party."
 		return
 	_actor_label.text = "%s — choose an action" % actor.display_name
-	_hint_label.text = "Esc cancels targeting" if _targeting else "Damage skills target one foe unless stated otherwise."
+	_hint_label.text = "Esc cancels targeting" if _targeting else "Select a skill, then tap a gold-ringed foe. Elemental weaknesses are shown on impact."
 	for skill_id in actor.skills:
 		var skill: SkillDef = ContentDB.get_skill(str(skill_id))
 		if skill != null:
@@ -603,7 +713,7 @@ func _add_skill_button(skill: SkillDef, actor: Combatant) -> void:
 func _select_skill(skill: SkillDef) -> void:
 	if _resolved or engine == null:
 		return
-	var actor := engine.current_actor()
+	var actor: Combatant = engine.current_actor()
 	if actor == null or actor.team != CombatEngine.PLAYER_TEAM:
 		return
 	if skill.ultimate and not actor.ultimate_ready():
@@ -612,25 +722,60 @@ func _select_skill(skill: SkillDef) -> void:
 		_pending_skill = skill
 		_targeting = true
 		_target_team = CombatEngine.ENEMY_TEAM if skill.target == "single_enemy" else CombatEngine.PLAYER_TEAM
-		_hint_label.text = "Select a target. Esc cancels."
+		_hint_label.text = "Tap a gold-ringed foe to target · Esc cancels" if _target_team == CombatEngine.ENEMY_TEAM else "Choose an ally in the party list · Esc cancels"
+		if _battlefield != null:
+			_battlefield.set_target_team(_target_team, true)
 		_refresh_cards()
 	else:
 		_execute_current(skill.id, [])
 
 
-func _on_card_clicked(card: CombatUnitCard) -> void:
-	if not _targeting or _pending_skill == null or card.unit == null:
+## Clicking a combatant on the battlefield (enemy) picks it as the target.
+func _on_battlefield_actor_clicked(actor: BattlefieldActor) -> void:
+	if not _targeting or _pending_skill == null or actor == null:
 		return
-	if card.unit.team != _target_team or not card.unit.is_alive():
+	if actor.unit == null or actor.unit.team != _target_team or not actor.unit.is_alive():
 		return
-	var skill_id := _pending_skill.id
-	_execute_current(skill_id, [card.unit.combat_index])
+	_execute_current(_pending_skill.id, [actor.unit.combat_index])
+
+
+## Clicking an ally in the party roster picks it as the target.
+func _on_roster_clicked(unit: Combatant) -> void:
+	if not _targeting or _pending_skill == null or unit == null:
+		return
+	if unit.team != _target_team or not unit.is_alive():
+		return
+	_execute_current(_pending_skill.id, [unit.combat_index])
+
+
+## The attack choreography lives on the battlefield; the engine has already
+## resolved the damage, so this never changes the outcome.
+func _animate_attack(attacker: BattlefieldActor, target: BattlefieldActor,
+		skill_id: String = "", ultimate: bool = false) -> void:
+	if _battlefield == null or attacker == null:
+		return
+	var element := "neutral"
+	if engine != null and attacker.unit != null:
+		var combat_index := attacker.unit.combat_index
+		if combat_index >= 0 and combat_index < engine.combatants.size():
+			var source: Combatant = engine.combatants[combat_index]
+			element = str(source.element)
+	_battlefield.play_attack(attacker, target, element, skill_id, ultimate)
+	if attacker.unit != null and attacker.unit.def_id == "fallen_matron" and (ultimate or skill_id == "matron_verdict"):
+		_camera_shake(8.0, 0.42)
+	elif attacker.unit != null and attacker.unit.def_id == "kael" and ultimate:
+		# A short anticipation tremor followed by the larger final-impact shake.
+		_camera_shake(3.0, 0.24)
+		get_tree().create_timer(0.78).timeout.connect(func() -> void:
+			if is_instance_valid(self):
+				_camera_shake(10.0, 0.52)
+		)
 
 
 func _execute_current(skill_id: String, targets: Array) -> void:
 	if engine == null or _resolved:
 		return
-	var actor := engine.current_actor()
+	var actor: Combatant = engine.current_actor()
 	if actor == null:
 		return
 	# Purely presentational: ULTIMATE skills get a short animated name banner.
@@ -640,23 +785,33 @@ func _execute_current(skill_id: String, targets: Array) -> void:
 		_show_banner(played_skill.display_name)
 	_cancel_targeting()
 	var events := engine.execute(engine.current_actor_index, skill_id, targets)
-	_process_events(events)
+	await _process_events(events)
 
 
 func _cancel_targeting() -> void:
 	_pending_skill = null
 	_targeting = false
+	if _battlefield != null:
+		_battlefield.set_target_team(_target_team, false)
 	_target_team = -1
 	_hint_label.text = ""
 	_refresh_cards()
 
-
 func _on_auto_toggled(value: bool) -> void:
 	_auto = value
-	_auto_button.text = "Auto: On" if value else "Auto: Off"
+	_turn_token += 1 # Cancel any queued auto action when the player switches mode.
+	_auto_button.text = "AUTO  ON" if value else "AUTO  OFF"
 	_auto_button.add_theme_color_override("font_color", UITheme.GOLD if value else UITheme.TEXT_DIM)
 	if value and engine != null and not _resolved:
-		var actor := engine.current_actor()
+		# Auto owns targeting as well as skill choice; clear any half-selected
+		# manual action before handing the turn to the decision system.
+		if _targeting:
+			_pending_skill = null
+			_targeting = false
+			_target_team = -1
+			if _battlefield != null:
+				_battlefield.set_target_team(-1, false)
+		var actor: Combatant = engine.current_actor()
 		if actor != null and actor.team == CombatEngine.PLAYER_TEAM:
 			_schedule_auto_player()
 
@@ -677,13 +832,12 @@ func _refresh_cards() -> void:
 	if engine == null:
 		return
 	if _boss_hp_bar != null and _boss_hp_bar.visible:
-		for index in _card_by_index.keys():
-			var c: CombatUnitCard = _card_by_index[index]
-			var u: Combatant = engine.combatants[int(index)]
-			if u.is_boss and u.is_alive():
-				_boss_hp_bar.value = u.hp
+		for unit in engine.combatants:
+			var boss: Combatant = unit
+			if boss.is_boss and boss.is_alive():
+				_boss_hp_bar.value = boss.hp
 				if _boss_phase_label != null:
-					_boss_phase_label.text = "Phase %d" % (u.triggered_phases.size() + 1)
+					_boss_phase_label.text = "Phase %d" % (boss.triggered_phases.size() + 1)
 	# Update active character info panel.
 	if engine.current_actor() != null and _hp_bar != null:
 		var active: Combatant = engine.current_actor()
@@ -693,131 +847,128 @@ func _refresh_cards() -> void:
 		_energy_bar.value = clampf(active.energy, 0.0, active.max_energy)
 		_actor_label.text = active.display_name
 		_status_label.text = UIFactory.status_text(active)
-	for index in _card_by_index.keys():
-		var card: CombatUnitCard = _card_by_index[index]
-		var unit: Combatant = engine.combatants[int(index)]
-		card.refresh()
-		card.set_current(int(index) == engine.current_actor_index and unit.is_alive())
-		var valid_target := (
-			_targeting
-			and unit.team == _target_team
-			and unit.is_alive()
-		)
-		card.set_targetable(valid_target)
-		card.set_selected(false)
+	# Refresh the battlefield: HP plates, the active marker and the roster.
+	if _battlefield != null:
+		_battlefield.refresh_actors()
+		_battlefield.set_active(engine.current_actor().uid if engine.current_actor() != null else "")
+	_refresh_roster()
+
+
+func _refresh_roster() -> void:
+	if engine == null:
+		return
+	for unit in engine.combatants:
+		if unit.team != CombatEngine.PLAYER_TEAM:
+			continue
+		var entry: Dictionary = _roster_rows.get(unit.uid, {})
+		if entry.is_empty():
+			continue
+		var bar: ProgressBar = entry.get("bar")
+		var label: Label = entry.get("label")
+		if bar != null:
+			bar.max_value = maxf(1.0, unit.max_hp)
+			bar.value = clampf(unit.hp, 0.0, unit.max_hp)
+		if label != null:
+			label.text = "%d/%d" % [int(ceil(unit.hp)), int(round(unit.max_hp))]
 
 
 func _update_turn_order() -> void:
 	if _turn_box == null or engine == null:
 		return
 	UIFactory.clear(_turn_box)
-	var preview := engine.upcoming_turns(6)
-	if preview.is_empty():
+	# The active actor is always first. The remaining portraits are the next
+	# turns in the engine's real initiative order, so the strip advances after
+	# every action instead of showing a static party list.
+	# Build one complete initiative cycle from combatant indices, not portrait
+	# names or UIDs. The active actor leads; after acting, the engine advances
+	# the pointer and that actor naturally appears at the tail of the next cycle.
+	# Index-based deduplication prevents any unit icon from appearing twice.
+	var sequence: Array[int] = []
+	var seen_indices: Dictionary = {}
+	var living_count := engine.living(CombatEngine.PLAYER_TEAM).size() + engine.living(CombatEngine.ENEMY_TEAM).size()
+	var active_index := engine.current_actor_index
+	if active_index >= 0 and active_index < engine.combatants.size():
+		var active_unit: Combatant = engine.combatants[active_index]
+		if active_unit.is_alive():
+			sequence.append(active_index)
+			seen_indices[active_index] = true
+	# Walk forward through the current initiative order and wrap once. This is
+	# the same queue the engine is executing, not a separately reconstructed
+	# list of portraits.
+	if not engine.order.is_empty() and engine.turn_pointer >= 0:
+		for offset in range(1, engine.order.size() + 1):
+			var order_position := (engine.turn_pointer + offset) % engine.order.size()
+			var next_index := int(engine.order[order_position])
+			if next_index < 0 or next_index >= engine.combatants.size() or seen_indices.has(next_index):
+				continue
+			var next_unit: Combatant = engine.combatants[next_index]
+			if next_unit.is_alive():
+				sequence.append(next_index)
+				seen_indices[next_index] = true
+	# Include newly summoned / newly alive units that were not in the round's
+	# original order, preserving deterministic speed order.
+	if sequence.size() < living_count:
+		var remaining_indices := engine.living_indices(CombatEngine.PLAYER_TEAM) + engine.living_indices(CombatEngine.ENEMY_TEAM)
+		remaining_indices.sort_custom(func(a: int, b: int) -> bool:
+			return engine.unit_speed(engine.combatants[a]) > engine.unit_speed(engine.combatants[b])
+		)
+		for next_index in remaining_indices:
+			if not seen_indices.has(next_index):
+				sequence.append(next_index)
+				seen_indices[next_index] = true
+	if sequence.is_empty():
 		_turn_box.add_child(UIFactory.label("—", 10, UITheme.TEXT_FAINT))
 		return
-	for index in preview.size():
-		var entry: Dictionary = preview[index]
-		var color := UITheme.TEAL if int(entry.get("team", 0)) == CombatEngine.PLAYER_TEAM else UITheme.DANGER
-		_turn_box.add_child(UIFactory.chip(str(entry.get("name", "?")), color))
-		if index < preview.size() - 1:
-			_turn_box.add_child(UIFactory.label("›", 10, UITheme.TEXT_FAINT))
+	for index in sequence.size():
+		var unit: Combatant = engine.combatants[sequence[index]]
+		if unit == null:
+			continue
+		var portrait := PortraitView.new()
+		portrait.show_frame = true
+		portrait.show_rarity_effect = false
+		portrait.selected = index == 0
+		portrait.dim = not unit.is_alive()
+		var definition := ContentDB.get_character(unit.def_id) if unit.team == CombatEngine.PLAYER_TEAM else null
+		if definition != null:
+			portrait.setup_character(definition)
+		else:
+			portrait.setup(unit.palette, "Monster" if unit.team == CombatEngine.ENEMY_TEAM else "Human", unit.element, unit.rarity, unit.def_id.hash())
+			if unit.def_id == "fallen_matron":
+				var matron_phase := 1
+				if unit.hp_ratio() <= 0.33:
+					matron_phase = 3
+				elif unit.hp_ratio() <= 0.66:
+					matron_phase = 2
+				var matron_atlas := load("res://assets/enemies/fallen_matron/phase_%d.png" % matron_phase) as Texture2D
+				if matron_atlas != null:
+					# Use a head-and-shoulders crop for the compact initiative icon.
+					var matron_portrait := AtlasTexture.new()
+					matron_portrait.atlas = matron_atlas
+					matron_portrait.region = Rect2(62, 0, 296, 250)
+					portrait.set_portrait_texture(matron_portrait)
+		portrait.tooltip_text = unit.display_name
+		_turn_box.add_child(portrait)
+		# PortraitView's general-purpose default is 96px; override it after
+		# entering the tree so the initiative strip stays compact.
+		portrait.custom_minimum_size = Vector2(38, 42)
+		portrait.size = Vector2(38, 42)
+		if index < sequence.size() - 1:
+			var arrow := UIFactory.label("›", 13, UITheme.GOLD if index == 0 else UITheme.TEXT_FAINT)
+			arrow.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			_turn_box.add_child(arrow)
 
 
-func _card_for_uid(uid: String) -> CombatUnitCard:
-	if engine == null:
+func _actor_for_uid(uid: String) -> BattlefieldActor:
+	if _battlefield == null:
 		return null
-	var unit := engine.get_by_uid(uid)
-	if unit == null:
-		return null
-	var card = _card_by_index.get(unit.combat_index, null)
-	return card as CombatUnitCard
+	return _battlefield.actor_for_uid(uid)
 
 
-func _spawn_elemental_burst(pos: Vector2, element: String) -> void:
-	var color := UITheme.element_color(element)
-	if color == UITheme.TEXT_DIM:
-		color = Color(0.8, 0.8, 0.8)
-	var particles := CPUParticles2D.new()
-	particles.amount = 16
-	particles.lifetime = 0.6
-	particles.one_shot = true
-	particles.explosiveness = 0.9
-	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
-	particles.emission_sphere_radius = 8.0
-	particles.direction = Vector2(0, -1)
-	particles.initial_velocity_min = 40.0
-	particles.initial_velocity_max = 120.0
-	particles.gravity = Vector2(0, 80)
-	particles.scale_amount_min = 0.4
-	particles.scale_amount_max = 1.2
-	particles.color = color
-	particles.z_index = 40
-	particles.position = pos
-	add_child(particles)
-	particles.emitting = true
-	get_tree().create_timer(1.0).timeout.connect(func() -> void:
-		if is_instance_valid(particles):
-			particles.queue_free()
-	)
-
-func _float_text(card: CombatUnitCard, text: String, color: Color) -> void:
-	if card == null or not is_instance_valid(card):
+## A floating damage / heal number over a battlefield actor.
+func _float_text(actor: BattlefieldActor, text: String, color: Color, delay: float = 0.16) -> void:
+	if _battlefield == null or actor == null:
 		return
-	var label := Label.new()
-	label.text = text
-	label.add_theme_font_size_override("font_size", 22)
-	label.add_theme_color_override("font_color", color)
-	label.add_theme_color_override("font_outline_color", Color(0.01, 0.02, 0.05, 0.95))
-	label.add_theme_constant_override("outline_size", 5)
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label.z_index = 50
-	add_child(label)
-	var local := card.global_position - global_position
-	label.position = local + Vector2(card.size.x * 0.5 - 24.0, 8.0)
-	var tween := create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(label, "position:y", label.position.y - 60.0, 0.9).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.tween_property(label, "modulate:a", 0.0, 0.9).set_delay(0.2)
-	if "!" in text:
-		label.scale = Vector2(1.4, 1.4)
-		tween.tween_property(label, "scale", Vector2.ONE, 0.3).set_trans(Tween.TRANS_ELASTIC)
-	tween.chain().tween_callback(label.queue_free)
-
-
-func _animate_attack(attacker: CombatUnitCard, target: CombatUnitCard) -> void:
-	if attacker == null or not is_instance_valid(attacker):
-		return
-	var origin := attacker.position
-	var tween := create_tween()
-	# Anticipation: scale up and slight pull back.
-	tween.tween_property(attacker, "scale", Vector2(1.15, 1.15), 0.1).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_interval(0.05)
-	# Move toward target (dramatic approach).
-	if target != null and is_instance_valid(target):
-		var target_pos := target.position
-		var direction := (target_pos - origin).normalized()
-		var approach := origin + direction * minf(120.0, origin.distance_to(target_pos) * 0.6)
-		tween.tween_property(attacker, "position", approach, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-		tween.tween_interval(0.08)
-		# Impact flash on target.
-		if target != null and is_instance_valid(target):
-			target.self_modulate = Color(2.0, 2.0, 2.0, 1.0)
-			var flash_tween := create_tween()
-			flash_tween.tween_property(target, "self_modulate", Color.WHITE, 0.25)
-		# Knockback: target moves slightly away.
-		if target != null and is_instance_valid(target):
-			var knockback := target.position + direction * 15.0
-			var kb_tween := create_tween()
-			kb_tween.tween_property(target, "position", knockback, 0.08).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-			kb_tween.tween_property(target, "position", target_pos, 0.15).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
-		# Return to origin.
-		tween.tween_property(attacker, "position", origin, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.tween_property(attacker, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_ELASTIC)
-	# Target hit reaction (scale punch).
-	if target != null and is_instance_valid(target):
-		var punch := create_tween()
-		punch.tween_property(target, "scale", Vector2(1.2, 0.85), 0.06)
-		punch.tween_property(target, "scale", Vector2.ONE, 0.15).set_trans(Tween.TRANS_ELASTIC)
+	_battlefield.spawn_damage_number(actor, text, color, delay)
 
 
 func _show_banner(text: String) -> void:
@@ -876,11 +1027,19 @@ func _finish_battle(victory: bool) -> void:
 	_pending_skill = null
 	_targeting = false
 	_target_team = -1
+	# If the Matron's Verdict ended the battle, let its telegraphed pillars land
+	# before the result overlay replaces the arena.
+	if _cinematic_finish_delay > 0.0:
+		var finish_delay := _cinematic_finish_delay
+		_cinematic_finish_delay = 0.0
+		await get_tree().create_timer(finish_delay).timeout
+		if not is_inside_tree():
+			return
 	_refresh_cards()
 	UIFactory.clear(_skills_box)
 	_actor_label.text = "Victory" if victory else "Defeat"
 	_hint_label.text = ""
-	_pending_rewards = GameState.build_battle_rewards(group_id) if victory else {}
+	_pending_rewards = GameState.build_battle_rewards(group_id, true) if victory else {}
 	_show_result(victory)
 
 
@@ -1011,7 +1170,7 @@ func _claim(victory: bool) -> void:
 		_result_layer.queue_free()
 		_result_layer = null
 	if victory:
-		GameState.apply_battle_result(group_id, true)
+		GameState.apply_battle_result(group_id, true, _pending_rewards)
 	EventBus.battle_finished.emit({
 		"group_id": group_id,
 		"victory": victory,
@@ -1019,6 +1178,18 @@ func _claim(victory: bool) -> void:
 	})
 	closed.emit()
 	queue_free()
+
+
+## Battlefield presentation snapshot (presentation overhaul). Purely visual
+## metadata; never read by the combat engine.
+func presentation_report() -> Dictionary:
+	var report := {
+		"screen": "combat",
+		"battlefield": _battlefield != null,
+	}
+	if _battlefield != null:
+		report["battlefield_report"] = _battlefield.presentation_report()
+	return report
 
 
 ## Additive skill-presentation report (Phase 5). The three feature flags are
@@ -1037,3 +1208,19 @@ func skill_presentation_report() -> Dictionary:
 		"banner_hook": true,
 		"skill_buttons": count,
 	}
+
+
+func _wait_for_cinematic_impact() -> void:
+	if _cinematic_finish_delay <= 0.0:
+		return
+	var impact_wait := _cinematic_finish_delay
+	_cinematic_finish_delay = 0.0
+	await get_tree().create_timer(impact_wait).timeout
+
+
+func _flush_pending_deaths(pending_deaths: Array[BattlefieldActor]) -> void:
+	if _battlefield == null:
+		return
+	for fallen in pending_deaths:
+		if is_instance_valid(fallen):
+			_battlefield.play_death(fallen)

@@ -55,7 +55,7 @@ Shipped (implemented and locally verified):
 
 **Exit:** a designer can add a character, banner and encounter without touching GDScript, and CI rejects broken references.
 
-> **Do not begin Phase 6 until Phase 5 is verified.** Phase 2 is signed off locally (test suite, validator, smoke tests, export pack); Phases 3, 4 and 5 are now **Complete** and verified locally (see each phase's "Verified locally" line). Phase 6 remains **Planned** and gated behind this check. The GitHub Actions pipeline is configured but has not yet been executed on GitHub.
+> **Phase 5 is verified; Phase 6 progression work is now in progress.** Phase 2 is signed off locally (test suite, validator, smoke tests, export pack); Phases 3, 4 and 5 are complete. Phase 6 currently has persistent gathering rewards and encounter bonus-drop routing; its full equipment/crafting and long-term progression scope remains unfinished. The GitHub Actions pipeline is configured but has not yet been executed on GitHub.
 
 ---
 
@@ -134,21 +134,39 @@ Shipped (implemented and verified locally):
 
 ---
 
-## Phase 6 — Progression, equipment and crafting · **Planned**
+## Phase 6 — Progression, equipment and crafting · **In progress**
 
 **Goal:** long-term character growth without pay-to-win.
 
-- Full equipment slots, set bonuses, enhancement and reroll stats.
-- Crafting, gathering and material conversion.
+Implemented in this phase so far:
+- [x] Persistent Greenward gathering nodes grant materials once; claimed state is stored in the existing save flags and remains collected after world recreation.
+- [x] Encounter bonus-drop tables support chance and amount ranges; the victory preview and claim share the same precomputed reward payload.
+
+Implemented in the current progression pass:
+- [x] Weapon, armor and accessory slots remain functional with stat comparison before equipping.
+- [x] Gear enhancement to +5; each level increases that item's stat bonuses by 8%, with per-character/per-slot save data.
+- [x] Enhancement consumes Gold and Glade Sap; equipped gear remains visible in inventory for management.
+- [x] Species-specific procedural combat silhouettes for Mossling and Moonpetal Sprite, plus subtle elemental ground sigils for enemies and larger boss sigils.
+- [x] Enemy action telegraphs: chosen enemy skill announced before execution, enemy intent label shown, threatened party highlighted during a reaction window.
+- [x] Two additional one-time Greenward gathering locations: Shrine Wisp (Moonpetal) and Grove Shard (Glade Sap).
+
+Still to build:
+- Set bonuses and stat rerolling.
+- Crafting recipes, crafting UI and material conversion.
 - Talent trees or skill nodes per character.
 - Character ascension/awakening content beyond the slice.
 - Account-level progression and collection milestones.
 - Resource sinks and catch-up mechanics.
 - Economy simulation and faucet/sink dashboards.
 
+**Current verification:** `1484 passed, 0 failed`; focused boss, avatar, arena,
+map, menu, opening, quest and turn-timeline verifiers pass; content validation
+passes; the Linux/X11 export pack builds successfully (31.5 MB). This confirms
+headless build/runtime safety, not rendered visual quality or device frame rate.
+
 **Exit:** a 30-day progression curve is modeled, tested and does not require gacha to progress the main story.
 
-> **Deferred from Phase 5.** The original Phase 5 "Combat depth and encounter design" goal was **NOT implemented by design** — the Phase 5 DIRECTIVE re-scoped the phase to character art and visual production. Its combat items are DEFERRED to later phases (see the Phase 5 "Re-scope note"): more skill kinds; status stacking/immunity/resistance; enemy telegraphs, interrupt windows and break gauges; boss phase scripting and add waves; encounter modifiers; battle speed, skip animations, auto-repeat and offline sweep; a damage-formula simulation harness; and a battle replay format shared with the future server. The Phase-4-deferred narrative items (dialogue graph, quest types/chains, cutscene tool, codex/bond episodes, localization keys, narrative QA) also remain deferred. None of these are part of Phase 6's scope. Phase 6 remains **Planned** and gated behind Phase 5 verification.
+> **Deferred from Phase 5.** The original Phase 5 "Combat depth and encounter design" goal was **NOT implemented by design** — the Phase 5 DIRECTIVE re-scoped the phase to character art and visual production. Its combat items are DEFERRED to later phases (see the Phase 5 "Re-scope note"): more skill kinds; status stacking/immunity/resistance; enemy telegraphs, interrupt windows and break gauges; boss phase scripting and add waves; encounter modifiers; battle speed, skip animations, auto-repeat and offline sweep; a damage-formula simulation harness; and a battle replay format shared with the future server. The Phase-4-deferred narrative items (dialogue graph, quest types/chains, cutscene tool, codex/bond episodes, localization keys, narrative QA) also remain deferred. None of these are part of Phase 6's scope. Phase 6 is now **In progress** after Phase 5 verification.
 
 ---
 

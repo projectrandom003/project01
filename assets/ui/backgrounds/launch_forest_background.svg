@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#080d1b"/><stop offset=".48" stop-color="#172433"/><stop offset=".76" stop-color="#35423d"/><stop offset="1" stop-color="#111c20"/></linearGradient>
+ <radialGradient id="moon"><stop stop-color="#fff5d8" stop-opacity=".95"/><stop offset=".35" stop-color="#d8e6d0" stop-opacity=".45"/><stop offset="1" stop-color="#a9c8c4" stop-opacity="0"/></radialGradient>
+ <linearGradient id="mist" x2="0" y2="1"><stop stop-color="#b7d2c4" stop-opacity="0"/><stop offset=".5" stop-color="#b7d2c4" stop-opacity=".13"/><stop offset="1" stop-color="#b7d2c4" stop-opacity="0"/></linearGradient>
+ <linearGradient id="path" x2="0" y2="1"><stop stop-color="#87958a" stop-opacity=".08"/><stop offset="1" stop-color="#b6a77d" stop-opacity=".28"/></linearGradient>
+ <linearGradient id="trunk" x2="1"><stop stop-color="#111a1b"/><stop offset=".5" stop-color="#26322c"/><stop offset="1" stop-color="#0c1519"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#d4f0bf" stop-opacity=".7"/><stop offset="1" stop-color="#a9e2cf" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="1920" height="1080" fill="url(#sky)"/>
+<circle cx="850" cy="245" r="310" fill="url(#moon)"/><circle cx="850" cy="245" r="118" fill="#e5e8cf"/>
+<circle cx="890" cy="220" r="108" fill="#1a2930"/>
+<g fill="#dce7d0" opacity=".65"><circle cx="170" cy="130" r="2"/><circle cx="360" cy="210" r="2"/><circle cx="570" cy="92" r="2"/><circle cx="790" cy="180" r="1.8"/><circle cx="1020" cy="110" r="2"/><circle cx="1210" cy="300" r="1.8"/><circle cx="1640" cy="90" r="2"/><circle cx="1810" cy="360" r="1.5"/></g>
+<!-- distant mountain and forest layers -->
+<path d="M0 570 L150 440 270 520 430 390 590 520 760 420 930 550 1100 405 1280 520 1450 390 1620 510 1770 430 1920 540V1080H0Z" fill="#19282b"/>
+<path d="M0 650L180 520 330 630 510 480 690 640 860 505 1030 640 1220 500 1390 620 1580 485 1740 610 1920 510V1080H0Z" fill="#142326"/>
+<g fill="#0d1b20" opacity=".92">
+ <path d="M0 740L90 520 180 740Z"/><path d="M130 760L250 470 370 760Z"/><path d="M330 760L440 520 550 760Z"/><path d="M520 780L650 465 780 780Z"/><path d="M760 780L870 520 980 780Z"/><path d="M980 780L1110 450 1240 780Z"/><path d="M1210 790L1330 500 1450 790Z"/><path d="M1510 790L1650 455 1790 790Z"/><path d="M1740 790L1840 520 1940 790Z"/>
+</g>
+<!-- old stone observatory -->
+<g fill="#293238" stroke="#59615b" stroke-width="8" opacity=".78">
+ <path d="M480 750V560Q480 405 650 405Q820 405 820 560V750H770V560Q770 455 650 455Q530 455 530 560V750Z"/>
+ <path d="M455 750H845V790H455Z"/><path d="M500 560L470 520 490 500 530 540M790 560L830 520 810 495 770 540" fill="none"/>
+</g>
+<!-- luminous forest path -->
+<path d="M720 1080Q850 850 900 760Q1010 690 1170 770Q1300 860 1440 1080Z" fill="url(#path)"/>
+<path d="M950 1080Q1010 890 1050 790Q1120 760 1170 800Q1220 900 1300 1080Z" fill="#8d9c86" opacity=".09"/>
+<g fill="none" stroke="#a6c9a7" opacity=".22"><path d="M970 1080Q1020 900 1080 820" stroke-width="5"/><path d="M1300 1080Q1220 900 1170 820" stroke-width="4"/></g>
+<!-- First Tree: enormous, layered trunk and branches -->
+<path d="M1450 1080Q1370 850 1400 650Q1430 460 1390 250Q1360 120 1420 35Q1460 180 1490 300Q1530 465 1510 650Q1540 850 1650 1080Z" fill="url(#trunk)"/>
+<g fill="none" stroke="#334139" stroke-linecap="round">
+ <path d="M1450 550Q1260 400 1100 250Q1020 180 920 120" stroke-width="20"/>
+ <path d="M1470 500Q1630 340 1790 190Q1840 145 1920 120" stroke-width="18"/>
+ <path d="M1420 410Q1320 250 1280 120Q1260 60 1210 20" stroke-width="17"/>
+ <path d="M1510 430Q1600 260 1630 80" stroke-width="18"/>
+ <path d="M1400 700Q1190 650 1020 540" stroke-width="12"/>
+ <path d="M1510 720Q1710 610 1850 500" stroke-width="16"/>
+</g>
+<g fill="none" stroke="#53634d" opacity=".55" stroke-linecap="round"><path d="M1450 850Q1330 680 1260 600" stroke-width="10"/><path d="M1500 900Q1630 700 1710 650" stroke-width="12"/><path d="M1430 620Q1360 460 1320 400" stroke-width="8"/></g>
+<!-- hanging vines and foliage -->
+<g fill="none" stroke="#52684d" stroke-width="8" opacity=".75"><path d="M1120 250Q1080 380 1130 490Q1150 540 1110 600"/><path d="M1230 140Q1190 310 1240 430"/><path d="M1690 210Q1650 390 1700 520Q1720 570 1680 640"/><path d="M1810 260Q1760 390 1810 480"/></g>
+<g fill="#243c31" opacity=".92">
+ <path d="M0 700Q120 590 250 690Q360 550 470 690Q570 570 680 700L680 860H0Z"/>
+ <path d="M900 660Q1020 540 1140 650Q1250 520 1370 650L1370 820H900Z"/>
+ <path d="M1570 690Q1690 550 1800 660Q1880 580 1920 650V900H1570Z"/>
+</g>
+<!-- foreground ferns, roots, stones -->
+<g fill="none" stroke="#40543f" stroke-width="12" stroke-linecap="round"><path d="M80 1080Q120 900 220 850M220 1080Q230 940 350 900M1820 1080Q1780 900 1690 840M1680 1080Q1650 950 1550 900"/></g>
+<g fill="#304b39"><path d="M50 990Q120 870 220 890Q160 950 50 990Z"/><path d="M95 1040Q190 900 290 930Q210 1000 95 1040Z"/><path d="M1700 1000Q1780 860 1880 890Q1820 970 1700 1000Z"/><path d="M1600 1060Q1710 900 1810 940Q1730 1020 1600 1060Z"/></g>
+<g fill="#526056" opacity=".8"><ellipse cx="420" cy="1010" rx="110" ry="30"/><ellipse cx="1510" cy="1030" rx="140" ry="34"/><ellipse cx="900" cy="990" rx="80" ry="20"/></g>
+<!-- low fog banks -->
+<rect y="760" width="1920" height="320" fill="url(#mist)" opacity=".65"/>
+<g fill="url(#glow)" opacity=".55"><circle cx="980" cy="760" r="58"/><circle cx="1220" cy="690" r="46"/><circle cx="500" cy="720" r="34"/></g>
+<rect width="1920" height="1080" fill="none" stroke="#050b12" stroke-width="80" opacity=".32"/>
+</svg>

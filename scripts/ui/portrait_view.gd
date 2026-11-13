@@ -37,7 +37,11 @@ var _accent: Color = Color("#7fe3e0")
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(96, 96)
+	# Preserve dimensions assigned by the parent before this node enters the
+	# tree. The old unconditional 96x96 reset silently shrank featured summon
+	# portraits and result-card portraits to HUD-icon size.
+	if custom_minimum_size.x <= 0.0 or custom_minimum_size.y <= 0.0:
+		custom_minimum_size = Vector2(96, 96)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	clip_contents = true
 	set_process(true)
@@ -134,7 +138,10 @@ func _draw() -> void:
 	else:
 		draw_texture_rect(portrait_texture, Rect2(Vector2.ZERO, size), false)
 
-	_draw_race_details(w, h, head_center, head_radius)
+	# Painted portraits already contain their own species details; only the
+	# procedural fallback needs the extra race ornament drawn over the base.
+	if portrait_texture == null:
+		_draw_race_details(w, h, head_center, head_radius)
 
 	# Element sigil (unchanged).
 	var sigil_center := Vector2(w * 0.82, h * 0.18)

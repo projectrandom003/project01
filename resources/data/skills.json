@@ -551,5 +551,81 @@
     "power": 180,
     "target": "all_enemies",
     "crit_bonus": 0.15
+  },
+  "lunar_wisp": {
+    "name": "Lunar Wisp",
+    "description": "Lilac moonfire gathers around Nyx's familiar before it darts through the enemy line, striking every foe and leaving their aim unsteady.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 76,
+    "target": "all_enemies",
+    "statuses": [
+      { "id": "blind", "chance": 0.35, "turns": 1, "potency": 0.25 }
+    ],
+    "energy_gain": 18
+  },
+  "velvet_hex": {
+    "name": "Velvet Hex",
+    "description": "A crescent sigil blooms beneath one enemy, weakening their attack while Nyx's familiar siphons a trace of their vitality.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 92,
+    "target": "single_enemy",
+    "lifesteal": 0.18,
+    "statuses": [
+      { "id": "atk_down", "chance": 0.75, "turns": 2, "potency": 0.18 }
+    ],
+    "energy_gain": 20
+  },
+  "hollow_moon_eclipse": {
+    "name": "Hollow Moon: Total Eclipse",
+    "description": "Nyx opens the black moon above the battlefield. A descending violet eclipse damages every enemy, drains a portion of the impact as health, and leaves the survivors weakened.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 178,
+    "target": "all_enemies",
+    "lifesteal": 0.25,
+    "ultimate": true,
+    "statuses": [
+      { "id": "atk_down", "chance": 0.8, "turns": 2, "potency": 0.2 }
+    ]
+  },
+  "reapers_waltz": {
+    "name": "Reaper's Waltz",
+    "description": "Vespera vanishes into a crimson afterimage and carves a precise scythe arc through one target. The strike grows deadlier against wounded foes.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 112,
+    "target": "single_enemy",
+    "lifesteal": 0.28,
+    "crit_bonus": 0.18,
+    "energy_gain": 20
+  },
+  "crimson_binding": {
+    "name": "Crimson Binding",
+    "description": "A ribbon of blood-red magic coils around the target, dealing damage and lowering its defence as Vespera marks it for the next harvest.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 84,
+    "target": "single_enemy",
+    "crit_bonus": 0.08,
+    "statuses": [
+      { "id": "def_down", "chance": 0.8, "turns": 2, "potency": 0.2 }
+    ],
+    "energy_gain": 18
+  },
+  "red_requiem": {
+    "name": "Red Requiem",
+    "description": "Vespera spins her scythe through a full circle, releasing a crescent of scarlet night. Every foe is struck; the marked and weakened are punished most severely.",
+    "element": "dark",
+    "kind": "damage",
+    "power": 164,
+    "target": "all_enemies",
+    "lifesteal": 0.35,
+    "crit_bonus": 0.12,
+    "ultimate": true,
+    "statuses": [
+      { "id": "burn", "chance": 0.65, "turns": 2, "potency": 0.06 }
+    ]
   }
 }

@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#11101f"/><stop offset=".38" stop-color="#282039"/><stop offset=".72" stop-color="#34213d"/><stop offset="1" stop-color="#100d1a"/></linearGradient>
+ <radialGradient id="moon"><stop stop-color="#e4c9ef" stop-opacity=".45"/><stop offset=".35" stop-color="#a77bbd" stop-opacity=".18"/><stop offset="1" stop-color="#8e54aa" stop-opacity="0"/></radialGradient>
+ <linearGradient id="glass" x2="0" y2="1"><stop stop-color="#c7a7df" stop-opacity=".48"/><stop offset=".48" stop-color="#80649b" stop-opacity=".2"/><stop offset="1" stop-color="#251a34" stop-opacity=".12"/></linearGradient>
+ <linearGradient id="stone" x2="0" y2="1"><stop stop-color="#64536d"/><stop offset=".25" stop-color="#382d45"/><stop offset="1" stop-color="#171421"/></linearGradient>
+ <linearGradient id="floor" x2="0" y2="1"><stop stop-color="#31253b"/><stop offset=".35" stop-color="#211b2b"/><stop offset="1" stop-color="#090b15"/></linearGradient>
+ <radialGradient id="ritual"><stop stop-color="#d78aff" stop-opacity=".42"/><stop offset=".45" stop-color="#a84ed7" stop-opacity=".18"/><stop offset="1" stop-color="#5c2d7b" stop-opacity="0"/></radialGradient>
+ <linearGradient id="beam" x2="0" y2="1"><stop stop-color="#e7d1fa" stop-opacity=".18"/><stop offset="1" stop-color="#c88bff" stop-opacity="0"/></linearGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="22"/></filter>
+</defs>
+<!-- distant cursed twilight -->
+<rect width="1920" height="1080" fill="url(#sky)"/>
+<ellipse cx="960" cy="310" rx="650" ry="390" fill="url(#moon)"/>
+<g opacity=".22" fill="#b58bc8" filter="url(#blur)"><ellipse cx="330" cy="450" rx="280" ry="80"/><ellipse cx="1480" cy="390" rx="340" ry="95"/></g>
+<!-- distant shattered conservatory ribs -->
+<g fill="none" stroke="#5b496a" stroke-width="18" opacity=".42">
+ <path d="M-70 730V330Q-70 20 250 20Q570 20 570 330V730"/>
+ <path d="M1350 730V330Q1350 20 1670 20Q1990 20 1990 330V730"/>
+</g>
+<g fill="url(#glass)" stroke="#8d70a0" stroke-width="9" opacity=".42">
+ <path d="M60 700V340Q60 100 260 100Q460 100 460 340V700Z"/>
+ <path d="M1460 700V340Q1460 100 1660 100Q1860 100 1860 340V700Z"/>
+</g>
+<!-- central rose window and broken dome ribs -->
+<g transform="translate(960 260)">
+ <circle r="184" fill="#21192f" stroke="#80618f" stroke-width="16"/>
+ <circle r="155" fill="url(#glass)" stroke="#b08abd" stroke-opacity=".7" stroke-width="5"/>
+ <circle r="92" fill="#35213f" stroke="#9871aa" stroke-width="6"/>
+ <g fill="none" stroke="#b89acb" stroke-width="7" opacity=".72">
+  <path d="M0-155V155M-155 0H155M-110-110L110 110M110-110L-110 110"/>
+  <path d="M0-155L38-38L155 0L38 38L0 155L-38 38L-155 0L-38-38Z"/>
+ </g>
+ <path d="M-18-150L8-92L-30-45L18-8L-4 50L32 95L8 152" fill="none" stroke="#26182e" stroke-width="17"/>
+ <path d="M-130-82L-50-35L-95 20L-10 68" fill="none" stroke="#24192e" stroke-width="12"/>
+</g>
+<!-- broken glass roof vaults -->
+<g fill="none" stroke="#655273" stroke-width="24" opacity=".7">
+ <path d="M-40 600Q220-30 620 170Q780 250 820 560"/>
+ <path d="M1960 600Q1700-30 1300 170Q1140 250 1100 560"/>
+ <path d="M480 30Q960-160 1440 30"/>
+</g>
+<g fill="none" stroke="#b39ac0" stroke-width="5" opacity=".34">
+ <path d="M0 560L180 320L360 220L540 250L720 410"/>
+ <path d="M1920 560L1740 320L1560 220L1380 250L1200 410"/>
+ <path d="M620 70L760 245L840 390M1300 70L1160 245L1080 390"/>
+</g>
+<!-- distinct greenhouse bays: unequal heights and damaged glazing -->
+<g stroke="#796387" stroke-width="14">
+ <path d="M80 720V410Q80 245 235 245Q390 245 390 410V720" fill="url(#glass)" opacity=".72"/>
+ <path d="M430 720V350Q430 150 635 150Q840 150 840 350V720" fill="url(#glass)" opacity=".64"/>
+ <path d="M1080 720V375Q1080 185 1265 185Q1450 185 1450 375V720" fill="url(#glass)" opacity=".62"/>
+ <path d="M1510 720V435Q1510 285 1685 285Q1860 285 1860 435V720" fill="url(#glass)" opacity=".68"/>
+</g>
+<g fill="none" stroke="#b99acb" stroke-width="7" opacity=".46">
+ <path d="M235 245V720M80 410H390M635 150V720M430 350H840M1265 185V720M1080 375H1450M1685 285V720M1510 435H1860"/>
+</g>
+<!-- broken mullions and jagged missing panes -->
+<g fill="none" stroke="#2a2034" stroke-width="13">
+ <path d="M390 370L340 450L395 515M840 300L770 365L825 430M1080 310L1140 380L1090 455M1510 400L1580 465L1520 535"/>
+ <path d="M520 150L560 240L535 300M1390 185L1350 280L1395 340"/>
+</g>
+<g fill="#d9b8e8" opacity=".16">
+ <path d="M120 420L210 340L270 450L210 530Z"/><path d="M470 360L555 280L620 400L560 490Z"/>
+ <path d="M1290 370L1370 300L1410 420L1350 500Z"/><path d="M1640 460L1720 380L1780 500L1700 565Z"/>
+</g>
+<!-- columns and capitals, intentionally irregular / damaged -->
+<g fill="url(#stone)" stroke="#887092" stroke-width="6">
+ <path d="M20 260H120L110 300L100 720H40L30 300Z"/><path d="M0 245H145V275H0Z"/>
+ <path d="M365 320H435L428 355L420 720H380L372 355Z"/><path d="M350 300H450V330H350Z"/>
+ <path d="M820 195H900L890 235L884 720H836L830 235Z"/><path d="M800 175H920V210H800Z"/>
+ <path d="M1030 230H1110L1102 270L1092 720H1048L1040 270Z"/><path d="M1010 210H1130V245H1010Z"/>
+ <path d="M1460 300H1535L1528 340L1518 720H1478L1468 340Z"/><path d="M1445 280H1550V310H1445Z"/>
+ <path d="M1800 250H1890L1880 290L1870 720H1820L1810 290Z"/><path d="M1780 230H1910V265H1780Z"/>
+</g>
+<!-- hanging wisteria, roots, thorned vines -->
+<g fill="none" stroke-linecap="round">
+ <g stroke="#52334f" stroke-width="15"><path d="M40 0Q120 150 75 310T135 510M260 0Q210 160 300 270T260 480M540 0Q620 130 570 250T650 420M1390 0Q1320 140 1400 300T1350 500M1650 0Q1740 160 1660 310T1730 510M1880 0Q1800 170 1870 320"/></g>
+ <g stroke="#9c5a9b" stroke-width="5"><path d="M75 100Q130 180 92 320M110 160Q60 250 130 380M290 60Q250 170 315 290M575 90Q650 170 590 330M1390 80Q1340 200 1410 340M1690 100Q1750 210 1690 370"/></g>
+ <g stroke="#38273e" stroke-width="22"><path d="M0 770Q130 650 245 740T470 710M1920 780Q1790 650 1670 750T1450 710"/></g>
+</g>
+<g fill="#744b79" opacity=".78">
+ <path d="M65 260q-35-28-52 6q30 38 52-6M100 340q-42-22-45 20q38 28 45-20M285 220q-36-35-55 5q34 40 55-5M580 240q-35-35-58 0q34 40 58 0M1390 270q-38-35-60 6q38 38 60-6M1700 260q-38-30-55 8q36 34 55-8M1830 350q-35-26-50 12q36 31 50-12"/>
+</g>
+<!-- shafts of cold moonlight through broken roof -->
+<g opacity=".65">
+ <path d="M320 0L610 0L800 710L570 710Z" fill="url(#beam)"/>
+ <path d="M1120 0L1280 0L1110 690L930 690Z" fill="url(#beam)"/>
+ <path d="M1520 0L1640 0L1510 650L1380 650Z" fill="url(#beam)"/>
+</g>
+<!-- middle-ground fog -->
+<g fill="#c59bd2" opacity=".13" filter="url(#blur)"><ellipse cx="380" cy="690" rx="450" ry="54"/><ellipse cx="1430" cy="660" rx="520" ry="62"/><ellipse cx="950" cy="730" rx="600" ry="46"/></g>
+<!-- cracked reflective stone floor -->
+<path d="M0 690Q420 655 960 705Q1480 650 1920 690V1080H0Z" fill="url(#floor)"/>
+<g fill="none" stroke="#76617e" stroke-width="5" opacity=".48">
+ <path d="M0 800Q430 760 960 810Q1450 765 1920 800M0 920Q460 865 960 925Q1460 870 1920 920M0 1030Q480 980 960 1020Q1440 985 1920 1030"/>
+ <path d="M960 710L650 1080M960 710L820 1080M960 710L1110 1080M960 710L1320 1080M520 730L240 1080M1400 730L1680 1080"/>
+</g>
+<g fill="none" stroke="#c5a0d2" stroke-width="3" opacity=".24"><path d="M250 850l70-18 35 24-28 40-62-8zM1490 880l65-22 48 34-30 42-72-8zM820 1000l55-25 38 27-35 35z"/></g>
+<!-- ritual dais and layered sigil -->
+<ellipse cx="960" cy="860" rx="570" ry="260" fill="url(#ritual)"/>
+<g fill="none" stroke="#d28aef" opacity=".78">
+ <ellipse cx="960" cy="855" rx="420" ry="146" stroke-width="8"/>
+ <ellipse cx="960" cy="855" rx="350" ry="118" stroke-width="4"/>
+ <ellipse cx="960" cy="855" rx="250" ry="84" stroke-width="3"/>
+ <path d="M960 700L1010 820L1135 855L1010 890L960 1010L910 890L785 855L910 820Z" stroke-width="8"/>
+ <path d="M690 855L960 735L1230 855L960 975Z" stroke-width="4"/>
+</g>
+<!-- foreground broken planters, thorn silhouettes, glass shards -->
+<g fill="#0b0d17" stroke="#46334f" stroke-width="8">
+ <path d="M0 920L110 880L175 925L150 1080H0Z"/><path d="M1740 930L1820 875L1920 920V1080H1770Z"/>
+ <path d="M210 1000L250 900L330 890L390 940L370 1080H190Z"/>
+ <path d="M1530 960L1600 890L1690 910L1740 1080H1510Z"/>
+</g>
+<g fill="none" stroke="#24182d" stroke-width="20" stroke-linecap="round">
+ <path d="M0 1080Q70 960 155 990T300 900M1920 1080Q1840 950 1770 990T1610 900"/>
+ <path d="M80 1080L150 980L130 925M150 980L220 955L250 900M1840 1080L1770 980L1795 920M1770 980L1695 950L1665 895"/>
+</g>
+<g fill="#b5a0c5" opacity=".6">
+ <path d="M180 970l24-72 22 80zM235 950l56-45-20 80zM1680 960l-18-70-30 75zM1740 970l-55-48 15 83z"/>
+</g>
+<!-- suspended glass fragments catching light -->
+<g fill="#d8c0ed" opacity=".38">
+ <path d="M460 580l18-65 17 62-20 38zM1320 560l22-80 16 72-20 34zM890 620l14-48 16 46-15 24zM1070 600l18-55 16 50-17 30z"/>
+</g>
+<!-- foreground atmospheric vignette -->
+<rect width="1920" height="1080" fill="#080913" opacity=".12"/>
+</svg>

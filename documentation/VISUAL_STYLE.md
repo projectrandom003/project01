@@ -6,16 +6,15 @@
 > two disagree, `GreenwardStyle` is the implementation truth; this guide is the
 > intent.
 
-> ### ⚠️ All shipped art is procedural placeholder art
-> **Every sprite, tile, prop, portrait and VFX in this build is generated in
-> code at runtime. There are NO final painted assets, NO sprite sheets, NO
-> imported textures.** `ProceduralArt`, `ActorVisual`, `PortraitView`,
-> `MainBackdrop`, `UITheme` and the shaders all draw from primitives. This guide
-> describes the *target look* that real art will one day fill; the current
-> build is a coherent, readable stand-in. **No device profiling has been
-> performed** — the mobile/desktop tiers are coarse platform hints only. See
-> [ART_PIPELINE.md](ART_PIPELINE.md) for the replacement workflow and production
-> export specs.
+> ### ⚠️ Most world and roster art still uses procedural placeholders
+> The three playable protagonists (Gerald, Lilith and Kael) now have final
+> imported avatar sheets, portraits and combat art; the Fallen Matron has three
+> original phase cutouts. Environment props, generic NPCs, ordinary monsters
+> and the 12 collectible roster assets still use procedural art. This guide
+> remains the canonical palette and visual-language target for those systems.
+> **No device profiling has been performed** — mobile/desktop tiers remain
+> coarse platform hints only. See [ART_PIPELINE.md](ART_PIPELINE.md) and
+> `assets/ASSET_STATUS.md` for the current asset inventory.
 
 ---
 

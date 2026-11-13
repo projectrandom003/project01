@@ -4,7 +4,9 @@
 > collectible characters are RUNTIME PROCEDURAL PLACEHOLDER art.
 > This manifest tracks EVERY expected character asset as FINAL / TEMPORARY / MISSING, computed
 > from disk by `scripts/art/character_asset_registry.gd` (`CharacterAssetRegistry`). It is a contract,
-> not a gallery: NO image/binary art file was created in this phase.
+> not a gallery: no collectible-character image/binary art file was created in this phase.
+> The separate Fallen Matron boss illustration set is documented in `ASSET_STATUS.md` and is not
+> part of this character-asset registry.
 
 ## The rule (never hardcode FINAL)
 

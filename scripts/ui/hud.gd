@@ -137,22 +137,25 @@ func refresh_quest() -> void:
 	if _quest_label == null:
 		return
 	var tracked := GameState.tracked_quest()
-	if tracked.is_empty() or GameState.quest_state(tracked) == "not_started":
+	if tracked.is_empty():
 		_quest_label.visible = false
 		return
 	var definition: Dictionary = ContentDB.get_quest(tracked)
 	if definition.is_empty():
 		_quest_label.visible = false
 		return
+	var state := GameState.quest_state(tracked)
 	var step: Dictionary = GameState.quest_step(tracked)
 	var step_text := str(step.get("text", "Quest complete"))
-	if GameState.quest_state(tracked) == "complete":
+	if state == "complete":
 		step_text = "Complete"
+	elif state == "not_started":
+		step_text = "Available · " + step_text
 	var distance := GameState.distance_to_tracked()
 	var arrow := _quest_arrow()
 	var suffix := ""
-	if not tracked.is_empty() and GameState.quest_state(tracked) == "active" and distance > 0.0:
-		suffix = "  (%s %.0fm)" % [arrow, distance / 16.0]
+	if state != "complete" and distance > 1.0:
+		suffix = "  (%s %.0f tiles)" % [arrow, distance / IsoMath.TILE_W]
 	_quest_label.text = "◆  %s — %s%s" % [str(definition.get("name", tracked)), step_text, suffix]
 	_quest_label.visible = true
 
@@ -236,10 +239,10 @@ func _build_top_bar() -> void:
 func _build_minimap() -> void:
 	_minimap = Minimap.new()
 	_minimap.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	_minimap.offset_left = -180
+	_minimap.offset_left = -244
 	_minimap.offset_right = -20
 	_minimap.offset_top = 90
-	_minimap.offset_bottom = 250
+	_minimap.offset_bottom = 314
 	add_child(_minimap)
 
 

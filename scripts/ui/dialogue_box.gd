@@ -220,10 +220,12 @@ func _run_action(action: String) -> void:
 	match parts[0]:
 		"start_quest":
 			if parts.size() >= 2:
-				GameState.start_quest(parts[1], _dialogue_id)
+				if not GameState.start_quest(parts[1], _dialogue_id):
+					EventBus.toast_requested.emit("This quest is not available yet.")
 		"complete_quest":
 			if parts.size() >= 2:
-				GameState.complete_quest(parts[1])
+				if not GameState.complete_quest(parts[1]):
+					EventBus.toast_requested.emit("Quest objective not complete yet. Check your current objective.")
 		"add_item":
 			if parts.size() >= 2:
 				GameState.add_item(parts[1], int(parts[2]) if parts.size() >= 3 else 1)

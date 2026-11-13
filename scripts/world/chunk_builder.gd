@@ -9,7 +9,7 @@ extends RefCounted
 ## MultiMeshInstance2D. Everything is derived deterministically from (coord,
 ## region, noise); no global RNG is used.
 
-const PATH_WIDTH := 1.35
+const PATH_WIDTH := 1.0
 
 # Meandering river channel (a connected ribbon derived from elevation noise).
 const RIVER_BASE := 30.0
@@ -66,28 +66,30 @@ static func build(
 	var foam_color := GreenwardStyle.WATER.foam
 	var dry_highland := GreenwardStyle.UNDERGROWTH.dry
 	var detail_palette := [
+		GreenwardStyle.UNDERGROWTH.dark,
+		GreenwardStyle.UNDERGROWTH.mid,
 		GreenwardStyle.UNDERGROWTH.light,
-		GreenwardStyle.UNDERGROWTH.grass_alt,
+		GreenwardStyle.CANOPY.moss,
+		GreenwardStyle.CANOPY.bright,
 		GreenwardStyle.ACCENTS.petal,
 		GreenwardStyle.ACCENTS.petal_alt,
-		GreenwardStyle.STONE.mid,
-		GreenwardStyle.UNDERGROWTH.lily,
-		GreenwardStyle.WATER.foam,
+		GreenwardStyle.STONE.moss,
 	]
 
 	# Density / caps from the single source of truth; lower on the mobile tier.
 	var tier := GreenwardStyle.performance_tier()
 	var prop_cap := GreenwardStyle.MAX_PROPS_PER_CHUNK
 	var detail_density := GreenwardStyle.DETAIL_DENSITY
-	var spawn_chance := 0.135
+	var spawn_chance := 0.16
 	if tier == "mobile":
 		prop_cap = int(GreenwardStyle.MAX_PROPS_PER_CHUNK * GreenwardStyle.MOBILE_PROP_FACTOR)
 		detail_density *= GreenwardStyle.MOBILE_DETAIL_FACTOR
-		spawn_chance = 0.08
+		spawn_chance = 0.11
 
 	var origin_grid := IsoMath.chunk_origin_grid(coord, chunk_size)
 	var paths := _path_segments(region)
 	var clearings := _clearings(region)
+	var boss_zones := _boss_zones(region)
 	var valid_kinds := _valid_kinds()
 
 	var terrain_transforms: Array = []
@@ -113,6 +115,7 @@ static func build(
 			var elevation_value := elevation.get_noise_2d(gx, gy)
 			var moisture_value := moisture.get_noise_2d(gx, gy)
 			var center := IsoMath.grid_to_world(gx, gy)
+			var zone_id := ""
 			var transform := Transform2D(0.0, Vector2(IsoMath.TILE_W * 1.02, IsoMath.TILE_H * 1.02), 0.0, center)
 
 			# Meandering, connected river ribbon.
@@ -138,11 +141,30 @@ static func build(
 				continue
 
 			# ---- Land tile colour: blend grass by BOTH moisture and elevation ----
-			var tint_index := absi(int(round(moisture_value * 20.0))) % grass_colors.size()
-			var tile_color := Color(str(grass_colors[tint_index]))
 			var elev_t := clampf((elevation_value + 0.3) / 0.9, 0.0, 1.0)
-			tile_color = tile_color.lerp(dry_highland, elev_t * 0.16) # drier/lighter highland
-			tile_color = tile_color.lightened(rng.randf_range(-0.04, 0.05)) # subtle per-tile variation
+			var damp_t := clampf((moisture_value + 0.35) / 1.1, 0.0, 1.0)
+			# Blend adjacent biome palette colours continuously from the moisture
+			# field. Avoid per-tile palette roulette: it created a checkerboard
+			# that fought the painterly ground shader and made the map look tiled.
+			var palette_pos := damp_t * float(maxi(0, grass_colors.size() - 1))
+			var palette_a := clampi(int(floor(palette_pos)), 0, grass_colors.size() - 1)
+			var palette_b := mini(palette_a + 1, grass_colors.size() - 1)
+			var tile_color := Color(str(grass_colors[palette_a])).lerp(
+				Color(str(grass_colors[palette_b])), palette_pos - floor(palette_pos)
+			)
+			# Low ground stays cool and moss-rich; exposed ridges pick up dry leaf litter.
+			tile_color = tile_color.lerp(GreenwardStyle.CANOPY.deep, (1.0 - damp_t) * 0.10)
+			tile_color = tile_color.lerp(dry_highland, elev_t * 0.11)
+			tile_color = tile_color.lightened(rng.randf_range(-0.012, 0.012))
+			# Boss territories tint their surrounding ground and bias local props,
+			# so they read as distinct biomes long before the arena clearing.
+			for zone in boss_zones:
+				var zone_distance := Vector2(gx, gy).distance_to(zone.center)
+				if zone_distance < zone.radius:
+					var influence: float = float(pow(1.0 - zone_distance / float(zone.get("radius", 1.0)), 1.35)) * float(zone.get("strength", 0.0))
+					tile_color = tile_color.lerp(zone.color, influence)
+					if zone_distance < zone.radius * 0.82:
+						zone_id = str(zone.id)
 
 			# Path variation: not one flat colour; varies with moisture/elevation/grain.
 			# A subtle cobble / stepping-stone tint is added PER-INSTANCE (COLOR
@@ -178,12 +200,13 @@ static func build(
 			var near_path := _near_path(Vector2(gx, gy), paths)
 
 			# ---- Detail layer: one MultiMesh for all ground cover ----
-			if not in_clearing and not near_path and rng.randf() < detail_density:
-				var dc: Color = detail_palette[rng.randi() % detail_palette.size()]
-				var j := Vector2(rng.randf_range(-0.35, 0.35), rng.randf_range(-0.35, 0.35))
+			if not in_clearing and not near_path and rng.randf() < detail_density * (0.72 + damp_t * 0.48):
+				var detail_roll := rng.randf()
+				var dc: Color = detail_palette[0] if detail_roll < 0.18 else detail_palette[1] if detail_roll < 0.38 else detail_palette[2] if detail_roll < 0.60 else detail_palette[rng.randi_range(3, detail_palette.size() - 1)]
+				var j := Vector2(rng.randf_range(-0.42, 0.42), rng.randf_range(-0.42, 0.42))
 				var dcenter := IsoMath.grid_to_world(gx + j.x, gy + j.y)
-				var dsize := rng.randf_range(9.0, 16.0)
-				_push_detail(detail_transforms, detail_instance_colors, dcenter, dsize, dc, 0.85)
+				var dsize := rng.randf_range(11.0, 19.0) * (0.88 + damp_t * 0.18)
+				_push_detail(detail_transforms, detail_instance_colors, dcenter, dsize, dc, 0.82)
 
 			# ---- Props (capped, varied, deterministic) ----
 			if in_clearing or near_path:
@@ -193,25 +216,50 @@ static func build(
 			if rng.randf() > spawn_chance:
 				continue
 			var base_type := _choose_prop(prop_weights, total_weight, elevation_value, rng)
+			if zone_id == "elder" and rng.randf() < 0.30:
+				base_type = "ancient_tree" if rng.randf() < 0.58 else "bush"
+			elif zone_id == "matron" and rng.randf() < 0.34:
+				var estate_roll := rng.randf()
+				base_type = "flower" if estate_roll < 0.58 else "crystal" if estate_roll < 0.78 else "mushroom"
 			if base_type.is_empty():
 				continue
 			var resolved := _resolve_prop(base_type, rng, valid_kinds, elevation_value, moisture_value)
 			var jitter := Vector2(rng.randf_range(-0.32, 0.32), rng.randf_range(-0.32, 0.32))
+			var prop_scale := rng.randf_range(0.82, 1.18)
+			if resolved.kind in ["glade_tree", "ancient_tree", "willow_tree", "birch_tree", "pine_tree", "blossom_tree", "dead_tree"]:
+				prop_scale = rng.randf_range(0.62, 1.05)
+			elif resolved.kind in ["flower", "flower_cluster", "spirit_bloom", "glow_mushroom"]:
+				prop_scale = rng.randf_range(0.82, 1.78)
+			elif resolved.kind in ["rock", "moss_rock", "river_rock", "pebble", "crystal_cluster"]:
+				prop_scale = rng.randf_range(0.72, 1.28)
 			props.append(_prop_entry(
 				resolved.kind, resolved.variant,
 				IsoMath.grid_to_world(gx + jitter.x, gy + jitter.y),
-				rng.randf_range(0.85, 1.15), rng.randf() < 0.5, false
+				prop_scale, rng.randf() < 0.5, false
 			))
 
-			# Occasional companion ground cover around trees for extra density.
-			if base_type == "glade_tree" and rng.randf() < 0.4 and props.size() < prop_cap:
-				var gc_base := "flower" if rng.randf() < 0.6 else "bush"
-				var gc := _resolve_prop(gc_base, rng, valid_kinds, elevation_value, moisture_value)
-				props.append(_prop_entry(
-					gc.kind, gc.variant,
-					IsoMath.grid_to_world(gx + rng.randf_range(-0.7, 0.7), gy + rng.randf_range(-0.7, 0.7)),
-					rng.randf_range(0.7, 1.0), rng.randf() < 0.5, true
-				))
+			# Natural tree clusters: forest density forms in groves instead of a uniform scatter.
+			var is_tree_base := base_type in ["glade_tree", "ancient_tree", "birch_tree", "willow_tree", "pine_tree", "blossom_tree"]
+			if is_tree_base and props.size() < prop_cap:
+				var cluster_roll := rng.randf()
+				var companion_count := 2 if cluster_roll < 0.04 else 1 if cluster_roll < 0.22 else 0
+				for companion in companion_count:
+					if props.size() >= prop_cap:
+						break
+					var tree := _resolve_prop(base_type, rng, valid_kinds, elevation_value, moisture_value)
+					var angle := rng.randf_range(0.0, TAU)
+					var radius := rng.randf_range(0.72, 1.55)
+					var offset := Vector2(cos(angle), sin(angle)) * radius
+					props.append(_prop_entry(tree.kind, tree.variant,
+						IsoMath.grid_to_world(gx + offset.x, gy + offset.y),
+						rng.randf_range(0.55, 0.76), rng.randf() < 0.5, false))
+				# Ferns, mushrooms and berry shrubs tuck into the shadow around trunks.
+				if rng.randf() < 0.58 and props.size() < prop_cap:
+					var gc_base := "glow_mushroom" if moisture_value > 0.30 and rng.randf() < 0.42 else "fern" if rng.randf() < 0.72 else "berry_bush"
+					var gc := _resolve_prop(gc_base, rng, valid_kinds, elevation_value, moisture_value)
+					props.append(_prop_entry(gc.kind, gc.variant,
+						IsoMath.grid_to_world(gx + rng.randf_range(-0.72, 0.72), gy + rng.randf_range(-0.72, 0.72)),
+						rng.randf_range(0.62, 0.88), rng.randf() < 0.5, true))
 
 	var terrain_node := _make_multimesh(terrain_transforms, terrain_colors, terrain_material)
 	var water_node: MultiMeshInstance2D = null
@@ -348,16 +396,60 @@ static func _seed_for(coord: Vector2i, region_seed: int) -> int:
 
 
 static func _path_segments(region: Dictionary) -> Array:
-	var points: Dictionary = {}
-	for poi in region.get("pois", []):
-		var grid: Array = poi.get("grid", [0, 0])
-		points[str(poi.get("id", ""))] = Vector2(float(grid[0]), float(grid[1]))
-	var village: Vector2 = points.get("glade_village", Vector2(8, 8))
+	# Trails connect meaningful destinations only. NPCs and tiny POIs do not
+	# generate separate spokes; each route meanders like a worn woodland track.
+	var spawn_grid: Array = region.get("spawn_grid", [8, 8])
+	var village := Vector2(float(spawn_grid[0]), float(spawn_grid[1]))
 	var segments: Array = []
-	for poi_id in points.keys():
-		if poi_id == "glade_village":
+	for poi in region.get("pois", []):
+		var poi_type := str(poi.get("type", ""))
+		if poi_type not in ["boss", "ruin", "dungeon", "landmark", "shrine"]:
 			continue
-		segments.append([village, points[poi_id]])
+		var grid: Array = poi.get("grid", [0, 0])
+		if grid.size() != 2:
+			continue
+		var destination := Vector2(float(grid[0]), float(grid[1]))
+		var direction := destination - village
+		if direction.length_squared() < 0.01:
+			continue
+		var perpendicular := direction.normalized().orthogonal()
+		var phase := float(absi(str(poi.get("id", "")).hash()) % 997) / 997.0 * TAU
+		var previous := village
+		for step in range(1, 7):
+			var t := float(step) / 6.0
+			var broad_curve := sin(t * PI) * sin(t * TAU * 1.15 + phase) * 1.15
+			var small_wander := sin(t * TAU * 2.2 + phase * 0.7) * 0.28
+			var point := village.lerp(destination, t) + perpendicular * (broad_curve + small_wander)
+			# The final segment must terminate exactly on the POI; a residual
+			# lateral wobble here leaves the trail visibly short of its destination.
+			if step == 6:
+				point = destination
+			segments.append([previous, point])
+			previous = point
+
+	# Also connect the village to region portals, so the main travel corridor
+	# is visible and readable before players reach the distant boss branches.
+	var entry_points: Dictionary = region.get("entry_points", {})
+	for connection in region.get("connections", []):
+		var via := str(connection.get("via", ""))
+		var portal_grid: Variant = entry_points.get(via, [])
+		if typeof(portal_grid) != TYPE_ARRAY or portal_grid.size() != 2:
+			continue
+		var portal_destination := Vector2(float(portal_grid[0]), float(portal_grid[1]))
+		var portal_direction := portal_destination - village
+		if portal_direction.length_squared() < 0.01:
+			continue
+		var portal_perpendicular := portal_direction.normalized().orthogonal()
+		var portal_previous := village
+		var portal_phase := float(absi(via.hash()) % 997) / 997.0 * TAU
+		for step in range(1, 7):
+			var t := float(step) / 6.0
+			var curve := sin(t * PI) * sin(t * TAU * 1.1 + portal_phase) * 0.65
+			var point := village.lerp(portal_destination, t) + portal_perpendicular * curve
+			if step == 6:
+				point = portal_destination
+			segments.append([portal_previous, point])
+			portal_previous = point
 	return segments
 
 
@@ -367,9 +459,32 @@ static func _clearings(region: Dictionary) -> Array:
 	for poi in region.get("pois", []):
 		var grid: Array = poi.get("grid", [0, 0])
 		var poi_radius := radius
-		if str(poi.get("type", "")) == "boss" or str(poi.get("type", "")) == "ruin":
+		if str(poi.get("type", "")) in ["boss", "ruin", "dungeon"]:
 			poi_radius = maxf(2.2, radius * 0.55)
 		result.append({ "center": Vector2(float(grid[0]), float(grid[1])), "radius": poi_radius })
+	return result
+
+
+static func _boss_zones(region: Dictionary) -> Array:
+	# The First Tree and Withered Estate have distinct ground palettes and
+	# local prop ecology, fading naturally into the surrounding Greenward.
+	var result: Array = []
+	for poi in region.get("pois", []):
+		var poi_id := str(poi.get("id", ""))
+		if poi_id not in ["elder_hollow", "withered_estate"]:
+			continue
+		var grid: Array = poi.get("grid", [0, 0])
+		var center := Vector2(float(grid[0]), float(grid[1]))
+		if poi_id == "elder_hollow":
+			result.append({
+				"id": "elder", "center": center, "radius": 28.0,
+				"strength": 0.34, "color": Color("#4f704b")
+			})
+		else:
+			result.append({
+				"id": "matron", "center": center, "radius": 28.0,
+				"strength": 0.38, "color": Color("#70536d")
+			})
 	return result
 
 

@@ -30,5 +30,69 @@
       "xp": 400,
       "items": { "dew_of_awakening": 2, "hollow_heart": 1 }
     }
+  },
+  "elder_memory": {
+    "name": "The First Tree Remembers",
+    "region": "greenward",
+    "summary": "The Hollowed Guardian's heart points toward the oldest tree in Greenward. Find the Elder Hollow and learn what began the corruption.",
+    "requires": "hollow_roots",
+    "steps": [
+      { "type": "kill", "target": "elder_hollow", "count": 1, "grid": [-88, 76], "text": "Defeat the Elder Hollow" },
+      { "type": "talk", "target": "elder_maelin", "grid": [6, 7], "text": "Return the First Tree's memory to Elder Maelin" }
+    ],
+    "rewards": {
+      "gold": 1100,
+      "crystals": 350,
+      "xp": 800,
+      "items": { "ancient_coins": 2, "dew_of_awakening": 2 }
+    }
+  },
+  "matron_bloom": {
+    "name": "A Garden Without a Keeper",
+    "region": "greenward",
+    "summary": "The Elder Hollow reveals that the corruption has a will of its own. Follow the trail to the Fallen Matron.",
+    "requires": "elder_memory",
+    "steps": [
+      { "type": "kill", "target": "fallen_matron", "count": 1, "grid": [116, 78], "text": "Defeat the Fallen Matron" },
+      { "type": "talk", "target": "elder_maelin", "grid": [6, 7], "text": "Tell Elder Maelin the Matron has fallen" }
+    ],
+    "rewards": {
+      "gold": 2500,
+      "crystals": 600,
+      "xp": 1800,
+      "items": { "ancient_coins": 5, "dew_of_awakening": 4 }
+    }
+  },
+  "sera_caravan": {
+    "name": "A Merchant's Bad Luck",
+    "region": "greenward",
+    "summary": "Sera's supply cart was driven off the road by thornhounds. Clear the path so her caravan can move again.",
+    "steps": [
+      { "type": "talk", "target": "merchant_sera", "grid": [10, 7], "text": "Hear Sera's problem" },
+      { "type": "kill", "target": "thornhound", "count": 2, "grid": [13, 11], "text": "Drive off two thornhounds" },
+      { "type": "talk", "target": "merchant_sera", "grid": [10, 7], "text": "Report back to Sera" }
+    ],
+    "rewards": {
+      "gold": 450,
+      "crystals": 80,
+      "xp": 220,
+      "items": { "moonpetal": 2, "glade_sap": 3 }
+    }
+  },
+  "pip_whispers": {
+    "name": "Three Little Whispers",
+    "region": "greenward",
+    "summary": "Pip has heard three glade wisps calling from the reeds. Find them before they lure another traveler off the path.",
+    "steps": [
+      { "type": "talk", "target": "wanderer_pip", "grid": [8, 9], "text": "Ask Pip about the whispers" },
+      { "type": "kill", "target": "glade_wisp", "count": 3, "grid": [1, 15], "text": "Quiet three wandering wisps" },
+      { "type": "talk", "target": "wanderer_pip", "grid": [8, 9], "text": "Tell Pip the wisps are gone" }
+    ],
+    "rewards": {
+      "gold": 350,
+      "crystals": 70,
+      "xp": 180,
+      "items": { "glade_sap": 2, "dew_of_awakening": 1 }
+    }
   }
 }

@@ -4,6 +4,7 @@ extends OverlayScreen
 ## and directional guidance to the tracked quest objective.
 
 var _info_box: VBoxContainer
+var _map_canvas: Control
 
 
 func _init() -> void:
@@ -28,16 +29,25 @@ func _build_content() -> void:
 	if not region.is_empty():
 		region_name = str(region.get("name", GameState.player_region))
 	left.add_child(UIFactory.heading(region_name, 18, UITheme.TEXT))
+	_map_canvas = Control.new()
+	_map_canvas.set_script(load("res://scripts/ui/world_map_canvas.gd"))
+	_map_canvas.custom_minimum_size = Vector2(620, 460)
+	_map_canvas.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_map_canvas.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	left.add_child(_map_canvas)
 
-	# Player position
-	var player_grid := Vector2.ZERO
-	if GameState.has_player_position:
-		player_grid = IsoMath.world_to_grid(GameState.player_position)
+	# Use the live player node whenever the world is active; the saved
+	# position is only a fallback for screens opened outside gameplay.
+	var player_world := GameState.player_position
+	var live_player := get_tree().get_first_node_in_group("player")
+	if live_player is Node2D:
+		player_world = (live_player as Node2D).global_position
+	var player_grid := IsoMath.world_to_grid(player_world)
 	left.add_child(UIFactory.label("Player: (%.0f, %.0f)" % [player_grid.x, player_grid.y], 12, UITheme.TEXT))
 
 	# Right: info panel
 	var right := UIFactory.vbox(10)
-	right.custom_minimum_size = Vector2(360, 0)
+	right.custom_minimum_size = Vector2(280, 0)
 	split.add_child(right)
 
 	right.add_child(UIFactory.label("POINTS OF INTEREST", 10, UITheme.TEXT_FAINT))
@@ -54,9 +64,7 @@ func _build_content() -> void:
 		var g: Array = grid
 		var poi_name := str(poi.get("name", poi.get("id", "POI")))
 		var poi_pos := IsoMath.grid_to_world(float(g[0]), float(g[1]))
-		var dist_to := 0.0
-		if GameState.has_player_position:
-			dist_to = GameState.player_position.distance_to(poi_pos)
+		var dist_to := player_world.distance_to(poi_pos)
 		var label := "%s  (%.0f, %.0f)  — %.0f tiles" % [poi_name, float(g[0]), float(g[1]), dist_to / 16.0]
 		_info_box.add_child(UIFactory.label(label, 11, UITheme.TEXT_DIM))
 
@@ -77,6 +85,11 @@ func _build_content() -> void:
 		var dist := GameState.distance_to_tracked()
 		var arrow := _quest_arrow()
 		right.add_child(UIFactory.label("%s  %.0f tiles" % [arrow, dist / 16.0], 12, UITheme.TEAL))
+
+
+func _refresh() -> void:
+	if _map_canvas != null and _map_canvas.has_method("refresh_map"):
+		_map_canvas.refresh_map()
 
 
 func _quest_arrow() -> String:

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+<defs>
+ <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#10152b"/><stop offset=".55" stop-color="#17132d"/><stop offset="1" stop-color="#090e1c"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#a88bff" stop-opacity=".34"/><stop offset=".55" stop-color="#7357c8" stop-opacity=".12"/><stop offset="1" stop-color="#34285d" stop-opacity="0"/></radialGradient>
+ <linearGradient id="glass" x2="0" y2="1"><stop stop-color="#b3a1e8" stop-opacity=".30"/><stop offset="1" stop-color="#5b72a8" stop-opacity=".04"/></linearGradient>
+ <linearGradient id="gold" x2="1" y2="0"><stop stop-color="#8b6a39" stop-opacity="0"/><stop offset=".5" stop-color="#e8c98c" stop-opacity=".7"/><stop offset="1" stop-color="#8b6a39" stop-opacity="0"/></linearGradient>
+</defs>
+<rect width="1280" height="720" fill="url(#bg)"/>
+<ellipse cx="640" cy="430" rx="560" ry="390" fill="url(#glow)"/>
+<g fill="none" stroke="#9c8bd1" opacity=".20">
+ <path d="M110 720V300Q110 80 320 80Q530 80 530 300V720M750 720V300Q750 80 960 80Q1170 80 1170 300V720" stroke-width="18"/>
+ <path d="M145 720V310Q145 120 320 120Q495 120 495 310V720M785 720V310Q785 120 960 120Q1135 120 1135 310V720" stroke-width="2"/>
+ <path d="M320 120V440M145 310H495M960 120V440M785 310H1135" stroke-width="1"/>
+</g>
+<g fill="url(#glass)" stroke="#9b8cc9" stroke-opacity=".18" stroke-width="2">
+ <path d="M160 700V315Q160 145 320 145Q480 145 480 315V700Z"/>
+ <path d="M800 700V315Q800 145 960 145Q1120 145 1120 315V700Z"/>
+</g>
+<g stroke="#c4b4ed" stroke-opacity=".18" fill="none" stroke-width="3">
+ <path d="M320 150L320 700M160 315L480 315M960 150L960 700M800 315L1120 315"/>
+ <path d="M160 315L320 500L480 315M800 315L960 500L1120 315"/>
+</g>
+<g fill="none" stroke="#b69bfa" opacity=".26">
+ <circle cx="640" cy="495" r="215" stroke-width="2"/><circle cx="640" cy="495" r="180" stroke-width="1"/><circle cx="640" cy="495" r="145" stroke-width="2"/>
+ <path d="M640 270V720M415 495H865M481 336L799 654M799 336L481 654" stroke-width="1"/>
+</g>
+<g fill="#d6c6ff" opacity=".48">
+ <circle cx="210" cy="230" r="2"/><circle cx="380" cy="180" r="2"/><circle cx="565" cy="275" r="2"/><circle cx="730" cy="170" r="2"/><circle cx="900" cy="235" r="2"/><circle cx="1080" cy="180" r="2"/><circle cx="1150" cy="410" r="2"/><circle cx="250" cy="500" r="2"/><circle cx="1030" cy="570" r="2"/>
+</g>
+<g stroke="url(#gold)" stroke-width="2" fill="none"><path d="M0 660H1280M0 680H1280"/></g>
+<path d="M0 0H1280V720H0Z" fill="#050817" opacity=".22"/>
+</svg>

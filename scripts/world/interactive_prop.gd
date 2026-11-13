@@ -1,9 +1,9 @@
 class_name InteractiveProp
 extends Interactable
-## Interactive environmental prop (Phase 3): lore stone, herb node, wisp
-## lantern, shrine, crystal cluster. It is PURELY cosmetic / non-destructive:
-## on interact it emits a local signal and an EventBus toast. It NEVER grants
-## currency/items and NEVER mutates GameState, so quests, combat and content stay
+## Interactive environmental prop: lore objects are inspect-only, while
+## explicitly configured gathering nodes grant one-time, save-persistent rewards.
+## Every successful interaction emits a local signal; visual art is procedural.
+## This keeps exploration rewards isolated from quest and combat state
 ## untouched. Visual is a ProceduralArt Sprite2D plus a soft highlight ring that
 ## brightens when the player is near. All art is procedural placeholder.
 ##
@@ -14,14 +14,16 @@ extends Interactable
 ## Local, non-gameplay signal emitted on a successful interact.
 signal activated(prop: InteractiveProp)
 
-const HIGHLIGHT_RADIUS := 96.0
+const HIGHLIGHT_RADIUS := 156.0
 
 var prop_kind: String = "rune_stone"
 var variant: int = 0
 var display_name: String = "Ancient Stone"
 var lore: String = ""
 var toast_on_interact: bool = true
-
+var collectible_id: String = ""
+var collectible_rewards: Dictionary = {}
+var collectible_label: String = ""
 var _sprite: Sprite2D
 var _highlight: float = 0.0
 var _player: Node2D
@@ -40,8 +42,20 @@ func setup(p_kind: String, p_position: Vector2, p_name: String, p_lore: String, 
 	_build_visual()
 
 
+func configure_collectible(p_id: String, p_rewards: Dictionary, p_label: String = "Collected") -> void:
+	collectible_id = p_id
+	collectible_rewards = p_rewards.duplicate(true)
+	collectible_label = p_label
+	prompt = "Gather"
+
+
 func _ready() -> void:
 	super._ready()  # adds this node to the "interactables" group
+	if not collectible_id.is_empty() and bool(GameState.flags.get("collectible:" + collectible_id, false)):
+		enabled = false
+		visible = false
+		set_process(false)
+		return
 	if _sprite == null:
 		_build_visual()  # safe fallback for a bare InteractiveProp.new()
 	set_process(true)
@@ -82,17 +96,38 @@ func _draw() -> void:
 	if _highlight <= 0.0:
 		return
 	var c := GreenwardStyle.MAGIC.teal
-	var alpha := _highlight * 0.5
-	draw_arc(Vector2(0, 0), 22.0, 0.0, TAU, 28, Color(c.r, c.g, c.b, alpha), 2.0)
-	draw_arc(Vector2(0, 0), 28.0, 0.0, TAU, 28, Color(c.r, c.g, c.b, alpha * 0.4), 1.5)
+	var alpha := _highlight * 0.62
+	draw_circle(Vector2(0, -3), 26.0, Color(c.r, c.g, c.b, alpha * 0.08))
+	draw_arc(Vector2(0, 0), 22.0 + _highlight * 3.0, 0.0, TAU, 32, Color(c.r, c.g, c.b, alpha), 2.2)
+	draw_arc(Vector2(0, 0), 30.0 + _highlight * 5.0, 0.0, TAU, 32, Color(c.r, c.g, c.b, alpha * 0.48), 1.6)
 
 
-## Non-destructive interact: a local signal + an optional flavour toast. No
-## currency, no items, no GameState mutation.
+## Lore props remain flavour-only. Configured gathering props grant their
+## explicit one-time rewards and persist the claim flag in the existing save.
 func interact() -> void:
 	if not can_interact():
 		return
 	activated.emit(self)
+	if not collectible_id.is_empty():
+		var flag_key := "collectible:" + collectible_id
+		if bool(GameState.flags.get(flag_key, false)):
+			enabled = false
+			visible = false
+			set_process(false)
+			return
+		GameState.flags[flag_key] = true
+		GameState.grant_reward_items(collectible_rewards)
+		GameState.queue_save()
+		enabled = false
+		visible = false
+		set_process(false)
+		var reward_names: Array[String] = []
+		for item_id in collectible_rewards.keys():
+			var item: Dictionary = ContentDB.get_item(str(item_id))
+			reward_names.append("%s ×%d" % [str(item.get("name", item_id)), int(collectible_rewards[item_id])])
+		var reward_text := ", ".join(reward_names)
+		EventBus.toast_requested.emit("%s — %s" % [collectible_label, reward_text])
+		return
 	if toast_on_interact:
 		var message := display_name
 		if not lore.is_empty():

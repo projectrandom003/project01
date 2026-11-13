@@ -1,6 +1,6 @@
-class_name GreenwardStyle
+﻿class_name GreenwardStyle
 extends RefCounted
-## GreenwardStyle — the single source of truth for PROJECT FANTASY's visual world.
+## GreenwardStyle â€” the single source of truth for PROJECT FANTASY's visual world.
 ##
 ## Every colour, day-phase light setting, sprite spec, prop palette and density
 ## cap lives here so procedural_art.gd, chunk_builder.gd, the shaders and the
@@ -31,26 +31,26 @@ const SKY := {
 
 # Canopy greens (deep -> rim) and undergrowth greens -------------------------
 const CANOPY := {
-	"deep": Color("#24402b"),
-	"mid": Color("#3f6b3f"),
-	"light": Color("#5d8f52"),
-	"rim": Color("#9df5cf"),
-	"pine": Color("#2f5234"),
-	"moss": Color("#4f7a46"),
-	"bright": Color("#8fbf6a"),
+	"deep": Color("#1f3428"),
+	"mid": Color("#35563a"),
+	"light": Color("#52784c"),
+	"rim": Color("#a5c98a"),
+	"pine": Color("#263f35"),
+	"moss": Color("#536f45"),
+	"bright": Color("#8da96a"),
 	"autumn": Color("#c9a45a"),
 	"blossom": Color("#ffc2d6"),
 	"birch": Color("#e8e4d0"),
 }
 const UNDERGROWTH := {
-	"dark": Color("#2f5234"),
-	"mid": Color("#4f7a46"),
-	"light": Color("#5d8f52"),
-	"grass": Color("#568449"),
-	"grass_alt": Color("#5c8c4f"),
-	"dry": Color("#8a7a55"),
-	"reeds": Color("#7f9a55"),
-	"lily": Color("#4f8a54"),
+	"dark": Color("#29432f"),
+	"mid": Color("#3e6240"),
+	"light": Color("#58774a"),
+	"grass": Color("#476d42"),
+	"grass_alt": Color("#52794a"),
+	"dry": Color("#8b7958"),
+	"reeds": Color("#75895b"),
+	"lily": Color("#416f55"),
 }
 
 # Water: shallow / deep / foam / reflection / shore --------------------------
@@ -145,7 +145,7 @@ const ELEMENTS := {
 	"dark": Color("#b78bff"),
 }
 
-# Shared dark ink used for 1–2px readability outlines ------------------------
+# Shared dark ink used for 1â€“2px readability outlines ------------------------
 const INK := Color("#161a24")
 
 # ------------------------------------------------------------------ day phases
@@ -210,7 +210,7 @@ const PHASES := {
 }
 
 # ------------------------------------------------------------------ sprite specs
-# World 96x128, boss 128x192, bottom-centre anchor, 1–2px outline. `fps`,
+# World 96x128, boss 128x192, bottom-centre anchor, 1â€“2px outline. `fps`,
 # `frames` and `loop` are keyed by state name; `frame_counts` / `fps_values` /
 # `loop_flags` are parallel arrays indexed by the state ints (0..7) so either
 # lookup style works for the animation pipeline.
@@ -261,9 +261,9 @@ const CAST_SPEC := {
 }
 
 # ------------------------------------------------------------------ perf caps
-const MAX_PROPS_PER_CHUNK := 48
+const MAX_PROPS_PER_CHUNK := 58
 const MAX_PARTICLES := 300
-const DETAIL_DENSITY := 0.22
+const DETAIL_DENSITY := 0.43
 const MOBILE_PROP_FACTOR := 0.55
 const MOBILE_DETAIL_FACTOR := 0.5
 

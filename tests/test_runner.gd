@@ -39,6 +39,7 @@ func _run() -> void:
 	_test_passive_multipliers()
 	_test_passive_battle_hooks()
 	_test_equipment_bonuses()
+	_test_gear_enhancement()
 	_test_invalid_json()
 	_test_duplicate_keys()
 	_test_missing_references()
@@ -92,6 +93,8 @@ func _run() -> void:
 	_test_progression_save_load()
 	_test_progression_invalid_upgrade()
 	_test_progression_combat_stats()
+	await _test_exploration_rewards()
+	await _test_bonus_drop_rewards()
 
 	_restore()
 
@@ -798,6 +801,51 @@ func _test_equipment_bonuses() -> void:
 	check(near(e_res.outgoing_multiplier(neither, "fire", foe), 1.0), "unrelated equipment element => no bonus", str(e_res.outgoing_multiplier(neither, "fire", foe)))
 	var neutral := _unit("res_neutral", "", "fire")
 	check(near(e_res.outgoing_multiplier(neutral, "fire", foe), 1.0), "no equipment element => neutral 1.0", str(e_res.outgoing_multiplier(neutral, "fire", foe)))
+
+
+func _test_gear_enhancement() -> void:
+	if GameState.roster.is_empty():
+		check(false, "gear enhancement test has a roster character")
+		return
+	var instance: CharacterInstance = GameState.roster[0]
+	var uid := instance.uid
+	var previous_item := instance.equipped_item("weapon")
+	var previous_level := GameState.gear_level(uid, "weapon")
+	var old_gold := GameState.currency("gold")
+	var old_sap := GameState.item_count("glade_sap")
+	var old_weapon_count := GameState.item_count("gladewood_bow")
+	var old_gear_levels := GameState.gear_levels.duplicate(true)
+	instance.equip("gladewood_bow", "weapon")
+	GameState.gear_levels[uid + "|weapon"] = 0
+	GameState.profile["gold"] = 10000
+	GameState.inventory["glade_sap"] = 5
+	var base_unit := CombatFactory.build_from_character(instance, 1.0)
+	var info := GameState.gear_upgrade_info(uid, "weapon")
+	check(bool(info.get("ok", false)), "equipped weapon exposes a valid enhancement offer", str(info))
+	check(GameState.enhance_gear(uid, "weapon"), "weapon enhancement consumes its stated resources")
+	var enhanced_unit := CombatFactory.build_from_character(instance, 1.0)
+	check(GameState.gear_level(uid, "weapon") == 1, "weapon enhancement level persists at +1")
+	check(near(enhanced_unit.atk - base_unit.atk, 24.0 * 0.08, 0.05), "+1 enhancement adds 8% of weapon stat bonuses", str(enhanced_unit.atk - base_unit.atk))
+	var serialized: Dictionary = GameState._to_dict()
+	check(int(serialized.get("gear_levels", {}).get(uid + "|weapon", 0)) == 1, "gear enhancement survives save serialization")
+	check(GameState.item_count("glade_sap") == 4 and GameState.currency("gold") == 9820, "enhancement charges exact gold and sap costs")
+	# Restore the live test fixture; the runner also restores the full save snapshot.
+	if not previous_item.is_empty():
+		instance.equip(previous_item, "weapon")
+	else:
+		instance.unequip("weapon")
+	GameState.gear_levels = old_gear_levels
+	GameState.profile["gold"] = old_gold
+	if old_sap > 0:
+		GameState.inventory["glade_sap"] = old_sap
+	else:
+		GameState.inventory.erase("glade_sap")
+	if old_weapon_count > 0:
+		GameState.inventory["gladewood_bow"] = old_weapon_count
+	else:
+		GameState.inventory.erase("gladewood_bow")
+	if previous_level > 0:
+		GameState.gear_levels[uid + "|weapon"] = previous_level
 
 
 # --------------------------------------------- Phase 2: invalid JSON parse path
@@ -1759,13 +1807,19 @@ func _test_world_visual_integration() -> void:
 	check(pv != null, "player exposes an ActorVisual")
 	check(pv.animator != null, "player visual has an animator")
 	check(pv.frame_source != null, "player visual has a frame source")
-	check(pv.using_temporary_art == true, "player visual is using temporary art")
+	check(pv.using_temporary_art == false, "Kael player visual uses registered playable art")
+	var kael_art_report: Dictionary = pv.character_art_report()
+	check(kael_art_report.get("has_frames", false) == true, "Kael playable sprite sheet has frames")
+	check(kael_art_report.get("animation_count", 0) == 72, "Kael playable sprite sheet exposes all 72 animations")
 	pv.play(CharacterAnimator.State.ATTACK)
 	pv.set_move_direction(Vector2(1, 0))
 	check(pv.animator.state == CharacterAnimator.State.ATTACK, "visual.play(ATTACK) updates the animator state")
 	check(pv.animator.direction == CharacterAnimator.Direction.RIGHT, "visual.set_move_direction((1,0)) sets RIGHT")
 	var report: Dictionary = game.world.visual_style_report()
 	check(not report.is_empty(), "visual_style_report() returns a non-empty Dictionary")
+	var reported_player_art: Dictionary = report.get("character_art", {})
+	check(reported_player_art.get("using_temporary_art", true) == false, "World visual report reflects Kael's final playable art")
+	check(reported_player_art.get("animation_count", 0) == 72, "World visual report exposes all 72 Kael animations")
 	game.queue_free()
 	await get_tree().process_frame
 
@@ -3036,8 +3090,10 @@ func _test_character_portrait_loading() -> void:
 	check(not PortraitAssetSource.replacement_seam().strip_edges().is_empty(), "replacement_seam() non-empty")
 
 	var pv := PortraitView.new()
+	pv.custom_minimum_size = Vector2(252, 292)
 	add_child(pv)
 	await get_tree().process_frame
+	check(pv.custom_minimum_size == Vector2(252, 292), "PortraitView preserves parent-assigned featured portrait dimensions")
 	pv.setup_character(ContentDB.get_character("ignis"))
 	var rep: Dictionary = pv.portrait_report()
 	check(str(rep.get("character_id", "")) == "ignis", "portrait_report character_id == ignis")
@@ -3215,7 +3271,9 @@ func _test_missing_asset_fallbacks() -> void:
 		if game.world != null and game.world.player != null:
 			check(game.world.player.visual != null, "player exposes an ActorVisual")
 			if game.world.player.visual != null:
-				check(game.world.player.visual.using_temporary_art == true, "player.visual.using_temporary_art stays true in assembled scene")
+				check(game.world.player.visual.using_temporary_art == false, "assembled Kael player uses final playable sprite art")
+				var art_report: Dictionary = game.world.player.visual.character_art_report()
+				check(art_report.get("has_frames", false) == true and art_report.get("animation_count", 0) == 72, "assembled Kael sheet has all 72 registered animations")
 		game.queue_free()
 		await get_tree().process_frame
 
@@ -3557,3 +3615,106 @@ func _find_test_instance() -> CharacterInstance:
 		return instance
 	return null
 
+
+
+# ------------------------------------------------------ exploration rewards
+func _test_exploration_rewards() -> void:
+	var saved_state: Dictionary = GameState._to_dict().duplicate(true)
+	GameState.flags.erase("collectible:greenward_moonpetal_herbs")
+	GameState.flags.erase("collectible:greenward_hollowed_crystal")
+	var game_scene: PackedScene = load("res://scenes/game.tscn")
+	var game := game_scene.instantiate()
+	add_child(game)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var herbs: InteractiveProp = null
+	var crystal: InteractiveProp = null
+	for node in get_tree().get_nodes_in_group("interactables"):
+		if node is InteractiveProp:
+			if node.collectible_id == "greenward_moonpetal_herbs":
+				herbs = node
+			elif node.collectible_id == "greenward_hollowed_crystal":
+				crystal = node
+	check(herbs != null and crystal != null, "World builds both configured gathering nodes")
+	if herbs != null and crystal != null:
+		var moonpetal_before := GameState.item_count("moonpetal")
+		var sap_before := GameState.item_count("glade_sap")
+		herbs.interact()
+		crystal.interact()
+		check(GameState.item_count("moonpetal") == moonpetal_before + 1, "Moonpetal herb grants its configured material")
+		check(GameState.item_count("glade_sap") == sap_before + 2, "Hollowed crystal grants its configured materials")
+		check(not herbs.visible and not herbs.enabled, "Gathered herb node is disabled and hidden")
+		check(not crystal.visible and not crystal.enabled, "Gathered crystal node is disabled and hidden")
+		herbs.interact()
+		check(GameState.item_count("moonpetal") == moonpetal_before + 1, "Gathered herb cannot be claimed twice")
+		var serialized_state: Dictionary = GameState._to_dict().duplicate(true)
+		GameState.flags.clear()
+		GameState._load_from_dict(serialized_state)
+		check(bool(GameState.flags.get("collectible:greenward_moonpetal_herbs", false)), "Collectible flag survives save-data round trip")
+	game.queue_free()
+	await get_tree().process_frame
+	var reload_game := game_scene.instantiate()
+	add_child(reload_game)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var herbs_hidden := false
+	var crystal_hidden := false
+	for node in get_tree().get_nodes_in_group("interactables"):
+		if node is InteractiveProp:
+			if node.collectible_id == "greenward_moonpetal_herbs":
+				herbs_hidden = not node.visible and not node.enabled
+			elif node.collectible_id == "greenward_hollowed_crystal":
+				crystal_hidden = not node.visible and not node.enabled
+	check(herbs_hidden and crystal_hidden, "Claimed gathering nodes stay hidden after world recreation")
+	reload_game.queue_free()
+	await get_tree().process_frame
+	GameState._load_from_dict(saved_state)
+
+
+func _test_bonus_drop_rewards() -> void:
+	for group_id in ["glade_mossling_pack", "thornhound_hunt", "moonpetal_sprite_pack"]:
+		var group: Dictionary = ContentDB.get_enemy_group(group_id)
+		check(not group.is_empty(), "Bonus-drop encounter exists: " + group_id)
+		for drop in group.get("drops", []):
+			var item_id := str(drop.get("item", ""))
+			check(ContentDB.items.has(item_id), "Bonus drop item resolves: %s/%s" % [group_id, item_id])
+			check(float(drop.get("chance", -1.0)) >= 0.0 and float(drop.get("chance", 2.0)) <= 1.0, "Bonus drop chance is within 0..1: " + group_id)
+			check(int(drop.get("min", 0)) > 0 and int(drop.get("max", 0)) >= int(drop.get("min", 0)), "Bonus drop amount range is valid: " + group_id)
+	var previous_group: Variant = ContentDB.enemy_groups.get("test_bonus_drop", null)
+	var saved_state: Dictionary = GameState._to_dict().duplicate(true)
+	ContentDB.enemy_groups["test_bonus_drop"] = {
+		"name": "Deterministic Bonus Drop Test",
+		"level": 1,
+		"rewards": {"gold": 0, "crystals": 0, "xp": 0, "items": {}},
+		"drops": [{"item": "moonpetal", "chance": 1.0, "min": 2, "max": 2}],
+		"quest_kills": {},
+	}
+	var preview: Dictionary = GameState.build_battle_rewards("test_bonus_drop", true)
+	check(int(preview.get("items", {}).get("moonpetal", 0)) == 2, "Reward preview rolls the guaranteed test drop")
+	ContentDB.enemy_groups["test_zero_bonus_drop"] = {
+		"name": "Zero Chance Drop Test",
+		"level": 1,
+		"rewards": {"gold": 0, "crystals": 0, "xp": 0, "items": {}},
+		"drops": [{"item": "moonpetal", "chance": 0.0, "min": 1, "max": 1}],
+		"quest_kills": {},
+	}
+	var zero_preview: Dictionary = GameState.build_battle_rewards("test_zero_bonus_drop", true)
+	check(zero_preview.get("items", {}).is_empty(), "A zero-chance bonus drop never appears")
+	ContentDB.enemy_groups.erase("test_zero_bonus_drop")
+	var before := GameState.item_count("moonpetal")
+	var applied: Dictionary = GameState.apply_battle_result("test_bonus_drop", true, preview)
+	check(GameState.item_count("moonpetal") == before + 2, "Claim grants the exact precomputed bonus drop")
+	check(applied.get("rewards", {}).get("items", {}) == preview.get("items", {}), "Displayed reward payload equals granted reward payload")
+	if previous_group == null:
+		ContentDB.enemy_groups.erase("test_bonus_drop")
+	else:
+		ContentDB.enemy_groups["test_bonus_drop"] = previous_group
+	GameState._load_from_dict(saved_state)
+
+	var sprite_monster := RoamingMonster.new()
+	sprite_monster.setup("moonpetal_sprite_pack", Vector2.ZERO, ContentDB.get_enemy("moonpetal_sprite"), false)
+	add_child(sprite_monster)
+	await get_tree().process_frame
+	check(sprite_monster.visual != null and sprite_monster.visual.def_id == "moonpetal_sprite", "Moonpetal Sprite keeps its unique species visual")
+	sprite_monster.queue_free()
+	await get_tree().process_frame

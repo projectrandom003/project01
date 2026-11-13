@@ -16,11 +16,11 @@ Expected:
 
 ```text
 ==================================================
-PROJECT FANTASY TESTS: 1374 passed, 0 failed
+PROJECT FANTASY TESTS: 1484 passed, 0 failed
 ==================================================
 ```
 
-The **236-test Phase 1 baseline is preserved**: Phase 2 added 111 new checks (passives, equipment resonance, strict content validation, quest prerequisites and reward routing), Phase 3 added 203 new checks (the 8 visual/animation/world groups listed below), Phase 4 added 404 new checks (the 11 groups below), and Phase 5 added 420 new checks (the 9 groups in the next section). **236 Phase 1 + 111 Phase 2 + 203 Phase 3 + 404 Phase 4 + 420 Phase 5 = 1374.** All 954 prior tests (236 + 111 + 203 + 404) are preserved; 347, 550 and 954 are past checkpoints, not the current total. Exit code is `0` on success, `1` on failure. `push_error` is used for failures, so CI logs show the failing assertion and its backtrace. `TESTING.md` is the single place the exact current total is documented.
+The **236-test Phase 1 baseline is preserved**. Phase 5 closed at 1374 checks; subsequent integration work added protagonist-art runtime reporting, persistent exploration rewards, monster bonus-drop validation, exact reward preview/claim consistency, gear enhancement/save tests and enemy silhouette rendering hooks. The current suite is **1484 passed, 0 failed**; 1374 and 1478 are historical checkpoints, not the current total. Separate scene verifiers additionally exercise all three playable avatar sheets, the Fallen Matron phases and Verdict cinematic, map UI, arenas, menus, quests and turn timeline. Exit code is `0` on success, `1` on failure. `push_error` is used for failures, so CI logs show the failing assertion and its backtrace. `TESTING.md` is the single place the exact current total is documented.
 
 ### Content validator (standalone)
 
@@ -53,9 +53,14 @@ If a test crashes before restore, the save may be left in the test state. Keep a
 | Combat | Player/enemy construction, full deterministic battle, victory, event stream, element table, boss flag |
 | State | New game defaults, currency add/spend/overspend, item stack/remove/over-remove, duplicates/awakening, party cap, quest flow, rewards, save round-trip |
 | UI/scenes | Every overlay builds content, title menu builds, combat screen starts an engine, full game scene creates world/HUD/player |
+| Exploration rewards | Gathering nodes grant the configured items once, persist claim flags through save-data round-trip, and stay hidden after world recreation |
+| Bonus drops | Drop item/chance/amount references validate; precomputed victory rewards are exactly the same payload previewed and granted |
+| Playable avatar reporting | The assembled world reports Kael's disk-backed 72-animation sheet instead of a stale procedural-placeholder status |
 | Passives (multipliers) | All 12 supported ids; whisperstep team speed/turn order, rooted HP threshold, deep_roots defense, hold_the_line (different living ally, dead-holder control), hollow_crown (dark vs debuff), nothing_to_lose HP threshold, patient_weaver (stun) — via `CombatEngine` helpers |
 | Passives (battle hooks) | small_miracles battle-start energy, dawnkeeper one-time heal refund (second heal does **not** refund), tidecall heal shield, ashen_wake burn on crit (+ no-crit control), sanguine_waltz 20% lifesteal — driven through real `CombatEngine.execute()` turns |
-| Equipment | Additive stats from real items, weapon-first `equipment_element` derivation, resonance ×1.08 / attunement ×1.04 / neutral ×1.0 |
+| Equipment | Additive stats from real items, weapon-first `equipment_element` derivation, resonance ×1.08 / attunement ×1.04 / neutral ×1.0; +1 enhancement costs exactly 180 Gold + 1 Glade Sap, adds 8% item stats and serializes per character/slot |
+| Enemy presentation | Distinct procedural Mossling and Moonpetal Sprite silhouettes with animated fern mantle / wing motion; elemental ground sigils on ordinary monsters and larger bosses; enemy intent labels and threatened-party markers before enemy actions |
+| Exploration presentation | Shrine Wisp and Grove Shard are additional one-time persistent gathering points, using the existing Moonpetal and Glade Sap inventory rewards |
 | Strict validator | Malformed JSON, duplicate keys, missing skill/enemy/character/item references, invalid banner configs (rates, rarity, `hard_pity`, featured-out-of-pool, bad cost currency), valid documents pass, `validate_all()` parses 9 files |
 | Quest prerequisites | `start_quest()` blocks `hollow_roots` until `glade_whisper` is complete, rejects a nonexistent `requires`, a no-`requires` quest still starts |
 | Reward validation | Quest/enemy-group reward item references, `grant_reward_items()` currency → wallet vs material → inventory routing |
@@ -101,18 +106,15 @@ All 550 prior tests (236 Phase 1 + 111 Phase 2 + 203 Phase 3) are preserved:
 | World region integration | `_test_world_region_integration()` | `GreenwardWorld` region-parameterization, data-driven second region, portals, `EventBus.region_change_requested`, per-region zone/spawn |
 | Procedural art phase 4 | `_test_procedural_art_phase4()` | 53 prop kinds (6 new), distinct CAST pose (state 8), `GreenwardStyle.CAST_SPEC` |
 
-> **Note — asset status and headless limits.** **ZERO final assets** exist: all
-> art is runtime procedural placeholder; `AssetManifest.status_report()` is
-> **FINAL 0 / TEMPORARY 8 / MISSING 8** and `CharacterAssetRegistry.report()` is
-> **FINAL 0 / TEMPORARY 120 / MISSING 120** (12 characters × 10 kinds; see
-> `ART_PIPELINE.md` §15, `assets/ASSET_STATUS.md` and
-> `assets/ASSET_PRODUCTION_MANIFEST.md` for the asset-status tables and
-> replacement seams), and **no audio** exists. **NO visual testing was
-> performed**: all verification is `--headless` with Godot's dummy renderer, so
-> `_draw()` output, auras, borders, tints, silhouettes and tween pops are
-> compile/build-safe and structurally asserted but were **NOT visually inspected
-> on screen**; shader visual output / appearance is not verified by the
-> automated suite and no device profiling was performed.
+> **Note — registry scope and headless limits.** The generic `AssetManifest`
+> still reports **FINAL 0 / TEMPORARY 8 / MISSING 8** and the collectible
+> `CharacterAssetRegistry` reports **FINAL 0 / TEMPORARY 120 / MISSING 120**.
+> Those registries do not count the separate final playable art sets for
+> Gerald, Lilith and Kael, or the Fallen Matron's three phase cutouts; see
+> `assets/ASSET_STATUS.md`. **No audio** exists. **NO full visual QA** was
+> performed in this automated run: headless checks validate structure and
+> runtime safety, not rendered appearance, animation feel, shader output or
+> device frame times.
 
 ### Phase 5 coverage (9 new test groups, 420 checks)
 
@@ -131,6 +133,30 @@ preserved, bringing the suite to **`1374 passed, 0 failed`**:
 | Gacha presentation | `_test_gacha_presentation()` | rarity effects, premium result cards, `presentation_report()` |
 | World visual standards | `_test_world_visual_standards()` | 6 categories, `region_tint()`, `validate()`, 57 prop kinds, `visual_standards_report()` |
 | Asset status honesty | `_test_asset_status_honesty()` | ZERO final assets; both registries report FINAL 0; FINAL never hardcoded |
+
+### Current integration additions (post-Phase 5)
+
+The Phase 5 count above is a historical checkpoint. The current suite is
+**1478 passed, 0 failed** and adds regression coverage for:
+- The three playable protagonists' imported art and the assembled player's live
+  art report (the generic art registries remain separate from these avatar sets).
+- One-time gathering rewards, inventory grants, save-data round trips and
+  re-instantiation hiding already-collected nodes.
+- Enemy bonus-drop references and identical reward payloads between the victory
+  preview and the actual claim.
+- The Moonpetal Sprite preserving its own species visual rather than inheriting
+  a randomized common-monster silhouette.
+
+Focused scene verifiers (run individually after editor import):
+- `verify_boss_actors.tscn` — boss visuals, Matron phase thresholds, Verdict
+  impact pillars, signal timing and temporary VFX cleanup.
+- `verify_character_avatars.tscn` — Gerald, Lilith and Kael, 72 animations
+  each, frame dimensions, facing and avatar cycling.
+- `verify_battlefield_arenas.tscn`, `verify_map_ui.tscn`,
+  `verify_loading_ui.tscn`, `verify_menu_ui.tscn`,
+  `verify_opening_cinematic.tscn`, `verify_opening_ui.tscn`,
+  `verify_pause_menu.tscn`, `verify_quest_flow.tscn` and
+  `verify_turn_timeline.tscn` cover their corresponding runtime surfaces.
 
 ### Adding a test
 
@@ -322,4 +348,4 @@ Manual QA and device profiling are mandatory before any public build.
 - The test runner restores state in-process; a hard crash can skip restoration.
 - The full game-scene test runs only a few frames, so long-running streaming and AI are not stressed.
 - Combat is tested for completion and event shape, not for balance or fun.
-- **NO visual testing was performed.** All verification is `--headless` with Godot's dummy renderer: `_draw()` output, auras, borders, tints, silhouettes and tween pops are compile/build-safe and structurally asserted but were **NOT visually inspected on screen**; shader visual output / appearance is not verified and **no device profiling** was performed. **ZERO final assets** exist (all art is runtime procedural placeholder; `AssetManifest.status_report()` = FINAL 0 / TEMPORARY 8 / MISSING 8 and `CharacterAssetRegistry.report()` = FINAL 0 / TEMPORARY 120 / MISSING 120) and **no audio** exists. The 12 character specs + generation prompts are PREPARATION for future external art, not finished artwork.
+- **Full visual QA and device profiling remain outstanding.** The automated checks use Godot's headless renderer and cannot judge composition, animation feel, shader output, touch ergonomics, frame pacing or thermal behavior. The generic asset registries still report FINAL 0 (8 generic classes and 120 collectible-character slots); the separate Gerald, Lilith and Kael playable art sets and Fallen Matron phase cutouts are documented in `assets/ASSET_STATUS.md`. No audio exists; the remaining collectible roster, NPCs, ordinary monsters and environment props still rely on procedural placeholders.

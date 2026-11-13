@@ -19,7 +19,10 @@
     "quest_kills": {
       "mossling": 2,
       "glade_wisp": 1
-    }
+    },
+    "drops": [
+      { "item": "glade_sap", "chance": 0.55, "min": 1, "max": 2 }
+    ]
   },
   "thornhound_hunt": {
     "name": "Thornhound Hunt",
@@ -40,7 +43,11 @@
     "quest_kills": {
       "thornhound": 1,
       "mossling": 1
-    }
+    },
+    "drops": [
+      { "item": "moonpetal", "chance": 0.35, "min": 1, "max": 1 },
+      { "item": "glade_sap", "chance": 0.45, "min": 1, "max": 2 }
+    ]
   },
   "fae_ambush": {
     "name": "Fae Ambush",
@@ -105,6 +112,22 @@
     },
     "boss": true
   },
+  "moonpetal_sprite_pack": {
+    "name": "Moonpetal Sprite Skirmish",
+    "region": "greenward",
+    "level": 3,
+    "enemies": ["moonpetal_sprite", "glade_wisp"],
+    "rewards": {
+      "gold": 78,
+      "xp": 105,
+      "crystals": 16,
+      "items": { "glade_sap": 1 }
+    },
+    "quest_kills": { "moonpetal_sprite": 1, "glade_wisp": 1 },
+    "drops": [
+      { "item": "moonpetal", "chance": 0.45, "min": 1, "max": 2 }
+    ]
+  },
   "fallen_matron_encounter": {
     "name": "The Fallen Matron",
     "boss": true,
@@ -121,6 +144,9 @@
         "dew_of_awakening": 3
       }
     },
-    "region": "greenward"
+    "region": "greenward",
+    "quest_kills": {
+      "fallen_matron": 1
+    }
   }
 }

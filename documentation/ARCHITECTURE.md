@@ -360,9 +360,11 @@ disk-computed status.
   `validation_report()` / `animation_names()` / `registration_report()` cover all
   9 states × 8 directions = 72 animations; `ActorVisual.configure_character()` /
   `character_art_report()` are called by `WorldNPC` and `RoamingMonster`.
-  `ProceduralActorFrames` REMAINS the fallback (no real sheets exist); the
-  Phase-4 `from_disk()` leak fix is preserved (ZERO leaked RIDs); the player demo
-  stays on temporary art (`using_temporary_art == true`).
+  `ProceduralActorFrames` remains the fallback for generic NPCs and monsters;
+  the player-controlled protagonist now uses Kael's validated disk-backed sheet.
+  Gerald, Lilith and Kael each have 72 playable world animations; their separate
+  collectible-roster art still uses the generic fallback until painted assets
+  are supplied. The Phase-4 `from_disk()` leak fix remains preserved.
 - **World visual standards.** `scripts/world/world_visual_standards.gd`
   (`WorldVisualStandards`) defines 6 categories (player / npc / monster /
   building / vegetation / environment_object) with canvas, anchor, outline,
@@ -388,7 +390,7 @@ compilation / appearance verification, no device profiling).
 - `greenward`'s village layout, NPC placement and landmark composition remain partly **HARDCODED**; `moonpetal_hollow` is fully data-driven via `_build_generic_region()`.
 - Chunk generation is **main-thread frame-sliced, NOT threaded** (`ChunkPreparer` prepares at most one chunk per frame, with a synchronous fallback). True threaded generation remains FUTURE WORK; large radii or high prop density can still hitch on low-end mobile.
 - Terrain and water are flat-shaded diamonds, not height-mapped meshes; there are **no elevation/cliffs or water traversal rules**; fog, river and beach bands are procedural approximations; there is no occlusion culling beyond the chunk ring.
-- **Three final playable characters (Gerald, Lilith, Kael); all other shipped art is procedural placeholder.** Each has a final imported art set (72 world animations, portrait, combat sprite, full-body illustration) extracted from their supplied Project Fantasy concept sheets by `tools/extract_character_sheet.py` / `tools/build_character_sheet.py` / `tools/build_character_static.py`; see each character's SPEC. For the 12 collectible characters there are **ZERO final assets**: `AssetManifest.status_report()` is **FINAL 0 / TEMPORARY 8 / MISSING 8** and `CharacterAssetRegistry.report()` is **FINAL 0 / TEMPORARY 120 / MISSING 120** (12 × 10); the demo sheet is TEMPORARY in-memory procedural frames. **No audio** exists. **NO visual testing** was performed (headless dummy renderer; `_draw()` output, auras, borders, tints and silhouettes were NOT visually inspected).
+- **Three final playable characters (Gerald, Lilith, Kael)** each have a final imported art set (72 world animations, portrait, combat sprite, full-body illustration), extracted from their supplied Project Fantasy concept sheets. The Fallen Matron also has three original phase cutouts. Generic world props, NPCs, ordinary monsters and the 12 collectible roster character assets still use procedural fallbacks; see `assets/ASSET_STATUS.md`. For the 12 collectible characters there are **ZERO final assets**: `AssetManifest.status_report()` is **FINAL 0 / TEMPORARY 8 / MISSING 8** and `CharacterAssetRegistry.report()` is **FINAL 0 / TEMPORARY 120 / MISSING 120** (12 × 10); the demo sheet is TEMPORARY in-memory procedural frames. **No audio** exists. **NO visual testing** was performed (headless dummy renderer; `_draw()` output, auras, borders, tints and silhouettes were NOT visually inspected).
 - **No device profiling** has been performed; mobile budgets come from a coarse `OS.get_name()` hint, not measured frame times. Headless CI uses a dummy renderer, so shader compilation and visual appearance are not verified.
 - **Weather is an architecture, not a simulation** — rain is a single capped CPU emitter (disabled on mobile); no precipitation physics, splashes, accumulation or snow.
 
@@ -634,7 +636,7 @@ Coverage:
 - Phase 4 additions — 11 new test groups (404 checks): region definitions, region graph transitions, invalid connections, region save state, asset manifest, asset loading fallbacks, animation sheet validation, animation transitions, chunk preparer, world region integration, procedural art phase 4.
 - Phase 5 additions — 9 new test groups (420 checks): character art pipeline (`CharacterArtPipeline` 10 kinds, 9×8 sheet contract, 72 animations, `validate_asset()`), character art specs (12 specs, identity vs `characters.json`, premium tier, prompts), character asset registry (disk-computed FINAL/TEMPORARY/MISSING, 120 entries), character portrait loading (`PortraitView` seam + fallback), sprite sheet registration (`register_character()` / 72 animations / `configure_character()`), missing asset fallbacks (procedural fallback stays active), gacha presentation (rarity effects + `presentation_report()`), world visual standards (6 categories, region tints, 57 props), and asset status honesty (ZERO final assets, both registries report FINAL 0).
 
-The suite now reports **`1374 passed, 0 failed`** — 236 Phase 1 baseline + 111 Phase 2 checks + 203 Phase 3 checks + 404 Phase 4 checks + 420 Phase 5 checks. All 954 prior tests (236 + 111 + 203 + 404) are preserved; 347 (236 + 111), 550 (236 + 111 + 203) and 954 (236 + 111 + 203 + 404) are past checkpoints, not the current total. All 6 verification commands exit `0` (editor import, `tools/validate_content.gd` → `[validate] OK — 9 content files parsed and validated.`, the test suite, title smoke `--quit-after 180`, game smoke `--quit-after 240`, and `--export-pack "Linux/X11"` → a non-empty `.pck` smoke build), with ZERO errors/warnings/leaked RIDs. **NO visual testing** was performed (all headless with Godot's dummy renderer; `_draw()` output, auras, borders, tints, silhouettes and tween pops were NOT visually inspected). See `TESTING.md` for commands and the exact current total.
+The historical Phase 5 checkpoint was `1374 passed, 0 failed`. The current suite reports **`1478 passed, 0 failed`**, including protagonist-art reporting, persistent gathering rewards, bonus-drop validation and exact preview/claim reward consistency. Separate scene verifiers cover all three playable protagonist sheets, Fallen Matron phases and Verdict VFX, map, arenas, menus, opening cinematic, quest flow and turn timeline. The current automated run validates content and headless scene startup; a real device export/performance profile and full visual QA are still outstanding. See `TESTING.md` for commands and the exact current total.
 
 The runner snapshots both `GameState` and the raw save file, then restores them. This is why tests can call `new_game()` and `save_now()` without erasing a player’s journey.
 
@@ -680,6 +682,7 @@ Not yet done:
 | Add a banner | `resources/data/banners.json` |
 | Add a quest | `resources/data/quests.json`, hook steps in dialogue |
 | Add an item | `resources/data/items.json` |
+| Enhance equipped gear | `GameState.gear_upgrade_info()` / `enhance_gear()`; saved `gear_levels` keyed by character UID + slot; `CombatFactory._apply_equipment()` applies +8% stat bonuses per enhancement level (cap +5) |
 | Add a screen | Subclass `OverlayScreen`, register in `GameScreen.open_screen()` |
 | Replace placeholder art | Keep `ProceduralArt` / `PortraitView` APIs, swap internals |
 | Register real painted sprite sheets | Drop a real `world_sheet.tres` and call `ActorVisual.set_frame_source(SpriteFramesActorSource.from_disk(<id>))` — no gameplay changes; specs/naming/import in `AssetManifest`, `assets/README.md`, `assets/ASSET_STATUS.md` |

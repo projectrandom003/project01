@@ -182,7 +182,17 @@ func _show_detail(quest_id: String) -> void:
 				UITheme.TEXT_FAINT
 			))
 		else:
-			actions.add_child(UIFactory.wrapped("Speak with Elder Maelin in Whispering Glade to begin.", 11, UITheme.TEXT_FAINT))
+			var first_step: Dictionary = steps[0] if not steps.is_empty() else {}
+			var giver_id := str(first_step.get("target", ""))
+			var giver_name := giver_id.replace("_", " ").capitalize()
+			match giver_id:
+				"elder_maelin":
+					giver_name = "Elder Maelin"
+				"merchant_sera":
+					giver_name = "Sera Quill"
+				"wanderer_pip":
+					giver_name = "Pip"
+			actions.add_child(UIFactory.wrapped("Speak with %s to begin." % giver_name, 11, UITheme.TEXT_FAINT))
 	elif state == "active" and GameState.quest_ready(quest_id):
 		actions.add_child(UIFactory.wrapped("Ready to turn in. Return to the quest giver.", 11, UITheme.GREEN))
 	_detail.add_child(actions)

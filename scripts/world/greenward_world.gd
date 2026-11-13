@@ -28,7 +28,7 @@ const SAVE_POSITION_INTERVAL := 1.0
 # meaningful). No unbounded node spawning anywhere below.
 const FOG_SIZE := Vector2(2600.0, 1700.0)
 const ANIM_VISIBLE_RANGE := 1200.0
-const MAX_INTERACTIVE_PROPS := 8
+const MAX_INTERACTIVE_PROPS := 28
 const MAX_ANIMATED_PROPS := 40
 const MAX_LIGHTS := 20
 const ATMO_INTERVAL := 0.25
@@ -39,6 +39,9 @@ const ZONE_TINTS := {
 	"village": "#ffd9a0",
 	"ruin": "#7fe3e0",
 	"grove": "#b48adf",
+	"elder_sanctuary": "#a9e89a",
+	"withered_estate": "#b78bff",
+	"corrupted_grove": "#8c5bc9",
 	"shrine": "#9df5cf",
 	"river": "#6fc9e6",
 	"wilderness": "#a8d0a0",
@@ -141,6 +144,9 @@ func _ready() -> void:
 		_setup_wildlife()
 		_setup_interactive_props()
 		_build_extra_interactive_and_animated()  # PART 4
+	var quest_marker := QuestDestinationMarker.new()
+	quest_marker.name = "QuestDestinationMarker"
+	entities.add_child(quest_marker)
 	_spawn_region_portals()       # for BOTH regions (Greenward gate near [30,8])
 
 	# PART 5: validate the visual STANDARD/CONTRACT once and apply the region
@@ -516,96 +522,55 @@ func _bump_prop_count(kind: String) -> void:
 # --------------------------------------------------------------- village hub
 
 func _build_village() -> void:
-	# Varied buildings around the spawn clearing (huts + cottages).
-	var huts := [
-		{ "grid": Vector2(5, 5), "scale": 1.0, "flip": false, "variant": 0 },
-		{ "grid": Vector2(11, 6), "scale": 0.92, "flip": true, "variant": 1 },
-		{ "grid": Vector2(6, 11), "scale": 0.95, "flip": false, "variant": 0 },
-		{ "grid": Vector2(10, 11), "scale": 1.05, "flip": true, "variant": 1 },
+	# A deliberately open village: four homes frame a broad central green.
+	# The centre stays clear so the player can read routes and NPCs at a glance.
+	var homes := [
+		{ "kind": "hut", "grid": Vector2(3.5, 4.2), "scale": 1.0, "flip": false, "variant": 0 },
+		{ "kind": "cottage", "grid": Vector2(13.0, 4.8), "scale": 0.95, "flip": true, "variant": 1 },
+		{ "kind": "hut", "grid": Vector2(3.6, 10.5), "scale": 0.95, "flip": true, "variant": 1 },
+		{ "kind": "cottage", "grid": Vector2(13.0, 10.4), "scale": 0.95, "flip": false, "variant": 2 },
 	]
-	for hut in huts:
-		_add_prop("hut", hut.grid, hut.scale, hut.flip, hut.variant)
+	for home in homes:
+		_add_prop(str(home.kind), home.grid, home.scale, home.flip, home.variant)
 
-	var cottages := [
-		{ "grid": Vector2(4.2, 8.4), "scale": 0.9, "flip": false, "variant": 1 },
-		{ "grid": Vector2(12.2, 9.2), "scale": 0.95, "flip": true, "variant": 2 },
-		{ "grid": Vector2(8.5, 12.4), "scale": 0.85, "flip": false, "variant": 0 },
-	]
-	for c in cottages:
-		_add_prop("cottage", c.grid, c.scale, c.flip, c.variant)
+	# One readable village landmark and one small service point; no prop pile.
+	_add_prop("well", Vector2(8.0, 5.6), 0.95, false, 1)
+	_add_prop("market_stall", Vector2(11.8, 5.9), 0.9, false, 0)
+	_add_prop("shrine", Vector2(4.8, 11.8), 0.85, false, 0)
+	_add_light(Vector2(8.0, 5.6), GreenwardStyle.LIGHT.warm_lantern, 0.75, 1.8)
 
-	# Village fixtures: well, shrine, signposts, barrels, a cart.
-	_add_prop("well", Vector2(8, 5.2), 1.0, false, 1)
-	_add_prop("shrine", Vector2(4.5, 11.5), 0.9, false, 0)
-	_add_prop("signpost", Vector2(9.5, 5.0), 1.0, false, 1)
-	_add_prop("signpost", Vector2(4.0, 9.6), 0.9, true, 0)
-	_add_prop("barrel", Vector2(6.2, 5.0), 0.9, false, 0)
-	_add_prop("barrel", Vector2(10.6, 11.8), 0.85, true, 1)
-	_add_prop("cart", Vector2(11.4, 10.2), 0.9, false, 0)
-
-	# Phase-4 detailed landmark buildings around the village green. _add_light()
-	# self-caps at MAX_LIGHTS, so these additions respect all existing caps.
-	_add_prop("market_stall", Vector2(7.4, 6.4), 0.95, false, 0)
-	_add_prop("gazebo", Vector2(12.6, 11.6), 0.9, false, 1)
-	_add_light(Vector2(7.4, 6.4), GreenwardStyle.LIGHT.warm_lantern, 0.9, 2.0)
-
-	# A proper run of warm lanterns with PointLight2D glows (GreenwardStyle).
-	var lanterns := [
-		Vector2(7, 6), Vector2(10, 7), Vector2(6, 9), Vector2(9, 10),
-		Vector2(5.4, 7.0), Vector2(11.2, 7.6), Vector2(8.0, 11.2),
-		Vector2(6.6, 4.4), Vector2(9.4, 4.6),
-	]
+	# Sparse lighting marks the main route without filling the village with lamps.
+	var lanterns := [Vector2(5.0, 6.0), Vector2(12.0, 10.2), Vector2(8.0, 12.0)]
 	for index in lanterns.size():
-		_add_prop("lantern", lanterns[index], 1.0, index % 2 == 0, index % 2)
-		if index % 2 == 0:
-			_add_light(lanterns[index], GreenwardStyle.LIGHT.warm_lantern, 1.15, 2.2)
+		_add_prop("lantern", lanterns[index], 0.9, index % 2 == 0, index % 2)
+		if index == 1:
+			_add_light(lanterns[index], GreenwardStyle.LIGHT.warm_lantern, 0.85, 1.8)
 
-	# Wisp lanterns (warm/violet magic).
-	var wisps := [Vector2(7.4, 9.2), Vector2(9.6, 8.6), Vector2(5.0, 10.4)]
-	for index in wisps.size():
-		_add_prop("wisp_lantern", wisps[index], 0.95, index % 2 == 0, index % 2)
-		if index == 0:
-			_add_light(wisps[index], GreenwardStyle.MAGIC.violet_light, 0.9, 2.0)
-
-	# Waypoint (cool teal).
-	_add_prop("waypoint", Vector2(10, 8), 1.0, false, 0)
-	_add_light(Vector2(10, 8), GreenwardStyle.MAGIC.teal, 1.3, 3.0)
-
-	# Fences.
-	var fences := [
-		Vector2(4, 4), Vector2(4.9, 4), Vector2(12, 5), Vector2(12.9, 5),
-		Vector2(4, 12), Vector2(4.9, 12), Vector2(11.9, 12),
-		Vector2(3.4, 6.5), Vector2(3.4, 7.4), Vector2(12.8, 9.6),
-	]
-	for index in fences.size():
-		_add_prop("fence", fences[index], 1.0, index % 2 == 0, index % 2)
-
-	# Flower clusters / ferns / bushes / ground cover.
+	# Small greenery accents stay at the edges, leaving the central green open.
 	var greenery := [
-		["bush", Vector2(5.5, 7.5), 0.9], ["bush", Vector2(10.6, 10.4), 0.85],
-		["flower_cluster", Vector2(7.6, 8.7), 1.0], ["flower_cluster", Vector2(9.1, 6.8), 0.9],
-		["fern", Vector2(6.4, 8.2), 0.9], ["fern", Vector2(11.0, 8.4), 0.85],
-		["berry_bush", Vector2(5.2, 9.4), 0.9], ["berry_bush", Vector2(10.2, 6.2), 0.85],
-		["flower_cluster", Vector2(8.2, 6.4), 0.8], ["tall_grass", Vector2(7.0, 10.8), 0.9],
-		["fern", Vector2(9.6, 11.4), 0.8], ["glow_mushroom", Vector2(6.8, 6.2), 0.9],
+		["bush", Vector2(5.2, 4.8), 0.85],
+		["flower_cluster", Vector2(11.8, 4.7), 0.8],
+		["fern", Vector2(5.2, 10.8), 0.8],
+		["berry_bush", Vector2(11.8, 10.8), 0.8],
+		["tall_grass", Vector2(7.0, 12.0), 0.8],
 	]
 	for index in greenery.size():
 		var g: Array = greenery[index]
 		_add_prop(str(g[0]), g[1], float(g[2]), index % 2 == 0, index % 3)
 
-	# Coherent decorative river line + bridges (waterfalls/foam are animated).
+	# Keep the river as the village's southern scenic boundary.
 	_build_river()
 
-	# The three quest/dialogue NPCs: EXACT ids + dialogue ids + positions.
-	_spawn_npc("elder_maelin", "Elder Maelin", "elder_maelin", Vector2(6, 7), {
+	# The three quest/dialogue NPCs remain intact and easy to find.
+	_spawn_npc("elder_maelin", "Elder Maelin", "elder_maelin", Vector2(5.6, 8.0), {
 		"hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a",
 		"accent": "#9df5cf", "skin": "#e8c8a8",
 	}, "Elf", "Village Elder")
-	_spawn_npc("merchant_sera", "Sera Quill", "merchant_sera", Vector2(10, 7), {
+	_spawn_npc("merchant_sera", "Sera Quill", "merchant_sera", Vector2(12.2, 8.4), {
 		"hair": "#c96f3a", "primary": "#5a3a2a", "secondary": "#e8c27a",
 		"accent": "#ffd27a", "skin": "#e8b890",
 	}, "Human", "Traveling Merchant")
-	_spawn_npc("wanderer_pip", "Pip", "wanderer_pip", Vector2(7, 10), {
+	_spawn_npc("wanderer_pip", "Pip", "wanderer_pip", Vector2(8.2, 11.0), {
 		"hair": "#f2e2a8", "primary": "#3f5a6b", "secondary": "#8fd9c4",
 		"accent": "#ffeaa0", "skin": "#f6e3cf",
 	}, "Beastkin", "Wandering Scout")
@@ -746,7 +711,7 @@ func _build_extra_landmarks() -> void:
 	_add_light(watch, GreenwardStyle.MAGIC.teal, 1.3, 2.6)
 	_add_light(watch + Vector2(0, 1.4), GreenwardStyle.MAGIC.violet_light, 0.8, 1.8)
 	if _interactive_props.size() < MAX_INTERACTIVE_PROPS:
-		_add_interactive_prop("rune_stone", watch + Vector2(0, 2.2), "Hilltop Dial", "It points to a road the maps have forgotten.", 1)
+		_add_interactive_prop("rune_stone", Vector2(48, 18), "Hilltop Dial", "It points to a road the maps have forgotten.", 1)
 
 	# 2) Market row — a readable cart/barrel/signpost/well composition near the hub.
 	var market := Vector2(13, 8)
@@ -757,7 +722,7 @@ func _build_extra_landmarks() -> void:
 	_add_prop("well", market + Vector2(1.8, 0.2), 0.9, false, 1)
 	_add_light(market, GreenwardStyle.LIGHT.warm_lantern, 1.0, 2.0)
 	if _interactive_props.size() < MAX_INTERACTIVE_PROPS:
-		_add_interactive_prop("signpost", market + Vector2(1.6, -1.0), "Trader's Sign", "Arrows scratch toward every corner of the glade.", 0)
+		_add_interactive_prop("signpost", Vector2(-10, -22), "Trader's Sign", "Arrows scratch toward every corner of the glade.", 0)
 
 	# 3) Lakeside composition — a dock + wooden bridge by the decorative river.
 	var lakeside := Vector2(6.4, 15.0)
@@ -767,32 +732,92 @@ func _build_extra_landmarks() -> void:
 	_add_prop("reeds", lakeside + Vector2(1.2, 1.2), 0.9, false, 1)
 	_add_light(lakeside, GreenwardStyle.WATER.glint, 0.9, 1.8)
 	if _interactive_props.size() < MAX_INTERACTIVE_PROPS:
-		_add_interactive_prop("dock", lakeside + Vector2(0.2, -1.0), "Old Mooring", "The rope is worn smooth by a hundred quiet departures.", 0)
+		_add_interactive_prop("dock", Vector2(16, 52), "Old Mooring", "The rope is worn smooth by a hundred quiet departures.", 0)
 
 	# PART 5 (World Presentation): a recognisable village-gate approach built
 	# from the new silhouette kinds. Consistent with WorldVisualStandards (warm
 	# lights, bottom-centre anchors, GreenwardStyle colours). ZERO final assets.
 	_build_greenward_gate_composition()
+	_build_elder_hollow_territory()
+	_build_fallen_matron_territory()
+
+
+func _build_elder_hollow_territory() -> void:
+	# Remote ancient-tree sanctuary at the north-western edge of Greenward.
+	# The ring of colossal roots and old growth makes this a distinct boss biome.
+	var c := Vector2(-88, 76)
+	var trees := [
+		["ancient_tree", Vector2(-95, 72), 1.34], ["willow_tree", Vector2(-81, 71), 1.18],
+		["dead_tree", Vector2(-97, 82), 1.22], ["ancient_tree", Vector2(-79, 84), 1.30],
+		["pine_tree", Vector2(-88, 65), 1.16], ["birch_tree", Vector2(-101, 77), 0.98],
+		["willow_tree", Vector2(-75, 77), 1.08],
+	]
+	for i in trees.size():
+		var e: Array = trees[i]
+		_add_prop(str(e[0]), e[1], float(e[2]), i % 2 == 0, i % 3)
+	for i in 8:
+		var a := TAU * float(i) / 8.0
+		var pos := c + Vector2(cos(a) * 7.0, sin(a) * 5.0)
+		_add_prop("moss_rock" if i % 2 == 0 else "rune_stone", pos, 0.88 + float(i % 3) * 0.12, i % 2 == 0, i % 3)
+	_add_prop("spirit_bloom", c + Vector2(-2.2, 2.0), 1.35, false, 2)
+	_add_prop("spirit_bloom", c + Vector2(2.4, 1.8), 1.18, true, 1)
+	_add_prop("glow_mushroom", c + Vector2(-4.0, 3.0), 1.2, false, 1)
+	_add_prop("glow_mushroom", c + Vector2(4.0, 3.2), 1.05, true, 0)
+	_add_prop("crystal_cluster", c + Vector2(0, -3.0), 1.18, false, 2)
+	_add_light(c, GreenwardStyle.MAGIC.teal, 1.45, 3.2)
+	_add_light(c + Vector2(0, -3.0), GreenwardStyle.MAGIC.violet_light, 1.0, 2.3)
+
+
+func _build_fallen_matron_territory() -> void:
+	# Remote Withered Estate in the south-east: ruined conservatory, rose
+	# thorns, broken stonework and pale blooms. Kept separate from the First Tree.
+	var c := Vector2(116, 78)
+	var trees := [
+		["dead_tree", Vector2(106, 70), 1.25], ["blossom_tree", Vector2(126, 70), 1.28],
+		["willow_tree", Vector2(103, 83), 1.16], ["dead_tree", Vector2(129, 85), 1.32],
+		["birch_tree", Vector2(115, 66), 1.08], ["blossom_tree", Vector2(119, 91), 1.18],
+	]
+	for i in trees.size():
+		var e: Array = trees[i]
+		_add_prop(str(e[0]), e[1], float(e[2]), i % 2 == 0, i % 3)
+	_add_prop("ruin_arch", c + Vector2(0, -4.0), 1.42, false, 2)
+	_add_prop("ruin_pillar", c + Vector2(-5.0, -1.0), 1.22, false, 1)
+	_add_prop("ruin_pillar", c + Vector2(5.0, -0.6), 1.12, true, 0)
+	_add_prop("shrine", c, 1.18, false, 2)
+	_add_prop("crystal_cluster", c + Vector2(-2.4, 2.0), 1.22, false, 2)
+	_add_prop("crystal_cluster", c + Vector2(2.4, 2.2), 1.10, true, 1)
+	_add_prop("flower_cluster", c + Vector2(-6.0, 4.0), 1.52, false, 2)
+	_add_prop("flower_cluster", c + Vector2(6.0, 4.2), 1.42, true, 1)
+	_add_prop("spirit_bloom", c + Vector2(0, 5.0), 1.35, false, 2)
+	_add_light(c, GreenwardStyle.MAGIC.violet, 1.55, 3.4)
+	_add_light(c + Vector2(0, -4.0), GreenwardStyle.MAGIC.violet_light, 1.1, 2.4)
 
 
 func _build_paths() -> void:
-	# Data-driven, readable marker runs from the village to the two landmarks.
+	# A connected woodland road network from the village hub to ruins,
+	# corrupted grove, Elder Hollow sanctuary and the distant Withered Estate.
 	var routes := [
-		[Vector2(8, 8), Vector2(2, 20)],   # village -> The Listening Stones
-		[Vector2(8, 8), Vector2(26, 16)],  # village -> The Hollowed Grove
+		[Vector2(8, 8), Vector2(2, 20)],
+		[Vector2(8, 8), Vector2(26, 16)],
+		[Vector2(8, 8), Vector2(-88, 76)],
+		[Vector2(8, 8), Vector2(116, 78)],
+		[Vector2(8, 8), Vector2(30, 8)], # village -> Moonpetal Path portal
 	]
 	var way_kinds := ["signpost", "lantern", "stone_bridge", "wisp_lantern"]
 	for r in routes.size():
 		var a: Vector2 = routes[r][0]
 		var b: Vector2 = routes[r][1]
 		var perp := (b - a).normalized().orthogonal() * 0.8
-		for i in 6:
-			var t := float(i + 1) / 7.0
-			var grid := a.lerp(b, t) + perp
-			var kind := str(way_kinds[(r + i) % way_kinds.size()])
-			_add_prop(kind, grid, 0.9, i % 2 == 0, i % 2)
-			if i % 3 == 1:
-				_add_light(grid, GreenwardStyle.LIGHT.warm_lantern, 0.7, 1.6)
+		var marker_count := 18 if r == 2 or r == 3 else 7
+		for i in marker_count:
+			var t := float(i + 1) / float(marker_count + 1)
+			var curve := sin(t * PI) * sin(t * TAU * 1.1 + float(r)) * (1.25 if r == 2 or r == 3 else 0.8)
+			var grid := a.lerp(b, t) + perp + (b - a).normalized().orthogonal() * curve
+			if i % 3 == 0 or r < 2:
+				var kind := str(way_kinds[(r + i) % way_kinds.size()])
+				_add_prop(kind, grid, 0.88 + float(i % 3) * 0.08, i % 2 == 0, i % 2)
+			if i % 5 == 2:
+				_add_light(grid, GreenwardStyle.LIGHT.warm_lantern, 0.58, 1.45)
 	# AnimatedProp used SPARINGLY: two foam ripples near the river crossing.
 	_add_animated_prop("foam_ripple", Vector2(7.0, 12.4), 0.9, false, AnimatedProp.MOTION_PULSE, 0)
 	_add_animated_prop("foam_ripple", Vector2(9.4, 12.8), 0.9, true, AnimatedProp.MOTION_PULSE, 0)
@@ -801,9 +826,9 @@ func _build_paths() -> void:
 func _build_extra_interactive_and_animated() -> void:
 	# 1–2 more interactive locations (guarded by MAX_INTERACTIVE_PROPS).
 	if _interactive_props.size() < MAX_INTERACTIVE_PROPS:
-		_add_interactive_prop("wisp_lantern", Vector2(19.4, 4.0), "Shrine Wisp", "It leans toward the moonpetal bloom.", 1)
+		_add_interactive_prop("wisp_lantern", Vector2(34, -28), "Shrine Wisp", "It leans toward the moonpetal bloom.", 1, {"moonpetal": 1})
 	if _interactive_props.size() < MAX_INTERACTIVE_PROPS:
-		_add_interactive_prop("crystal_cluster", Vector2(27.2, 15.2), "Grove Shard", "Cold to the touch, and faintly singing.", 0)
+		_add_interactive_prop("crystal_cluster", Vector2(-36, 8), "Grove Shard", "Cold to the touch, and faintly singing.", 0, {"glade_sap": 1})
 	# A couple more AnimatedProps (waterfall / foam / wildlife), capped internally.
 	_add_animated_prop("waterfall", Vector2(13.8, 13.4), 0.9, false, AnimatedProp.MOTION_FLICKER, 0)
 	_add_animated_prop("foam_ripple", Vector2(5.2, 13.9), 0.9, false, AnimatedProp.MOTION_PULSE, 0)
@@ -923,14 +948,21 @@ func current_zone() -> String:
 
 
 func _zone_for_poi(poi_type: String, poi_name: String) -> String:
+	var n := poi_name.to_lower()
+	if "first tree" in n:
+		return "elder_sanctuary"
+	if "withered estate" in n:
+		return "withered_estate"
+	if "hollowed grove" in n:
+		return "corrupted_grove"
 	match poi_type:
 		"village": return "village"
 		"boss": return "grove"
 		"ruin": return "ruin"
 		"shrine": return "shrine"
 		"landmark": return "river"
+		"dungeon": return "withered_estate"
 		_:
-			var n := poi_name.to_lower()
 			if "pool" in n or "river" in n or "water" in n:
 				return "river"
 			return "grove"
@@ -1085,36 +1117,51 @@ func _setup_wildlife() -> void:
 	cap = clampi(cap, 0, MAX_ANIMATED_PROPS)
 	var kinds := ["butterfly", "moth", "bird", "firefly_sprite"]
 	# Cluster centres: village, Listening Stones, Moonpetal Shrine, Hollowed Grove.
-	var centres := [Vector2(8, 8), Vector2(2, 20), Vector2(18, 5), Vector2(26, 16)]
+	var centres := [Vector2(8, 8), Vector2(-18, 28), Vector2(34, 24), Vector2(20, 38), Vector2(-28, -12), Vector2(42, -8), Vector2(16, 52), Vector2(34, -28), Vector2(-88, 76), Vector2(116, 78)]
 	for index in cap:
 		var centre: Vector2 = centres[index % centres.size()]
-		var jx := sin(float(index) * 12.9898) * 3.2
-		var jy := cos(float(index) * 7.233) * 2.6
+		var jx := sin(float(index) * 12.9898) * 2.4
+		var jy := cos(float(index) * 7.233) * 2.0
 		var grid := centre + Vector2(jx, jy)
 		var kind := str(kinds[index % kinds.size()])
 		_add_animated_prop(kind, grid, 0.85, index % 2 == 0, AnimatedProp.MOTION_DRIFT, 0)
 
 
 func _setup_interactive_props() -> void:
-	# Non-destructive lore / herb / lantern / shrine / crystal interactables.
-	# They NEVER grant currency/items and NEVER mutate GameState.
+	# Lore objects remain inspect-only; gathering nodes carry explicit one-time
+	# rewards and persist their claimed state through GameState.flags.
 	var entries := [
-		["rune_stone", Vector2(2, 21.6), "Weathered Rune", "The stones remember a song the forest forgot.", 1],
-		["berry_bush", Vector2(5.0, 9.0), "Moonpetal Herbs", "Silver leaves stir though there is no wind.", 1],
-		["wisp_lantern", Vector2(18, 3.6), "Wisp Lantern", "A patient light, waiting to be noticed.", 1],
-		["shrine", Vector2(11.3, 12.2), "Glade Shrine", "A small offering to the green.", 1],
-		["crystal_cluster", Vector2(24.4, 16.4), "Hollowed Crystal", "It hums with a hollow, borrowed warmth.", 2],
+		["rune_stone", Vector2(-18, 28), "Weathered Rune", "The stones remember a song the forest forgot.", 1],
+		["berry_bush", Vector2(34, 24), "Moonpetal Herbs", "Silver leaves stir though there is no wind.", 1, {"moonpetal": 1}],
+		["wisp_lantern", Vector2(20, 38), "Wisp Lantern", "A patient light, waiting to be noticed.", 1],
+		["shrine", Vector2(-28, -12), "Glade Shrine", "A small offering to the green.", 1],
+		["crystal_cluster", Vector2(42, -8), "Hollowed Crystal", "It hums with a hollow, borrowed warmth.", 2, {"glade_sap": 2}],
+		["flower_cluster", Vector2(-45, 58), "Mosslight Flowers", "Tiny petals hold the last warmth of dusk.", 2, {"moonpetal": 2}],
+		["berry_bush", Vector2(-22, 76), "Elderberry Bough", "The oldest roots shelter a rare harvest.", 2, {"glade_sap": 2}],
+		["rune_stone", Vector2(-54, 12), "Wayfarer's Mark", "A worn marker points deeper into Greenward.", 0],
+		["crystal_cluster", Vector2(54, 0), "Singing Shard", "A clear note rings inside the crystal.", 1, {"glade_sap": 1}],
+		["spirit_bloom", Vector2(68, 45), "Lantern Bloom", "Its petals brighten when someone approaches.", 2, {"moonpetal": 2}],
+		["glow_mushroom", Vector2(82, 100), "Duskwick Cap", "A soft blue light spills from its gills.", 1, {"glade_sap": 1}],
+		["wisp_lantern", Vector2(12, 72), "Lost Wisp", "It has been waiting beside the old road.", 2],
+		["flower_cluster", Vector2(38, -50), "Sunfall Posy", "Gold-edged flowers grow in the high clearing.", 1, {"moonpetal": 1}],
+		["rune_stone", Vector2(-60, -24), "Broken Waystone", "The inscription names a path no longer on maps.", 2],
+		["berry_bush", Vector2(72, -40), "Silverleaf Berries", "The fruit glimmers beneath the leaves.", 2, {"moonpetal": 2}],
+		["crystal_cluster", Vector2(130, 45), "Estate Crystal", "Violet light moves beneath its glassy surface.", 2, {"glade_sap": 2}],
+		["spirit_bloom", Vector2(-112, 92), "First Tree Petal", "A petal from the ancient sanctuary.", 2, {"moonpetal": 2}],
 	]
 	for index in entries.size():
 		if _interactive_props.size() >= MAX_INTERACTIVE_PROPS:
 			break
 		var e: Array = entries[index]
-		_add_interactive_prop(str(e[0]), e[1], str(e[2]), str(e[3]), int(e[4]))
+		_add_interactive_prop(str(e[0]), e[1], str(e[2]), str(e[3]), int(e[4]), e[5] if e.size() > 5 else {})
 
 
-func _add_interactive_prop(kind: String, grid_position: Vector2, display_name: String, lore: String, variant: int = 0) -> void:
+func _add_interactive_prop(kind: String, grid_position: Vector2, display_name: String, lore: String, variant: int = 0, rewards: Dictionary = {}) -> void:
 	var prop := InteractiveProp.new()
 	prop.setup(kind, IsoMath.grid_to_world(grid_position.x, grid_position.y), display_name, lore, variant)
+	if not rewards.is_empty():
+		var stable_id := region_id + "_" + display_name.to_lower().replace(" ", "_").replace("'", "")
+		prop.configure_collectible(stable_id, rewards, "Collected %s" % display_name)
 	entities.add_child(prop)
 	_interactive_props.append(prop)
 	_record_texture(kind, variant)
@@ -1255,6 +1302,9 @@ func visual_style_report() -> Dictionary:
 	var prop_total := 0
 	for key in _prop_kind_counts.keys():
 		prop_total += int(_prop_kind_counts[key])
+	var player_art: Dictionary = {}
+	if player != null and is_instance_valid(player) and player.visual != null:
+		player_art = player.visual.character_art_report()
 	return {
 		"phase": day_phase(),
 		"weather_state": weather.current_state if weather != null else WeatherDirector.CLEAR,
@@ -1283,13 +1333,7 @@ func visual_style_report() -> Dictionary:
 		# ---- PART 5 (World Presentation): additive reporting keys ----
 		"visual_standards": visual_standards_report(),
 		"visual_standards_valid": _visual_standards_valid,
-		"character_art": {
-			"temporary": true,
-			"source": "ProceduralActorFrames / ActorVisual (procedural placeholder)",
-			"canvas": [GreenwardStyle.SPRITE_SPECS.world_width, GreenwardStyle.SPRITE_SPECS.world_height],
-			"anchor": GreenwardStyle.SPRITE_SPECS.anchor,
-			"outline_px": GreenwardStyle.SPRITE_SPECS.outline_px,
-		},
+		"character_art": player_art,
 		"prop_kind_total": ProceduralArt.prop_kinds().size(),
 	}
 

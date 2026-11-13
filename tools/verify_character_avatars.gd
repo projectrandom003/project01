@@ -8,7 +8,7 @@ extends Node
 ##   - SpriteFramesActorSource.from_disk(<id>) loads world_sheet.tres
 ##   - every (state, direction) animation has the authoritative frame count,
 ##     fps, loop flag and non-null 96x128 frames
-##   - a Player's default avatar is still the Wanderer placeholder
+##   - a Player starts as Kael, the player-controlled protagonist
 ##   - pressing the switch_avatar action swaps the world actor onto the
 ##     selected character's disk sheet (using_temporary_art false, sprite
 ##     visible, no flip_h)
@@ -104,11 +104,12 @@ func _check_avatar_switching() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 
-	_check("player default avatar is the Wanderer", _player.avatar_id == "", _player.avatar_id)
-	_check("player default visual uses temporary art", _player.visual.using_temporary_art)
+	_check("player starts as Kael", _player.avatar_id == "kael", _player.avatar_id)
+	_check("player default visual uses Kael's final art", not _player.visual.using_temporary_art)
+	_check("player default visual identifies Kael", _player.visual.character_id == "kael", _player.visual.character_id)
 
 	var ids := _player.available_avatars()
-	_check("available avatars include the Wanderer", ids.has(""), str(ids))
+	_check("Wanderer placeholder is not a selectable avatar", not ids.has(""), str(ids))
 	for character_id in CHARACTERS:
 		_check("available avatars include %s" % character_id, ids.has(character_id), str(ids))
 
@@ -151,14 +152,12 @@ func _check_avatar_switching() -> void:
 		_check("%s facing left does not flip the sprite" % character_id,
 			sprite != null and not sprite.flip_h)
 
-	# One more press from the last avatar must land back on the Wanderer.
-	var guard := 0
-	while _player.avatar_id != "" and guard < 8:
-		_send_switch_avatar()
-		await get_tree().process_frame
-		guard += 1
-	_check("cycling returns to the Wanderer", _player.avatar_id == "", _player.avatar_id)
-	_check("Wanderer avatar uses temporary art again", _player.visual.using_temporary_art)
+	# The story cycle contains only the three playable protagonists; it wraps
+	# from Kael to Lilith rather than switching to the non-selectable Wanderer.
+	_send_switch_avatar()
+	await get_tree().process_frame
+	_check("avatar cycle wraps from Kael to Lilith", _player.avatar_id == "lilith", _player.avatar_id)
+	_check("wrapped protagonist keeps final art", not _player.visual.using_temporary_art)
 
 	_player.queue_free()
 	await get_tree().process_frame

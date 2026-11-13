@@ -318,9 +318,18 @@ func _open_pause_menu() -> void:
 	menu.closed.connect(_on_overlay_closed)
 	menu.main_menu_requested.connect(_return_to_title)
 	menu.reset_requested.connect(_reset_journey)
+	menu.navigate_requested.connect(_on_pause_navigation)
 	overlay_root.add_child(menu)
 	_set_world_active(false)
 	EventBus.screen_changed.emit("pause")
+
+
+func _on_pause_navigation(screen_id: String) -> void:
+	# Close the pause overlay first; defer opening the destination until the
+	# closed signal has released GameScreen's single-overlay lock.
+	if active_overlay != null and is_instance_valid(active_overlay):
+		active_overlay.close_screen()
+	call_deferred("open_screen", screen_id)
 
 
 func _return_to_title() -> void:

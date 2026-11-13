@@ -75,7 +75,7 @@ func _ready() -> void:
 	visual.visual_scale = (1.35 if is_boss else 1.0) * scale_variance
 	# Vary silhouette where feasible via existing ActorVisual.Kind / def_id /
 	# race values. Bosses keep their true def_id so the treant boss still draws.
-	if not is_boss:
+	if not is_boss and def_id != "moonpetal_sprite":
 		var silhouettes := ["mossling", "thornhound", "fae_marauder", "glade_wisp", "corrupted_treant"]
 		visual.def_id = str(silhouettes[(vseed >> 3) % silhouettes.size()])
 	add_child(visual)
@@ -151,57 +151,31 @@ func _process(delta: float) -> void:
 		_player = get_tree().get_first_node_in_group("player")
 	if _player == null:
 		return
-	var distance := global_position.distance_to(_player.global_position)
-	# Spawn grace: never engage in the first seconds after spawning.
-	if _spawn_grace > 0.0:
-		_spawn_grace -= delta
-		if _spawn_grace < 0.0:
-			_spawn_grace = 0.0
-	# Direct contact (~18px) only engages if not on cooldown/grace.
-	if distance < 18.0 and enabled and _engagement_cooldown <= 0.0 and _spawn_grace <= 0.0:
-		_begin_encounter()
-		return
-	# Alert: approach but STOP at ~55px so the player can avoid or deliberately
-	# walk into the monster. No forced fight from chasing alone.
-	if distance < 210.0:
-		var to_player := _player.position - position
-		if distance > 55.0:
-			if _target_walkable(_player.position):
-				position = position.move_toward(_player.position, move_speed * 1.9 * delta)
-				visual.walking = true
-				visual.set_move_direction(to_player)
-				visual.play(ANIM_RUN)
-			else:
-				visual.walking = false
-				visual.set_move_direction(to_player)
-				visual.play(ANIM_IDLE)
-		else:
-			visual.walking = false
-			visual.set_move_direction(to_player)
-			visual.play(ANIM_IDLE)
+	# Monsters never initiate combat from proximity or chase the player.
+	# They roam inside their home radius and remain passive until the player
+	# approaches and explicitly presses E / the Interact button.
+	_roam_timer -= delta
+	if _roam_timer <= 0.0:
+		_roam_timer = randf_range(2.0, 5.0)
+		var found := false
+		for _attempt in 8:
+			var offset := Vector2(randf_range(-roam_radius, roam_radius), randf_range(-roam_radius, roam_radius))
+			var candidate := home_position + offset
+			if _target_walkable(candidate):
+				_roam_target = candidate
+				found = true
+				break
+		if not found:
+			_roam_target = position
+	if position.distance_to(_roam_target) > 4.0 and _target_walkable(_roam_target):
+		var to_target := _roam_target - position
+		position = position.move_toward(_roam_target, move_speed * delta)
+		visual.walking = true
+		visual.set_move_direction(to_target)
+		visual.play(ANIM_WALK)
 	else:
-		_roam_timer -= delta
-		if _roam_timer <= 0.0:
-			_roam_timer = randf_range(2.0, 5.0)
-			var found := false
-			for _attempt in 8:
-				var offset := Vector2(randf_range(-roam_radius, roam_radius), randf_range(-roam_radius, roam_radius))
-				var candidate := home_position + offset
-				if _target_walkable(candidate):
-					_roam_target = candidate
-					found = true
-					break
-			if not found:
-				_roam_target = position
-		if position.distance_to(_roam_target) > 4.0 and _target_walkable(_roam_target):
-			var to_target := _roam_target - position
-			position = position.move_toward(_roam_target, move_speed * delta)
-			visual.walking = true
-			visual.set_move_direction(to_target)
-			visual.play(ANIM_WALK)
-		else:
-			visual.walking = false
-			visual.play(ANIM_IDLE)
+		visual.walking = false
+		visual.play(ANIM_IDLE)
 
 
 func interact() -> void:
@@ -211,7 +185,9 @@ func interact() -> void:
 
 
 func _begin_encounter() -> void:
-	if engaged or defeated or _engagement_cooldown > 0.0 or _spawn_grace > 0.0:
+	# This method is only reached by explicit Interactable.interact() (E / A).
+	# Spawn grace must never block a deliberate player challenge.
+	if engaged or defeated or _engagement_cooldown > 0.0:
 		return
 	engaged = true
 	visual.walking = false

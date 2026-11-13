@@ -1,6 +1,6 @@
 # Art and Audio Pipeline
 
-The vertical slice deliberately ships **zero third-party visual assets**. Everything is generated in code so the project can be developed, tested and shared without licensing ambiguity. This document explains what exists, how to replace it, and the production specs to target.
+The vertical slice deliberately ships **zero third-party visual assets**. It now includes original final playable art for Gerald, Lilith and Kael, plus the Fallen Matron's three boss-phase cutouts; generic world props, NPCs, ordinary monsters and the collectible roster still use procedural fallbacks. This document explains the replacement seams and production specs.
 
 ---
 
@@ -12,7 +12,8 @@ The vertical slice deliberately ships **zero third-party visual assets**. Everyt
 | Water | Second `MultiMesh` + `water.gdshader`; stylised reflections/glints, depth shading and animated shore foam, plus a meandering noise-derived RIVER ribbon | Same `MultiMesh` layer with a water atlas or animated material |
 | Props | `ProceduralArt.prop_texture(kind, variant=0)` draws **57 prop kinds** (47 Phase-3 + 6 Phase-4 building/landmark + 4 new Phase-5 kinds: `birch_grove`, `moon_lantern`, `stone_path`, `village_gate`) with deterministic, visually distinct `variant`s into cached `ImageTexture`s; `prop_kinds()` / `variant_count()` enumerate them | Return a real `Texture2D` from `prop_texture(kind, variant)` |
 | Characters (core, Phase 3) | `CharacterAnimator` (8 states × 8 directions) → `ActorFrameSource` seam → `ProceduralActorFrames` (TEMPORARY placeholder frames) → `ActorVisual` | Subclass `ActorFrameSource` (e.g. `SpriteFramesActorSource`) and register it via `ActorVisual.set_frame_source()` |
-| Characters (Phase 4 CAST + demo) | ADDITIVE 9th state `CAST = 8` (`ALL_STATES` stays 8), `SpriteFramesActorSource` (`from_disk()` / `validate_sheets()`) and `DemoCharacterFrames` (ONE TEMPORARY in-memory procedural demo character wired to the player) | `SpriteFramesActorSource.from_disk(<id>)` → `ActorVisual.set_frame_source()` (see §14) |
+| Characters (Phase 4 CAST + demo) | ADDITIVE 9th state `CAST = 8` (`ALL_STATES` stays 8), `SpriteFramesActorSource` (`from_disk()` / `validate_sheets()`) and `DemoCharacterFrames` (TEMPORARY procedural fallback) | `SpriteFramesActorSource.from_disk(<id>)` → `ActorVisual.set_frame_source()` (see §14) |
+| Playable protagonists (Phase 6 art integration) | Gerald, Lilith and Kael have separate final world sheets (72 animations each), portraits, combat sprites and full-body illustrations; Fallen Matron has three original phase cutouts. These are outside the generic 8-class asset manifest and 12-character collectible registry. | `MainCharacterRoster` / `SpriteFramesActorSource` and `BattlefieldActor` phase-art paths; see `assets/ASSET_STATUS.md` |
 | Art asset contract (Phase 4) | `scripts/art/asset_manifest.gd` (`AssetManifest`) — 8 asset classes with exact specs; `status_report()` = **FINAL 0 / TEMPORARY 8 / MISSING 8** | Drop real files at the recorded `res://assets/...` paths (see `assets/README.md`, `assets/ASSET_STATUS.md`, §14) |
 | Second region (Phase 4) | `moonpetal_hollow` — cooler violet/silver biome, `load_radius 1`, region-specific `environment` (fog/tint/weather), 6 new landmark prop kinds | Painted biome tilesets / props via the same per-class seams |
 | Background preparation (Phase 4) | `ChunkPreparer` — main-thread FRAME-SLICED chunk preparation (at most one chunk/frame), **NO threads** | Real threaded generation remains future work |
@@ -28,7 +29,7 @@ The vertical slice deliberately ships **zero third-party visual assets**. Everyt
 | Portraits (Phase 5 real-portrait seam) | `PortraitView.portrait_texture` / `set_portrait_texture()` / `portrait_report()` via `scripts/art/portrait_asset_source.gd` (`PortraitAssetSource`) — null-safe lookup + guarded procedural fallback | `PortraitAssetSource.texture_for(<id>)` (see §15) |
 | World visual standards (Phase 5) | `scripts/world/world_visual_standards.gd` (`WorldVisualStandards`) — 6 categories, `region_tint()`, `validate()`; `GreenwardWorld.apply_visual_standards()` / `visual_standards_report()` | Per-category painted art via existing seams (see §15) |
 
-The important rule: **keep the public APIs stable** (`ProceduralArt.prop_texture(kind, variant)`, `PortraitView.setup_character()`, `ActorVisual.setup()` and `ActorVisual.set_frame_source()`), so gameplay and UI code do not change when art arrives. See §13 (Phase 3 snapshot) and §14 (Phase 4 snapshot); **§15 is the CURRENT authoritative Phase 5 character art pipeline and the exact asset status for BOTH registries**.
+The important rule: **keep the public APIs stable** (`ProceduralArt.prop_texture(kind, variant)`, `PortraitView.setup_character()`, `ActorVisual.setup()` and `ActorVisual.set_frame_source()`), so gameplay and UI code do not change when art arrives. See §13 (Phase 3 snapshot) and §14 (Phase 4 snapshot); §15 remains authoritative for the generic collectible-character art pipeline and its registries; Phase 6 playable protagonist art and boss-specific cutouts are documented in `assets/ASSET_STATUS.md`.
 
 ---
 

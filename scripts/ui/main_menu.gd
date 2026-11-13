@@ -1,7 +1,7 @@
 class_name MainMenu
 extends Control
-## Title screen. It only emits intent; main.gd owns scene switching so the menu
-## can be tested without changing scenes.
+## Art-forward title screen. The party stands in the world scene; navigation is
+## deliberately short and consistent instead of presenting the cast as cards.
 
 signal play_requested
 signal quit_requested
@@ -11,213 +11,179 @@ const STARTERS := ["gerald", "lilith", "kael"]
 var _play_button: Button
 var _reset_button: Button
 var _summary_label: Label
+var _party_names_label: Label
+var _party_layer: Node2D
+var _party_visuals: Array[ActorVisual] = []
 var _reset_armed: bool = false
-
 
 func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	theme = UITheme.build()
 
-	var backdrop := MainBackdrop.new()
-	backdrop.name = "Backdrop"
+	var backdrop := LaunchForestBackdrop.new()
+	backdrop.name = "TitleScreenBackdrop"
 	UIFactory.set_full_rect(backdrop)
 	add_child(backdrop)
+	var shade := ColorRect.new()
+	shade.name = "TitleArtworkReadabilityShade"
+	shade.color = Color(0.015, 0.012, 0.035, 0.22)
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	UIFactory.set_full_rect(shade)
+	add_child(shade)
 
-	var margin := UIFactory.margin(26)
+	_party_layer = Node2D.new()
+	_party_layer.name = "PartyShowcase"
+	_party_layer.z_index = 2
+	add_child(_party_layer)
+	_build_party_showcase()
+
+	var margin := UIFactory.margin(34)
 	UIFactory.set_full_rect(margin)
+	margin.z_index = 4
 	add_child(margin)
+	var layout := UIFactory.hbox(26)
+	layout.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	layout.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	margin.add_child(layout)
 
-	var center := CenterContainer.new()
-	margin.add_child(center)
-
-	var panel := UIFactory.panel(Color(0.035, 0.055, 0.095, 0.86), Color(UITheme.GOLD.r, UITheme.GOLD.g, UITheme.GOLD.b, 0.28), 22, 1, 34, true)
-	panel.custom_minimum_size = Vector2(1060, 0)
-	center.add_child(panel)
-
-	var root := UIFactory.vbox(14)
-	panel.add_child(root)
-
-	_build_header(root)
-	root.add_child(UIFactory.separator())
-	_build_body(root)
-	root.add_child(UIFactory.separator())
-	_build_footer(root)
-
+	_build_navigation(layout)
+	_build_scene_copy(layout)
+	resized.connect(_layout_party)
 	_refresh_summary()
+	_layout_party()
 
+func _build_navigation(layout: HBoxContainer) -> void:
+	var panel := UIFactory.panel(Color(0.025, 0.045, 0.075, 0.90), Color(0.72, 0.67, 0.52, 0.30), 18, 1, 26, true)
+	panel.custom_minimum_size = Vector2(390, 0)
+	panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	layout.add_child(panel)
 
-func _build_header(root: VBoxContainer) -> void:
-	var header := UIFactory.hbox(18)
-	root.add_child(header)
-
-	var titles := UIFactory.vbox(2)
-	titles.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var title := UIFactory.heading("PROJECT FANTASY", 52, UITheme.GOLD_BRIGHT)
-	title.add_theme_color_override("font_outline_color", Color(0.02, 0.03, 0.06, 0.95))
-	title.add_theme_constant_override("outline_size", 7)
-	titles.add_child(title)
-	titles.add_child(UIFactory.label("AETHERIA  ·  AN ORIGINAL ANIME-FANTASY MMORPG", 13, UITheme.TEAL))
-	header.add_child(titles)
-
-	var version := UIFactory.vbox(2)
-	version.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var chip := UIFactory.chip("VERTICAL SLICE 0.1.0", UITheme.GOLD)
-	chip.size_flags_horizontal = Control.SIZE_SHRINK_END
-	version.add_child(chip)
-	var status := UIFactory.label("Offline · single-player", 10, UITheme.TEXT_FAINT)
-	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	version.add_child(status)
-	header.add_child(version)
-
-
-func _build_body(root: VBoxContainer) -> void:
-	var body := UIFactory.hbox(26)
-	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	root.add_child(body)
-
-	var left := UIFactory.vbox(10)
-	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	body.add_child(left)
-
-	left.add_child(UIFactory.wrapped(
-		"The Whispering Glade is waking from a dream it should not be having. "
-		+ "Walk the streamed isometric forests of Greenward, gather bonds through "
-		+ "summoning, and face the Hollowed Guardian beneath the roots.",
+	var column := UIFactory.vbox(13)
+	panel.add_child(column)
+	column.add_child(UIFactory.label("AETHERIA  /  GREENWARD", 10, UITheme.TEAL))
+	var title := UIFactory.heading("PROJECT\nFANTASY", 43, UITheme.GOLD_BRIGHT)
+	title.add_theme_color_override("font_outline_color", Color("#050914"))
+	title.add_theme_constant_override("outline_size", 5)
+	column.add_child(title)
+	column.add_child(UIFactory.wrapped(
+		"A world that remembers. A promise that refuses to fade.",
 		14,
 		UITheme.TEXT_DIM
 	))
+	column.add_child(UIFactory.separator())
 
-	var features := UIFactory.grid(2, 8)
-	features.add_child(_feature("Streamed isometric world", "Chunked terrain, props, water and a day/night cycle.", UITheme.TEAL))
-	features.add_child(_feature("Turn-based battles", "Elemental weaknesses, status effects, ultimates and boss phases.", UITheme.DANGER))
-	features.add_child(_feature("Summoning & collection", "Data-driven banners, pity, awakening and ascension.", UITheme.VIOLET))
-	features.add_child(_feature("Original content", "Fourteen characters, six enemy types, two story quests.", UITheme.GREEN))
-	left.add_child(features)
-
-	_summary_label = UIFactory.label("", 12, UITheme.GOLD)
-	left.add_child(_summary_label)
-
-	var actions := UIFactory.hbox(10)
-	left.add_child(actions)
 	_play_button = UIFactory.button("Begin Journey", true)
-	_play_button.custom_minimum_size = Vector2(220, 48)
+	_play_button.custom_minimum_size = Vector2(0, 54)
+	_play_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_play_button.pressed.connect(_on_play)
-	actions.add_child(_play_button)
-	_reset_button = UIFactory.button("Reset Journey", false, true)
-	_reset_button.custom_minimum_size = Vector2(180, 48)
-	_reset_button.pressed.connect(_on_reset)
-	actions.add_child(_reset_button)
-	var quit := UIFactory.button("Quit")
-	quit.custom_minimum_size = Vector2(120, 48)
-	quit.pressed.connect(func() -> void: quit_requested.emit())
-	actions.add_child(quit)
+	column.add_child(_play_button)
 
-	left.add_child(UIFactory.wrapped(
-		"Controls: WASD / arrows to move  ·  Shift to sprint  ·  E / Space to interact  ·  "
-		+ "C roster  ·  G summon  ·  I inventory  ·  Q quests  ·  Esc pause. "
-		+ "Touch devices get a virtual joystick automatically.",
+	var journey_note := UIFactory.label("STORY  ·  EXPLORATION  ·  TURN-BASED COMBAT", 9, UITheme.TEXT_FAINT)
+	journey_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	column.add_child(journey_note)
+	column.add_child(UIFactory.separator())
+
+	_reset_button = UIFactory.button("Reset Journey", false, true)
+	_reset_button.custom_minimum_size = Vector2(0, 42)
+	_reset_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_reset_button.pressed.connect(_on_reset)
+	column.add_child(_reset_button)
+
+	var quit := UIFactory.button("Quit Game")
+	quit.custom_minimum_size = Vector2(0, 42)
+	quit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	quit.pressed.connect(func() -> void: quit_requested.emit())
+	column.add_child(quit)
+	column.add_child(UIFactory.spacer())
+
+	column.add_child(UIFactory.wrapped(
+		"WASD / arrows to move  ·  E to interact  ·  C roster  ·  G summon  ·  I inventory  ·  Q quests  ·  Esc menu",
 		10,
 		UITheme.TEXT_FAINT
 	))
+	column.add_child(UIFactory.label("GODOT 4.7  ·  OFFLINE STORY BUILD", 9, UITheme.TEXT_FAINT))
 
+func _build_scene_copy(layout: HBoxContainer) -> void:
 	var right := UIFactory.vbox(8)
-	right.custom_minimum_size = Vector2(430, 0)
-	body.add_child(right)
-	right.add_child(UIFactory.label("FIRST BONDS", 10, UITheme.TEXT_FAINT))
-	var row := UIFactory.hbox(10)
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	right.add_child(row)
-	for character_id in STARTERS:
+	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	layout.add_child(right)
+	right.add_child(UIFactory.label("THE LOST SIBLINGS  /  THEIR ALLY", 11, UITheme.GOLD_BRIGHT))
+	right.add_child(UIFactory.label("The Whispering Glade", 20, UITheme.TEXT))
+	right.add_child(UIFactory.label("A first step into a much older story", 11, UITheme.TEXT_DIM))
+	right.add_child(UIFactory.spacer())
+	right.add_child(UIFactory.label("YOUR PARTY", 9, UITheme.TEXT_FAINT))
+	_party_names_label = UIFactory.label("", 14, UITheme.TEXT)
+	right.add_child(_party_names_label)
+	_summary_label = UIFactory.label("", 11, UITheme.GOLD)
+	right.add_child(_summary_label)
+
+func _build_party_showcase() -> void:
+	if _party_layer == null:
+		return
+	for child in _party_layer.get_children():
+		child.queue_free()
+	_party_visuals.clear()
+	var ids: Array[String] = []
+	for instance in GameState.party_instances():
+		ids.append(str(instance.char_id))
+	if ids.is_empty():
+		for starter_id in STARTERS:
+			ids.append(starter_id)
+	for character_id in ids:
 		var definition: CharacterDef = ContentDB.get_character(character_id)
 		if definition == null:
 			continue
-		row.add_child(_starter_card(definition))
-	right.add_child(UIFactory.wrapped(
-		"Three travelers answer the glade's call. Summon more with Crystals earned "
-		+ "through quests and battles.",
-		10,
-		UITheme.TEXT_FAINT
-	))
+		var visual := ActorVisual.new()
+		visual.name = "Party_" + character_id
+		visual.visual_scale = 2.8
+		visual.facing = -1.0
+		visual.setup(definition.palette, ActorVisual.Kind.HUMAN, definition.id, definition.race, definition.element)
+		# Reuse the exact registered playable art and idle animation sheets.
+		visual.configure_character(character_id)
+		_party_layer.add_child(visual)
+		_party_visuals.append(visual)
 
-
-func _feature(title: String, description: String, color: Color) -> PanelContainer:
-	var panel := UIFactory.panel(Color("#0b1220"), Color(color.r, color.g, color.b, 0.24), 8, 1, 9)
-	var box := UIFactory.vbox(2)
-	box.add_child(UIFactory.label(title, 12, color))
-	box.add_child(UIFactory.wrapped(description, 10, UITheme.TEXT_DIM))
-	panel.add_child(box)
-	return panel
-
-
-func _starter_card(definition: CharacterDef) -> PanelContainer:
-	var color := UITheme.rarity_color(definition.rarity)
-	var panel := UIFactory.panel(Color("#0a101c"), Color(color.r, color.g, color.b, 0.42), 10, 1, 8)
-	panel.custom_minimum_size = Vector2(128, 196)
-	var box := UIFactory.vbox(3)
-	panel.add_child(box)
-	var portrait := PortraitView.new()
-	portrait.custom_minimum_size = Vector2(112, 128)
-	portrait.setup_character(definition)
-	box.add_child(portrait)
-	var name_label := UIFactory.label(definition.display_name, 12, UITheme.TEXT)
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	box.add_child(name_label)
-	var sub := UIFactory.label("%s · %s" % [definition.role, definition.element.capitalize()], 9, UITheme.TEXT_DIM)
-	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	sub.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	box.add_child(sub)
-	var rarity := UIFactory.label(definition.rarity.capitalize(), 9, color)
-	rarity.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(rarity)
-	return panel
-
-
-func _build_footer(root: VBoxContainer) -> void:
-	var footer := UIFactory.hbox(10)
-	root.add_child(footer)
-	footer.add_child(UIFactory.wrapped(
-		"Placeholder procedural art. All characters, names and lore are original. "
-		+ "No multiplayer, trading or server-authoritative economy exists in this build.",
-		10,
-		UITheme.TEXT_FAINT
-	))
-	footer.add_child(UIFactory.spacer())
-	var godot := UIFactory.label("Godot 4.7 · GDScript", 10, UITheme.TEXT_FAINT)
-	godot.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	footer.add_child(godot)
-
+func _layout_party() -> void:
+	if _party_layer == null or _party_visuals.is_empty():
+		return
+	var count := _party_visuals.size()
+	var spacing := minf(size.x * 0.125, 150.0)
+	var center_x := size.x * 0.70
+	for i in range(count):
+		var visual := _party_visuals[i]
+		visual.position = Vector2(center_x + (float(i) - float(count - 1) * 0.5) * spacing, size.y * 0.82)
+		visual.z_index = i
 
 func _refresh_summary() -> void:
 	if _summary_label == null:
 		return
 	var profile: Dictionary = GameState.profile
-	var party_names: Array = []
+	var party_names: Array[String] = []
 	for instance in GameState.party_instances():
 		var definition: CharacterDef = ContentDB.get_character(instance.char_id)
 		if definition != null:
 			party_names.append(definition.display_name)
-	_summary_label.text = "Lv %d  ·  %d characters  ·  %s gold  ·  %s crystals  ·  Party: %s" % [
+	if _party_names_label != null:
+		_party_names_label.text = "  ·  ".join(party_names) if not party_names.is_empty() else "No party selected"
+	_summary_label.text = "Lv %d   ·   %d collected   ·   %s gold   ·   %s crystals" % [
 		int(profile.get("level", 1)),
 		GameState.unique_owned_count(),
 		UIFactory.number(GameState.currency("gold")),
 		UIFactory.number(GameState.currency("crystals")),
-		", ".join(party_names) if not party_names.is_empty() else "none",
 	]
 	if GameState.loaded_from_save:
 		_play_button.text = "Continue Journey"
 	else:
 		_play_button.text = "Begin Journey"
 
-
 func _on_play() -> void:
 	play_requested.emit()
-
 
 func _on_reset() -> void:
 	if not _reset_armed:
 		_reset_armed = true
-		_reset_button.text = "Press again to erase"
+		_reset_button.text = "Press again to erase save"
 		_reset_button.add_theme_color_override("font_color", UITheme.DANGER)
 		return
 	GameState.reset_progress()
@@ -225,5 +191,7 @@ func _on_reset() -> void:
 	_reset_armed = false
 	_reset_button.text = "Reset Journey"
 	_reset_button.add_theme_color_override("font_color", UITheme.DANGER)
+	_build_party_showcase()
 	_refresh_summary()
+	_layout_party()
 	EventBus.toast_requested.emit("Journey reset. A new story begins.")

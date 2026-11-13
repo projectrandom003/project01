@@ -1,18 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#141a35"/>
-      <stop offset="1" stop-color="#070a16"/>
-    </linearGradient>
-    <linearGradient id="crystal" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#a8fff1"/>
-      <stop offset="0.5" stop-color="#39d6c0"/>
-      <stop offset="1" stop-color="#1b7fa8"/>
-    </linearGradient>
-  </defs>
-  <rect width="128" height="128" rx="24" fill="url(#bg)"/>
-  <circle cx="64" cy="62" r="44" fill="none" stroke="#c9a45a" stroke-width="2" opacity="0.55"/>
-  <path d="M64 16 L92 58 L64 112 L36 58 Z" fill="url(#crystal)" stroke="#d8fff9" stroke-width="2"/>
-  <path d="M64 16 L64 112 M36 58 L92 58" stroke="#0b2a3a" stroke-width="1.5" opacity="0.5"/>
-  <circle cx="64" cy="58" r="6" fill="#f6fffd" opacity="0.9"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs>
+ <radialGradient id="bg" cx="50%" cy="42%" r="68%"><stop offset="0" stop-color="#292044"/><stop offset=".62" stop-color="#111326"/><stop offset="1" stop-color="#070a16"/></radialGradient>
+ <linearGradient id="silver" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4eaff"/><stop offset=".42" stop-color="#9b9bc8"/><stop offset="1" stop-color="#55557e"/></linearGradient>
+ <linearGradient id="violet" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e2b8ff"/><stop offset=".48" stop-color="#9b55e8"/><stop offset="1" stop-color="#542b9b"/></linearGradient>
+ <linearGradient id="ember" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd7a0"/><stop offset=".5" stop-color="#dc774c"/><stop offset="1" stop-color="#7d3157"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="18" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <pattern id="stars" width="116" height="116" patternUnits="userSpaceOnUse"><circle cx="18" cy="23" r="2" fill="#c7b5f4" opacity=".55"/><circle cx="82" cy="72" r="1.5" fill="#8d7bb9" opacity=".5"/></pattern>
+</defs>
+<rect width="1024" height="1024" rx="210" fill="url(#bg)"/>
+<rect width="1024" height="1024" rx="210" fill="url(#stars)"/>
+<path d="M512 72 C735 130 888 302 888 514 C888 735 724 900 512 952 C300 900 136 735 136 514 C136 302 289 130 512 72Z" fill="none" stroke="#8065a8" stroke-width="16" opacity=".85"/>
+<path d="M512 112 C708 170 834 326 834 514 C834 695 700 835 512 892" fill="none" stroke="#c2a7e8" stroke-width="5" opacity=".5"/>
+<path d="M512 112 C316 170 190 326 190 514 C190 695 324 835 512 892" fill="none" stroke="#c2a7e8" stroke-width="5" opacity=".5"/>
+<!-- crescent guardian blade -->
+<path d="M650 198 C796 350 772 590 596 720 C682 572 683 398 575 280 C598 240 625 214 650 198Z" fill="url(#silver)" opacity=".94" filter="url(#glow)"/>
+<path d="M614 276 C698 396 684 538 608 638" fill="none" stroke="#fff0ff" stroke-width="13" stroke-linecap="round" opacity=".85"/>
+<!-- central twin-soul sigil -->
+<path d="M512 222 L568 412 L512 506 L456 412Z" fill="url(#violet)" stroke="#eadbff" stroke-width="9"/>
+<path d="M512 506 L566 596 L512 790 L458 596Z" fill="#19162c" stroke="url(#silver)" stroke-width="10"/>
+<path d="M512 516 L512 760" stroke="#c5a9ff" stroke-width="9" opacity=".8"/>
+<circle cx="512" cy="416" r="30" fill="#f1d9ff" filter="url(#glow)"/>
+<!-- twin spirits -->
+<circle cx="360" cy="470" r="76" fill="#8bdcff" opacity=".12" filter="url(#glow)"/>
+<path d="M360 398 C405 442 394 505 359 535 C322 505 313 442 360 398Z" fill="#b7ecff" stroke="#e6f8ff" stroke-width="8"/>
+<circle cx="360" cy="460" r="16" fill="#f8ffff"/>
+<circle cx="664" cy="610" r="74" fill="#ffb18d" opacity=".12" filter="url(#glow)"/>
+<path d="M664 540 C708 585 698 648 663 678 C626 648 616 585 664 540Z" fill="url(#ember)" stroke="#ffe0c7" stroke-width="8"/>
+<circle cx="664" cy="602" r="15" fill="#fff2dc"/>
+<!-- star points -->
+<path d="M512 132 L532 180 L580 200 L532 220 L512 268 L492 220 L444 200 L492 180Z" fill="#eadbff" filter="url(#glow)"/>
+<path d="M512 790 L532 838 L580 858 L532 878 L512 926 L492 878 L444 858 L492 838Z" fill="#9d7cda" opacity=".9"/>
+<path d="M238 512 L258 522 L268 542 L258 562 L238 572 L218 562 L208 542 L218 522Z" fill="#a7a0d7" opacity=".8"/>
+<path d="M786 512 L806 522 L816 542 L806 562 L786 572 L766 562 L756 542 L766 522Z" fill="#a7a0d7" opacity=".8"/>
 </svg>

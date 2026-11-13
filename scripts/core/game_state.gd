@@ -23,6 +23,8 @@ var inventory: Dictionary = {}
 var quests: Dictionary = {}
 var pity: Dictionary = {}
 var flags: Dictionary = {}
+## Persistent per-character gear enhancement levels, keyed by "uid|slot".
+var gear_levels: Dictionary = {}
 var player_position: Vector2 = Vector2.ZERO
 var has_player_position: bool = false
 var loaded_from_save: bool = false
@@ -127,6 +129,7 @@ func _to_dict() -> Dictionary:
 		"quests": quests,
 		"pity": pity,
 		"flags": flags,
+		"gear_levels": gear_levels.duplicate(true),
 		"position": { "x": player_position.x, "y": player_position.y },
 		"has_position": has_player_position,
 		"region": player_region,
@@ -180,6 +183,8 @@ func _load_from_dict(data: Dictionary) -> void:
 	quests = data.get("quests", {})
 	pity = data.get("pity", {})
 	flags = data.get("flags", {})
+	var saved_gear_levels: Variant = data.get("gear_levels", {})
+	gear_levels = saved_gear_levels.duplicate(true) if typeof(saved_gear_levels) == TYPE_DICTIONARY else {}
 	var pos: Dictionary = data.get("position", {})
 	player_position = Vector2(float(pos.get("x", 0.0)), float(pos.get("y", 0.0)))
 	has_player_position = bool(data.get("has_position", false))
@@ -517,7 +522,7 @@ func equip_item(uid: String, item_id: String) -> bool:
 	if str(item.get("category", "")) != "equipment":
 		return false
 	var slot := str(item.get("slot", ""))
-	if slot.is_empty():
+	if not CharacterInstance.SLOTS.has(slot):
 		return false
 	if item_count(item_id) <= 0:
 		return false
@@ -526,6 +531,7 @@ func equip_item(uid: String, item_id: String) -> bool:
 	if not previous.is_empty():
 		add_item(previous, 1)
 	instance.equip(item_id, slot)
+	gear_levels.erase(uid + "|" + slot)
 	EventBus.roster_changed.emit()
 	queue_save()
 	return true
@@ -539,7 +545,46 @@ func unequip_item(uid: String, slot: String) -> bool:
 	if current.is_empty():
 		return false
 	instance.unequip(slot)
+	gear_levels.erase(uid + "|" + slot)
 	add_item(current, 1)
+	EventBus.roster_changed.emit()
+	queue_save()
+	return true
+
+
+func gear_level(uid: String, slot: String) -> int:
+	return clampi(int(gear_levels.get(uid + "|" + slot, 0)), 0, 5)
+
+
+func gear_upgrade_info(uid: String, slot: String) -> Dictionary:
+	var instance := _find_instance(uid)
+	if instance == null or not CharacterInstance.SLOTS.has(slot):
+		return { "ok": false, "reason": "Invalid character or equipment slot." }
+	var item_id := instance.equipped_item(slot)
+	if item_id.is_empty():
+		return { "ok": false, "reason": "Equip an item in this slot first." }
+	var level := gear_level(uid, slot)
+	if level >= 5:
+		return { "ok": false, "reason": "This item is fully enhanced." }
+	var gold_cost := 180 * (level + 1)
+	var sap_cost := level + 1
+	if currency("gold") < gold_cost:
+		return { "ok": false, "reason": "Need %d gold." % gold_cost }
+	if item_count("glade_sap") < sap_cost:
+		return { "ok": false, "reason": "Need %d Glade Sap." % sap_cost }
+	return { "ok": true, "level": level, "next": level + 1, "gold": gold_cost, "sap": sap_cost, "item_id": item_id }
+
+
+func enhance_gear(uid: String, slot: String) -> bool:
+	var info := gear_upgrade_info(uid, slot)
+	if not bool(info.get("ok", false)):
+		return false
+	if not spend_currency("gold", int(info.gold)):
+		return false
+	if not remove_item("glade_sap", int(info.sap)):
+		add_currency("gold", int(info.gold))
+		return false
+	gear_levels[uid + "|" + slot] = int(info.next)
 	EventBus.roster_changed.emit()
 	queue_save()
 	return true
@@ -574,19 +619,29 @@ func set_tracked_quest(quest_id: String) -> void:
 	if quest_id.is_empty():
 		untrack_quest()
 		return
+	if not ContentDB.quests.has(quest_id):
+		push_warning("[GameState] Cannot track unknown quest: " + quest_id)
+		return
+	var previous := tracked_quest()
 	flags["tracked_quest"] = quest_id
 	queue_save()
+	# Notify both the HUD and open quest journal immediately. Emit the previous
+	# id too when switching so listeners can clear stale selection state.
+	if not previous.is_empty() and previous != quest_id:
+		EventBus.quest_updated.emit(previous)
 	EventBus.quest_updated.emit(quest_id)
 
 
 func untrack_quest() -> void:
+	var previous := tracked_quest()
 	flags.erase("tracked_quest")
 	queue_save()
+	if not previous.is_empty():
+		EventBus.quest_updated.emit(previous)
 
 
 func quest_destination(quest_id: String) -> Vector2:
-	# Returns the world-space destination of the currently active step, or
-	# Vector2.ZERO if unknown. Used by the HUD tracker and the world map.
+	# Returns the destination for the current objective, in the quest's region.
 	if quest_id.is_empty():
 		return Vector2.ZERO
 	var step := quest_step(quest_id)
@@ -596,32 +651,64 @@ func quest_destination(quest_id: String) -> Vector2:
 	if typeof(grid) == TYPE_ARRAY and (grid as Array).size() == 2:
 		var g: Array = grid
 		return IsoMath.grid_to_world(float(g[0]), float(g[1]))
-	# Fall back to the region spawn grid if no explicit grid was authored.
-	var region: Dictionary = ContentDB.get_region("greenward")
+	var definition: Dictionary = ContentDB.get_quest(quest_id)
+	var region: Dictionary = ContentDB.get_region(str(definition.get("region", "greenward")))
 	var spawn: Array = region.get("spawn_grid", [8, 8])
 	return IsoMath.grid_to_world(float(spawn[0]), float(spawn[1]))
 
 
+func quest_target_position(quest_id: String) -> Vector2:
+	# For kill objectives, follow the actual living matching monster rather than
+	# only the authored encounter centre. This keeps the compass and beacon exact
+	# while passive enemies roam inside their home radius.
+	var step := quest_step(quest_id)
+	if str(step.get("type", "")) == "kill":
+		var target_id := str(step.get("target", ""))
+		var player_pos := _find_player_position()
+		var best_position := Vector2.ZERO
+		var best_distance := INF
+		for node in get_tree().get_nodes_in_group("interactables"):
+			if not is_instance_valid(node) or not (node is RoamingMonster):
+				continue
+			var monster := node as RoamingMonster
+			if monster.defeated or not monster.visible:
+				continue
+			var visual_id := str(monster.visual_definition.get("id", ""))
+			if monster.group_id != target_id and visual_id != target_id:
+				continue
+			var d := player_pos.distance_to(monster.global_position)
+			if d < best_distance:
+				best_distance = d
+				best_position = monster.global_position
+		if best_distance < INF:
+			return best_position
+	return quest_destination(quest_id)
+
+
 func distance_to_tracked() -> float:
 	var qid := tracked_quest()
-	if qid.is_empty() or quest_state(qid) != "active":
+	if qid.is_empty() or quest_state(qid) == "complete":
 		return 0.0
-	var player := _find_player_position()
-	return player.distance_to(quest_destination(qid))
+	return _find_player_position().distance_to(quest_target_position(qid))
 
 
 func direction_to_tracked() -> Vector2:
 	var qid := tracked_quest()
-	if qid.is_empty() or quest_state(qid) != "active":
+	if qid.is_empty() or quest_state(qid) == "complete":
 		return Vector2.ZERO
-	var player := _find_player_position()
-	var delta := quest_destination(qid) - player
+	var delta := quest_target_position(qid) - _find_player_position()
 	if delta.length_squared() < 0.0001:
 		return Vector2.ZERO
 	return delta.normalized()
 
 
 func _find_player_position() -> Vector2:
+	# The saved position is only a fallback. While playing, use the live Player
+	# node: the previous implementation only read the last saved position, so
+	# the compass distance/bearing stayed frozen as the player walked.
+	var live_player := get_tree().get_first_node_in_group("player")
+	if live_player is Node2D:
+		return (live_player as Node2D).global_position
 	if has_player_position:
 		return player_position
 	return Vector2.ZERO
@@ -641,6 +728,9 @@ func start_quest(quest_id: String, giver_id: String = "") -> bool:
 	# The conversation that grants a quest satisfies its first "talk" step.
 	if str(first.get("type", "")) == "talk" and str(first.get("target", "")) == giver_id:
 		quests[quest_id].step = 1
+	# Accepting a quest should immediately make it the active HUD objective.
+	# Do not leave an older active quest silently pinned when a new one starts.
+	set_tracked_quest(quest_id)
 	EventBus.quest_updated.emit(quest_id)
 	queue_save()
 	return true
@@ -672,6 +762,7 @@ func record_kill(enemy_id: String, count: int = 1) -> void:
 		if int(entry.progress) >= int(step.get("count", 1)):
 			entry.progress = 0
 			entry.step = int(entry.step) + 1
+			EventBus.toast_requested.emit("Objective complete: %s" % str(step.get("text", "Target defeated")))
 		quests[quest_id] = entry
 		changed = true
 		EventBus.quest_updated.emit(quest_id)
@@ -707,10 +798,42 @@ func complete_quest(quest_id: String) -> bool:
 	entry.state = "complete"
 	entry.step = definition.get("steps", []).size()
 	quests[quest_id] = entry
+	if tracked_quest() == quest_id:
+		flags.erase("tracked_quest")
+		for next_id in quests.keys():
+			if quest_state(str(next_id)) == "active":
+				flags["tracked_quest"] = str(next_id)
+				break
 	EventBus.quest_updated.emit(quest_id)
 	EventBus.toast_requested.emit("Quest complete: %s" % definition.get("name", quest_id))
 	queue_save()
 	return true
+
+
+## Returns a map/HUD marker state for an NPC who can give or turn in
+## quests. "ready" means return for a reward; "available" means a new quest
+## can be accepted; "active" means the NPC has an ongoing quest for you.
+func quest_marker_for_npc(npc_id: String) -> String:
+	var npc_quests := {
+		"elder_maelin": ["glade_whisper", "hollow_roots", "elder_memory", "matron_bloom"],
+		"merchant_sera": ["sera_caravan"],
+		"wanderer_pip": ["pip_whispers"]
+	}
+	var linked: Array = npc_quests.get(npc_id, [])
+	for quest_id in linked:
+		if quest_state(str(quest_id)) == "active" and quest_ready(str(quest_id)):
+			return "ready"
+	for quest_id in linked:
+		if quest_state(str(quest_id)) != "not_started":
+			continue
+		var definition: Dictionary = ContentDB.get_quest(str(quest_id))
+		var requirement := str(definition.get("requires", ""))
+		if requirement.is_empty() or quest_state(requirement) == "complete":
+			return "available"
+	for quest_id in linked:
+		if quest_state(str(quest_id)) == "active":
+			return "active"
+	return ""
 
 
 func active_quests() -> Array:
@@ -773,26 +896,43 @@ func pull_banner(banner_id: String, count: int) -> Dictionary:
 
 # ------------------------------------------------------------------- battle
 
-func build_battle_rewards(group_id: String) -> Dictionary:
+func build_battle_rewards(group_id: String, roll_bonus_drops: bool = false) -> Dictionary:
 	var group: Dictionary = ContentDB.get_enemy_group(group_id)
 	var rewards: Dictionary = group.get("rewards", {})
 	var level_mult := 1.0 + 0.12 * maxi(0, int(group.get("level", 1)) - 1)
+	var items: Dictionary = rewards.get("items", {}).duplicate(true)
+	if roll_bonus_drops:
+		var rng := RandomNumberGenerator.new()
+		rng.randomize()
+		for drop in group.get("drops", []):
+			if typeof(drop) != TYPE_DICTIONARY:
+				continue
+			var chance := clampf(float(drop.get("chance", 0.0)), 0.0, 1.0)
+			if chance >= 1.0 or (chance > 0.0 and rng.randf() < chance):
+				var item_id := str(drop.get("item", ""))
+				var minimum := maxi(1, int(drop.get("min", 1)))
+				var maximum := maxi(minimum, int(drop.get("max", minimum)))
+				var amount := rng.randi_range(minimum, maximum)
+				if not item_id.is_empty():
+					items[item_id] = int(items.get(item_id, 0)) + amount
 	return {
 		"gold": int(round(float(rewards.get("gold", 0)) * level_mult)),
 		"crystals": int(round(float(rewards.get("crystals", 0)) * level_mult)),
 		"xp": int(round(float(rewards.get("xp", 0)) * level_mult)),
-		"items": rewards.get("items", {}),
+		"items": items,
 	}
 
 
-func apply_battle_result(group_id: String, victory: bool) -> Dictionary:
+func apply_battle_result(group_id: String, victory: bool, precomputed_rewards: Dictionary = {}) -> Dictionary:
 	if not victory:
 		return { "applied": false }
 	var group: Dictionary = ContentDB.get_enemy_group(group_id)
-	var rewards := build_battle_rewards(group_id)
-	add_currency("gold", int(rewards.gold))
-	add_currency("crystals", int(rewards.crystals))
-	grant_reward_items(rewards.items)
+	var rewards: Dictionary = precomputed_rewards.duplicate(true) if not precomputed_rewards.is_empty() else build_battle_rewards(group_id, true)
+	add_currency("gold", int(rewards.get("gold", 0)))
+	add_currency("crystals", int(rewards.get("crystals", 0)))
+	var granted_items: Dictionary = rewards.get("items", {}).duplicate(true)
+	grant_reward_items(granted_items)
+	rewards["items"] = granted_items
 	add_party_xp(int(rewards.xp))
 	# Bond gain: small amount per battle victory.
 	for uid in party:

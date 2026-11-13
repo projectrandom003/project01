@@ -144,14 +144,14 @@
       "crit_dmg": 1.5
     },
     "skills": [
-      "umbral_rend",
-      "nightfall"
+      "lunar_wisp",
+      "velvet_hex"
     ],
-    "ultimate": "eclipse_requiem",
+    "ultimate": "hollow_moon_eclipse",
     "passive": {
-      "name": "Hollow Crown",
+      "name": "Moonbound Familiar",
       "id": "hollow_crown",
-      "text": "Dark skills deal 15% more damage to enemies with a debuff."
+      "text": "Nyx's familiar feeds on afflicted foes: her dark attacks deal 15% more damage to enemies suffering a debuff."
     },
     "lore": "A queen who traded her reflection for a throne. The moon she rules over is a hole in the sky, and it is always full.",
     "palette": {
@@ -359,14 +359,14 @@
       "crit_dmg": 1.4
     },
     "skills": [
-      "umbral_rend",
-      "blood_waltz"
+      "reapers_waltz",
+      "crimson_binding"
     ],
-    "ultimate": "crimson_eclipse",
+    "ultimate": "red_requiem",
     "passive": {
-      "name": "Sanguine Waltz",
+      "name": "Bloodstained Encore",
       "id": "sanguine_waltz",
-      "text": "Heals for 20% of all damage dealt."
+      "text": "Vespera restores 20% of damage dealt as health; critical strikes leave her poised for a faster follow-up."
     },
     "lore": "Vespera attends every funeral in Nocturne, dressed in white. Nobody has ever seen her leave before the last candle goes out.",
     "palette": {

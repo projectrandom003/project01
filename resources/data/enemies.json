@@ -92,22 +92,34 @@
     }
   },
   "corrupted_treant": {
-    "name": "Corrupted Treant",
+    "name": "The Hollowed Guardian",
     "element": "earth",
     "rarity": "epic",
     "role": "Elite",
     "base": {
-      "hp": 90,
-      "atk": 9,
-      "def": 6,
+      "hp": 340,
+      "atk": 15,
+      "def": 11,
       "spd": 10,
-      "crit": 0.04
+      "crit": 0.06
     },
     "skills": [
       "root_crush",
       "bark_ward"
     ],
     "ultimate": "hollow_verdict",
+    "phases": [
+      {
+        "hp_below": 0.6,
+        "message": "The guardian's bark splits. Roots burst through the clearing and the heartwood begins to burn.",
+        "status": { "id": "atk_up", "turns": 99, "potency": 0.22 }
+      },
+      {
+        "hp_below": 0.25,
+        "message": "The Hollowed Guardian tears free of the earth. Its roots lash wildly as the heartwood is exposed.",
+        "status": { "id": "spd_up", "turns": 99, "potency": 0.25 }
+      }
+    ],
     "lore": "Something hollow took root inside an old guardian. It still tries to protect the glade — from everything.",
     "palette": {
       "primary": "#4a4030",
@@ -121,11 +133,11 @@
     "rarity": "mythic",
     "role": "World Boss",
     "base": {
-      "hp": 220,
-      "atk": 12,
-      "def": 8,
-      "spd": 12,
-      "crit": 0.06
+      "hp": 680,
+      "atk": 18,
+      "def": 13,
+      "spd": 13,
+      "crit": 0.08
     },
     "skills": [
       "root_crush",
@@ -166,12 +178,12 @@
     "rarity": "mythic",
     "role": "Boss",
     "base": {
-      "hp": 600,
-      "atk": 28,
-      "def": 16,
-      "spd": 14,
-      "crit": 0.1,
-      "crit_dmg": 1.6
+      "hp": 1200,
+      "atk": 30,
+      "def": 18,
+      "spd": 15,
+      "crit": 0.12,
+      "crit_dmg": 1.7
     },
     "skills": [
       "corruption_bolt",
@@ -206,6 +218,21 @@
       "primary": "#1a1a2e",
       "secondary": "#f5f0e8",
       "accent": "#9b59b6"
+    }
+  },
+  "moonpetal_sprite": {
+    "name": "Moonpetal Sprite",
+    "element": "wind",
+    "rarity": "rare",
+    "role": "Skirmisher",
+    "base": { "hp": 46, "atk": 8, "def": 3, "spd": 21, "crit": 0.1 },
+    "skills": ["spark"],
+    "ultimate": "",
+    "lore": "A quicksilver guardian of the Moonpetal glade. It darts between flowers and lashes out with condensed moonlight.",
+    "palette": {
+      "primary": "#486b83",
+      "secondary": "#a9e5e8",
+      "accent": "#f4d9ff"
     }
   }
 }

@@ -2,8 +2,17 @@
   "elder_maelin": {
     "start": "greet",
     "start_rules": [
+      { "if": "quest_ready:matron_bloom", "node": "turnin_matron" },
+      { "if": "quest_ready:elder_memory", "node": "turnin_elder" },
+      { "if": "quest_ready:hollow_roots", "node": "turnin_hollow" },
       { "if": "quest_ready:glade_whisper", "node": "turnin_glade" },
+      { "if": "quest_state:matron_bloom:active", "node": "matron_in_progress" },
+      { "if": "quest_state:elder_memory:active", "node": "elder_in_progress" },
+      { "if": "quest_state:hollow_roots:active", "node": "hollow_in_progress" },
       { "if": "quest_state:glade_whisper:active", "node": "in_progress" },
+      { "if": "quest_state:matron_bloom:complete", "node": "matron_reward" },
+      { "if": "quest_state:elder_memory:complete", "node": "elder_reward" },
+      { "if": "quest_state:hollow_roots:complete", "node": "hollow_reward" },
       { "if": "quest_state:glade_whisper:complete", "node": "after_glade" }
     ],
     "nodes": {
@@ -81,6 +90,92 @@
         "text": "The eastern clearing. Follow the grey moss. And traveler — if it speaks with your voice, it is only remembering how.",
         "next": ""
       },
+      "hollow_in_progress": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "The Hollowed Guardian still stands between us and the truth. Return when you have ended its watch.",
+        "choices": [
+          { "text": "I will return when it is done.", "next": "" }
+        ]
+      },
+      "turnin_hollow": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "You have ended the Guardian\u2019s watch. The roots can finally rest. Give me a moment; there is something I would have you carry from this place.",
+        "choices": [
+          { "text": "I brought what you asked for.", "next": "hollow_reward", "action": "complete_quest:hollow_roots" }
+        ]
+      },
+      "hollow_reward": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "Greenward will remember what you have done. The old paths are quiet for now, but the First Tree has begun to remember. Its oldest heart lies deeper in the eastern wood.",
+        "choices": [
+          { "text": "I will seek the First Tree.", "next": "elder_accepted", "action": "start_quest:elder_memory" },
+          { "text": "I will keep watch.", "next": "" }
+        ]
+      },
+      "elder_accepted": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "Follow the old roots east. The Elder Hollow is no mere beast; it is the memory of Greenward given a body. Bring that memory back to me.",
+        "next": ""
+      },
+      "elder_in_progress": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "The First Tree waits in the eastern wood. Follow the roots that break through the old stones, and be ready for what remembers you.",
+        "choices": [
+          { "text": "I will return with its memory.", "next": "" }
+        ]
+      },
+      "turnin_elder": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "You faced the First Tree and returned. The memory you carried is not a warning. It is a name: the Matron. She was the keeper who first tried to bind the corruption.",
+        "choices": [
+          { "text": "Then I will find the Matron.", "next": "elder_reward", "action": "complete_quest:elder_memory" }
+        ]
+      },
+      "elder_reward": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "The trail leads to the ruined conservatory. The Matron is no longer its keeper. End the corruption before it takes root in another heart.",
+        "choices": [
+          { "text": "I will enter the conservatory.", "next": "matron_accepted", "action": "start_quest:matron_bloom" },
+          { "text": "I need to prepare.", "next": "" }
+        ]
+      },
+      "matron_accepted": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "The ruined conservatory lies south of the old stones. Do not mistake her sorrow for mercy.",
+        "next": ""
+      },
+      "matron_in_progress": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "The Fallen Matron waits in the ruined conservatory. End the corruption, then come back to me.",
+        "choices": [
+          { "text": "I will return.", "next": "" }
+        ]
+      },
+      "turnin_matron": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "The glade is quiet. Not healed, perhaps, but free to grow again. You have done more than any of us dared ask.",
+        "choices": [
+          { "text": "Then let it grow.", "next": "matron_reward", "action": "complete_quest:matron_bloom" }
+        ]
+      },
+      "matron_reward": {
+        "speaker": "Elder Maelin",
+        "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
+        "text": "Take this final gift. When you are ready, the roads beyond Greenward will open. There are more stories than this forest can hold.",
+        "choices": [
+          { "text": "I am ready.", "next": "" }
+        ]
+      },
       "after_glade": {
         "speaker": "Elder Maelin",
         "portrait": { "hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8" },
@@ -94,6 +189,10 @@
   },
   "merchant_sera": {
     "start": "greet",
+    "start_rules": [
+      { "if": "quest_ready:sera_caravan", "node": "caravan_turnin" },
+      { "if": "quest_state:sera_caravan:active", "node": "caravan_active" }
+    ],
     "nodes": {
       "greet": {
         "speaker": "Sera Quill",
@@ -102,6 +201,7 @@
         "choices": [
           { "text": "What do you sell?", "next": "shop" },
           { "text": "Any news?", "next": "news" },
+          { "text": "Your caravan looks troubled.", "next": "caravan_intro" },
           { "text": "Maybe later.", "next": "" }
         ]
       },
@@ -116,11 +216,52 @@
         "portrait": { "hair": "#c96f3a", "primary": "#5a3a2a", "secondary": "#e8c27a", "accent": "#ffd27a", "skin": "#e8b890" },
         "text": "They say the Elder Hollow woke up. They also say the moon is a hole. I sell to both rumors equally.",
         "next": ""
+      },
+      "caravan_intro": {
+        "speaker": "Sera Quill",
+        "portrait": { "hair": "#c96f3a", "primary": "#5a3a2a", "secondary": "#e8c27a", "accent": "#ffd27a", "skin": "#e8b890" },
+        "text": "Two thornhounds have made a den beside the road. My supply cart is stranded. Clear the road and I will pay you in goods, not just gratitude.",
+        "choices": [
+          { "text": "I will clear the road.", "next": "caravan_accepted", "action": "start_quest:sera_caravan" },
+          { "text": "Not right now.", "next": "" }
+        ]
+      },
+      "caravan_accepted": {
+        "speaker": "Sera Quill",
+        "portrait": { "hair": "#c96f3a", "primary": "#5a3a2a", "secondary": "#e8c27a", "accent": "#ffd27a", "skin": "#e8b890" },
+        "text": "The road bends north-east. Two of them. And please bring back the cart in one piece — it is the only thing I own that has wheels.",
+        "next": ""
+      },
+      "caravan_active": {
+        "speaker": "Sera Quill",
+        "portrait": { "hair": "#c96f3a", "primary": "#5a3a2a", "secondary": "#e8c27a", "accent": "#ffd27a", "skin": "#e8b890" },
+        "text": "Those thornhounds are still blocking the road. Clear them and come back.",
+        "choices": [
+          { "text": "I am on it.", "next": "" }
+        ]
+      },
+      "caravan_turnin": {
+        "speaker": "Sera Quill",
+        "portrait": { "hair": "#c96f3a", "primary": "#5a3a2a", "secondary": "#e8c27a", "accent": "#ffd27a", "skin": "#e8b890" },
+        "text": "The road is clear! You have saved my entire season. Here, take these supplies before I change my mind.",
+        "choices": [
+          { "text": "Happy to help.", "next": "caravan_reward", "action": "complete_quest:sera_caravan" }
+        ]
+      },
+      "caravan_reward": {
+        "speaker": "Sera Quill",
+        "portrait": { "hair": "#c96f3a", "primary": "#5a3a2a", "secondary": "#e8c27a", "accent": "#ffd27a", "skin": "#e8b890" },
+        "text": "If you find anything else strange out there, tell me first. Information is lighter than cargo and twice as profitable.",
+        "next": ""
       }
     }
   },
   "wanderer_pip": {
     "start": "greet",
+    "start_rules": [
+      { "if": "quest_ready:pip_whispers", "node": "whispers_turnin" },
+      { "if": "quest_state:pip_whispers:active", "node": "whispers_active" }
+    ],
     "nodes": {
       "greet": {
         "speaker": "Pip",
@@ -128,6 +269,7 @@
         "text": "You can see the floating islands from here if you squint. My grandmother says they are pieces of a promise somebody broke.",
         "choices": [
           { "text": "What is this place?", "next": "lore" },
+          { "text": "What are those whispers?", "next": "whispers_intro" },
           { "text": "Farewell.", "next": "" }
         ]
       },
@@ -135,6 +277,43 @@
         "speaker": "Pip",
         "portrait": { "hair": "#f2e2a8", "primary": "#3f5a6b", "secondary": "#8fd9c4", "accent": "#ffeaa0", "skin": "#f6e3cf" },
         "text": "The Whispering Glade. Greenward's oldest wound, dressed in flowers. Stay on the paths and you'll be fine. Mostly.",
+        "next": ""
+      },
+      "whispers_intro": {
+        "speaker": "Pip",
+        "portrait": { "hair": "#f2e2a8", "primary": "#3f5a6b", "secondary": "#8fd9c4", "accent": "#ffeaa0", "skin": "#f6e3cf" },
+        "text": "Three little lights keep calling travelers off the reed path. I think they are glade wisps, but they sound frightened. Could you quiet them before someone gets lost?",
+        "choices": [
+          { "text": "I will find them.", "next": "whispers_accepted", "action": "start_quest:pip_whispers" },
+          { "text": "Maybe another time.", "next": "" }
+        ]
+      },
+      "whispers_accepted": {
+        "speaker": "Pip",
+        "portrait": { "hair": "#f2e2a8", "primary": "#3f5a6b", "secondary": "#8fd9c4", "accent": "#ffeaa0", "skin": "#f6e3cf" },
+        "text": "Listen for the soft chiming near the reeds. They hide when you get close, so keep your eyes open.",
+        "next": ""
+      },
+      "whispers_active": {
+        "speaker": "Pip",
+        "portrait": { "hair": "#f2e2a8", "primary": "#3f5a6b", "secondary": "#8fd9c4", "accent": "#ffeaa0", "skin": "#f6e3cf" },
+        "text": "The three wisps are still out there. Follow the reed path and watch for their pale green light.",
+        "choices": [
+          { "text": "I will find them.", "next": "" }
+        ]
+      },
+      "whispers_turnin": {
+        "speaker": "Pip",
+        "portrait": { "hair": "#f2e2a8", "primary": "#3f5a6b", "secondary": "#8fd9c4", "accent": "#ffeaa0", "skin": "#f6e3cf" },
+        "text": "The whispers stopped! I can hear the river again. Thank you. I found these near the reeds — maybe they belong to you.",
+        "choices": [
+          { "text": "Thank you, Pip.", "next": "whispers_reward", "action": "complete_quest:pip_whispers" }
+        ]
+      },
+      "whispers_reward": {
+        "speaker": "Pip",
+        "portrait": { "hair": "#f2e2a8", "primary": "#3f5a6b", "secondary": "#8fd9c4", "accent": "#ffeaa0", "skin": "#f6e3cf" },
+        "text": "If you hear a fourth whisper, don't follow it. There are only supposed to be three.",
         "next": ""
       }
     }

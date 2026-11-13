@@ -17,6 +17,7 @@ var visual: ActorVisual
 var _name_label: Label
 var _subtitle_label: Label
 var _time: float = 0.0
+var _quest_marker_state: String = ""
 
 
 func setup(p_id: String, p_name: String, p_dialogue: String, p_palette: Dictionary, p_race: String) -> void:
@@ -73,6 +74,19 @@ func _ready() -> void:
 	add_child(_subtitle_label)
 
 	set_process(true)
+	_refresh_quest_marker()
+	if not EventBus.quest_updated.is_connected(_refresh_quest_marker):
+		EventBus.quest_updated.connect(_refresh_quest_marker)
+
+
+func _exit_tree() -> void:
+	if EventBus.quest_updated.is_connected(_refresh_quest_marker):
+		EventBus.quest_updated.disconnect(_refresh_quest_marker)
+
+
+func _refresh_quest_marker(_quest_id: String = "") -> void:
+	_quest_marker_state = GameState.quest_marker_for_npc(npc_id)
+	queue_redraw()
 
 
 func _derive_role() -> String:
@@ -103,6 +117,21 @@ func _draw() -> void:
 	var pulse := 0.35 + 0.15 * sin(_time * 2.0)
 	draw_arc(Vector2(0, 0), 16.0, 0.0, TAU, 24, Color(c.r, c.g, c.b, pulse * 0.5), 2.0)
 	draw_arc(Vector2(0, 0), 22.0, 0.0, TAU, 24, Color(c.r, c.g, c.b, pulse * 0.22), 1.5)
+	# Quest giver / turn-in marker floats above the NPC nameplate.
+	if not _quest_marker_state.is_empty():
+		var marker_color := Color("#e9c66d")
+		var symbol := "!"
+		match _quest_marker_state:
+			"ready":
+				marker_color = Color("#8ee0a0")
+				symbol = "!"
+			"active":
+				marker_color = Color("#78c6e8")
+				symbol = "·"
+		var marker_pos := Vector2(0, -105)
+		draw_circle(marker_pos, 10.0, Color(marker_color.r, marker_color.g, marker_color.b, 0.18))
+		draw_circle(marker_pos, 6.0, marker_color)
+		draw_string(ThemeDB.fallback_font, marker_pos + Vector2(-3.0, 4.0), symbol, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#14202a"))
 
 
 func interact() -> void:

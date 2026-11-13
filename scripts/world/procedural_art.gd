@@ -24,6 +24,26 @@ static var _glow_cache: Dictionary = {}
 static var _frame_cache: Dictionary = {}
 static var _white: Texture2D
 
+# First authored Greenward environment sprites. These are real imported SVG
+# assets, not runtime polygon painters. The procedural painters remain as a
+# graceful fallback for every not-yet-replaced prop kind.
+const AUTHORED_ENVIRONMENT := {
+	"willow_tree": "res://assets/environment/greenward/willow_tree.svg",
+	"birch_tree": "res://assets/environment/moonpetal/silver_birch.svg",
+	"pine_tree": "res://assets/environment/greenward/pine_tree.svg",
+	"blossom_tree": "res://assets/environment/greenward/blossom_tree.svg",
+	"dead_tree": "res://assets/environment/greenward/dead_tree.svg",
+	"bush": "res://assets/environment/greenward/forest_shrub.svg",
+	"spirit_bloom": "res://assets/environment/moonpetal/spirit_bloom.svg",
+	"moon_lantern": "res://assets/environment/moonpetal/moon_lantern.svg",
+	"ancient_tree": "res://assets/environment/greenward/ancient_oak.svg",
+	"moss_rock": "res://assets/environment/greenward/moss_rock.svg",
+	"cottage": "res://assets/environment/greenward/woodland_cottage.svg",
+	"fern": "res://assets/environment/greenward/fern.svg",
+	"flower_cluster": "res://assets/environment/greenward/wildflower_patch.svg",
+	"stone_bridge": "res://assets/environment/greenward/stone_bridge.svg",
+}
+
 
 # ------------------------------------------------------------------ public API
 
@@ -34,6 +54,26 @@ static func prop_texture(kind: String, variant: int = 0) -> Texture2D:
 	var key := "%s|%d" % [kind, variant]
 	if _prop_cache.has(key):
 		return _prop_cache[key]
+	# Authored SVGs are loaded directly by Godot's SVG importer. Keep variants
+	# on the same hand-painted silhouette until dedicated variant art exists.
+	if AUTHORED_ENVIRONMENT.has(kind):
+		var authored_path := str(AUTHORED_ENVIRONMENT[kind])
+		if ResourceLoader.exists(authored_path):
+			var authored := load(authored_path) as Texture2D
+			if authored != null:
+				if variant <= 0:
+					_prop_cache[key] = authored
+					return authored
+				# Authored SVGs still honour the existing deterministic variant
+				# contract: clone the imported pixels, then add the same kind-aware
+				# hue/geometry accents used by procedural props.
+				var authored_image := authored.get_image()
+				if authored_image != null:
+					var varied_image := authored_image.duplicate()
+					_apply_variant(varied_image, kind, variant)
+					var varied_texture := ImageTexture.create_from_image(varied_image)
+					_prop_cache[key] = varied_texture
+					return varied_texture
 	var image: Image = _build_prop(kind, variant)
 	var texture := ImageTexture.create_from_image(image)
 	_prop_cache[key] = texture
@@ -413,18 +453,22 @@ static func _apply_variant(image: Image, kind: String, variant: int) -> void:
 
 
 static func _variant_tree(image: Image, p: Dictionary, seed: int, cx: float, h: float) -> void:
+	# Variants add small leaf facets to the existing crown. Do not stamp more
+	# circular canopy blobs: that was the source of the repeated lollipop look.
 	var deep := _pc(p, "canopy_deep")
 	var light := _pc(p, "canopy_light")
 	var rim := _pc(p, "rim")
-	var count := 2 + int(_srand(seed, 1) * 3.0)
-	for i in count:
-		var px := cx + (_srand(seed, 10 + i) * 2.0 - 1.0) * image.get_width() * 0.34
-		var py := h * 0.28 + (_srand(seed, 20 + i) * 2.0 - 1.0) * h * 0.12
-		var col := deep if i % 2 == 0 else light
-		_ellipse(image, Vector2(px, py),
-			Vector2(8.0 + _srand(seed, 30 + i) * 10.0, 7.0 + _srand(seed, 40 + i) * 8.0), col, 0.05)
-	_ellipse(image, Vector2(cx + (_srand(seed, 2) * 2.0 - 1.0) * 18.0, h * 0.62), Vector2(7.0, 12.0), light)
-	_ellipse(image, Vector2(cx + 14.0, h * 0.20), Vector2(6.0, 5.0), rim)
+	for i in range(9):
+		var px := cx + (_srand(seed, 10 + i) * 2.0 - 1.0) * image.get_width() * 0.29
+		var py := h * 0.27 + (_srand(seed, 20 + i) * 2.0 - 1.0) * h * 0.105
+		var length := 4.0 + _srand(seed, 30 + i) * 4.0
+		var lean := (_srand(seed, 40 + i) * 2.0 - 1.0) * 3.0
+		var leaf_color := light if i % 3 == 0 else deep
+		_line(image, Vector2(px - length * 0.5, py + 1.0),
+			Vector2(px + length * 0.5 + lean, py - 2.0), 1.2, leaf_color)
+	# One restrained edge glint differentiates the silhouette without looking emissive.
+	if seed % 3 == 0:
+		_ellipse(image, Vector2(cx + image.get_width() * 0.18, h * 0.19), Vector2(2.0, 2.0), rim, 0.12)
 
 
 static func _variant_flower(image: Image, p: Dictionary, seed: int, cx: float, h: float) -> void:
@@ -506,55 +550,108 @@ static func _variant_sparkles(image: Image, p: Dictionary, seed: int, cx: float,
 # Kept verbatim so variant 0 is byte-for-byte the shipped placeholder look.
 
 static func _tree(width: int, height: int, ancient: bool) -> Image:
+	# Woodland trees use an irregular, branch-led silhouette instead of stacked
+	# circular blobs. The silhouette is intentionally asymmetric so groves do
+	# not read as repeated lollipops when viewed from the isometric camera.
 	var image := _new_image(width, height)
 	var cx := width * 0.5
 	var base_y := height - 6.0
-	var canopy_y := height * (0.34 if ancient else 0.36)
-	var canopy_x := width * (0.44 if ancient else 0.42)
-	var canopy_h := height * (0.30 if ancient else 0.28)
+	var canopy_y := height * (0.31 if ancient else 0.32)
+	var canopy_x := width * (0.43 if ancient else 0.40)
+	var canopy_h := height * (0.29 if ancient else 0.27)
+	var trunk_top := height * (0.47 if ancient else 0.53)
+	var trunk_dark := Color("#30291f") if ancient else Color("#3a2b20")
+	var trunk_light := Color("#756044") if ancient else Color("#755337")
+	var deep := Color("#1b3025") if ancient else Color("#20372a")
+	var mid := Color("#304d35") if ancient else Color("#36583a")
+	var light := Color("#4d7044") if ancient else Color("#527b49")
+	var sunlit := Color("#78965a") if ancient else Color("#7d9b5c")
+	var shadow := Color(0.015, 0.035, 0.025, 0.34)
 
-	_ellipse(image, Vector2(cx, base_y), Vector2(width * 0.32, 7.0), Color(0.02, 0.06, 0.03, 0.28))
+	_ellipse(image, Vector2(cx, base_y), Vector2(width * 0.31, 6.0), shadow)
 
-	var trunk_dark := Color("#3a2a1c") if not ancient else Color("#2f2a20")
-	var trunk_light := Color("#6b4c33") if not ancient else Color("#5a5140")
-	var trunk_top := height * (0.50 if ancient else 0.56)
-	_polygon(image, [
-		Vector2(cx - width * 0.10, base_y),
-		Vector2(cx - width * 0.045, trunk_top),
-		Vector2(cx + width * 0.045, trunk_top),
-		Vector2(cx + width * 0.10, base_y),
-	], trunk_dark)
-	_polygon(image, [
-		Vector2(cx - width * 0.02, base_y),
-		Vector2(cx - width * 0.015, trunk_top),
-		Vector2(cx + width * 0.02, trunk_top),
-		Vector2(cx + width * 0.045, base_y),
-	], trunk_light)
-	_line(image, Vector2(cx - width * 0.02, base_y - 4), Vector2(cx - width * 0.22, base_y), 3.0, trunk_dark)
-	_line(image, Vector2(cx + width * 0.02, base_y - 4), Vector2(cx + width * 0.22, base_y), 3.0, trunk_dark)
-	_line(image, Vector2(cx - width * 0.02, trunk_top + 8), Vector2(cx - width * 0.26, canopy_y + 18), 4.0, trunk_dark)
-	_line(image, Vector2(cx + width * 0.02, trunk_top + 8), Vector2(cx + width * 0.24, canopy_y + 12), 4.0, trunk_dark)
+	# Exposed roots and a tapered, slightly leaning trunk.
+	_polygon(image, PackedVector2Array([
+		Vector2(cx - width * 0.15, base_y), Vector2(cx - width * 0.075, base_y - 12.0),
+		Vector2(cx - width * 0.045, trunk_top), Vector2(cx + width * 0.035, trunk_top - 2.0),
+		Vector2(cx + width * 0.10, base_y - 10.0), Vector2(cx + width * 0.19, base_y),
+		Vector2(cx + width * 0.055, base_y - 4.0), Vector2(cx - width * 0.04, base_y - 3.0)
+	]), trunk_dark)
+	_polygon(image, PackedVector2Array([
+		Vector2(cx - width * 0.015, base_y - 5.0), Vector2(cx + width * 0.005, trunk_top + 2.0),
+		Vector2(cx + width * 0.04, trunk_top + 1.0), Vector2(cx + width * 0.065, base_y - 8.0)
+	]), trunk_light)
 
-	var deep := Color("#24402b") if not ancient else Color("#1e3626")
-	var mid := Color("#3f6b3f") if not ancient else Color("#35603c")
-	var light := Color("#5d8f52") if not ancient else Color("#4f7d4a")
-	var rim := Color("#9df5cf") if not ancient else Color("#c8ffb0")
-	_ellipse(image, Vector2(cx, canopy_y), Vector2(canopy_x, canopy_h), deep, 0.06)
-	_ellipse(image, Vector2(cx - canopy_x * 0.42, canopy_y + canopy_h * 0.30), Vector2(canopy_x * 0.62, canopy_h * 0.68), deep, 0.05)
-	_ellipse(image, Vector2(cx + canopy_x * 0.44, canopy_y + canopy_h * 0.26), Vector2(canopy_x * 0.60, canopy_h * 0.66), deep, 0.05)
-	_ellipse(image, Vector2(cx - canopy_x * 0.22, canopy_y - canopy_h * 0.10), Vector2(canopy_x * 0.66, canopy_h * 0.66), mid, 0.07)
-	_ellipse(image, Vector2(cx + canopy_x * 0.30, canopy_y + canopy_h * 0.06), Vector2(canopy_x * 0.52, canopy_h * 0.56), mid, 0.06)
-	_ellipse(image, Vector2(cx - canopy_x * 0.30, canopy_y - canopy_h * 0.26), Vector2(canopy_x * 0.42, canopy_h * 0.38), light, 0.06)
-	_ellipse(image, Vector2(cx + canopy_x * 0.16, canopy_y - canopy_h * 0.22), Vector2(canopy_x * 0.30, canopy_h * 0.30), light, 0.05)
-	_ellipse(image, Vector2(cx - canopy_x * 0.38, canopy_y - canopy_h * 0.40), Vector2(canopy_x * 0.24, canopy_h * 0.20), rim.lerp(light, 0.4), 0.0)
-	for index in 5:
-		var offset_x := sin(float(index) * 1.7) * canopy_x * 0.6
-		_ellipse(image, Vector2(cx + offset_x, canopy_y + canopy_h * 0.72 + index * 3.0), Vector2(5.0, 8.0), mid)
+	# Thick, visible limbs emerge from the trunk and disappear into the crown.
+	var limb_width := 5.0 if ancient else 3.5
+	_line(image, Vector2(cx, trunk_top + 20.0), Vector2(cx - canopy_x * 0.72, canopy_y + canopy_h * 0.48), limb_width, trunk_dark)
+	_line(image, Vector2(cx + 2.0, trunk_top + 15.0), Vector2(cx + canopy_x * 0.70, canopy_y + canopy_h * 0.42), limb_width, trunk_dark)
+	_line(image, Vector2(cx, trunk_top + 4.0), Vector2(cx - canopy_x * 0.28, canopy_y - canopy_h * 0.35), limb_width * 0.72, trunk_dark)
+	_line(image, Vector2(cx + 1.0, trunk_top + 6.0), Vector2(cx + canopy_x * 0.34, canopy_y - canopy_h * 0.28), limb_width * 0.72, trunk_dark)
+
+	# Scalloped but non-circular crown outline.
+	var crown := PackedVector2Array()
+	for i in range(20):
+		var angle := TAU * float(i) / 20.0
+		var irregular := 0.84 + 0.10 * sin(float(i) * 2.17) + 0.055 * cos(float(i) * 3.71)
+		var x_radius := canopy_x * irregular
+		var y_radius := canopy_h * (0.90 + 0.08 * sin(float(i) * 1.43))
+		crown.append(Vector2(cx + cos(angle) * x_radius, canopy_y + sin(angle) * y_radius))
+	_polygon(image, crown, deep)
+
+	# Offset crown masses create depth and a canopy that hangs over the trunk.
+	_polygon(image, PackedVector2Array([
+		Vector2(cx - canopy_x * 0.94, canopy_y + canopy_h * 0.12),
+		Vector2(cx - canopy_x * 0.79, canopy_y - canopy_h * 0.46),
+		Vector2(cx - canopy_x * 0.34, canopy_y - canopy_h * 0.72),
+		Vector2(cx + canopy_x * 0.12, canopy_y - canopy_h * 0.52),
+		Vector2(cx + canopy_x * 0.28, canopy_y - canopy_h * 0.05),
+		Vector2(cx - canopy_x * 0.10, canopy_y + canopy_h * 0.34),
+		Vector2(cx - canopy_x * 0.60, canopy_y + canopy_h * 0.54)
+	]), mid)
+	_polygon(image, PackedVector2Array([
+		Vector2(cx - canopy_x * 0.05, canopy_y - canopy_h * 0.46),
+		Vector2(cx + canopy_x * 0.44, canopy_y - canopy_h * 0.76),
+		Vector2(cx + canopy_x * 0.88, canopy_y - canopy_h * 0.28),
+		Vector2(cx + canopy_x * 0.96, canopy_y + canopy_h * 0.24),
+		Vector2(cx + canopy_x * 0.52, canopy_y + canopy_h * 0.58),
+		Vector2(cx + canopy_x * 0.12, canopy_y + canopy_h * 0.20)
+	]), mid)
+
+	# Individual pointed leaf clusters catch the canopy light. Their placement
+	# follows an offset spiral rather than a regular radial ring.
+	for i in range(30):
+		var angle := float(i) * 2.399
+		var radius := sqrt(float(i) / 30.0)
+		var center := Vector2(cx, canopy_y) + Vector2(cos(angle) * canopy_x * 0.78 * radius, sin(angle) * canopy_h * 0.76 * radius)
+		var direction := Vector2(cos(angle + 0.55), sin(angle + 0.55) * 0.72)
+		var tangent := Vector2(-direction.y, direction.x)
+		var leaf_len := (width * 0.075) * (1.0 - radius * 0.25)
+		var leaf_w := leaf_len * 0.34
+		var leaf := PackedVector2Array([
+			center - direction * leaf_len,
+			center - tangent * leaf_w,
+			center + direction * leaf_len * 0.78,
+			center + tangent * leaf_w * 0.65
+		])
+		var leaf_color := sunlit if i % 7 == 0 else light if i % 3 == 0 else mid
+		_polygon(image, leaf, leaf_color)
+
+	# A few hanging leaf tips break the lower edge of the crown.
+	for i in range(7):
+		var x := cx - canopy_x * 0.78 + float(i) * canopy_x * 0.25
+		var y := canopy_y + canopy_h * (0.68 + 0.10 * sin(float(i) * 1.7))
+		_polygon(image, PackedVector2Array([
+			Vector2(x - 3.0, y - 3.0), Vector2(x + 3.0, y - 2.0),
+			Vector2(x + 1.0, y + 9.0 + float(i % 3) * 3.0), Vector2(x - 2.0, y + 5.0)
+		]), mid)
+
 	if ancient:
-		for index in 4:
-			var y := trunk_top + 12.0 + index * 14.0
-			_ellipse(image, Vector2(cx - 2.0 + (index % 2) * 4.0, y), Vector2(2.2, 2.2), Color(0.6, 1.0, 0.75, 0.8))
-		_ellipse(image, Vector2(cx - canopy_x * 0.1, canopy_y + canopy_h * 0.2), Vector2(canopy_x * 0.16, canopy_h * 0.18), Color(0.5, 1.0, 0.75, 0.16))
+		# Old trees carry a restrained rune scar, not a glowing Christmas-light effect.
+		for i in range(3):
+			var y := trunk_top + 22.0 + float(i) * 16.0
+			_line(image, Vector2(cx + 1.0, y), Vector2(cx + 4.0, y - 5.0), 1.2, Color(0.36, 0.78, 0.62, 0.62))
+		_ellipse(image, Vector2(cx - canopy_x * 0.10, canopy_y + canopy_h * 0.10), Vector2(canopy_x * 0.10, canopy_h * 0.10), Color(0.35, 0.75, 0.58, 0.10))
 	return image
 
 
@@ -570,8 +667,16 @@ static func _rock() -> Image:
 	_polygon(image, [
 		Vector2(22, 26), Vector2(31, 18), Vector2(38, 21), Vector2(30, 27),
 	], Color("#8a8f7c"))
+	# Broken facets and thin mineral seams stop the rock reading as a smooth blob.
+	_polygon(image, PackedVector2Array([
+		Vector2(15, 34), Vector2(22, 27), Vector2(27, 31), Vector2(24, 39), Vector2(17, 40)
+	]), Color("#3b403b"))
+	_line(image, Vector2(31, 18), Vector2(28, 29), 1.0, Color("#b1b49a", 0.55))
+	_line(image, Vector2(28, 29), Vector2(35, 35), 0.8, Color("#343a35", 0.8))
+	_line(image, Vector2(43, 23), Vector2(48, 31), 1.0, Color("#343a35", 0.65))
 	_ellipse(image, Vector2(24, 38), Vector2(3.0, 2.0), Color("#6f8f5a"))
 	_ellipse(image, Vector2(46, 36), Vector2(4.0, 2.5), Color("#5d7a4a"))
+	_line(image, Vector2(13, 38), Vector2(21, 34), 1.2, Color("#7f9560", 0.55))
 	return image
 
 
@@ -659,6 +764,55 @@ static func _hut() -> Image:
 	_ellipse(image, Vector2(130, 66), Vector2(10, 3), Color("#4f7a46"))
 	_line(image, Vector2(132, 70), Vector2(134, 100), 1.4, Color("#3f6b3f"))
 	_ellipse(image, Vector2(124, 16), Vector2(8, 5), Color(0.8, 0.85, 0.9, 0.10))
+
+	# Uneven thatch courses and small split ends stop the roof reading as a
+	# perfectly clean polygon. Keep highlights muted so the village stays calm.
+	for row in range(4):
+		var y := 34.0 + float(row) * 7.0
+		var inset := float(row) * 4.0
+		_line(image, Vector2(34.0 + inset, y), Vector2(138.0 - inset, y + 1.0), 1.0, Color("#8a6944", 0.48))
+		for seam in range(5):
+			var sx := 44.0 + float(seam) * 19.0 + float((row + seam) % 2) * 5.0
+			if sx < 136.0 - inset:
+				_line(image, Vector2(sx, y - 2.0), Vector2(sx - 2.0, y + 4.0), 0.8, Color("#3a2a1c", 0.55))
+	# Wall grain, weather stains and a few exposed foundation stones.
+	for plank in range(5):
+		var x := 48.0 + float(plank) * 18.0
+		_line(image, Vector2(x, 74), Vector2(x - 1.0, base_y - 26.0), 0.8, Color("#a47a4d", 0.30))
+	for stone in range(7):
+		var sx := 34.0 + float(stone) * 17.0
+		_line(image, Vector2(sx, base_y - 12.0), Vector2(sx + 7.0, base_y - 13.0), 1.2, Color("#8a8776", 0.55))
+	_ellipse(image, Vector2(39, 76), Vector2(5, 3), Color("#3f6b3f", 0.55))
+	_ellipse(image, Vector2(130, 68), Vector2(6, 2), Color("#3f6b3f", 0.48))
+
+	# Small recessed shutters and a dark doorway establish a believable facade.
+	for wx in [54.0, 126.0]:
+		_polygon(image, PackedVector2Array([
+			Vector2(wx - 7.0, 99.0), Vector2(wx - 7.0, 85.0),
+			Vector2(wx + 7.0, 85.0), Vector2(wx + 7.0, 99.0)
+		]), Color("#35271e"))
+		_polygon(image, PackedVector2Array([
+			Vector2(wx - 4.0, 96.0), Vector2(wx - 4.0, 88.0),
+			Vector2(wx + 4.0, 88.0), Vector2(wx + 4.0, 96.0)
+		]), Color("#c49a5e", 0.78))
+		_line(image, Vector2(wx, 88.0), Vector2(wx, 96.0), 1.0, Color("#493323"))
+	_polygon(image, PackedVector2Array([
+		Vector2(74.0, 128.0), Vector2(74.0, 96.0), Vector2(100.0, 96.0),
+		Vector2(100.0, 128.0)
+	]), Color("#35271e"))
+	_polygon(image, PackedVector2Array([
+		Vector2(78.0, 126.0), Vector2(78.0, 99.0), Vector2(96.0, 99.0),
+		Vector2(96.0, 126.0)
+	]), Color("#523a28"))
+	_ellipse(image, Vector2(92.0, 114.0), Vector2(1.6, 1.6), Color("#d9b16e"))
+	# A few broken thatch strands and timber end-grain, kept low contrast.
+	for row in range(4):
+		var roof_y := 35.0 + float(row) * 7.0
+		var inset := float(row) * 4.0
+		_line(image, Vector2(30.0 + inset, roof_y), Vector2(142.0 - inset, roof_y + 1.0), 1.0, Color("#a17b50", 0.38))
+	for plank in range(4):
+		var px := 48.0 + float(plank) * 22.0
+		_line(image, Vector2(px, 76.0), Vector2(px - 1.0, 119.0), 0.8, Color("#c0905b", 0.24))
 	return image
 
 
@@ -719,25 +873,50 @@ static func _fence() -> Image:
 
 static func _p_willow_tree() -> Image:
 	var p := GreenwardStyle.prop_palette("willow_tree")
-	var image := _new_image(110, 150)
-	var cx := 55.0
-	var by := 142.0
-	_shadow(image, cx, by, 34.0)
-	_polygon(image, [Vector2(cx - 9, by), Vector2(cx - 5, 60), Vector2(cx + 5, 60), Vector2(cx + 11, by)], _pc(p, "trunk"))
-	_line(image, Vector2(cx - 2, by), Vector2(cx - 2, 60), 3.0, _pc(p, "trunk_light"))
+	var image := _new_image(116, 164)
+	var cx := 58.0
+	var by := 156.0
 	var deep := _pc(p, "canopy_deep")
 	var mid := _pc(p, "canopy_mid")
 	var light := _pc(p, "canopy_light")
-	_ellipse(image, Vector2(cx, 54), Vector2(46, 30), deep, 0.06)
-	_ellipse(image, Vector2(cx - 26, 62), Vector2(20, 22), mid, 0.05)
-	_ellipse(image, Vector2(cx + 26, 62), Vector2(20, 22), mid, 0.05)
-	_ellipse(image, Vector2(cx - 18, 40), Vector2(22, 16), light, 0.05)
-	_ellipse(image, Vector2(cx + 14, 38), Vector2(20, 15), light, 0.04)
-	for i in 9:
-		var x := cx - 40.0 + i * 10.0
-		var length := 30.0 + (i % 3) * 14.0
-		_line(image, Vector2(x, 62), Vector2(x + sin(i * 1.3) * 6.0, 62 + length), 1.6, mid if i % 2 == 0 else light)
-		_ellipse(image, Vector2(x + sin(i * 1.3) * 6.0, 62 + length), Vector2(2.2, 4.0), light)
+	_shadow(image, cx, by, 38.0)
+	# A curved trunk and long lateral boughs support the hanging crown.
+	_polygon(image, PackedVector2Array([
+		Vector2(49, by), Vector2(47, 92), Vector2(52, 62),
+		Vector2(61, 60), Vector2(66, 94), Vector2(69, by)
+	]), _pc(p, "trunk"))
+	_line(image, Vector2(53, 148), Vector2(57, 68), 2.2, _pc(p, "trunk_light"))
+	for branch in range(5):
+		var side := -1.0 if branch % 2 == 0 else 1.0
+		var start := Vector2(58.0 + side * 2.0, 78.0 + float(branch) * 4.0)
+		var end := Vector2(58.0 + side * (26.0 + float(branch % 3) * 5.0), 40.0 + float(branch) * 5.0)
+		_line(image, start, end, 3.0 if branch < 2 else 2.0, _pc(p, "trunk"))
+	# Broad, uneven crown with scalloped edges; avoid a single circular canopy.
+	_polygon(image, PackedVector2Array([
+		Vector2(12, 54), Vector2(18, 30), Vector2(36, 18), Vector2(52, 22),
+		Vector2(66, 12), Vector2(90, 22), Vector2(105, 43), Vector2(101, 68),
+		Vector2(84, 78), Vector2(31, 78), Vector2(14, 68)
+	]), deep)
+	for cluster in [
+		Vector2(29, 42), Vector2(48, 32), Vector2(72, 31), Vector2(91, 43),
+		Vector2(38, 57), Vector2(77, 57)
+	]:
+		_ellipse(image, cluster, Vector2(17, 13), mid, 0.05)
+	_ellipse(image, Vector2(43, 30), Vector2(13, 9), light, 0.05)
+	_ellipse(image, Vector2(78, 29), Vector2(14, 9), light, 0.05)
+	# Willow curtains are long, tapering leaf sprays with irregular lengths.
+	for i in range(17):
+		var x := 16.0 + float(i) * 5.2
+		var root_y := 56.0 + 8.0 * absf((x - cx) / 58.0)
+		var length := 34.0 + 22.0 * absf(sin(float(i) * 1.71))
+		var sway := sin(float(i) * 1.37) * 5.0
+		var tip := Vector2(x + sway, root_y + length)
+		_line(image, Vector2(x, root_y), tip, 1.8, mid if i % 3 == 0 else light)
+		for leaf in range(4):
+			var t := 0.22 + float(leaf) * 0.18
+			var point := Vector2(x, root_y).lerp(tip, t)
+			var lean := -1.0 if (i + leaf) % 2 == 0 else 1.0
+			_line(image, point, point + Vector2(lean * 4.0, 3.0), 1.1, light if leaf % 2 == 0 else mid)
 	return image
 
 
@@ -982,7 +1161,47 @@ static func _p_cottage() -> Image:
 	for i in 5:
 		_line(image, Vector2(36 + i * 3, 62 - i * 6), Vector2(148 - i * 3, 62 - i * 6), 1.2, _pc(p, "wood_dark"))
 	_polygon(image, [Vector2(118, 22), Vector2(118, 6), Vector2(132, 6), Vector2(132, 24)], _pc(p, "wood_dark"))
+
+	# Carved roof edge, exposed rafters and uneven thatch strands.
+	for row in range(5):
+		var roof_y := 34.0 + float(row) * 6.0
+		var inset := float(row) * 4.5
+		_line(image, Vector2(34.0 + inset, roof_y), Vector2(150.0 - inset, roof_y + 1.0), 1.1, Color("#b08a59", 0.42))
+		for seam in range(6):
+			var sx := 43.0 + float(seam) * 18.0 + float((row + seam) % 2) * 4.0
+			if sx < 148.0 - inset:
+				_line(image, Vector2(sx, roof_y - 2.0), Vector2(sx - 2.0, roof_y + 3.0), 0.8, _pc(p, "wood_dark"))
+	# Recessed windows with timber lintels and a warm interior, not bright decals.
+	for wx in [55.0, 126.0]:
+		_polygon(image, PackedVector2Array([
+			Vector2(wx - 8.0, 84.0), Vector2(wx - 8.0, 69.0),
+			Vector2(wx + 8.0, 69.0), Vector2(wx + 8.0, 84.0)
+		]), _pc(p, "wood_dark"))
+		_polygon(image, PackedVector2Array([
+			Vector2(wx - 5.0, 81.0), Vector2(wx - 5.0, 72.0),
+			Vector2(wx + 5.0, 72.0), Vector2(wx + 5.0, 81.0)
+		]), Color("#d9aa62", 0.82))
+		_line(image, Vector2(wx, 72.0), Vector2(wx, 82.0), 1.0, _pc(p, "wood_dark"))
+		_line(image, Vector2(wx - 7.0, 68.0), Vector2(wx + 7.0, 68.0), 2.0, _pc(p, "wood_dark"))
+	# Door frame, step and diagonal plank grain make the entrance readable.
+	_polygon(image, PackedVector2Array([
+		Vector2(78.0, 130.0), Vector2(78.0, 94.0), Vector2(108.0, 94.0),
+		Vector2(108.0, 130.0)
+	]), _pc(p, "wood_dark"))
+	_polygon(image, PackedVector2Array([
+		Vector2(82.0, 128.0), Vector2(82.0, 97.0), Vector2(104.0, 97.0),
+		Vector2(104.0, 128.0)
+	]), _pc(p, "wood_mid"))
+	_line(image, Vector2(93.0, 99.0), Vector2(93.0, 126.0), 0.9, _pc(p, "wood_dark"))
+	_ellipse(image, Vector2(100.0, 115.0), Vector2(1.8, 1.8), _pc(p, "warm"))
+	_polygon(image, PackedVector2Array([
+		Vector2(74.0, 132.0), Vector2(112.0, 132.0), Vector2(116.0, 138.0), Vector2(70.0, 138.0)
+	]), _pc(p, "stone"))
+	# Moss grows in crevices rather than forming bright blobs on the walls.
 	_ellipse(image, Vector2(48, 74), Vector2(12, 4), _pc(p, "moss"))
+	_ellipse(image, Vector2(142, 136), Vector2(11, 3), Color(_pc(p, "moss").r, _pc(p, "moss").g, _pc(p, "moss").b, 0.55))
+	_line(image, Vector2(45.0, 91.0), Vector2(67.0, 89.0), 0.8, Color("#d4a36a", 0.28))
+	_line(image, Vector2(118.0, 104.0), Vector2(137.0, 102.0), 0.8, Color("#d4a36a", 0.24))
 	return image
 
 
@@ -1010,9 +1229,17 @@ static func _p_stone_bridge() -> Image:
 	var light := _pc(p, "stone_light")
 	_polygon(image, [Vector2(10, 60), Vector2(24, 30), Vector2(108, 30), Vector2(122, 60), Vector2(100, 60), Vector2(66, 44), Vector2(32, 60)], stone)
 	_polygon(image, [Vector2(20, 30), Vector2(30, 16), Vector2(102, 16), Vector2(112, 30)], light)
+	# Individual voussoir blocks and a dark recessed arch make the span read as stonework.
 	for i in 6:
 		var x := 26.0 + i * 15.0
 		_line(image, Vector2(x, 16), Vector2(x, 30), 1.0, _pc(p, "moss"))
+		_line(image, Vector2(x - 5.0, 31.0), Vector2(x + 4.0, 31.0), 0.8, Color(0.10, 0.14, 0.13, 0.45))
+	_polygon(image, PackedVector2Array([
+		Vector2(30, 31), Vector2(44, 45), Vector2(66, 50), Vector2(88, 45), Vector2(102, 31),
+		Vector2(96, 31), Vector2(66, 42), Vector2(36, 31)
+	]), Color(0.08, 0.12, 0.12, 0.72))
+	_line(image, Vector2(22, 30), Vector2(34, 42), 1.0, _pc(p, "moss"))
+	_line(image, Vector2(110, 30), Vector2(98, 42), 1.0, _pc(p, "moss"))
 	_ellipse(image, Vector2(66, 60), Vector2(40, 5), _pc(p, "wood_dark"))
 	return image
 
@@ -1075,7 +1302,17 @@ static func _p_ruin_arch() -> Image:
 	_polygon(image, [Vector2(18, 116), Vector2(20, 44), Vector2(28, 44), Vector2(30, 116)], light)
 	_polygon(image, [Vector2(8, 40), Vector2(18, 22), Vector2(52, 12), Vector2(86, 22), Vector2(96, 40), Vector2(80, 40), Vector2(52, 26), Vector2(24, 40)], stone)
 	_polygon(image, [Vector2(60, 12), Vector2(70, 16), Vector2(66, 28), Vector2(58, 24)], light)
+	# Mortar joints, fractures and moss drips make the arch feel old and partly reclaimed.
+	for y in [58.0, 78.0, 98.0]:
+		_line(image, Vector2(16, y), Vector2(34, y - 1.0), 1.0, Color(0.10, 0.13, 0.13, 0.58))
+		_line(image, Vector2(70, y - 1.0), Vector2(88, y), 1.0, Color(0.10, 0.13, 0.13, 0.58))
+	_line(image, Vector2(28, 54), Vector2(24, 66), 1.2, Color("#b3b19a", 0.45))
+	_line(image, Vector2(24, 66), Vector2(29, 75), 0.9, Color("#b3b19a", 0.40))
+	_line(image, Vector2(77, 42), Vector2(72, 52), 1.0, Color("#b3b19a", 0.38))
+	_line(image, Vector2(72, 52), Vector2(77, 60), 0.8, Color("#b3b19a", 0.32))
 	_ellipse(image, Vector2(30, 70), Vector2(4, 3), _pc(p, "moss"))
+	_ellipse(image, Vector2(82, 104), Vector2(7, 3), _pc(p, "moss"))
+	_line(image, Vector2(18, 112), Vector2(25, 116), 1.4, _pc(p, "moss"))
 	return image
 
 
