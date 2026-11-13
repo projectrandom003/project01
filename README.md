@@ -1,4 +1,4 @@
-# PROJECT FANTASY
+# REVERIE
 
 An original anime-fantasy MMORPG vertical slice built with **Godot 4.7** and **GDScript**.
 

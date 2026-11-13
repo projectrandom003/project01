@@ -46,7 +46,7 @@ func _ready() -> void:
 
 	var header := UIFactory.vbox(3)
 	header.position = Vector2(34, 30)
-	header.add_child(UIFactory.heading("PROJECT FANTASY", 27, UITheme.GOLD_BRIGHT))
+	header.add_child(UIFactory.heading("REVERIE", 27, UITheme.GOLD_BRIGHT))
 	header.add_child(UIFactory.label("AETHERIA  /  GREENWARD", 10, UITheme.TEAL))
 	add_child(header)
 

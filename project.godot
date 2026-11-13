@@ -10,14 +10,15 @@ config_version=5
 
 [application]
 
-config/name="Project Fantasy"
-config/description="Anime fantasy MMORPG — Aetheria vertical slice."
+config/name="Reverie"
+config/custom_user_dir_name="Project Fantasy"
+config/description="Anime fantasy MMORPG â€” Aetheria vertical slice."
 config/version="0.1.0"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 boot_splash/bg_color=Color(0.035, 0.045, 0.09, 1)
 boot_splash/show_image=false
-config/icon="res://icon.svg"
+config/icon="res://assets/ui/reverie_icon.svg"
 
 [autoload]
 
@@ -54,3 +55,5 @@ renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
 environment/defaults/default_clear_color=Color(0.035, 0.045, 0.09, 1)
+
+
