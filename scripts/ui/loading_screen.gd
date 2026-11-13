@@ -29,12 +29,25 @@ var _party_layer: Node2D
 func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	var backdrop := LaunchForestBackdrop.new()
-	UIFactory.set_full_rect(backdrop)
-	add_child(backdrop)
+	# Use the bespoke REVERIE loading artwork when present; retain the
+	# procedural forest as a safe fallback until the image is installed.
+	var artwork := TextureRect.new()
+	artwork.name = "ReverieLoadingArtwork"
+	artwork.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	artwork.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	artwork.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var loading_texture := load("res://assets/ui/backgrounds/reverie_loading_screen.jpg") as Texture2D
+	if loading_texture != null:
+		artwork.texture = loading_texture
+		UIFactory.set_full_rect(artwork)
+		add_child(artwork)
+	else:
+		var backdrop := LaunchForestBackdrop.new()
+		UIFactory.set_full_rect(backdrop)
+		add_child(backdrop)
 
 	var shade := ColorRect.new()
-	shade.color = Color(0.015, 0.025, 0.045, 0.22)
+	shade.color = Color(0.015, 0.025, 0.045, 0.16)
 	UIFactory.set_full_rect(shade)
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(shade)
