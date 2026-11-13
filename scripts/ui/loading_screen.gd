@@ -29,8 +29,10 @@ var _party_layer: Node2D
 func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	# Use the bespoke REVERIE loading artwork when present; retain the
-	# procedural forest as a safe fallback until the image is installed.
+
+	# The loading illustration already contains the logo, title, and ornate
+	# progress-frame. Keep those pixels unobstructed and bind only the live fill
+	# to the exact inner track of the artwork.
 	var artwork := TextureRect.new()
 	artwork.name = "ReverieLoadingArtwork"
 	artwork.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -46,49 +48,52 @@ func _ready() -> void:
 		UIFactory.set_full_rect(backdrop)
 		add_child(backdrop)
 
-	var shade := ColorRect.new()
-	shade.color = Color(0.015, 0.025, 0.045, 0.16)
-	UIFactory.set_full_rect(shade)
-	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(shade)
+	_progress_label = Label.new()
+	_progress_label.name = "LiveLoadingCaption"
+	_progress_label.text = "LOADING...  0%"
+	_progress_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_progress_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_progress_label.add_theme_font_size_override("font_size", 19)
+	_progress_label.add_theme_color_override("font_color", Color("#f5e9f3"))
+	_progress_label.add_theme_color_override("font_shadow_color", Color(0.02, 0.01, 0.04, 0.95))
+	_progress_label.add_theme_constant_override("shadow_offset_x", 1)
+	_progress_label.add_theme_constant_override("shadow_offset_y", 2)
+	_progress_label.anchor_left = 0.36
+	_progress_label.anchor_right = 0.64
+	_progress_label.anchor_top = 0.735
+	_progress_label.anchor_bottom = 0.785
+	add_child(_progress_label)
 
-	_party_layer = Node2D.new()
-	_party_layer.z_index = 2
-	add_child(_party_layer)
-	_build_party()
-
-	var header := UIFactory.vbox(3)
-	header.position = Vector2(34, 30)
-	header.add_child(UIFactory.heading("REVERIE", 27, UITheme.GOLD_BRIGHT))
-	header.add_child(UIFactory.label("AETHERIA  /  GREENWARD", 10, UITheme.TEAL))
-	add_child(header)
-
-	var panel := UIFactory.panel(Color(0.025, 0.045, 0.075, 0.91), Color(0.72, 0.67, 0.52, 0.32), 14, 1, 18, true)
-	panel.anchor_left = 0.47
-	panel.anchor_right = 0.97
-	panel.anchor_top = 0.78
-	panel.anchor_bottom = 0.97
-	panel.offset_left = 0
-	panel.offset_right = 0
-	panel.offset_top = 0
-	panel.offset_bottom = 0
-	panel.z_index = 5
-	add_child(panel)
-	var column := UIFactory.vbox(7)
-	panel.add_child(column)
-	column.add_child(UIFactory.label("ENTERING THE WHISPERING GLADE", 9, UITheme.TEAL))
-	_lore_label = UIFactory.label(LORE_LINES[0], 13, UITheme.TEXT)
-	_lore_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	column.add_child(_lore_label)
 	_progress_bar = ProgressBar.new()
+	_progress_bar.name = "LiveArtworkProgressFill"
 	_progress_bar.min_value = 0.0
 	_progress_bar.max_value = 100.0
 	_progress_bar.value = 0.0
 	_progress_bar.show_percentage = false
-	_progress_bar.custom_minimum_size = Vector2(0, 12)
-	column.add_child(_progress_bar)
-	_progress_label = UIFactory.label("Preparing the world  ·  0%", 9, UITheme.TEXT_FAINT)
-	column.add_child(_progress_label)
+	_progress_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_progress_bar.anchor_left = 0.276
+	_progress_bar.anchor_right = 0.704
+	_progress_bar.anchor_top = 0.812
+	_progress_bar.anchor_bottom = 0.833
+	var track := StyleBoxFlat.new()
+	track.bg_color = Color("#171020")
+	track.set_corner_radius_all(5)
+	track.content_margin_left = 0
+	track.content_margin_right = 0
+	track.content_margin_top = 0
+	track.content_margin_bottom = 0
+	_progress_bar.add_theme_stylebox_override("background", track)
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = Color("#d9a0d8")
+	fill.set_corner_radius_all(5)
+	fill.shadow_color = Color(0.88, 0.43, 0.78, 0.65)
+	fill.shadow_size = 5
+	fill.content_margin_left = 0
+	fill.content_margin_right = 0
+	fill.content_margin_top = 0
+	fill.content_margin_bottom = 0
+	_progress_bar.add_theme_stylebox_override("fill", fill)
+	add_child(_progress_bar)
 
 	var error := ResourceLoader.load_threaded_request(SCENE_PATH, "PackedScene", true)
 	if error != OK and error != ERR_BUSY:
@@ -98,12 +103,6 @@ func _process(delta: float) -> void:
 	if _emitted:
 		return
 	_elapsed += delta
-	_lore_elapsed += delta
-	if _lore_elapsed >= 3.8:
-		_lore_elapsed = 0.0
-		_lore_index = (_lore_index + 1) % LORE_LINES.size()
-		_lore_label.text = LORE_LINES[_lore_index]
-
 	var actual_progress: Array = []
 	var status := ResourceLoader.load_threaded_get_status(SCENE_PATH, actual_progress)
 	if not actual_progress.is_empty():
@@ -115,7 +114,7 @@ func _process(delta: float) -> void:
 	if _progress_bar != null:
 		_progress_bar.value = _progress
 	if _progress_label != null:
-		_progress_label.text = "Preparing the world  ·  %d%%" % int(_progress)
+		_progress_label.text = "LOADING...  %d%%" % int(_progress)
 
 	if _elapsed < MINIMUM_DISPLAY:
 		return
