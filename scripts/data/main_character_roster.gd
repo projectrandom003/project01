@@ -18,6 +18,7 @@ extends RefCounted
 ## null and keeps the procedural fallback.
 
 const DATA_PATH := "res://resources/data/main_characters.json"
+const COLLECTIBLES_PATH := "res://resources/data/characters.json"
 const PORTRAIT_W := 256
 const PORTRAIT_H := 384
 
@@ -93,26 +94,26 @@ static func reference_texture(character_id: String) -> Texture2D:
 
 
 static func portrait_path(character_id: String) -> String:
-	return str(_assets(character_id).get("portrait_target", ""))
+	return str(assets_for(character_id).get("portrait_target", ""))
 
 
 ## Folder holding the playable (in-game) art. Falls back to the design-reference
 ## folder for protagonists that only have a reference sheet.
 static func playable_folder(character_id: String) -> String:
-	var folder := str(_assets(character_id).get("playable_folder", ""))
+	var folder := str(assets_for(character_id).get("playable_folder", ""))
 	return folder if not folder.is_empty() else asset_folder(character_id)
 
 
 static func world_sheet_path(character_id: String) -> String:
-	return str(_assets(character_id).get("world_sheet", ""))
+	return str(assets_for(character_id).get("world_sheet", ""))
 
 
 static func combat_sprite_path(character_id: String) -> String:
-	return str(_assets(character_id).get("combat_sprite", ""))
+	return str(assets_for(character_id).get("combat_sprite", ""))
 
 
 static func full_body_path(character_id: String) -> String:
-	return str(_assets(character_id).get("full_body_illustration", ""))
+	return str(assets_for(character_id).get("full_body_illustration", ""))
 
 
 ## The runtime SpriteFrames for the world actor, or null when no validated sheet
@@ -168,7 +169,7 @@ static func asset_status(character_id: String) -> String:
 ## Authoring status declared in JSON ("final", "placeholder", "missing"). This is
 ## metadata only; world_art_ready()/portrait_texture() are the on-disk truth.
 static func art_status(character_id: String) -> String:
-	return str(_assets(character_id).get("art_status", "missing"))
+	return str(assets_for(character_id).get("art_status", "missing"))
 
 
 # ---------------------------------------------------------------------- report
@@ -232,6 +233,40 @@ static func _ensure_loaded() -> void:
 
 static func _assets(character_id: String) -> Dictionary:
 	var value: Variant = get_entry(character_id).get("assets", {})
+	if typeof(value) != TYPE_DICTIONARY:
+		return {}
+	return value
+
+
+## The "assets" block for ANY character.
+##
+## The protagonists (Lilith, Gerald) carry theirs in main_characters.json.
+## Kael is BOTH a starting-party member and one of the twelve collectible
+## characters, so his playable-art block lives with the collectible roster in
+## characters.json. Look in both so one helper serves every character.
+static func assets_for(character_id: String) -> Dictionary:
+	var own := _assets(character_id)
+	if not own.is_empty():
+		return own
+	return _collectible_assets(character_id)
+
+
+static var _collectibles: Dictionary = {}
+static var _collectibles_loaded: bool = false
+
+
+static func _collectible_assets(character_id: String) -> Dictionary:
+	if not _collectibles_loaded:
+		_collectibles_loaded = true
+		if FileAccess.file_exists(COLLECTIBLES_PATH):
+			var parsed: Variant = JSON.parse_string(
+				FileAccess.get_file_as_string(COLLECTIBLES_PATH))
+			if typeof(parsed) == TYPE_DICTIONARY:
+				_collectibles = parsed
+	var entry: Variant = _collectibles.get(character_id, {})
+	if typeof(entry) != TYPE_DICTIONARY:
+		return {}
+	var value: Variant = (entry as Dictionary).get("assets", {})
 	if typeof(value) != TYPE_DICTIONARY:
 		return {}
 	return value

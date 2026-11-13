@@ -196,7 +196,7 @@ func available_avatars() -> Array[String]:
 		var character_id := str(instance.char_id)
 		if character_id.is_empty() or ids.has(character_id):
 			continue
-		var source := SpriteFramesActorSource.from_disk(character_id)
+		var source := SpriteFramesActorSource.from_playable(character_id)
 		if source != null and source.has_frames() and source.validate_sheets().is_empty():
 			ids.append(character_id)
 	return ids

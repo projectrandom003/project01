@@ -1,6 +1,6 @@
 # PROJECT FANTASY — Asset Production Manifest (Part 6)
 
-> **Lilith is the ONE final playable character.** All shipped visuals for the 12
+> **Three final playable characters (Gerald, Lilith, Kael).** All shipped visuals for the other
 > collectible characters are RUNTIME PROCEDURAL PLACEHOLDER art.
 > This manifest tracks EVERY expected character asset as FINAL / TEMPORARY / MISSING, computed
 > from disk by `scripts/art/character_asset_registry.gd` (`CharacterAssetRegistry`). It is a contract,

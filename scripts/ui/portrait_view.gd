@@ -76,11 +76,15 @@ func setup_character(definition: CharacterDef, p_rarity: String = "") -> void:
 		p_rarity if not p_rarity.is_empty() else definition.rarity,
 		definition.portrait_seed
 	)
-	# setup() clears these, so set them AFTER the call. ZERO final portraits
-	# exist: PortraitAssetSource.texture_for() returns null for all 12 ids and
-	# the procedural fallback remains the active rendering path.
+	# setup() clears these, so set them AFTER the call. A character's FINAL
+	# portrait (the protagonists) is looked up through its registered
+	# playable-art path first; the twelve collectible characters have none, so
+	# PortraitAssetSource returns null and the procedural fallback stays the
+	# active rendering path for them.
 	character_id = definition.id
-	portrait_texture = PortraitAssetSource.texture_for(definition.id, "hud")
+	portrait_texture = MainCharacterRoster.portrait_texture(definition.id)
+	if portrait_texture == null:
+		portrait_texture = PortraitAssetSource.texture_for(definition.id, "hud")
 
 
 ## Inject a real validated painted portrait (the future seam). When null, the

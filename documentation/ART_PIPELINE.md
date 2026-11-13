@@ -611,7 +611,7 @@ wired to the player). Workflow and the exact per-class status table are in
 > asset FILE is absent on disk. `check_disk()` returns `false` for all 8.
 > The ONLY image file tracked by `AssetManifest` is `icon.svg`. For the 8
 > `AssetManifest` classes there are **ZERO final painted assets**,
-> **no audio**, **no real sprite sheets / PNG textures on disk**. (Lilith's
+> **no audio**, **no real sprite sheets / PNG textures on disk**. (The three
 > character art lives outside these 8 classes — see §15.)
 
 State plainly:
@@ -687,21 +687,25 @@ the final file is absent (orthogonal to the fallback).
 
 State plainly:
 
-- **Lilith is the ONE final playable character; the 12 collectibles are still ZERO final assets.** All shipped visuals for the 12 collectible characters are **runtime procedural
+- **Three final playable characters (Gerald, Lilith, Kael); the 12 collectibles are still ZERO final assets.** All shipped visuals for the 12 collectible characters are **runtime procedural
   placeholder** art. **No audio** exists. **No final artwork was fabricated from
   polygons / random shapes and labelled finished.**
-  - **Exception — Lilith.** `assets/characters/lilith/` holds a real, imported
-    art set extracted from the supplied **Project Fantasy concept sheet**
-    (`Downloads/little sister`) by `tools/extract_lilith_sheet.py` ->
-    `tools/build_lilith_sheet.py` -> `tools/build_lilith_static.py`: the
-    sheet's own Idle / Walk / Attack / Cast / Hurt / Death strips and its
-    Front / Right / Back / Left views, re-laid out as
-    8 directions x 9 states = **72 animations / 432 frames** (`world_sheet.tres`),
-    a 256x384 `portrait.png`, a 128x192 `combat_sprite.png` and a 1024x2048
-    `full_body_illustration.png`. It is tracked by
+  - **Exception — the three protagonists.** `assets/characters/gerald/`,
+    `assets/characters/lilith/` and `assets/characters/kael_avatar/` hold real,
+    imported art sets extracted from the supplied **Project Fantasy concept
+    sheets** in `~/Downloads` (`The Guardian_`, `little sister`,
+    `Kael Isometric Character Sheet.png`) by
+    `tools/extract_character_sheet.py` -> `tools/build_character_sheet.py` ->
+    `tools/build_character_static.py`: each sheet's own animation strips and
+    character views, re-laid out as 8 directions x 9 states =
+    **72 animations / 432 frames** (`world_sheet.tres`), a 256x384
+    `portrait.png`, a 128x192 `combat_sprite.png` and a 1024x2048
+    `full_body_illustration.png`. They are tracked by
     `MainCharacterRoster.world_art_ready()` / `asset_status()` and by
-    `tools/verify_lilith_avatar.tscn`, **not** by the 12-character registries
-    above (which intentionally stay FINAL 0).
+    `tools/verify_character_avatars.tscn`, **not** by the 12-character registries
+    above (which intentionally stay FINAL 0). Kael's playable art lives in its
+    own folder because `res://assets/characters/kael/` belongs to the
+    collectible asset registry.
 - The ONE demonstration character uses a **TEMPORARY in-memory procedural
   `SpriteFrames`** (`DemoCharacterFrames`, `loaded_from_disk == false`;
   `ActorVisual.using_temporary_art == true`) — it is NOT final art.

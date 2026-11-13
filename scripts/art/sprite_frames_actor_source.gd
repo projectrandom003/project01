@@ -55,6 +55,37 @@ func _init(p_character_id: String = "", p_sprite_frames: SpriteFrames = null) ->
 ## SpriteFrames) or world_sheet.png. On ANY failure return a NOT-loaded source
 ## (has_frames false, is_temporary true, missing_reason set) -- NEVER crash.
 static func from_disk(character_id: String) -> ActorFrameSource:
+	return _from_sheet_paths(character_id,
+		"res://assets/characters/%s/world_sheet.tres" % character_id,
+		"res://assets/characters/%s/world_sheet.png" % character_id)
+
+
+## Try to load a character's FINAL playable sheet from its own art folder.
+##
+## The twelve collectible characters keep res://assets/characters/<id>/ as
+## their own folder (the CharacterAssetRegistry owns it and reports them as
+## art-less placeholders). A protagonist whose playable art lives elsewhere --
+## Kael, who is both a collectible and the player-controlled avatar -- is
+## loaded through its registered playable-art path instead.
+static func from_playable(character_id: String) -> ActorFrameSource:
+	var path := MainCharacterRoster.world_sheet_path(character_id)
+	if path.is_empty():
+		return from_disk(character_id)
+	return _from_sheet_paths(character_id, path, "")
+
+
+## Register a character's FINAL playable art, falling back to the
+## collectible registry. Returns a validated disk-backed source when the art
+## exists, otherwise the (not-loaded) registry source so callers keep their
+## procedural fallback.
+static func register_playable(character_id: String) -> ActorFrameSource:
+	var src: ActorFrameSource = from_playable(character_id)
+	if src != null and src.has_frames() and src.validate_sheets().is_empty():
+		return src
+	return register_character(character_id)
+
+
+static func _from_sheet_paths(character_id: String, tres: String, png: String) -> ActorFrameSource:
 	# Instantiate via a RUNTIME load() of this script rather than
 	# `SpriteFramesActorSource.new()`, and type against the BASE class. A static
 	# method that names its OWN global class (return type or constructor call)
@@ -64,8 +95,6 @@ static func from_disk(character_id: String) -> ActorFrameSource:
 	# ObjectDB instances at exit. A runtime load() + base typing breaks the cycle
 	# while keeping identical behaviour (still returns a SpriteFramesActorSource).
 	var src: ActorFrameSource = load("res://scripts/art/sprite_frames_actor_source.gd").new(character_id)
-	var tres := "res://assets/characters/%s/world_sheet.tres" % character_id
-	var png := "res://assets/characters/%s/world_sheet.png" % character_id
 	src.sheet_path = tres
 	if ResourceLoader.exists(tres):
 		var loaded: Resource = load(tres)
@@ -75,7 +104,7 @@ static func from_disk(character_id: String) -> ActorFrameSource:
 			src.missing_reason = ""
 		else:
 			src.missing_reason = "%s exists but is not a SpriteFrames resource" % tres
-	elif FileAccess.file_exists(png) or ResourceLoader.exists(png):
+	elif not png.is_empty() and (FileAccess.file_exists(png) or ResourceLoader.exists(png)):
 		src.sheet_path = png
 		src.missing_reason = "%s is a raw image; slice it into a SpriteFrames .tres to register this character" % png
 	else:

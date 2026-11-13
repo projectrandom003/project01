@@ -3,8 +3,7 @@
 > **These are PREPARATION prompts for FUTURE external image generation.**
 > **NO final artwork was generated or fabricated for the 12 collectible characters.** All shipped
 > visuals for them are runtime procedural placeholder art. The files below are text contracts only.
-> (Lilith's playable art IS final and lives in `assets/characters/lilith/` — see
-> `assets/characters/main/little_sister/SPEC.md`.)
+> (the three protagonists' playable art IS final — see each character's SPEC.)
 
 ## 1. GLOBAL STYLE ANCHOR (prepend to EVERY prompt)
 

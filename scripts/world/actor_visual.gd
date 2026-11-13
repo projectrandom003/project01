@@ -183,7 +183,9 @@ func set_frame_source(source: ActorFrameSource) -> void:
 ## `using_temporary_art` computation is unchanged). Returns a status report.
 func configure_character(character_id: String) -> Dictionary:
 	self.character_id = character_id
-	var source: ActorFrameSource = SpriteFramesActorSource.register_character(character_id)
+	# register_playable() prefers a character's FINAL playable art (its own
+	# registered art folder) and falls back to the collectible registry.
+	var source: ActorFrameSource = SpriteFramesActorSource.register_playable(character_id)
 	var registered := false
 	if source != null and source.has_frames() and source.validate_sheets().is_empty():
 		set_frame_source(source)

@@ -1,0 +1,77 @@
+{
+  "idle": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\idle_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\idle_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\idle_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\idle_3.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\idle_4.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\idle_5.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\idle_6.png"
+  ],
+  "walk": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\walk_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\walk_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\walk_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\walk_3.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\walk_4.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\walk_5.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\walk_6.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\walk_7.png"
+  ],
+  "run": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\run_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\run_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\run_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\run_3.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\run_4.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\run_5.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\run_6.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\run_7.png"
+  ],
+  "attack": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\attack_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\attack_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\attack_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\attack_3.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\attack_4.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\attack_5.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\attack_6.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\attack_7.png"
+  ],
+  "skill": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\skill_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\skill_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\skill_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\skill_3.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\skill_4.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\skill_5.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\skill_6.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\skill_7.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\skill_8.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\skill_9.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\skill_10.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\skill_11.png"
+  ],
+  "hurt": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\hurt_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\hurt_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\hurt_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\hurt_3.png"
+  ],
+  "death": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\death_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\death_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\death_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\death_3.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\death_4.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\death_5.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\death_6.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\death_7.png"
+  ],
+  "views": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\views_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\views_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\views_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\kael\\source\\views_3.png"
+  ]
+}

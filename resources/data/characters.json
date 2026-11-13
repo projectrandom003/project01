@@ -513,6 +513,30 @@
       "spd": 1,
       "crit": 0.004,
       "crit_dmg": 0.008
+    },
+    "assets": {
+      "asset_folder": "res://assets/characters/kael",
+      "playable_folder": "res://assets/characters/kael_avatar",
+      "reference_sheet": "res://assets/characters/kael/reference_sheet.png",
+      "reference_dimensions": [
+        1536,
+        1024
+      ],
+      "reference_format": "RGB PNG (no alpha)",
+      "reference_role": "Design reference sheet. Not a cut-out portrait.",
+      "portrait_target": "res://assets/characters/kael_avatar/portrait.png",
+      "portrait_target_dimensions": [
+        256,
+        384
+      ],
+      "portrait_status": "final",
+      "world_sheet": "res://assets/characters/kael_avatar/world_sheet.tres",
+      "world_sheet_animations": 72,
+      "world_sheet_frames": 432,
+      "combat_sprite": "res://assets/characters/kael_avatar/combat_sprite.png",
+      "full_body_illustration": "res://assets/characters/kael_avatar/full_body_illustration.png",
+      "art_status": "final",
+      "art_note": "Playable art extracted from the supplied Project Fantasy isometric character sheet (tools/extract_character_sheet.py -> tools/build_character_sheet.py -> tools/build_character_static.py): the sheet's own Idle/Walk/Run/Attack/Skill/Hit/Death strips and its SE/SW/NE/NW isometric views, re-laid out as 9 states x 8 directions (72 animations), a 256x384 bust portrait, a 128x192 combat sprite and a 1024x2048 full-body key illustration. The playable art lives in its own folder because res://assets/characters/kael/ belongs to the collectible asset registry."
     }
   }
 }

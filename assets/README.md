@@ -5,8 +5,10 @@
 > folder is the *contract* for dropping in real art, not a gallery of finished
 > work. See [`ASSET_STATUS.md`](ASSET_STATUS.md) for the per-class status table.
 >
-> **Exception:** `assets/characters/lilith/` holds final imported playable art for
-> Lilith (72 world animations, portrait, combat sprite, full-body illustration).
+> **Exception:** `assets/characters/gerald/`, `assets/characters/lilith/` and
+> `assets/characters/kael_avatar/` hold final imported playable art for the three
+> protagonists (72 world animations, portrait, combat sprite, full-body illustration
+> each).
 > See [`characters/main/little_sister/SPEC.md`](characters/main/little_sister/SPEC.md).
 >
 > Authoritative docs: [`../documentation/ART_PIPELINE.md`](../documentation/ART_PIPELINE.md)

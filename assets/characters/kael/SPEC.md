@@ -2,6 +2,13 @@
 
 > **SPECIFICATION ONLY — no final artwork exists for this character. Status: MISSING (final) / TEMPORARY (procedural fallback).**
 >
+> **However:** Kael is also the player-controlled avatar, and his
+> FINAL playable art DOES exist: `res://assets/characters/kael_avatar/`
+> holds the 72 world animations, the 256x384 portrait, the 128x192
+> combat sprite and the 1024x2048 full-body illustration, extracted
+> from his isometric character sheet. This SPEC keeps describing the
+> collectible placeholder pipeline for the other eleven characters.
+>
 > ZERO final assets exist. Every shipped visual is RUNTIME PROCEDURAL PLACEHOLDER art generated in code.
 > This document is a CONTRACT/SPECIFICATION for FUTURE external image generation. **No final artwork
 > was generated or fabricated in this phase**, and no image/binary file exists at any path below.

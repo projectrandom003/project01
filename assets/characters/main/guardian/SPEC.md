@@ -1,11 +1,9 @@
 # Gerald — Main Protagonist (`gerald`)
 
-> **Status: REFERENCE SHEET ONLY.** The design reference sheet is imported and
-> usable as a `Texture2D`. No cut-out portrait, sprite sheet or combat asset
-> exists yet. This character is a **starting party member**: recruited by
-> default, registered in ContentDB and saved with the player's roster. They are
-> not in the gacha pool. The twelve collectible placeholder characters are
-> otherwise unchanged.
+> **Status: FINAL PLAYABLE ART.** Gerald is a protagonist with a complete
+> set: 8 directions x 9 states = 72 animations, a 256x384 bust portrait, a
+> 128x192 combat sprite and a 1024x2048 full-body key illustration, extracted
+> from this concept sheet (`The Guardian_`).
 
 ## Identity (`resources/data/main_characters.json`)
 
@@ -41,7 +39,7 @@
 | file | status | notes |
 | --- | --- | --- |
 | `reference_sheet.png` | **present** | 1536x1024 RGB PNG, byte-identical copy of the supplied art. Design reference, not a cut-out. |
-| `portrait.png` | **missing** | Future 256x384 RGBA8 transparent cut-out. Drop it here to activate the real portrait seam. |
+| `portrait.png` | **n/a** | His final art lives in `res://assets/characters/gerald/` (portrait, world sheet, combat sprite, full-body illustration). |
 
 ## Provisional kit (reuses existing, validated content)
 
