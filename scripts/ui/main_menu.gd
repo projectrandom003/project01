@@ -53,33 +53,38 @@ func _ready() -> void:
 	_layout_party()
 
 func _build_navigation(layout: HBoxContainer) -> void:
-	var panel := UIFactory.panel(Color(0.025, 0.045, 0.075, 0.90), Color(0.72, 0.67, 0.52, 0.30), 18, 1, 26, true)
+	var panel := UIFactory.panel(Color(0.012, 0.018, 0.038, 0.78), Color(0.78, 0.68, 0.48, 0.34), 22, 1, 30, true)
 	panel.custom_minimum_size = Vector2(390, 0)
 	panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(panel)
 
-	var column := UIFactory.vbox(13)
+	var column := UIFactory.vbox(15)
 	panel.add_child(column)
-	column.add_child(UIFactory.label("AETHERIA  /  GREENWARD", 10, UITheme.TEAL))
-	var title := UIFactory.heading("PROJECT\nFANTASY", 43, UITheme.GOLD_BRIGHT)
-	title.add_theme_color_override("font_outline_color", Color("#050914"))
-	title.add_theme_constant_override("outline_size", 5)
-	column.add_child(title)
-	column.add_child(UIFactory.wrapped(
-		"A world that remembers. A promise that refuses to fade.",
-		14,
-		UITheme.TEXT_DIM
-	))
-	column.add_child(UIFactory.separator())
+	column.add_child(UIFactory.label("✦     A DARK FANTASY RPG     ✦", 10, UITheme.GOLD_BRIGHT))
 
-	_play_button = UIFactory.button("Begin Journey", true)
-	_play_button.custom_minimum_size = Vector2(0, 54)
+	var title := UIFactory.heading("REVERIE", 54, Color("#f0e6d1"))
+	title.add_theme_color_override("font_outline_color", Color("#080b18"))
+	title.add_theme_constant_override("outline_size", 6)
+	column.add_child(title)
+
+	var subtitle := UIFactory.label("WHERE MEMORY BECOMES MYTH", 10, Color("#c6ad7c"))
+	subtitle.add_theme_constant_override("letter_spacing", 3)
+	column.add_child(subtitle)
+	column.add_child(UIFactory.separator())
+	column.add_child(UIFactory.wrapped(
+		"Some promises outlive the ones who made them.\nA brother. A sister. A world that has not forgotten.",
+		15,
+		Color("#d0d0d4")
+	))
+	column.add_child(UIFactory.spacer())
+	_play_button = UIFactory.button("Continue the Journey" if GameState.loaded_from_save else "Begin the Journey", true)
+	_play_button.custom_minimum_size = Vector2(0, 58)
 	_play_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_play_button.pressed.connect(_on_play)
 	column.add_child(_play_button)
 
-	var journey_note := UIFactory.label("STORY  ·  EXPLORATION  ·  TURN-BASED COMBAT", 9, UITheme.TEXT_FAINT)
-	journey_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var journey_note := UIFactory.label("ENTER THE WHISPERING GLADE", 9, Color("#9d9ba8"))
+	journey_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(journey_note)
 	column.add_child(UIFactory.separator())
 
@@ -89,33 +94,39 @@ func _build_navigation(layout: HBoxContainer) -> void:
 	_reset_button.pressed.connect(_on_reset)
 	column.add_child(_reset_button)
 
-	var quit := UIFactory.button("Quit Game")
-	quit.custom_minimum_size = Vector2(0, 42)
+	var quit := UIFactory.button("Quit", false, true)
+	quit.custom_minimum_size = Vector2(0, 38)
 	quit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	quit.pressed.connect(func() -> void: quit_requested.emit())
 	column.add_child(quit)
 	column.add_child(UIFactory.spacer())
 
-	column.add_child(UIFactory.wrapped(
-		"WASD / arrows to move  ·  E to interact  ·  C roster  ·  G summon  ·  I inventory  ·  Q quests  ·  Esc menu",
-		10,
-		UITheme.TEXT_FAINT
-	))
-	column.add_child(UIFactory.label("GODOT 4.7  ·  OFFLINE STORY BUILD", 9, UITheme.TEXT_FAINT))
+	var controls := UIFactory.label("WASD / ARROWS  MOVE     •     E  INTERACT", 9, Color("#898b9a"))
+	controls.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	column.add_child(controls)
+	var build := UIFactory.label("REVERIE     •     v0.2.1     •     OFFLINE STORY", 8, Color("#777987"))
+	build.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	column.add_child(build)
 
 func _build_scene_copy(layout: HBoxContainer) -> void:
-	var right := UIFactory.vbox(8)
+	var right := UIFactory.vbox(10)
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(right)
-	right.add_child(UIFactory.label("THE LOST SIBLINGS  /  THEIR ALLY", 11, UITheme.GOLD_BRIGHT))
-	right.add_child(UIFactory.label("The Whispering Glade", 20, UITheme.TEXT))
-	right.add_child(UIFactory.label("A first step into a much older story", 11, UITheme.TEXT_DIM))
+
+	var eyebrow := UIFactory.label("A TALE OF TWO SOULS", 10, Color("#d7c18f"))
+	eyebrow.add_theme_constant_override("letter_spacing", 2)
+	right.add_child(eyebrow)
+	right.add_child(UIFactory.label("The Whispering Glade", 24, Color("#f0e8d8")))
+	right.add_child(UIFactory.label("THE FIRST CHAPTER", 9, Color("#b7b0a4")))
 	right.add_child(UIFactory.spacer())
-	right.add_child(UIFactory.label("YOUR PARTY", 9, UITheme.TEXT_FAINT))
-	_party_names_label = UIFactory.label("", 14, UITheme.TEXT)
+
+	var party_heading := UIFactory.label("YOUR COMPANIONS", 9, Color("#d7c18f"))
+	party_heading.add_theme_constant_override("letter_spacing", 2)
+	right.add_child(party_heading)
+	_party_names_label = UIFactory.label("", 15, Color("#f0e8d8"))
 	right.add_child(_party_names_label)
-	_summary_label = UIFactory.label("", 11, UITheme.GOLD)
+	_summary_label = UIFactory.label("", 10, Color("#c4b58e"))
 	right.add_child(_summary_label)
 
 func _build_party_showcase() -> void:
