@@ -1,0 +1,50 @@
+{
+  "idle": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\idle_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\idle_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\idle_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\idle_3.png"
+  ],
+  "walk": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\walk_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\walk_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\walk_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\walk_3.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\walk_4.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\walk_5.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\walk_6.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\walk_7.png"
+  ],
+  "attack": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\attack_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\attack_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\attack_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\attack_3.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\attack_4.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\attack_5.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\attack_6.png"
+  ],
+  "cast": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\cast_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\cast_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\cast_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\cast_3.png"
+  ],
+  "hurt": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\hurt_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\hurt_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\hurt_2.png"
+  ],
+  "death": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\death_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\death_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\death_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\death_3.png"
+  ],
+  "views": [
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\views_0.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\views_1.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\views_2.png",
+    "C:\\Users\\quoth\\Documents\\Default Project\\project-fantasy\\assets\\characters\\lilith\\source\\views_3.png"
+  ]
+}

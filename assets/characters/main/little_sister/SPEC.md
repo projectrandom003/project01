@@ -87,15 +87,37 @@ left, down_left`; rows 5/6/7 are exact horizontal mirrors of rows 3/2/1.
 
 ## Regeneration
 
-`tools/generate_lilith_art.py` (Python + Pillow) renders every asset
-deterministically from the brief above. It draws in three composited layers
-(`under` / `main` / `over`) because Pillow's `ImageDraw` replaces pixels
-instead of alpha-blending on an RGBA target. `tools/build_lilith_spriteframes.gd`
-slices the per-state atlases into `world_sheet.tres` using the
-`CharacterAnimator` contract, then round-trip validates it:
+Her playable art is **extracted from this concept sheet**, which already
+contains the finished artwork: Idle, Walk, Attack (Spirit Blast), Cast,
+Hurt and Death strips plus Front / Right / Back / Left character views.
 
 ```powershell
-python tools/generate_lilith_art.py
+python tools/extract_lilith_sheet.py   # cut the frames out of the sheet
+python tools/build_lilith_sheet.py      # re-lay them out as 9 states x 8 directions
+python tools/build_lilith_static.py     # portrait / combat sprite / full-body art
+godot --headless --path . --script res://tools/build_lilith_spriteframes.gd
+```
+
+`extract_lilith_sheet.py` keys the flat navy panel background out into a real
+alpha channel and drops the panel borders and title text; the character views
+are keyed the same way. `build_lilith_sheet.py` normalises every source set to
+one common body size (the sheet draws its strips at different scales) and
+re-grounds each frame on a single baseline, because the spirit flame below her
+feet changes length from frame to frame.
+
+The two diagonal directions are the Front / Back artwork sheared around the
+feet, which is how an isometric 3/4 turn reads; the profile and back rows use
+the sheet's own Right / Back / Left views and inherit the motion measured from
+the front row of the same state.
+
+`build_lilith_spriteframes.gd` then slices the per-state atlases into
+`world_sheet.tres` using the `CharacterAnimator` contract and round-trip
+validates it:
+
+```powershell
+python tools/extract_lilith_sheet.py
+python tools/build_lilith_sheet.py
+python tools/build_lilith_static.py
 godot --headless --path . --script res://tools/build_lilith_spriteframes.gd
 ```
 
