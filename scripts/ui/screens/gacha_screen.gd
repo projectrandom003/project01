@@ -19,6 +19,60 @@ var _reveal_animations: int = 0
 var _result_cards: int = 0
 
 
+class ChamberAtmosphere extends Control:
+	var elapsed := 0.0
+	var motes: Array[Vector3] = []
+	var petals: Array[Vector3] = []
+
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var rng := RandomNumberGenerator.new()
+		rng.seed = 712903
+		for i in range(64):
+			motes.append(Vector3(rng.randf_range(0.0, 1280.0), rng.randf_range(0.0, 720.0), rng.randf_range(0.35, 1.0)))
+		for i in range(14):
+			petals.append(Vector3(rng.randf_range(0.0, 1280.0), rng.randf_range(0.0, 720.0), rng.randf_range(0.5, 1.3)))
+
+	func _process(delta: float) -> void:
+		elapsed += delta
+		for i in range(motes.size()):
+			var mote: Vector3 = motes[i]
+			mote.y -= delta * (10.0 + mote.z * 17.0)
+			mote.x += sin(elapsed * 0.7 + i * 1.7) * delta * 9.0
+			if mote.y < -8.0:
+				mote.y = 728.0
+			motes[i] = mote
+		for i in range(petals.size()):
+			var petal: Vector3 = petals[i]
+			petal.y -= delta * (16.0 + petal.z * 22.0)
+			petal.x += sin(elapsed * 1.4 + i) * delta * 28.0
+			if petal.y < -20.0:
+				petal.y = 740.0
+				petal.x = fposmod(petal.x + 1280.0, 1280.0)
+			petals[i] = petal
+		queue_redraw()
+
+	func _draw() -> void:
+		var center := Vector2(size.x * 0.5, size.y * 0.72)
+		var pulse := 0.5 + 0.5 * sin(elapsed * 1.35)
+		var beam_alpha := 0.035 + pulse * 0.065
+		draw_rect(Rect2(Vector2(center.x - size.x * 0.055, size.y * 0.20), Vector2(size.x * 0.11, size.y * 0.62)), Color(0.73, 0.42, 1.0, beam_alpha), true)
+		for ring in range(3):
+			var radius := minf(size.x * 0.27, size.y * 0.34) * (0.72 + ring * 0.15)
+			var start := elapsed * (0.12 if ring % 2 == 0 else -0.09)
+			draw_arc(center, radius, start, start + TAU * 0.88, 96, Color(0.78, 0.56, 1.0, 0.08 + pulse * 0.08), 1.5)
+		for i in range(motes.size()):
+			var mote: Vector3 = motes[i]
+			var alpha := 0.18 + 0.35 * (0.5 + 0.5 * sin(elapsed * 2.2 + i))
+			draw_circle(Vector2(mote.x / 1280.0 * size.x, mote.y / 720.0 * size.y), 1.0 + mote.z * 1.5, Color(0.86, 0.72, 1.0, alpha))
+		for i in range(petals.size()):
+			var petal: Vector3 = petals[i]
+			var pos := Vector2(petal.x / 1280.0 * size.x, petal.y / 720.0 * size.y)
+			var angle := sin(elapsed * 1.6 + i * 2.0) * 0.8
+			var shape := PackedVector2Array([pos + Vector2(-4, 0).rotated(angle), pos + Vector2(0, -2).rotated(angle), pos + Vector2(5, 0).rotated(angle), pos + Vector2(0, 3).rotated(angle)])
+			draw_colored_polygon(shape, Color(0.78, 0.22, 0.48, 0.42))
+
+
 func _ready() -> void:
 	super._ready()
 	var art_path := "res://assets/ui/backgrounds/summoning_chamber_background.svg"
@@ -32,6 +86,11 @@ func _ready() -> void:
 		UIFactory.set_full_rect(backdrop)
 		add_child(backdrop)
 		move_child(backdrop, 0)
+	var atmosphere := ChamberAtmosphere.new()
+	atmosphere.name = "AnimatedSummoningAtmosphere"
+	UIFactory.set_full_rect(atmosphere)
+	atmosphere.z_index = 1
+	add_child(atmosphere)
 
 class SummonSigil extends Control:
 	var elapsed := 0.0
