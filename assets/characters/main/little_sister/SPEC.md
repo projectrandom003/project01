@@ -21,21 +21,40 @@
 | main_character | true |
 | playable | true (starting party member) |
 
-## Design brief (from the supplied reference sheet)
+## Design brief (read from the supplied concept sheet)
 
-- White-haired, blue-eyed ghost girl who died at age 13.
-- Original design is the source of truth; the playable art is **original
-  vector-style art generated programmatically** from this brief and palette.
-  The supplied sheet is **not** cropped, traced or reused as a texture.
-- Palette:
+The supplied sheet is the source of truth for Lilith's look. The playable art
+is **original vector-style work rendered from this brief** — the sheet is
+**not** cropped, traced or reused as a texture.
+
+- **"The Lost Girl"** — a cheerful ghost girl who died at 13. She is a
+  *restless spirit*; her soul lingers in the mortal world.
+- **Chibi proportions** (roughly 2.5 heads tall), big head, large anime eyes.
+- **Hair:** voluminous white/silver. A long side-ponytail sweeps out from the
+  crown; long side locks frame the face.
+- **Signature accessory:** a **black bow with a white skull** pinning the
+  ponytail at the top-right of her head.
+- **Eyes:** large, bright cyan with white highlights.
+- **Dress:** **white** (not blue) — a frilly, layered, *torn* dress with a lace
+  ruffle at the hem and a ragged, frayed bottom edge.
+- **Navy accents:** a navy **bow at the chest**, a navy **choker with a cyan
+  teardrop gem**, and navy **thigh-highs** with small bows at the top.
+- **Spirit effects:** a blue spectral aura and tail around the lower body,
+  small blue "soul" wisps orbiting her, and a cyan flash when she is hit.
+- Palette (the five swatches printed on the sheet, plus the accents):
 
 | role | hex |
 | --- | --- |
-| `hair` | `#f2f5fa` |
-| `primary` | `#6f8fbf` |
-| `secondary` | `#b9d4e8` |
-| `accent` | `#7fd4ff` |
-| `skin` | `#e8eef7` |
+| `hair` | `#f4f7fc` |
+| `dress` | `#edf1f8` |
+| `trim` | `#bacde3` |
+| `accent` (spirit cyan, eyes, gem) | `#7fd4ff` |
+| `navy` (bows, choker, thigh-highs) | `#2b3a5c` |
+| `skin` | `#f3e9ec` |
+
+The `palette` block in `resources/data/main_characters.json` keeps the older
+blue-grey hero palette; it is used only for the procedural fallback and UI
+tinting, not for the final art.
 
 ## Files
 
@@ -69,7 +88,9 @@ left, down_left`; rows 5/6/7 are exact horizontal mirrors of rows 3/2/1.
 ## Regeneration
 
 `tools/generate_lilith_art.py` (Python + Pillow) renders every asset
-deterministically from the brief above. `tools/build_lilith_spriteframes.gd`
+deterministically from the brief above. It draws in three composited layers
+(`under` / `main` / `over`) because Pillow's `ImageDraw` replaces pixels
+instead of alpha-blending on an RGBA target. `tools/build_lilith_spriteframes.gd`
 slices the per-state atlases into `world_sheet.tres` using the
 `CharacterAnimator` contract, then round-trip validates it:
 
