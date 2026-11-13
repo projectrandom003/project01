@@ -242,12 +242,14 @@ func _refresh_summary() -> void:
 		UIFactory.number(GameState.currency("crystals")),
 	]
 	if _play_button != null:
-		_play_button.text = "Continue Journey" if GameState.loaded_from_save else "Begin Journey"
+		_play_button.text = "✧   CONTINUE   ✧" if GameState.loaded_from_save else "✧   BEGIN JOURNEY   ✧"
 
 func _style_ornate_menu_button(button: Button, accent: Color, primary: bool) -> void:
-	var normal_bg := Color(0.025, 0.018, 0.045, 0.76)
-	var hover_bg := Color(0.12, 0.075, 0.15, 0.94)
-	var pressed_bg := Color(0.18, 0.11, 0.20, 0.98)
+	# The title artwork has its own painted labels beneath the live controls.
+	# Keep the ornate button faces fully opaque so those labels never bleed through.
+	var normal_bg := Color(0.018, 0.012, 0.035, 1.0)
+	var hover_bg := Color(0.075, 0.045, 0.105, 1.0)
+	var pressed_bg := Color(0.12, 0.075, 0.15, 1.0)
 	button.add_theme_stylebox_override("normal", UITheme.style(normal_bg, Color(accent.r, accent.g, accent.b, 0.68), 7, 1, 16))
 	button.add_theme_stylebox_override("hover", UITheme.style(hover_bg, Color(accent.r, accent.g, accent.b, 1.0), 7, 2, 16, true))
 	button.add_theme_stylebox_override("pressed", UITheme.style(pressed_bg, Color(accent.r, accent.g, accent.b, 1.0), 7, 2, 16))
