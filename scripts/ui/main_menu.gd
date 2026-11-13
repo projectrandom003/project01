@@ -20,37 +20,77 @@ func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	theme = UITheme.build()
 
-	var backdrop := LaunchForestBackdrop.new()
-	backdrop.name = "TitleScreenBackdrop"
-	UIFactory.set_full_rect(backdrop)
-	add_child(backdrop)
+	# The generated title artwork already contains the REVERIE logo and chapter
+	# illustration. Keep those as art, while replacing its painted menu with
+	# real Godot controls in the same visual area.
+	var artwork := TextureRect.new()
+	artwork.name = "ReverieTitleArtwork"
+	artwork.texture = load("res://assets/ui/backgrounds/reverie_title_screen.jpg") as Texture2D
+	artwork.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	artwork.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	artwork.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	UIFactory.set_full_rect(artwork)
+	add_child(artwork)
+
 	var shade := ColorRect.new()
 	shade.name = "TitleArtworkReadabilityShade"
-	shade.color = Color(0.015, 0.012, 0.035, 0.22)
+	shade.color = Color(0.012, 0.009, 0.028, 0.12)
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	UIFactory.set_full_rect(shade)
 	add_child(shade)
 
-	_party_layer = Node2D.new()
-	_party_layer.name = "PartyShowcase"
-	_party_layer.z_index = 2
-	add_child(_party_layer)
-	_build_party_showcase()
+	# Cover the concept image's non-interactive painted menu and place live
+	# buttons over it. Save/reset/play/quit continue to use the existing signals.
+	var menu_panel := UIFactory.panel(Color(0.012, 0.009, 0.025, 0.91), Color(0.78, 0.58, 0.68, 0.58), 18, 1, 22, true)
+	menu_panel.name = "LiveMenuPanel"
+	menu_panel.anchor_left = 0.495
+	menu_panel.anchor_right = 0.735
+	menu_panel.anchor_top = 0.385
+	menu_panel.anchor_bottom = 0.895
+	menu_panel.offset_left = 0
+	menu_panel.offset_right = 0
+	menu_panel.offset_top = 0
+	menu_panel.offset_bottom = 0
+	add_child(menu_panel)
 
-	var margin := UIFactory.margin(34)
-	UIFactory.set_full_rect(margin)
-	margin.z_index = 4
-	add_child(margin)
-	var layout := UIFactory.hbox(26)
-	layout.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	layout.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	margin.add_child(layout)
+	var column := UIFactory.vbox(13)
+	menu_panel.add_child(column)
+	column.add_child(UIFactory.label("✦  THE JOURNEY AWAITS  ✦", 10, UITheme.GOLD_BRIGHT))
+	var continue_button := UIFactory.button("Continue Journey" if GameState.loaded_from_save else "Begin Journey", true)
+	continue_button.custom_minimum_size = Vector2(0, 56)
+	continue_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	continue_button.pressed.connect(_on_play)
+	column.add_child(continue_button)
+	column.add_child(UIFactory.separator())
+	var reset := UIFactory.button("Reset Journey", false, true)
+	reset.custom_minimum_size = Vector2(0, 44)
+	reset.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	reset.pressed.connect(_on_reset)
+	_reset_button = reset
+	column.add_child(reset)
+	var quit := UIFactory.button("Quit", false, true)
+	quit.custom_minimum_size = Vector2(0, 42)
+	quit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	quit.pressed.connect(func() -> void: quit_requested.emit())
+	column.add_child(quit)
+	var hint := UIFactory.label("A STORY OF TWO SOULS", 9, Color("#aaa0b7"))
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	column.add_child(hint)
 
-	_build_navigation(layout)
-	_build_scene_copy(layout)
-	resized.connect(_layout_party)
-	_refresh_summary()
-	_layout_party()
+	resized.connect(_layout_art_menu)
+	_layout_art_menu()
+
+func _layout_art_menu() -> void:
+	var panel := get_node_or_null("LiveMenuPanel") as Control
+	if panel == null:
+		return
+	# Keep the panel aligned with the illustrated menu on common widescreen
+	# layouts, while preserving a usable minimum width on smaller windows.
+	var panel_width := clampf(size.x * 0.24, 300.0, 410.0)
+	var panel_height := clampf(size.y * 0.51, 390.0, 560.0)
+	panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	panel.position = Vector2(size.x * 0.495, size.y * 0.385)
+	panel.size = Vector2(panel_width, panel_height)
 
 func _build_navigation(layout: HBoxContainer) -> void:
 	var panel := UIFactory.panel(Color(0.012, 0.018, 0.038, 0.78), Color(0.78, 0.68, 0.48, 0.34), 22, 1, 30, true)
