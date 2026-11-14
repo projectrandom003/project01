@@ -23,6 +23,7 @@ var _quest_marker_core: Polygon2D
 var _quest_marker_symbol: Label
 var _time: float = 0.0
 var _quest_marker_state: String = ""
+var quest_marker_y: float = -105.0
 
 
 func setup(p_id: String, p_name: String, p_dialogue: String, p_palette: Dictionary, p_race: String) -> void:
@@ -48,6 +49,7 @@ func _ready() -> void:
 	_interaction_ring = get_node_or_null("InteractionRing") as Node2D
 	_quest_marker = get_node_or_null("QuestMarker") as Node2D
 	if _quest_marker != null:
+		_quest_marker.position = Vector2(0.0, quest_marker_y)
 		_quest_marker_glow = _quest_marker.get_node_or_null("Glow") as Polygon2D
 		_quest_marker_core = _quest_marker.get_node_or_null("Core") as Polygon2D
 		_quest_marker_symbol = _quest_marker.get_node_or_null("Symbol") as Label

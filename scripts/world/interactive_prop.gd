@@ -25,6 +25,7 @@ var collectible_id: String = ""
 var collectible_rewards: Dictionary = {}
 var collectible_label: String = ""
 var _sprite: Sprite2D
+var _highlight_node: Node2D
 var _highlight: float = 0.0
 var _player: Node2D
 
@@ -64,6 +65,8 @@ func _ready() -> void:
 func _build_visual() -> void:
 	if _sprite == null:
 		_sprite = get_node_or_null("Sprite") as Sprite2D
+	if _highlight_node == null:
+		_highlight_node = get_node_or_null("InteractionHighlight") as Node2D
 	if _sprite == null:
 		_sprite = Sprite2D.new() # compatibility for bare InteractiveProp.new()
 		_sprite.name = "Sprite"
@@ -91,17 +94,11 @@ func _process(delta: float) -> void:
 		if _sprite != null:
 			var boost := 1.0 + _highlight * 0.35
 			_sprite.modulate = Color(boost, boost, boost, 1.0)
-		queue_redraw()
-
-
-func _draw() -> void:
-	if _highlight <= 0.0:
-		return
-	var c := GreenwardStyle.MAGIC.teal
-	var alpha := _highlight * 0.62
-	draw_circle(Vector2(0, -3), 26.0, Color(c.r, c.g, c.b, alpha * 0.08))
-	draw_arc(Vector2(0, 0), 22.0 + _highlight * 3.0, 0.0, TAU, 32, Color(c.r, c.g, c.b, alpha), 2.2)
-	draw_arc(Vector2(0, 0), 30.0 + _highlight * 5.0, 0.0, TAU, 32, Color(c.r, c.g, c.b, alpha * 0.48), 1.6)
+	if _highlight_node != null:
+		_highlight_node.visible = _highlight > 0.005
+		_highlight_node.modulate.a = _highlight
+		var pulse := 1.0 + _highlight * 0.1
+		_highlight_node.scale = Vector2(pulse, pulse)
 
 
 ## Lore props remain flavour-only. Configured gathering props grant their

@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/interactive_prop.gd" id="1_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/components/interaction_highlight.tscn" id="2_highlight"]
 
 [node name="InteractiveProp" type="Node2D"]
 script = ExtResource("1_prop")
@@ -8,3 +9,5 @@ script = ExtResource("1_prop")
 [node name="Sprite" type="Sprite2D" parent="."]
 centered = false
 texture_filter = 1
+
+[node name="InteractionHighlight" parent="." instance=ExtResource("2_highlight")]
