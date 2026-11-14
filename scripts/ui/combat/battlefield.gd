@@ -363,11 +363,9 @@ func _play_kael_attack(attacker: BattlefieldActor, target: BattlefieldActor,
 
 
 func _spawn_kael_cross_slash(center: Vector2, direction: Vector2, color: Color, strength: float) -> void:
-	var slash := Line2D.new()
+	var slash := preload("res://scenes/ui/combat/components/kael_cross_slash.tscn").instantiate() as Line2D
 	slash.width = 10.0 * strength
 	slash.default_color = Color(color.r, color.g, color.b, 0.94)
-	slash.begin_cap_mode = Line2D.LINE_CAP_ROUND
-	slash.end_cap_mode = Line2D.LINE_CAP_ROUND
 	var normal := Vector2(-direction.y, direction.x)
 	slash.points = PackedVector2Array([
 		center - direction * 34.0 - normal * 25.0,
@@ -383,12 +381,8 @@ func _spawn_kael_cross_slash(center: Vector2, direction: Vector2, color: Color, 
 
 
 func _spawn_kael_impact(pos: Vector2, fire: Color, gold: Color, strength: float) -> void:
-	var flash := Polygon2D.new()
-	var points := PackedVector2Array()
-	for i in 12:
-		var angle := TAU * float(i) / 12.0
-		points.append(Vector2(cos(angle), sin(angle)) * (8.0 + float(i % 2) * 5.0) * strength)
-	flash.polygon = points
+	var flash := preload("res://scenes/ui/combat/components/kael_impact_flash.tscn").instantiate() as Polygon2D
+	flash.scale = Vector2.ONE * strength
 	flash.color = Color(gold.r, gold.g, gold.b, 0.86)
 	flash.position = pos
 	flash.z_index = 48
@@ -401,26 +395,13 @@ func _spawn_kael_impact(pos: Vector2, fire: Color, gold: Color, strength: float)
 
 
 func _spawn_kael_lance(from: Vector2, to: Vector2, fire: Color, gold: Color, pale: Color) -> void:
-	var spear := Node2D.new()
+	var spear := preload("res://scenes/ui/combat/components/kael_lance.tscn").instantiate() as Node2D
 	spear.position = from
 	spear.z_index = 50
+	(spear.get_node("Shaft") as Line2D).default_color = fire
+	(spear.get_node("Core") as Line2D).default_color = pale
+	(spear.get_node("Glow") as PointLight2D).color = fire
 	add_child(spear)
-	var shaft := Line2D.new()
-	shaft.width = 8.0
-	shaft.default_color = fire
-	shaft.points = PackedVector2Array([Vector2(-28, 0), Vector2(0, 0), Vector2(34, 0)])
-	spear.add_child(shaft)
-	var core := Line2D.new()
-	core.width = 2.5
-	core.default_color = pale
-	core.points = PackedVector2Array([Vector2(-24, 0), Vector2(32, 0)])
-	spear.add_child(core)
-	var glow := PointLight2D.new()
-	glow.color = fire
-	glow.energy = 1.7
-	glow.texture = SOFT_GLOW
-	glow.texture_scale = 0.75
-	spear.add_child(glow)
 	var delta := to - from
 	spear.rotation = delta.angle()
 	var travel := create_tween()
@@ -453,13 +434,8 @@ func _spawn_kael_rally_ring(center: Vector2, fire: Color, gold: Color) -> void:
 
 
 func _spawn_kael_aura(ally: BattlefieldActor) -> void:
-	var aura := PointLight2D.new()
-	aura.name = "KaelRallyAura"
+	var aura := preload("res://scenes/ui/combat/components/kael_rally_aura.tscn").instantiate() as PointLight2D
 	aura.color = Color("#ff9b50")
-	aura.energy = 0.0
-	aura.texture = SOFT_GLOW
-	aura.texture_scale = 1.4
-	aura.position = Vector2(0, -42)
 	ally.add_child(aura)
 	var tween := create_tween()
 	tween.tween_property(aura, "energy", 1.15, 0.22)
@@ -594,18 +570,11 @@ func _spawn_matron_telegraph(at: Vector2, duration: float) -> void:
 
 
 func _spawn_matron_orb(from: Vector2, to: Vector2) -> void:
-	var orb := Polygon2D.new()
-	orb.polygon = PackedVector2Array([Vector2(0, -13), Vector2(10, -5), Vector2(8, 8), Vector2(0, 13), Vector2(-8, 8), Vector2(-10, -5)])
+	var orb := preload("res://scenes/ui/combat/components/matron_orb.tscn").instantiate() as Polygon2D
 	orb.color = Color("#bd65f5")
 	orb.position = from
 	orb.z_index = 42
 	add_child(orb)
-	var glow := PointLight2D.new()
-	glow.color = Color("#a34be8")
-	glow.energy = 1.4
-	glow.texture = SOFT_GLOW
-	glow.texture_scale = 0.65
-	orb.add_child(glow)
 	var tween := create_tween()
 	tween.tween_property(orb, "position", to + Vector2(0, -22), 0.42).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tween.tween_callback(func() -> void:
@@ -616,11 +585,9 @@ func _spawn_matron_orb(from: Vector2, to: Vector2) -> void:
 
 func _spawn_shadow_lash(target_pos: Vector2) -> void:
 	for i in range(3):
-		var lash := Line2D.new()
+		var lash := preload("res://scenes/ui/combat/components/shadow_lash.tscn").instantiate() as Line2D
 		lash.width = 8.0 - float(i) * 1.5
 		lash.default_color = Color(0.34, 0.08, 0.48, 0.92 - float(i) * 0.18)
-		lash.begin_cap_mode = Line2D.LINE_CAP_ROUND
-		lash.end_cap_mode = Line2D.LINE_CAP_ROUND
 		var start := Vector2(size.x * 0.82, size.y * 0.76 + float(i - 1) * 18.0)
 		var bend := (start + target_pos) * 0.5 + Vector2(-12, -55.0 - float(i) * 12.0)
 		lash.points = PackedVector2Array([start, bend, target_pos + Vector2(0, -24)])
@@ -632,11 +599,9 @@ func _spawn_shadow_lash(target_pos: Vector2) -> void:
 
 
 func _spawn_soul_drain(from: Vector2, to: Vector2) -> void:
-	var beam := Line2D.new()
+	var beam := preload("res://scenes/ui/combat/components/soul_drain_beam.tscn").instantiate() as Line2D
 	beam.width = 13.0
 	beam.default_color = Color(0.72, 0.35, 0.92, 0.78)
-	beam.begin_cap_mode = Line2D.LINE_CAP_ROUND
-	beam.end_cap_mode = Line2D.LINE_CAP_ROUND
 	beam.points = PackedVector2Array([from, (from + to) * 0.5 + Vector2(0, -24), to])
 	beam.z_index = 38
 	add_child(beam)
@@ -770,17 +735,14 @@ func _spawn_verdict_warning(center: Vector2) -> void:
 
 
 func _spawn_verdict_column(center: Vector2) -> void:
-	var column := Polygon2D.new()
+	var column := preload("res://scenes/ui/combat/components/verdict_column.tscn").instantiate() as Polygon2D
 	column.name = "MatronVerdictColumn"
-	column.polygon = PackedVector2Array([Vector2(-42, 20), Vector2(-20, -430), Vector2(20, -430), Vector2(42, 20)])
 	column.color = Color(0.82, 0.3, 1.0, 0.0)
 	column.position = center + Vector2(0, -185)
 	column.z_index = 43
 	add_child(column)
-	var core := Polygon2D.new()
-	core.polygon = PackedVector2Array([Vector2(-12, 12), Vector2(-5, -390), Vector2(5, -390), Vector2(12, 12)])
+	var core := column.get_node("Core") as Polygon2D
 	core.color = Color(1.0, 0.82, 1.0, 0.0)
-	column.add_child(core)
 	var strike := create_tween()
 	strike.tween_property(column, "color:a", 0.78, 0.08)
 	strike.parallel().tween_property(core, "color:a", 0.95, 0.06)

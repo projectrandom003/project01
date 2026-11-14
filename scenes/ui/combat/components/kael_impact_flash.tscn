@@ -1,0 +1,4 @@
+[gd_scene format=3]
+
+[node name="KaelImpactFlash" type="Polygon2D"]
+polygon = PackedVector2Array(0, -13, 6.5, -11.25, 13, 0, 6.5, 11.25, 0, 13, -6.5, 11.25, -13, 0, -6.5, -11.25, 0, -13, 6.5, -11.25, 13, 0, 6.5, 11.25)

@@ -1,0 +1,5 @@
+[gd_scene format=3]
+
+[node name="ShadowLash" type="Line2D"]
+begin_cap_mode = 2
+end_cap_mode = 2

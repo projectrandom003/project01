@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[node name="VerdictColumn" type="Polygon2D"]
+polygon = PackedVector2Array(-42, 20, -20, -430, 20, -430, 42, 20)
+
+[node name="Core" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-12, 12, -5, -390, 5, -390, 12, 12)
