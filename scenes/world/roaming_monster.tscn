@@ -1,22 +1,15 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/roaming_monster.gd" id="1_monster"]
 [ext_resource type="PackedScene" path="res://scenes/characters/actor_visual.tscn" id="2_visual"]
+[ext_resource type="PackedScene" path="res://scenes/world/components/monster_name_label.tscn" id="3_name"]
+[ext_resource type="PackedScene" path="res://scenes/world/components/monster_accent.tscn" id="4_accent"]
 
 [node name="RoamingMonster" type="Node2D"]
 script = ExtResource("1_monster")
 
 [node name="ActorVisual" parent="." instance=ExtResource("2_visual")]
 
-[node name="NameLabel" type="Label" parent="."]
-offset_left = -80.0
-offset_top = -68.0
-offset_right = 80.0
-offset_bottom = -46.0
-horizontal_alignment = 1
-mouse_filter = 2
+[node name="NameLabel" parent="." instance=ExtResource("3_name")]
 
-[node name="Accent" type="Sprite2D" parent="."]
-visible = false
-centered = false
-texture_filter = 1
+[node name="Accent" parent="." instance=ExtResource("4_accent")]

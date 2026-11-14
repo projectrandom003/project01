@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[node name="Accent" type="Sprite2D"]
+visible = false
+centered = false
+texture_filter = 1
