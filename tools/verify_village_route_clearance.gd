@@ -22,8 +22,9 @@ func _run() -> void:
 	var village := VILLAGE_SCENE.instantiate()
 	add_child(village)
 	await get_tree().physics_frame
-	var circle := CircleShape2D.new()
-	circle.radius = 7.0
+	var player_capsule := CapsuleShape2D.new()
+	player_capsule.radius = 9.0
+	player_capsule.height = 22.0
 	var space := (village as Node2D).get_world_2d().direct_space_state
 	for route_id in ROUTES:
 		var route: Dictionary = ROUTES[route_id]
@@ -34,12 +35,12 @@ func _run() -> void:
 		var start: Vector2 = route["from"]
 		var finish: Vector2 = route["to"]
 		var span := finish - start
-		var count := mini(4, maxi(1, ceili(span.length() / float(route["step"]))))
+		var count := maxi(1, ceili(span.length() / float(route["step"])))
 		for i in range(count + 1):
 			var point := start.lerp(finish, float(i) / float(count))
 			var query := PhysicsShapeQueryParameters2D.new()
-			query.shape = circle
-			query.transform = Transform2D(0.0, point)
+			query.shape = player_capsule
+			query.transform = Transform2D(0.0, point + Vector2(0, -10))
 			query.collision_mask = 1
 			query.collide_with_bodies = true
 			query.collide_with_areas = false
