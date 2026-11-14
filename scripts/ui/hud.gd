@@ -12,6 +12,7 @@ signal interact_requested
 signal switch_avatar_requested
 
 const PARTY_ENTRY_SCENE: PackedScene = preload("res://scenes/ui/components/hud_party_entry.tscn")
+const CURRENCY_CHIP_SCENE: PackedScene = preload("res://scenes/ui/components/currency_chip.tscn")
 
 var joystick: TouchJoystick
 var _area_label: Label
@@ -99,10 +100,23 @@ func refresh_currency() -> void:
 	if _currency_box == null:
 		return
 	UIFactory.clear(_currency_box)
-	_currency_box.add_child(UIFactory.chip("Gold  " + UIFactory.number(GameState.currency("gold")), UITheme.GOLD))
-	_currency_box.add_child(UIFactory.chip("Crystals  " + UIFactory.number(GameState.currency("crystals")), UITheme.TEAL))
+	_add_currency_chip("Gold  " + UIFactory.number(GameState.currency("gold")), UITheme.GOLD)
+	_add_currency_chip("Crystals  " + UIFactory.number(GameState.currency("crystals")), UITheme.TEAL)
 	if GameState.currency("gems") > 0:
-		_currency_box.add_child(UIFactory.chip("Gems  " + UIFactory.number(GameState.currency("gems")), UITheme.VIOLET))
+		_add_currency_chip("Gems  " + UIFactory.number(GameState.currency("gems")), UITheme.VIOLET)
+
+
+func _add_currency_chip(value_text: String, tint: Color) -> void:
+	var chip := CURRENCY_CHIP_SCENE.instantiate() as PanelContainer
+	(chip.get_node("Content/Dot") as ColorRect).color = tint
+	var value_label := chip.get_node("Content/ValueLabel") as Label
+	value_label.text = value_text
+	value_label.add_theme_color_override("font_color", tint)
+	var style := chip.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
+	style.bg_color = Color(tint.r, tint.g, tint.b, 0.10)
+	style.border_color = Color(tint.r, tint.g, tint.b, 0.45)
+	chip.add_theme_stylebox_override("panel", style)
+	_currency_box.add_child(chip)
 
 
 func refresh_party() -> void:
