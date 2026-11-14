@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/roaming_monster.gd" id="1_monster"]
 [ext_resource type="PackedScene" path="res://scenes/characters/actor_visual.tscn" id="2_visual"]
 [ext_resource type="PackedScene" path="res://scenes/world/components/monster_name_label.tscn" id="3_name"]
 [ext_resource type="PackedScene" path="res://scenes/world/components/monster_accent.tscn" id="4_accent"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_status_anchor.tscn" id="5_status"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_health_display_anchor.tscn" id="6_health"]
 
 [node name="RoamingMonster" type="Node2D"]
 script = ExtResource("1_monster")
@@ -13,3 +15,7 @@ script = ExtResource("1_monster")
 [node name="NameLabel" parent="." instance=ExtResource("3_name")]
 
 [node name="Accent" parent="." instance=ExtResource("4_accent")]
+
+[node name="StatusAnchor" parent="." instance=ExtResource("5_status")]
+
+[node name="HealthDisplayAnchor" parent="." instance=ExtResource("6_health")]

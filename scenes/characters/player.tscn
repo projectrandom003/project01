@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/characters/actor_visual.tscn" id="2_visual"]
@@ -7,6 +7,9 @@
 [ext_resource type="PackedScene" path="res://scenes/characters/components/player_personal_glow.tscn" id="5_glow"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/player_water_surface.tscn" id="6_water"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/player_camera.tscn" id="7_camera"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_interaction_component.tscn" id="8_interaction"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_status_anchor.tscn" id="9_status"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_health_display_anchor.tscn" id="10_health"]
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 2
@@ -24,3 +27,9 @@ script = ExtResource("1_player")
 [node name="WaterSurface" parent="." instance=ExtResource("6_water")]
 
 [node name="Camera2D" parent="." instance=ExtResource("7_camera")]
+
+[node name="InteractionComponent" parent="." instance=ExtResource("8_interaction")]
+
+[node name="StatusAnchor" parent="." instance=ExtResource("9_status")]
+
+[node name="HealthDisplayAnchor" parent="." instance=ExtResource("10_health")]

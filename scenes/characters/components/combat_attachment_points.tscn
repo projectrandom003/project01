@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[node name="CombatAttachmentPoints" type="Node2D"]
+
+[node name="WeaponTip" type="Marker2D" parent="."]
+position = Vector2(18, -36)
+
+[node name="CastOrigin" type="Marker2D" parent="."]
+position = Vector2(0, -42)
+
+[node name="HitOrigin" type="Marker2D" parent="."]
+position = Vector2(0, -28)
+
+[node name="ProjectileOrigin" type="Marker2D" parent="."]
+position = Vector2(20, -40)
+
+[node name="Overhead" type="Marker2D" parent="."]
+position = Vector2(0, -96)

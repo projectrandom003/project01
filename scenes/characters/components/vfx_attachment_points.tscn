@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[node name="VfxAttachmentPoints" type="Node2D"]
+
+[node name="Ground" type="Marker2D" parent="."]
+position = Vector2(0, 0)
+
+[node name="Body" type="Marker2D" parent="."]
+position = Vector2(0, -34)
+
+[node name="Head" type="Marker2D" parent="."]
+position = Vector2(0, -58)
+
+[node name="Aura" type="Marker2D" parent="."]
+position = Vector2(0, -40)
+
+[node name="Trail" type="Marker2D" parent="."]
+position = Vector2(-10, -30)

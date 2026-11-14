@@ -1,54 +1,14 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/actor_visual.gd" id="1_actor_visual"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/directional_equipment/directional_equipment_layers.tscn" id="2_directional"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/character_effects.tscn" id="3_effects"]
-
-[sub_resource type="Animation" id="Animation_idle_bob"]
-resource_name = "idle_bob"
-length = 2.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {"times": PackedFloat32Array(0, 1, 2), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Vector2(0, 0), Vector2(0, -1.25), Vector2(0, 0)]}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:scale")
-tracks/1/interp = 2
-tracks/1/loop_wrap = true
-tracks/1/keys = {"times": PackedFloat32Array(0, 1, 2), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Vector2(1, 1), Vector2(1.006, 1.012), Vector2(1, 1)]}
-
-[sub_resource type="Animation" id="Animation_walk_bob"]
-resource_name = "walk_bob"
-length = 0.32
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {"times": PackedFloat32Array(0, 0.08, 0.16, 0.24, 0.32), "transitions": PackedFloat32Array(1, 1, 1, 1, 1), "update": 0, "values": [Vector2(0, 0), Vector2(0, -2), Vector2(0, 0), Vector2(0, -1), Vector2(0, 0)]}
-
-[sub_resource type="Animation" id="Animation_run_bob"]
-resource_name = "run_bob"
-length = 0.24
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {"times": PackedFloat32Array(0, 0.06, 0.12, 0.18, 0.24), "transitions": PackedFloat32Array(1, 1, 1, 1, 1), "update": 0, "values": [Vector2(0, 0), Vector2(0, -3), Vector2(0, 0), Vector2(0, -1), Vector2(0, 0)]}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_locomotion"]
-_data = {"idle_bob": SubResource("Animation_idle_bob"), "walk_bob": SubResource("Animation_walk_bob"), "run_bob": SubResource("Animation_run_bob")}
+[ext_resource type="AnimationLibrary" path="res://resources/characters/animations/character_locomotion.tres" id="4_locomotion"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_animation_component.tscn" id="5_anim_component"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/combat_attachment_points.tscn" id="6_combat_points"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/vfx_attachment_points.tscn" id="7_vfx_points"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_status_anchor.tscn" id="8_status_anchor"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_health_display_anchor.tscn" id="9_health_anchor"]
 
 [node name="ActorVisual" type="Node2D"]
 script = ExtResource("1_actor_visual")
@@ -62,6 +22,19 @@ texture_filter = 1
 [node name="Effects" parent="." instance=ExtResource("3_effects")]
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {"": SubResource("AnimationLibrary_locomotion")}
+libraries = {
+"": ExtResource("4_locomotion")
+}
+
+[node name="CharacterAnimationComponent" parent="." instance=ExtResource("5_anim_component")]
+animation_player_path = NodePath("../AnimationPlayer")
+
+[node name="CombatAttachmentPoints" parent="." instance=ExtResource("6_combat_points")]
+
+[node name="VfxAttachmentPoints" parent="." instance=ExtResource("7_vfx_points")]
+
+[node name="StatusAnchor" parent="." instance=ExtResource("8_status_anchor")]
+
+[node name="HealthDisplayAnchor" parent="." instance=ExtResource("9_health_anchor")]
 
 [node name="Audio" type="Node2D" parent="."]
