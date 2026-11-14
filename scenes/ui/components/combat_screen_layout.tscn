@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/combat/components/combat_header.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/combat/components/boss_health_panel.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/combat/components/turn_order_panel.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/battlefield.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/combat/components/combat_bottom_hud.tscn" id="5"]
+
+[node name="CombatScreenLayout" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Root" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="CombatHeader" parent="Root" instance=ExtResource("1")]
+layout_mode = 2
+
+[node name="BossHealthPanel" parent="Root" instance=ExtResource("2")]
+layout_mode = 2
+
+[node name="TurnOrderPanel" parent="Root" instance=ExtResource("3")]
+layout_mode = 2
+
+[node name="Battlefield" parent="Root" instance=ExtResource("4")]
+custom_minimum_size = Vector2(0, 280)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CombatBottomHUD" parent="Root" instance=ExtResource("5")]
+layout_mode = 2

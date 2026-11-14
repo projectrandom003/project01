@@ -10,6 +10,7 @@ signal closed
 const TURN_DELAY := 0.78
 const IMPACT_DELAY := 0.58
 const BATTLEFIELD_SCENE: PackedScene = preload("res://scenes/ui/battlefield.tscn")
+const COMBAT_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/combat_screen_layout.tscn")
 const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
 
 var group_id: String = ""
@@ -101,14 +102,16 @@ func _style_combat_panel(panel: PanelContainer, fill: Color, radius: int, margin
 
 
 func _build_layout() -> void:
-	var margin := UIFactory.margin(16)
-	UIFactory.set_full_rect(margin)
-	add_child(margin)
-	var root := UIFactory.vbox(6)
-	margin.add_child(root)
-
-	# ===== TOP: authored, reusable combat header =====
-	var header := preload("res://scenes/ui/combat/components/combat_header.tscn").instantiate() as HBoxContainer
+	# All static combat presentation is pre-authored in combat_screen_layout.tscn.
+	# This method only binds the scene contract and configures data-driven state.
+	var layout := get_node_or_null("CombatScreenLayout") as Control
+	if layout == null:
+		layout = COMBAT_LAYOUT_SCENE.instantiate() as Control
+		layout.name = "CombatScreenLayout"
+		UIFactory.set_full_rect(layout)
+		add_child(layout)
+	var root := layout.get_node("Root") as VBoxContainer
+	var header := root.get_node("CombatHeader") as HBoxContainer
 	_title_label = header.get_node("TitleLabel") as Label
 	_title_label.add_theme_font_size_override("font_size", 20)
 	_title_label.add_theme_color_override("font_color", UITheme.GOLD_BRIGHT)
@@ -124,16 +127,8 @@ func _build_layout() -> void:
 	var retreat := header.get_node("RetreatButton") as Button
 	retreat.add_theme_stylebox_override("normal", UIFactory.button("Retreat", false, true).get_theme_stylebox("normal").duplicate())
 	retreat.pressed.connect(_confirm_retreat)
-	_boss_bar_container = null
-	_boss_name_label = null
-	_boss_hp_bar = null
-	_boss_phase_label = null
-	_camera_shake_timer = 0.0
-	_camera_shake_intensity = 0.0
-	root.add_child(header)
 
-	# Boss health presentation is an independently editable PackedScene.
-	_boss_bar_container = preload("res://scenes/ui/combat/components/boss_health_panel.tscn").instantiate() as VBoxContainer
+	_boss_bar_container = root.get_node("BossHealthPanel") as VBoxContainer
 	_boss_name_label = _boss_bar_container.get_node("Panel/Content/BossName") as Label
 	_boss_name_label.add_theme_font_size_override("font_size", 16)
 	_boss_name_label.add_theme_color_override("font_color", UITheme.DANGER)
@@ -152,10 +147,8 @@ func _build_layout() -> void:
 	boss_panel_style.content_margin_top = 6
 	boss_panel_style.content_margin_bottom = 6
 	(_boss_bar_container.get_node("Panel") as PanelContainer).add_theme_stylebox_override("panel", boss_panel_style)
-	root.add_child(_boss_bar_container)
 
-	# Turn order timeline is a reusable scene with a stable node contract.
-	var turn_panel := preload("res://scenes/ui/combat/components/turn_order_panel.tscn").instantiate() as PanelContainer
+	var turn_panel := root.get_node("TurnOrderPanel") as PanelContainer
 	var turn_style := StyleBoxFlat.new()
 	turn_style.bg_color = Color(0.05, 0.075, 0.13, 0.7)
 	turn_style.border_color = UITheme.BORDER_SOFT
@@ -170,24 +163,13 @@ func _build_layout() -> void:
 	turn_caption.add_theme_font_size_override("font_size", 8)
 	turn_caption.add_theme_color_override("font_color", UITheme.TEXT_FAINT)
 	_turn_box = turn_panel.get_node("TurnRow/TurnItems") as HBoxContainer
-	root.add_child(turn_panel)
 
-	# ===== CENTER: the battlefield =====
-	# Party on the left, enemies on the right, real sprites on the stage.
-	_battlefield = BATTLEFIELD_SCENE.instantiate() as Battlefield
+	_battlefield = root.get_node("Battlefield") as Battlefield
 	_battlefield.arena_id = group_id
-	_battlefield.name = "Battlefield"
-	_battlefield.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_battlefield.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_battlefield.custom_minimum_size = Vector2(0, 280)
 	_battlefield.actor_clicked.connect(_on_battlefield_actor_clicked)
 	_battlefield.cinematic_impact.connect(_camera_shake)
-	root.add_child(_battlefield)
 
-	# ===== BOTTOM: active character info + skills =====
-	# Bottom combat HUD: authored panel hierarchy with script-owned data binding.
-	var bottom := preload("res://scenes/ui/combat/components/combat_bottom_hud.tscn").instantiate() as HBoxContainer
-	root.add_child(bottom)
+	var bottom := root.get_node("CombatBottomHUD") as HBoxContainer
 	var info_panel := bottom.get_node("ActiveInfoPanel") as PanelContainer
 	var roster_panel := bottom.get_node("RosterPanel") as PanelContainer
 	var skills_panel := bottom.get_node("SkillsPanel") as PanelContainer
@@ -224,6 +206,8 @@ func _build_layout() -> void:
 	_log_label = bottom.get_node("LogPanel/LogContent/LogText") as RichTextLabel
 	_log_label.add_theme_font_size_override("normal_font_size", 9)
 	_log_label.add_theme_color_override("default_color", UITheme.TEXT_DIM)
+	_camera_shake_timer = 0.0
+	_camera_shake_intensity = 0.0
 
 func _start_battle() -> void:
 	_resolved = false
