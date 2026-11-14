@@ -6,3 +6,96 @@
 custom_minimum_size = Vector2(560, 460)
 mouse_filter = 2
 script = ExtResource("1")
+
+[node name="Glyph" type="Node2D" parent="."]
+
+[node name="Ring0" type="Line2D" parent="Glyph"]
+points = PackedVector2Array(1, 0, 0.924, 0.383, 0.707, 0.707, 0.383, 0.924, 0, 1, -0.383, 0.924, -0.707, 0.707, -0.924, 0.383, -1, 0, -0.924, -0.383, -0.707, -0.707, -0.383, -0.924, 0, -1, 0.383, -0.924, 0.707, -0.707, 0.924, -0.383, 1, 0)
+width = 2.0
+default_color = Color(0.71, 0.55, 1, 0.42)
+
+[node name="Ring1" type="Line2D" parent="Glyph"]
+points = PackedVector2Array(1, 0, 0.924, 0.383, 0.707, 0.707, 0.383, 0.924, 0, 1, -0.383, 0.924, -0.707, 0.707, -0.924, 0.383, -1, 0, -0.924, -0.383, -0.707, -0.707, -0.383, -0.924, 0, -1, 0.383, -0.924, 0.707, -0.707, 0.924, -0.383, 1, 0)
+width = 2.0
+default_color = Color(0.71, 0.55, 1, 0.33999999999999997)
+
+[node name="Ring2" type="Line2D" parent="Glyph"]
+points = PackedVector2Array(1, 0, 0.924, 0.383, 0.707, 0.707, 0.383, 0.924, 0, 1, -0.383, 0.924, -0.707, 0.707, -0.924, 0.383, -1, 0, -0.924, -0.383, -0.707, -0.707, -0.383, -0.924, 0, -1, 0.383, -0.924, 0.707, -0.707, 0.924, -0.383, 1, 0)
+width = 2.0
+default_color = Color(0.71, 0.55, 1, 0.26)
+
+[node name="Spoke0" type="Line2D" parent="Glyph"]
+points = PackedVector2Array(0.62, 0, 1.08, 0)
+width = 2.0
+default_color = Color(0.71, 0.55, 1, 0.45)
+
+[node name="Spoke1" type="Line2D" parent="Glyph"]
+points = PackedVector2Array(0.62, 0, 1.08, 0)
+width = 2.0
+default_color = Color(0.71, 0.55, 1, 0.45)
+
+[node name="Spoke2" type="Line2D" parent="Glyph"]
+points = PackedVector2Array(0.62, 0, 1.08, 0)
+width = 2.0
+default_color = Color(0.71, 0.55, 1, 0.45)
+
+[node name="Spoke3" type="Line2D" parent="Glyph"]
+points = PackedVector2Array(0.62, 0, 1.08, 0)
+width = 2.0
+default_color = Color(0.71, 0.55, 1, 0.45)
+
+[node name="Spoke4" type="Line2D" parent="Glyph"]
+points = PackedVector2Array(0.62, 0, 1.08, 0)
+width = 2.0
+default_color = Color(0.71, 0.55, 1, 0.45)
+
+[node name="Spoke5" type="Line2D" parent="Glyph"]
+points = PackedVector2Array(0.62, 0, 1.08, 0)
+width = 2.0
+default_color = Color(0.71, 0.55, 1, 0.45)
+
+[node name="Spoke6" type="Line2D" parent="Glyph"]
+points = PackedVector2Array(0.62, 0, 1.08, 0)
+width = 2.0
+default_color = Color(0.71, 0.55, 1, 0.45)
+
+[node name="Spoke7" type="Line2D" parent="Glyph"]
+points = PackedVector2Array(0.62, 0, 1.08, 0)
+width = 2.0
+default_color = Color(0.71, 0.55, 1, 0.45)
+
+[node name="Spark0" type="Polygon2D" parent="Glyph"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(1, 0.94, 0.78, 1)
+
+[node name="Spark1" type="Polygon2D" parent="Glyph"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(1, 0.94, 0.78, 1)
+
+[node name="Spark2" type="Polygon2D" parent="Glyph"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(1, 0.94, 0.78, 1)
+
+[node name="Spark3" type="Polygon2D" parent="Glyph"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(1, 0.94, 0.78, 1)
+
+[node name="Spark4" type="Polygon2D" parent="Glyph"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(1, 0.94, 0.78, 1)
+
+[node name="Spark5" type="Polygon2D" parent="Glyph"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(1, 0.94, 0.78, 1)
+
+[node name="Spark6" type="Polygon2D" parent="Glyph"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(1, 0.94, 0.78, 1)
+
+[node name="Spark7" type="Polygon2D" parent="Glyph"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(1, 0.94, 0.78, 1)
+
+[node name="Core" type="Polygon2D" parent="Glyph"]
+polygon = PackedVector2Array(1, 0, 0.924, 0.383, 0.707, 0.707, 0.383, 0.924, 0, 1, -0.383, 0.924, -0.707, 0.707, -0.924, 0.383, -1, 0, -0.924, -0.383, -0.707, -0.707, -0.383, -0.924, 0, -1, 0.383, -0.924, 0.707, -0.707, 0.924, -0.383, 1, 0)
+color = Color(0.71, 0.55, 1, 0.75)
