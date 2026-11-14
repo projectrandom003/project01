@@ -976,17 +976,12 @@ func _float_text(actor: BattlefieldActor, text: String, color: Color, delay: flo
 
 
 func _show_banner(text: String) -> void:
-	var banner := UIFactory.label(text, 26, UITheme.GOLD_BRIGHT)
-	banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	banner.set_anchors_preset(Control.PRESET_CENTER)
-	banner.offset_left = -320
-	banner.offset_right = 320
-	banner.offset_top = -22
-	banner.offset_bottom = 22
+	var banner := preload("res://scenes/ui/combat/components/battle_event_banner.tscn").instantiate() as Label
+	banner.text = text
+	banner.add_theme_font_size_override("font_size", 26)
+	banner.add_theme_color_override("font_color", UITheme.GOLD_BRIGHT)
 	banner.add_theme_color_override("font_outline_color", Color(0.01, 0.02, 0.05, 0.95))
 	banner.add_theme_constant_override("outline_size", 7)
-	banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	banner.z_index = 60
 	add_child(banner)
 	banner.modulate = Color(1, 1, 1, 0)
 	var tween := create_tween()
