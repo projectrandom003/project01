@@ -1,0 +1,362 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/launch_forest_backdrop.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/ui/backgrounds/launch_forest_background.svg" id="2"]
+
+[node name="LaunchForestBackdrop" type="Control"]
+mouse_filter = 2
+script = ExtResource("1")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Effects" type="Node2D" parent="."]
+
+[node name="Moonshaft0" type="Polygon2D" parent="Effects"]
+polygon = PackedVector2Array(917.8, 130, 963.8, 130, 1122.8, 886, 854.8, 886)
+color = Color(0.72, 0.88, 0.76, 0.03)
+
+[node name="Moonshaft1" type="Polygon2D" parent="Effects"]
+polygon = PackedVector2Array(1119.3999999999999, 130, 1165.3999999999999, 130, 1324.3999999999999, 886, 1056.3999999999999, 886)
+color = Color(0.72, 0.88, 0.76, 0.03)
+
+[node name="Moonshaft2" type="Polygon2D" parent="Effects"]
+polygon = PackedVector2Array(1321, 130, 1367, 130, 1526, 886, 1258, 886)
+color = Color(0.72, 0.88, 0.76, 0.03)
+
+[node name="Moonshaft3" type="Polygon2D" parent="Effects"]
+polygon = PackedVector2Array(1522.6, 130, 1568.6, 130, 1727.6, 886, 1459.6, 886)
+color = Color(0.72, 0.88, 0.76, 0.03)
+
+[node name="Mist0" type="Polygon2D" parent="Effects"]
+polygon = PackedVector2Array(-260, 752.4000000000001, -110, 725.4000000000001, 40, 739.4000000000001, 220, 719.4000000000001, 330, 759.4000000000001, 330, 786.4000000000001, -260, 786.4000000000001)
+color = Color(0.70, 0.84, 0.78, 0.035)
+
+[node name="Mist1" type="Polygon2D" parent="Effects"]
+polygon = PackedVector2Array(-260, 833.4, -110, 806.4, 40, 820.4, 220, 800.4, 330, 840.4, 330, 867.4, -260, 867.4)
+color = Color(0.70, 0.84, 0.78, 0.035)
+
+[node name="Mist2" type="Polygon2D" parent="Effects"]
+polygon = PackedVector2Array(-260, 914.4000000000001, -110, 887.4000000000001, 40, 901.4000000000001, 220, 881.4000000000001, 330, 921.4000000000001, 330, 948.4000000000001, -260, 948.4000000000001)
+color = Color(0.70, 0.84, 0.78, 0.035)
+
+[node name="Mist3" type="Polygon2D" parent="Effects"]
+polygon = PackedVector2Array(-260, 995.4, -110, 968.4, 40, 982.4, 220, 962.4, 330, 1002.4, 330, 1029.4, -260, 1029.4)
+color = Color(0.70, 0.84, 0.78, 0.035)
+
+[node name="Firefly0" type="Polygon2D" parent="Effects"]
+position = Vector2(29, 41)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Petal0" type="Line2D" parent="Effects"]
+points = PackedVector2Array(-4, -2, 4, 2)
+position = Vector2(29, 41)
+width = 1.2
+default_color = Color(0.84, 0.72, 0.62, 0.18)
+
+[node name="Firefly1" type="Polygon2D" parent="Effects"]
+position = Vector2(202, 138)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly2" type="Polygon2D" parent="Effects"]
+position = Vector2(375, 235)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly3" type="Polygon2D" parent="Effects"]
+position = Vector2(548, 332)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly4" type="Polygon2D" parent="Effects"]
+position = Vector2(721, 429)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Petal4" type="Line2D" parent="Effects"]
+points = PackedVector2Array(-4, -2, 4, 2)
+position = Vector2(721, 429)
+width = 1.2
+default_color = Color(0.84, 0.72, 0.62, 0.18)
+
+[node name="Firefly5" type="Polygon2D" parent="Effects"]
+position = Vector2(894, 526)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly6" type="Polygon2D" parent="Effects"]
+position = Vector2(1067, 623)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly7" type="Polygon2D" parent="Effects"]
+position = Vector2(1240, 720)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly8" type="Polygon2D" parent="Effects"]
+position = Vector2(1413, 817)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Petal8" type="Line2D" parent="Effects"]
+points = PackedVector2Array(-4, -2, 4, 2)
+position = Vector2(1413, 817)
+width = 1.2
+default_color = Color(0.84, 0.72, 0.62, 0.18)
+
+[node name="Firefly9" type="Polygon2D" parent="Effects"]
+position = Vector2(1586, 914)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly10" type="Polygon2D" parent="Effects"]
+position = Vector2(1759, 1011)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly11" type="Polygon2D" parent="Effects"]
+position = Vector2(12, 28)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly12" type="Polygon2D" parent="Effects"]
+position = Vector2(185, 125)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Petal12" type="Line2D" parent="Effects"]
+points = PackedVector2Array(-4, -2, 4, 2)
+position = Vector2(185, 125)
+width = 1.2
+default_color = Color(0.84, 0.72, 0.62, 0.18)
+
+[node name="Firefly13" type="Polygon2D" parent="Effects"]
+position = Vector2(358, 222)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly14" type="Polygon2D" parent="Effects"]
+position = Vector2(531, 319)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly15" type="Polygon2D" parent="Effects"]
+position = Vector2(704, 416)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly16" type="Polygon2D" parent="Effects"]
+position = Vector2(877, 513)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Petal16" type="Line2D" parent="Effects"]
+points = PackedVector2Array(-4, -2, 4, 2)
+position = Vector2(877, 513)
+width = 1.2
+default_color = Color(0.84, 0.72, 0.62, 0.18)
+
+[node name="Firefly17" type="Polygon2D" parent="Effects"]
+position = Vector2(1050, 610)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly18" type="Polygon2D" parent="Effects"]
+position = Vector2(1223, 707)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly19" type="Polygon2D" parent="Effects"]
+position = Vector2(1396, 804)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly20" type="Polygon2D" parent="Effects"]
+position = Vector2(1569, 901)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Petal20" type="Line2D" parent="Effects"]
+points = PackedVector2Array(-4, -2, 4, 2)
+position = Vector2(1569, 901)
+width = 1.2
+default_color = Color(0.84, 0.72, 0.62, 0.18)
+
+[node name="Firefly21" type="Polygon2D" parent="Effects"]
+position = Vector2(1742, 998)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly22" type="Polygon2D" parent="Effects"]
+position = Vector2(1915, 15)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly23" type="Polygon2D" parent="Effects"]
+position = Vector2(168, 112)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly24" type="Polygon2D" parent="Effects"]
+position = Vector2(341, 209)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Petal24" type="Line2D" parent="Effects"]
+points = PackedVector2Array(-4, -2, 4, 2)
+position = Vector2(341, 209)
+width = 1.2
+default_color = Color(0.84, 0.72, 0.62, 0.18)
+
+[node name="Firefly25" type="Polygon2D" parent="Effects"]
+position = Vector2(514, 306)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly26" type="Polygon2D" parent="Effects"]
+position = Vector2(687, 403)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly27" type="Polygon2D" parent="Effects"]
+position = Vector2(860, 500)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly28" type="Polygon2D" parent="Effects"]
+position = Vector2(1033, 597)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Petal28" type="Line2D" parent="Effects"]
+points = PackedVector2Array(-4, -2, 4, 2)
+position = Vector2(1033, 597)
+width = 1.2
+default_color = Color(0.84, 0.72, 0.62, 0.18)
+
+[node name="Firefly29" type="Polygon2D" parent="Effects"]
+position = Vector2(1206, 694)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly30" type="Polygon2D" parent="Effects"]
+position = Vector2(1379, 791)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly31" type="Polygon2D" parent="Effects"]
+position = Vector2(1552, 888)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly32" type="Polygon2D" parent="Effects"]
+position = Vector2(1725, 985)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Petal32" type="Line2D" parent="Effects"]
+points = PackedVector2Array(-4, -2, 4, 2)
+position = Vector2(1725, 985)
+width = 1.2
+default_color = Color(0.84, 0.72, 0.62, 0.18)
+
+[node name="Firefly33" type="Polygon2D" parent="Effects"]
+position = Vector2(1898, 2)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly34" type="Polygon2D" parent="Effects"]
+position = Vector2(151, 99)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly35" type="Polygon2D" parent="Effects"]
+position = Vector2(324, 196)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly36" type="Polygon2D" parent="Effects"]
+position = Vector2(497, 293)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Petal36" type="Line2D" parent="Effects"]
+points = PackedVector2Array(-4, -2, 4, 2)
+position = Vector2(497, 293)
+width = 1.2
+default_color = Color(0.84, 0.72, 0.62, 0.18)
+
+[node name="Firefly37" type="Polygon2D" parent="Effects"]
+position = Vector2(670, 390)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly38" type="Polygon2D" parent="Effects"]
+position = Vector2(843, 487)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly39" type="Polygon2D" parent="Effects"]
+position = Vector2(1016, 584)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly40" type="Polygon2D" parent="Effects"]
+position = Vector2(1189, 681)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Petal40" type="Line2D" parent="Effects"]
+points = PackedVector2Array(-4, -2, 4, 2)
+position = Vector2(1189, 681)
+width = 1.2
+default_color = Color(0.84, 0.72, 0.62, 0.18)
+
+[node name="Firefly41" type="Polygon2D" parent="Effects"]
+position = Vector2(1362, 778)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly42" type="Polygon2D" parent="Effects"]
+position = Vector2(1535, 875)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly43" type="Polygon2D" parent="Effects"]
+position = Vector2(1708, 972)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Firefly44" type="Polygon2D" parent="Effects"]
+position = Vector2(1881, 1069)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="Petal44" type="Line2D" parent="Effects"]
+points = PackedVector2Array(-4, -2, 4, 2)
+position = Vector2(1881, 1069)
+width = 1.2
+default_color = Color(0.84, 0.72, 0.62, 0.18)
+
+[node name="Firefly45" type="Polygon2D" parent="Effects"]
+position = Vector2(134, 86)
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.85, 0.94, 0.72, 0.3)
+
+[node name="GladeSeal" type="Line2D" parent="Effects"]
+position = Vector2(1094.4, 820.8)
+points = PackedVector2Array(81, 0, 80.692, 7.06, 79.769, 14.066, 78.24, 20.964, 76.115, 27.704, 73.411, 34.232, 70.148, 40.5, 66.351, 46.46, 62.05, 52.066, 57.276, 57.276, 52.066, 62.05, 46.46, 66.351, 40.5, 70.148, 34.232, 73.411, 27.704, 76.115, 20.964, 78.24, 14.066, 79.769, 7.06, 80.692, 0, 81, -7.06, 80.692, -14.066, 79.769, -20.964, 78.24, -27.704, 76.115, -34.232, 73.411, -40.5, 70.148, -46.46, 66.351, -52.066, 62.05, -57.276, 57.276, -62.05, 52.066, -66.351, 46.46, -70.148, 40.5, -73.411, 34.232, -76.115, 27.704, -78.24, 20.964, -79.769, 14.066, -80.692, 7.06, -81, 0, -80.692, -7.06, -79.769, -14.066, -78.24, -20.964, -76.115, -27.704, -73.411, -34.232, -70.148, -40.5, -66.351, -46.46, -62.05, -52.066, -57.276, -57.276, -52.066, -62.05, -46.46, -66.351, -40.5, -70.148, -34.232, -73.411, -27.704, -76.115, -20.964, -78.24, -14.066, -79.769, -7.06, -80.692, 0, -81, 7.06, -80.692, 14.066, -79.769, 20.964, -78.24, 27.704, -76.115, 34.232, -73.411, 40.5, -70.148, 46.46, -66.351, 52.066, -62.05, 57.276, -57.276, 62.05, -52.066, 66.351, -46.46, 70.148, -40.5, 73.411, -34.232, 76.115, -27.704, 78.24, -20.964, 79.769, -14.066, 80.692, -7.06, 81, 0)
+width = 1.8
+default_color = Color(0.73, 0.88, 0.68, 0.16)
