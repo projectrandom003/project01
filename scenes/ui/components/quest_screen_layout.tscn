@@ -1,4 +1,6 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/components/quest_detail_content.tscn" id="2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_detail"]
 bg_color = Color(0.039, 0.063, 0.114, 1)
@@ -52,7 +54,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="DetailContent" type="VBoxContainer" parent="DetailPanel/DetailScroll"]
+[node name="DetailContent" parent="DetailPanel/DetailScroll" instance=ExtResource("2")]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10

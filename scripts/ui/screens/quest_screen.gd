@@ -9,6 +9,13 @@ const QUEST_OBJECTIVE_ROW_SCENE: PackedScene = preload("res://scenes/ui/componen
 
 var _list: VBoxContainer
 var _detail: VBoxContainer
+var _detail_title: Label
+var _detail_chips: HBoxContainer
+var _detail_summary: Label
+var _objectives: VBoxContainer
+var _reward_chips: HBoxContainer
+var _reward_items: VBoxContainer
+var _detail_actions: HBoxContainer
 var _selected_quest: String = ""
 var _cards: Dictionary = {}
 
@@ -24,6 +31,13 @@ func _build_content() -> void:
 	content.add_child(layout)
 	_list = layout.get_node("QuestListPanel/ListScroll/QuestList") as VBoxContainer
 	_detail = layout.get_node("DetailPanel/DetailScroll/DetailContent") as VBoxContainer
+	_detail_title = _detail.get_node("Title") as Label
+	_detail_chips = _detail.get_node("StatusChips") as HBoxContainer
+	_detail_summary = _detail.get_node("Summary") as Label
+	_objectives = _detail.get_node("Objectives") as VBoxContainer
+	_reward_chips = _detail.get_node("RewardChips") as HBoxContainer
+	_reward_items = _detail.get_node("RewardItems") as VBoxContainer
+	_detail_actions = _detail.get_node("Actions") as HBoxContainer
 
 
 func _refresh() -> void:
@@ -78,26 +92,48 @@ func _make_card(quest_id: String) -> PanelContainer:
 
 
 func _show_detail(quest_id: String) -> void:
-	UIFactory.clear(_detail)
+	UIFactory.clear(_detail_chips)
+	UIFactory.clear(_objectives)
+	UIFactory.clear(_reward_chips)
+	UIFactory.clear(_reward_items)
+	UIFactory.clear(_detail_actions)
+	_detail.visible = true
 	if quest_id.is_empty():
-		_detail.add_child(UIFactory.label("No quest selected.", 13, UITheme.TEXT_DIM))
+		_detail_title.text = "No quest selected."
+		_detail_title.add_theme_color_override("font_color", UITheme.TEXT_DIM)
+		_detail_chips.visible = false
+		_detail_summary.visible = false
+		_objectives.visible = false
+		_reward_chips.visible = false
+		_reward_items.visible = false
+		_detail_actions.visible = false
 		return
 	var quest: Dictionary = ContentDB.get_quest(quest_id)
 	if quest.is_empty():
-		_detail.add_child(UIFactory.label("Unknown quest.", 13, UITheme.DANGER))
+		_detail_title.text = "Unknown quest."
+		_detail_title.add_theme_color_override("font_color", UITheme.DANGER)
+		_detail_chips.visible = false
+		_detail_summary.visible = false
+		_objectives.visible = false
+		_reward_chips.visible = false
+		_reward_items.visible = false
+		_detail_actions.visible = false
 		return
+
 	var state := GameState.quest_state(quest_id)
 	var state_color := UITheme.GOLD if state == "active" else (UITheme.GREEN if state == "complete" else UITheme.TEXT_DIM)
+	_detail_title.text = str(quest.get("name", quest_id))
+	_detail_title.add_theme_color_override("font_color", UITheme.TEXT)
+	_detail_chips.visible = true
+	_detail_summary.visible = true
+	_objectives.visible = true
+	_reward_chips.visible = true
+	_reward_items.visible = true
+	_detail_actions.visible = true
+	_detail_chips.add_child(UIFactory.chip(state.replace("_", " ").capitalize(), state_color))
+	_detail_chips.add_child(UIFactory.chip(str(quest.get("region", "greenward")).capitalize(), UITheme.TEAL))
+	_detail_summary.text = str(quest.get("summary", ""))
 
-	_detail.add_child(UIFactory.heading(str(quest.get("name", quest_id)), 24, UITheme.TEXT))
-	var chips := UIFactory.hbox(6)
-	chips.add_child(UIFactory.chip(state.replace("_", " ").capitalize(), state_color))
-	chips.add_child(UIFactory.chip(str(quest.get("region", "greenward")).capitalize(), UITheme.TEAL))
-	_detail.add_child(chips)
-	_detail.add_child(UIFactory.wrapped(str(quest.get("summary", "")), 13, UITheme.TEXT_DIM))
-	_detail.add_child(UIFactory.separator())
-
-	_detail.add_child(UIFactory.label("OBJECTIVES", 10, UITheme.TEXT_FAINT))
 	var steps: Array = quest.get("steps", [])
 	var current := GameState.quest_step_index(quest_id)
 	for index in steps.size():
@@ -113,29 +149,23 @@ func _show_detail(quest_id: String) -> void:
 			objective_text += "  (%d/%d)" % [progress, int(step.get("count", 1))]
 		var row := QUEST_OBJECTIVE_ROW_SCENE.instantiate() as QuestObjectiveRow
 		row.setup(marker, objective_text, color if (done or active) else UITheme.TEXT_DIM)
-		_detail.add_child(row)
+		_objectives.add_child(row)
 
-	_detail.add_child(UIFactory.separator())
-	_detail.add_child(UIFactory.label("REWARDS", 10, UITheme.TEXT_FAINT))
 	var rewards: Dictionary = quest.get("rewards", {})
-	var reward_row := UIFactory.hbox(8)
 	if int(rewards.get("gold", 0)) > 0:
-		reward_row.add_child(UIFactory.chip("%s Gold" % UIFactory.number(int(rewards.gold)), UITheme.GOLD))
+		_reward_chips.add_child(UIFactory.chip("%s Gold" % UIFactory.number(int(rewards.gold)), UITheme.GOLD))
 	if int(rewards.get("crystals", 0)) > 0:
-		reward_row.add_child(UIFactory.chip("%s Crystals" % UIFactory.number(int(rewards.crystals)), UITheme.TEAL))
+		_reward_chips.add_child(UIFactory.chip("%s Crystals" % UIFactory.number(int(rewards.crystals)), UITheme.TEAL))
 	if int(rewards.get("xp", 0)) > 0:
-		reward_row.add_child(UIFactory.chip("%s XP" % UIFactory.number(int(rewards.xp)), UITheme.GREEN))
-	_detail.add_child(reward_row)
+		_reward_chips.add_child(UIFactory.chip("%s XP" % UIFactory.number(int(rewards.xp)), UITheme.GREEN))
 	for item_id in rewards.get("items", {}).keys():
 		var item: Dictionary = ContentDB.get_item(str(item_id))
-		_detail.add_child(UIFactory.label(
+		_reward_items.add_child(UIFactory.label(
 			"• %s ×%d — %s" % [str(item.get("name", item_id)), int(rewards["items"][item_id]), str(item.get("description", ""))],
 			11,
 			UITheme.TEXT_DIM
 		))
 
-	_detail.add_child(UIFactory.separator())
-	var actions := UIFactory.hbox(8)
 	var tracked := str(GameState.flags.get("tracked_quest", "")) == quest_id
 	var track_button := UIFactory.button("Untrack" if tracked else "Track on HUD", not tracked)
 	track_button.pressed.connect(func() -> void:
@@ -146,11 +176,11 @@ func _show_detail(quest_id: String) -> void:
 		_rebuild_list()
 		_show_detail(quest_id)
 	)
-	actions.add_child(track_button)
+	_detail_actions.add_child(track_button)
 	if state == "not_started":
 		var requires := str(quest.get("requires", ""))
 		if not requires.is_empty() and GameState.quest_state(requires) != "complete":
-			actions.add_child(UIFactory.wrapped(
+			_detail_actions.add_child(UIFactory.wrapped(
 				"Complete \"%s\" first." % str(ContentDB.get_quest(requires).get("name", requires)),
 				11,
 				UITheme.TEXT_FAINT
@@ -166,7 +196,6 @@ func _show_detail(quest_id: String) -> void:
 					giver_name = "Sera Quill"
 				"wanderer_pip":
 					giver_name = "Pip"
-			actions.add_child(UIFactory.wrapped("Speak with %s to begin." % giver_name, 11, UITheme.TEXT_FAINT))
+			_detail_actions.add_child(UIFactory.wrapped("Speak with %s to begin." % giver_name, 11, UITheme.TEXT_FAINT))
 	elif state == "active" and GameState.quest_ready(quest_id):
-		actions.add_child(UIFactory.wrapped("Ready to turn in. Return to the quest giver.", 11, UITheme.GREEN))
-	_detail.add_child(actions)
+		_detail_actions.add_child(UIFactory.wrapped("Ready to turn in. Return to the quest giver.", 11, UITheme.GREEN))
