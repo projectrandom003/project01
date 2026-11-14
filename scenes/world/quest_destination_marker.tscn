@@ -5,3 +5,62 @@
 [node name="QuestDestinationMarker" type="Node2D"]
 script = ExtResource("1_marker")
 z_index = 35
+
+[node name="GroundHalo" type="Polygon2D" parent="."]
+position = Vector2(0, -2)
+polygon = PackedVector2Array(34, 0, 33.71, 4.44, 32.84, 8.8, 31.41, 13.01, 29.44, 17, 26.97, 20.7, 24.04, 24.04, 20.7, 26.97, 17, 29.44, 13.01, 31.41, 8.8, 32.84, 4.44, 33.71, 0, 34, -4.44, 33.71, -8.8, 32.84, -13.01, 31.41, -17, 29.44, -20.7, 26.97, -24.04, 24.04, -26.97, 20.7, -29.44, 17, -31.41, 13.01, -32.84, 8.8, -33.71, 4.44, -34, 0, -33.71, -4.44, -32.84, -8.8, -31.41, -13.01, -29.44, -17, -26.97, -20.7, -24.04, -24.04, -20.7, -26.97, -17, -29.44, -13.01, -31.41, -8.8, -32.84, -4.44, -33.71, 0, -34, 4.44, -33.71, 8.8, -32.84, 13.01, -31.41, 17, -29.44, 20.7, -26.97, 24.04, -24.04, 26.97, -20.7, 29.44, -17, 31.41, -13.01, 32.84, -8.8, 33.71, -4.44)
+color = Color(0.5, 0.89, 0.88, 0.07)
+
+[node name="OuterRing" type="Line2D" parent="."]
+points = PackedVector2Array(18, 0, 17.85, 2.35, 17.39, 4.66, 16.63, 6.89, 15.59, 9, 14.28, 10.96, 12.73, 12.73, 10.96, 14.28, 9, 15.59, 6.89, 16.63, 4.66, 17.39, 2.35, 17.85, 0, 18, -2.35, 17.85, -4.66, 17.39, -6.89, 16.63, -9, 15.59, -10.96, 14.28, -12.73, 12.73, -14.28, 10.96, -15.59, 9, -16.63, 6.89, -17.39, 4.66, -17.85, 2.35, -18, 0, -17.85, -2.35, -17.39, -4.66, -16.63, -6.89, -15.59, -9, -14.28, -10.96, -12.73, -12.73, -10.96, -14.28, -9, -15.59, -6.89, -16.63, -4.66, -17.39, -2.35, -17.85, 0, -18, 2.35, -17.85, 4.66, -17.39, 6.89, -16.63, 9, -15.59, 10.96, -14.28, 12.73, -12.73, 14.28, -10.96, 15.59, -9, 16.63, -6.89, 17.39, -4.66, 17.85, -2.35)
+closed = true
+width = 2.0
+default_color = Color(0.5, 0.89, 0.88, 0.72)
+antialiased = true
+
+[node name="SecondaryRing" type="Line2D" parent="."]
+points = PackedVector2Array(26, 0, 25.78, 3.39, 25.11, 6.73, 24.02, 9.95, 22.52, 13, 20.63, 15.83, 18.38, 18.38, 15.83, 20.63, 13, 22.52, 9.95, 24.02, 6.73, 25.11, 3.39, 25.78, 0, 26, -3.39, 25.78, -6.73, 25.11, -9.95, 24.02, -13, 22.52, -15.83, 20.63, -18.38, 18.38, -20.63, 15.83, -22.52, 13, -24.02, 9.95, -25.11, 6.73, -25.78, 3.39, -26, 0, -25.78, -3.39, -25.11, -6.73, -24.02, -9.95, -22.52, -13, -20.63, -15.83, -18.38, -18.38, -15.83, -20.63, -13, -22.52, -9.95, -24.02, -6.73, -25.11, -3.39, -25.78, 0, -26, 3.39, -25.78, 6.73, -25.11, 9.95, -24.02, 13, -22.52, 15.83, -20.63, 18.38, -18.38, 20.63, -15.83, 22.52, -13, 24.02, -9.95, 25.11, -6.73, 25.78, -3.39)
+closed = true
+width = 1.2
+default_color = Color(0.5, 0.89, 0.88, 0.28)
+antialiased = true
+
+[node name="BeaconGlow" type="Line2D" parent="."]
+points = PackedVector2Array(0, -10, 0, -104)
+width = 8.0
+default_color = Color(0.5, 0.89, 0.88, 0.2)
+antialiased = true
+
+[node name="BeaconCore" type="Line2D" parent="."]
+points = PackedVector2Array(0, -12, 0, -102)
+width = 1.8
+default_color = Color(0.5, 0.89, 0.88, 0.72)
+antialiased = true
+
+[node name="TargetGlyph" type="Polygon2D" parent="."]
+position = Vector2(0, -108)
+polygon = PackedVector2Array(0, -8, 5.44, 0, 0, 8, -5.44, 0)
+color = Color(0.5, 0.89, 0.88, 1)
+
+[node name="TargetCore" type="Polygon2D" parent="."]
+position = Vector2(0, -108)
+polygon = PackedVector2Array(0, -2.5, 1.7000000000000002, 0, 0, 2.5, -1.7000000000000002, 0)
+color = Color(1, 1, 1, 1)
+
+[node name="Sparks" type="Node2D" parent="."]
+
+[node name="Spark0" type="Polygon2D" parent="Sparks"]
+polygon = PackedVector2Array(0, -2, 1.36, 0, 0, 2, -1.36, 0)
+color = Color(0.5, 0.89, 0.88, 0.9)
+
+[node name="Spark1" type="Polygon2D" parent="Sparks"]
+polygon = PackedVector2Array(0, -2, 1.36, 0, 0, 2, -1.36, 0)
+color = Color(0.5, 0.89, 0.88, 0.9)
+
+[node name="Spark2" type="Polygon2D" parent="Sparks"]
+polygon = PackedVector2Array(0, -2, 1.36, 0, 0, 2, -1.36, 0)
+color = Color(0.5, 0.89, 0.88, 0.9)
+
+[node name="Spark3" type="Polygon2D" parent="Sparks"]
+polygon = PackedVector2Array(0, -2, 1.36, 0, 0, 2, -1.36, 0)
+color = Color(0.5, 0.89, 0.88, 0.9)

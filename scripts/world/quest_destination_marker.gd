@@ -1,11 +1,21 @@
 class_name QuestDestinationMarker
 extends Node2D
-## World-space quest beacon. Its position follows the exact live quest target
-## when a matching monster exists, otherwise the authored objective coordinate.
-## The beacon becomes brighter, larger and more animated as the player approaches.
+## World-space quest beacon. Its visual hierarchy is authored in the scene;
+## this script only resolves the live target and animates existing nodes.
 
 var _time := 0.0
 var _distance := INF
+
+@onready var _ground_halo: Polygon2D = $GroundHalo
+@onready var _outer_ring: Line2D = $OuterRing
+@onready var _secondary_ring: Line2D = $SecondaryRing
+@onready var _beacon_glow: Line2D = $BeaconGlow
+@onready var _beacon_core: Line2D = $BeaconCore
+@onready var _target_glyph: Polygon2D = $TargetGlyph
+@onready var _target_core: Polygon2D = $TargetCore
+@onready var _sparks: Array[Polygon2D] = [
+	$Sparks/Spark0, $Sparks/Spark1, $Sparks/Spark2, $Sparks/Spark3
+]
 
 
 func _ready() -> void:
@@ -46,31 +56,36 @@ func _process(delta: float) -> void:
 	var marker_player_position: Vector2 = marker_player.global_position if marker_player is Node2D else GameState._find_player_position()
 	_distance = marker_player_position.distance_to(global_position)
 	visible = true
-	queue_redraw()
+	_animate_nodes()
 
 
-func _draw() -> void:
+func _animate_nodes() -> void:
 	var proximity := 1.0 - clampf(_distance / 420.0, 0.0, 1.0)
 	var pulse := 0.5 + 0.5 * sin(_time * (2.2 + proximity * 2.5))
 	var strength := 0.18 + proximity * 0.72
 	var color := Color("#7fe3e0").lerp(Color("#e4fff0"), proximity * 0.72)
 	var ring_radius := 18.0 + pulse * 5.0 + proximity * 9.0
-	# Soft ground halo and concentric locator rings.
-	draw_circle(Vector2(0, -2), ring_radius + 13.0, Color(color.r, color.g, color.b, strength * 0.07))
-	draw_arc(Vector2(0, -2), ring_radius, 0.0, TAU, 48, Color(color.r, color.g, color.b, strength * 0.72), 2.0 + proximity)
-	draw_arc(Vector2(0, -2), ring_radius + 7.0 + pulse * 2.0, 0.0, TAU, 48, Color(color.r, color.g, color.b, strength * 0.28), 1.2)
-	# Vertical beacon, brightest near the objective.
-	draw_line(Vector2(0, -10), Vector2(0, -104 - pulse * 8.0), Color(color.r, color.g, color.b, strength * 0.20), 8.0 + proximity * 5.0)
-	draw_line(Vector2(0, -12), Vector2(0, -102), Color(color.r, color.g, color.b, strength * 0.72), 1.8)
-	# Floating diamond target glyph.
-	var y := -108.0 - pulse * 5.0
-	var s := 8.0 + proximity * 4.0
-	draw_colored_polygon(PackedVector2Array([
-		Vector2(0, y - s), Vector2(s * 0.68, y), Vector2(0, y + s), Vector2(-s * 0.68, y)
-	]), Color(color.r, color.g, color.b, strength))
-	draw_circle(Vector2(0, y), 2.5 + proximity * 2.0, Color(1.0, 1.0, 1.0, strength))
-	# Four orbiting sparks intensify at close range.
-	for i in 4:
-		var a := _time * (0.7 + proximity) + TAU * float(i) / 4.0
-		var point := Vector2(cos(a) * (ring_radius + 5.0), -2.0 + sin(a) * (ring_radius * 0.55))
-		draw_circle(point, 1.8 + proximity * 1.5, Color(color.r, color.g, color.b, strength * 0.9))
+
+	_ground_halo.color = Color(color.r, color.g, color.b, strength * 0.07)
+	_outer_ring.default_color = Color(color.r, color.g, color.b, strength * 0.72)
+	_outer_ring.width = 2.0 + proximity
+	_outer_ring.scale = Vector2.ONE * (ring_radius / 18.0)
+	_secondary_ring.default_color = Color(color.r, color.g, color.b, strength * 0.28)
+	_secondary_ring.scale = Vector2.ONE * ((ring_radius + 7.0 + pulse * 2.0) / 26.0)
+
+	_beacon_glow.default_color = Color(color.r, color.g, color.b, strength * 0.20)
+	_beacon_glow.width = 8.0 + proximity * 5.0
+	_beacon_core.default_color = Color(color.r, color.g, color.b, strength * 0.72)
+	_target_glyph.position.y = -108.0 - pulse * 5.0
+	_target_glyph.color = Color(color.r, color.g, color.b, strength)
+	_target_glyph.scale = Vector2.ONE * (1.0 + proximity * 0.30)
+	_target_core.position.y = _target_glyph.position.y
+	_target_core.scale = Vector2.ONE * (1.0 + proximity * 0.8)
+	_target_core.color = Color(1.0, 1.0, 1.0, strength)
+
+	for i in _sparks.size():
+		var angle := _time * (0.7 + proximity) + TAU * float(i) / 4.0
+		var point := Vector2(cos(angle) * (ring_radius + 5.0), -2.0 + sin(angle) * (ring_radius * 0.55))
+		_sparks[i].position = point
+		_sparks[i].scale = Vector2.ONE * (0.8 + proximity * 0.55)
+		_sparks[i].color = Color(color.r, color.g, color.b, strength * 0.9)
