@@ -29,59 +29,16 @@ var _party_layer: Node2D
 func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	mouse_filter = Control.MOUSE_FILTER_STOP
-
-	# The loading illustration already contains the logo, title, and ornate
-	# progress-frame. Keep those pixels unobstructed and bind only the live fill
-	# to the exact inner track of the artwork.
-	var artwork := TextureRect.new()
-	artwork.name = "ReverieLoadingArtwork"
-	artwork.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	artwork.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	artwork.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var loading_texture := load("res://assets/ui/backgrounds/reverie_loading_screen.jpg") as Texture2D
-	if loading_texture != null:
-		artwork.texture = loading_texture
-		UIFactory.set_full_rect(artwork)
-		add_child(artwork)
-	else:
-		var backdrop := LaunchForestBackdrop.new()
-		UIFactory.set_full_rect(backdrop)
-		add_child(backdrop)
-
-	# The artwork already contains the word "Loading...". Do not draw a
-	# second caption over it; the animated fill below is the live progress cue.
+	# Artwork and the live progress fill are authored in loading_screen.tscn.
+	_progress_bar = get_node("LiveArtworkProgressFill") as ProgressBar
 	_progress_label = null
-
-	_progress_bar = ProgressBar.new()
-	_progress_bar.name = "LiveArtworkProgressFill"
-	_progress_bar.min_value = 0.0
-	_progress_bar.max_value = 100.0
-	_progress_bar.value = 0.0
-	_progress_bar.show_percentage = false
-	_progress_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_progress_bar.anchor_left = 0.276
-	_progress_bar.anchor_right = 0.704
-	_progress_bar.anchor_top = 0.812
-	_progress_bar.anchor_bottom = 0.833
-	var track := StyleBoxFlat.new()
-	track.bg_color = Color("#171020")
-	track.set_corner_radius_all(5)
-	track.content_margin_left = 0
-	track.content_margin_right = 0
-	track.content_margin_top = 0
-	track.content_margin_bottom = 0
-	_progress_bar.add_theme_stylebox_override("background", track)
-	var fill := StyleBoxFlat.new()
-	fill.bg_color = Color("#d9a0d8")
-	fill.set_corner_radius_all(5)
-	fill.shadow_color = Color(0.88, 0.43, 0.78, 0.65)
-	fill.shadow_size = 5
-	fill.content_margin_left = 0
-	fill.content_margin_right = 0
-	fill.content_margin_top = 0
-	fill.content_margin_bottom = 0
-	_progress_bar.add_theme_stylebox_override("fill", fill)
-	add_child(_progress_bar)
+	var artwork := get_node("ReverieLoadingArtwork") as TextureRect
+	if artwork.texture == null:
+		artwork.visible = false
+		var fallback := LaunchForestBackdrop.new()
+		UIFactory.set_full_rect(fallback)
+		add_child(fallback)
+	_party_layer = get_node("PartyLayer") as Node2D
 
 	var error := ResourceLoader.load_threaded_request(SCENE_PATH, "PackedScene", true)
 	if error != OK and error != ERR_BUSY:

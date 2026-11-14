@@ -5,7 +5,7 @@ extends Control
 var menu: MainMenu
 const MAIN_MENU_SCENE: PackedScene = preload("res://scenes/ui/main_menu.tscn")
 const OPENING_CINEMATIC_SCENE: PackedScene = preload("res://scenes/ui/opening_cinematic.tscn")
-const LoadingScreenScript = preload("res://scripts/ui/loading_screen.gd")
+const LOADING_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/loading_screen.tscn")
 
 
 func _ready() -> void:
@@ -41,7 +41,7 @@ func _launch_game() -> void:
 		intro.visible = false
 		intro.queue_free()
 	menu.visible = false
-	var loading = LoadingScreenScript.new()
+	var loading := LOADING_SCREEN_SCENE.instantiate() as LoadingScreen
 	loading.name = "LoadingScreen"
 	loading.scene_loaded.connect(_on_scene_loaded)
 	loading.load_failed.connect(_on_loading_failed)
