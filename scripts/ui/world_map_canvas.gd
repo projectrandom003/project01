@@ -50,8 +50,8 @@ func _draw() -> void:
 	var h := size.y
 	if w < 40.0 or h < 40.0:
 		return
+	# Background fill is data-independent base; frame/legend are authored nodes.
 	draw_rect(Rect2(Vector2.ZERO, size), Color("#09131b"))
-	draw_rect(Rect2(Vector2(1, 1), size - Vector2(2, 2)), Color("#101e25"), false, 2.0)
 	var bounds := Rect2(Vector2(18, 18), size - Vector2(36, 36))
 	# Fit the entire authored region instead of clipping distant objectives
 	# to an arbitrary 40x32 frame. Include every POI plus the live player and
@@ -218,12 +218,5 @@ func _draw() -> void:
 			player_point - facing * 5.0 + side * 4.0,
 			player_point - facing * 5.0 - side * 4.0
 		]), Color.WHITE)
-	# Compact legend.
-	draw_circle(Vector2(22, h - 13), 3.0, Color("#55d7ff"))
-	draw_string(font, Vector2(31, h - 9), "You", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#d9e5e0"))
-	draw_circle(Vector2(78, h - 13), 3.0, Color("#df6871"))
-	draw_string(font, Vector2(87, h - 9), "Boss", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#d9e5e0"))
-	draw_colored_polygon(PackedVector2Array([Vector2(142, h - 17), Vector2(146, h - 13), Vector2(142, h - 9), Vector2(138, h - 13)]), Color("#ffd65c"))
-	draw_string(font, Vector2(152, h - 9), "Objective", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#d9e5e0"))
-	draw_circle(Vector2(226, h - 13), 3.0, Color("#75c8ef"))
-	draw_string(font, Vector2(235, h - 9), "NPC", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#d9e5e0"))
+	# Compact legend is authored in the scene (static UI composition). Dynamic map
+	# geography, routes, markers, player/objective and calculations remain in script/draw.

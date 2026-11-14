@@ -10,6 +10,7 @@ var _collapsed: bool = false
 var _expand_button: Button
 var _collapse_button: Button
 var _canvas: Control
+var _overlay: Control
 var _world: Node = null
 ## Shared resolver injected by GameScreen through HUD; keeps compass, map and beacon aligned.
 var quest_resolver: QuestNavigationResolver = null
@@ -30,9 +31,12 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
 	_canvas = get_node("MapCanvas") as Control
+	_overlay = get_node_or_null("Overlay") as Control
 	_expand_button = get_node("ExpandButton") as Button
 	_collapse_button = get_node("CollapseButton") as Button
 	_canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if _overlay:
+		_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_canvas.draw.connect(_on_draw)
 	_expand_button.pressed.connect(_request_full_map)
 	_collapse_button.pressed.connect(_toggle_collapse)
@@ -295,23 +299,8 @@ func _on_draw() -> void:
 	])
 	_canvas.draw_colored_polygon(player_points, Color.WHITE)
 
-	# Compact compass and legend make symbols understandable instead of
-	# leaving the player to guess what each dot represents.
-	var font := ThemeDB.fallback_font
-	_canvas.draw_string(font, Vector2(center.x - 3.0, 12.0), "N", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#dce8df"))
-	_canvas.draw_line(center + Vector2(0, -15), center + Vector2(0, -9), Color("#dce8df", 0.8), 1.0)
-	_canvas.draw_rect(Rect2(3, MAP_SIZE - 19, MAP_SIZE - 6, 16), Color(0.015, 0.025, 0.04, 0.88))
-	_canvas.draw_circle(Vector2(10, MAP_SIZE - 11), 2.5, Color("#69c9ed"))
-	_canvas.draw_string(font, Vector2(15, MAP_SIZE - 8), "You", HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("#e5edf5"))
-	_canvas.draw_circle(Vector2(43, MAP_SIZE - 11), 2.5, Color("#83e39b"))
-	_canvas.draw_string(font, Vector2(48, MAP_SIZE - 8), "NPC", HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("#e5edf5"))
-	_canvas.draw_colored_polygon(PackedVector2Array([Vector2(78, MAP_SIZE - 14), Vector2(81, MAP_SIZE - 11), Vector2(78, MAP_SIZE - 8), Vector2(75, MAP_SIZE - 11)]), Color("#ff6878"))
-	_canvas.draw_string(font, Vector2(84, MAP_SIZE - 8), "Boss", HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("#e5edf5"))
-	_canvas.draw_circle(Vector2(117, MAP_SIZE - 11), 2.5, Color("#f0d27c"))
-	_canvas.draw_string(font, Vector2(122, MAP_SIZE - 8), "POI", HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("#e5edf5"))
-
-	# Border
-	_canvas.draw_rect(Rect2(0, 0, MAP_SIZE, MAP_SIZE), Color(0.42, 0.58, 0.66, 0.9), false, 1.0)
+	# Static compass, legend and border are authored overlay nodes in the scene. Dynamic
+	# terrain, markers, player and quest indicators are rendered below.
 
 
 func _toggle_collapse() -> void:
@@ -320,12 +309,16 @@ func _toggle_collapse() -> void:
 		custom_minimum_size = Vector2(60, 24)
 		size = Vector2(60, 24)
 		_canvas.visible = false
+		if _overlay:
+			_overlay.visible = false
 		_expand_button.visible = false
 		_collapse_button.text = "+"
 	else:
 		custom_minimum_size = Vector2(MAP_SIZE, MAP_SIZE)
 		size = Vector2(MAP_SIZE, MAP_SIZE)
 		_canvas.visible = true
+		if _overlay:
+			_overlay.visible = true
 		_expand_button.visible = true
 		_collapse_button.text = "-"
 	_find_world()

@@ -6,3 +6,104 @@
 custom_minimum_size = Vector2(480, 340)
 mouse_filter = 2
 script = ExtResource("1")
+
+[node name="FrameBorder" type="ReferenceRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+border_color = Color(0.0627451, 0.117647, 0.145098, 1)
+border_width = 2.0
+editor_only = false
+
+[node name="Legend" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -22.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="YouDot" type="ColorRect" parent="Legend"]
+layout_mode = 0
+offset_left = 19.0
+offset_top = 7.0
+offset_right = 25.0
+offset_bottom = 13.0
+mouse_filter = 2
+color = Color(0.333333, 0.843137, 1, 1)
+
+[node name="YouLabel" type="Label" parent="Legend"]
+layout_mode = 0
+offset_left = 31.0
+offset_top = 2.0
+offset_right = 60.0
+offset_bottom = 18.0
+theme_override_colors/font_color = Color(0.85098, 0.898039, 0.878431, 1)
+theme_override_font_sizes/font_size = 10
+text = "You"
+
+[node name="BossDot" type="ColorRect" parent="Legend"]
+layout_mode = 0
+offset_left = 75.0
+offset_top = 7.0
+offset_right = 81.0
+offset_bottom = 13.0
+mouse_filter = 2
+color = Color(0.87451, 0.407843, 0.443137, 1)
+
+[node name="BossLabel" type="Label" parent="Legend"]
+layout_mode = 0
+offset_left = 87.0
+offset_top = 2.0
+offset_right = 120.0
+offset_bottom = 18.0
+theme_override_colors/font_color = Color(0.85098, 0.898039, 0.878431, 1)
+theme_override_font_sizes/font_size = 10
+text = "Boss"
+
+[node name="ObjectiveDot" type="ColorRect" parent="Legend"]
+layout_mode = 0
+offset_left = 140.0
+offset_top = 6.0
+offset_right = 144.0
+offset_bottom = 10.0
+rotation = 0.785398
+pivot_offset = Vector2(2, 2)
+mouse_filter = 2
+color = Color(1, 0.839216, 0.360784, 1)
+
+[node name="ObjectiveLabel" type="Label" parent="Legend"]
+layout_mode = 0
+offset_left = 152.0
+offset_top = 2.0
+offset_right = 210.0
+offset_bottom = 18.0
+theme_override_colors/font_color = Color(0.85098, 0.898039, 0.878431, 1)
+theme_override_font_sizes/font_size = 10
+text = "Objective"
+
+[node name="NpcDot" type="ColorRect" parent="Legend"]
+layout_mode = 0
+offset_left = 223.0
+offset_top = 7.0
+offset_right = 229.0
+offset_bottom = 13.0
+mouse_filter = 2
+color = Color(0.458824, 0.784314, 0.937255, 1)
+
+[node name="NpcLabel" type="Label" parent="Legend"]
+layout_mode = 0
+offset_left = 235.0
+offset_top = 2.0
+offset_right = 265.0
+offset_bottom = 18.0
+theme_override_colors/font_color = Color(0.85098, 0.898039, 0.878431, 1)
+theme_override_font_sizes/font_size = 10
+text = "NPC"
