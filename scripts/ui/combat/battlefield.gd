@@ -33,6 +33,7 @@ const BOSS_X := 0.845
 const BOSS_Y := 0.905
 
 const DAMAGE_FONT := 26
+const SOFT_GLOW: Texture2D = preload("res://scenes/ui/combat/components/soft_glow.tres")
 
 const ACTOR_SCENE: PackedScene = preload("res://scenes/ui/battlefield_actor.tscn")
 
@@ -86,18 +87,8 @@ func _build_environment() -> void:
 		estate_backdrop.visible = arena_id == "fallen_matron_encounter"
 	_embers = get_node_or_null("Embers") as CPUParticles2D
 	if _embers == null:
-		_embers = CPUParticles2D.new()
+		_embers = preload("res://scenes/ui/combat/components/arena_embers.tscn").instantiate() as CPUParticles2D
 		_embers.name = "Embers"
-		_embers.amount = 22
-		_embers.lifetime = 7.0
-		_embers.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
-		_embers.emission_rect_extents = Vector2(640, 150)
-		_embers.direction = Vector2(0.15, -1)
-		_embers.initial_velocity_min = 6.0
-		_embers.initial_velocity_max = 20.0
-		_embers.gravity = Vector2(1.5, -2.5)
-		_embers.scale_amount_min = 0.3
-		_embers.scale_amount_max = 0.9
 		add_child(_embers)
 	_embers.color = Color(0.85, 0.6, 0.95, 0.22) if arena_id == "fallen_matron_encounter" else Color(0.62, 0.9, 0.48, 0.20)
 	_stage = get_node_or_null("Actors") as Node2D
@@ -427,7 +418,7 @@ func _spawn_kael_lance(from: Vector2, to: Vector2, fire: Color, gold: Color, pal
 	var glow := PointLight2D.new()
 	glow.color = fire
 	glow.energy = 1.7
-	glow.texture = _make_soft_glow()
+	glow.texture = SOFT_GLOW
 	glow.texture_scale = 0.75
 	spear.add_child(glow)
 	var delta := to - from
@@ -466,7 +457,7 @@ func _spawn_kael_aura(ally: BattlefieldActor) -> void:
 	aura.name = "KaelRallyAura"
 	aura.color = Color("#ff9b50")
 	aura.energy = 0.0
-	aura.texture = _make_soft_glow()
+	aura.texture = SOFT_GLOW
 	aura.texture_scale = 1.4
 	aura.position = Vector2(0, -42)
 	ally.add_child(aura)
@@ -502,7 +493,7 @@ func _spawn_kael_ultimate_burst(center: Vector2, fire: Color, gold: Color, pale:
 	var bloom := PointLight2D.new()
 	bloom.color = fire
 	bloom.energy = 0.0
-	bloom.texture = _make_soft_glow()
+	bloom.texture = SOFT_GLOW
 	bloom.texture_scale = 0.3
 	bloom.position = center
 	bloom.z_index = 54
@@ -511,20 +502,7 @@ func _spawn_kael_ultimate_burst(center: Vector2, fire: Color, gold: Color, pale:
 	light.tween_property(bloom, "energy", 3.4, 0.12)
 	light.tween_property(bloom, "energy", 0.0, 0.62)
 	light.tween_callback(bloom.queue_free)
-	var burst := CPUParticles2D.new()
-	burst.amount = 64
-	burst.one_shot = true
-	burst.explosiveness = 0.96
-	burst.lifetime = 0.85
-	burst.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
-	burst.emission_sphere_radius = 16.0
-	burst.direction = Vector2.UP
-	burst.spread = 180.0
-	burst.initial_velocity_min = 75.0
-	burst.initial_velocity_max = 220.0
-	burst.gravity = Vector2(0, 110)
-	burst.scale_amount_min = 0.5
-	burst.scale_amount_max = 1.8
+	var burst := preload("res://scenes/ui/combat/components/kael_ultimate_particles.tscn").instantiate() as CPUParticles2D
 	burst.color = gold
 	burst.position = center
 	burst.z_index = 52
@@ -592,25 +570,22 @@ func _play_matron_attack(boss: BattlefieldActor, target: BattlefieldActor,
 
 
 func _spawn_matron_telegraph(at: Vector2, duration: float) -> void:
-	var marker := Node2D.new()
+	var marker := preload("res://scenes/ui/combat/components/ground_telegraph.tscn").instantiate() as Node2D
 	marker.position = at + Vector2(0, 8)
 	marker.z_index = 34
-	add_child(marker)
-	var ring := Line2D.new()
+	var ring := marker.get_node("Ring") as Line2D
 	ring.width = 3.0
 	ring.default_color = Color(0.92, 0.24, 0.62, 0.88)
-	ring.closed = true
 	var points := PackedVector2Array()
 	for i in range(49):
 		var angle := TAU * float(i) / 48.0
 		points.append(Vector2(cos(angle), sin(angle)) * 34.0)
 	ring.points = points
-	marker.add_child(ring)
-	var cross := Line2D.new()
+	var cross := marker.get_node("Cross") as Line2D
 	cross.width = 1.5
 	cross.default_color = Color(1.0, 0.62, 0.83, 0.72)
 	cross.points = PackedVector2Array([Vector2(-46, 0), Vector2(46, 0)])
-	marker.add_child(cross)
+	add_child(marker)
 	marker.scale = Vector2(0.45, 0.45)
 	var tween := create_tween()
 	tween.tween_property(marker, "scale", Vector2(1.25, 1.25), maxf(0.12, duration)).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -628,7 +603,7 @@ func _spawn_matron_orb(from: Vector2, to: Vector2) -> void:
 	var glow := PointLight2D.new()
 	glow.color = Color("#a34be8")
 	glow.energy = 1.4
-	glow.texture = _make_soft_glow()
+	glow.texture = SOFT_GLOW
 	glow.texture_scale = 0.65
 	orb.add_child(glow)
 	var tween := create_tween()
@@ -772,25 +747,22 @@ func _spawn_verdict_seal(center: Vector2) -> void:
 
 
 func _spawn_verdict_warning(center: Vector2) -> void:
-	var warning := Node2D.new()
+	var warning := preload("res://scenes/ui/combat/components/ground_telegraph.tscn").instantiate() as Node2D
 	warning.position = center + Vector2(0, 8)
 	warning.z_index = 37
-	add_child(warning)
-	var ring := Line2D.new()
+	var ring := warning.get_node("Ring") as Line2D
 	ring.width = 4.0
 	ring.default_color = Color("#ff5ac8")
-	ring.closed = true
 	var points := PackedVector2Array()
 	for i in range(65):
 		var angle := TAU * float(i) / 64.0
 		points.append(Vector2(cos(angle), sin(angle)) * 38.0)
 	ring.points = points
-	warning.add_child(ring)
-	var cross := Line2D.new()
+	var cross := warning.get_node("Cross") as Line2D
 	cross.width = 2.0
 	cross.default_color = Color(1.0, 0.72, 0.92, 0.9)
 	cross.points = PackedVector2Array([Vector2(-52, 0), Vector2(52, 0)])
-	warning.add_child(cross)
+	add_child(warning)
 	var pulse := create_tween()
 	pulse.tween_property(warning, "scale", Vector2(1.55, 1.55), 0.7).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	pulse.parallel().tween_property(ring, "default_color:a", 0.0, 0.7)
@@ -839,36 +811,12 @@ func _spawn_ritual_rings(center: Vector2) -> void:
 
 
 func _spawn_matron_burst(pos: Vector2) -> void:
-	var particles := CPUParticles2D.new()
-	particles.amount = 24
-	particles.lifetime = 0.7
-	particles.one_shot = true
-	particles.explosiveness = 0.94
-	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
-	particles.emission_sphere_radius = 10.0
-	particles.direction = Vector2(0, -1)
-	particles.spread = 180.0
-	particles.initial_velocity_min = 45.0
-	particles.initial_velocity_max = 150.0
-	particles.gravity = Vector2(0, 35)
-	particles.scale_amount_min = 0.45
-	particles.scale_amount_max = 1.35
-	particles.color = Color("#c36cf2")
+	var particles := preload("res://scenes/ui/combat/components/matron_burst.tscn").instantiate() as CPUParticles2D
 	particles.z_index = 44
 	particles.position = pos
 	add_child(particles)
 	particles.finished.connect(particles.queue_free)
 	particles.emitting = true
-
-
-func _make_soft_glow() -> Texture2D:
-	var image := Image.create(64, 64, false, Image.FORMAT_RGBA8)
-	for y in range(64):
-		for x in range(64):
-			var distance := Vector2(x - 31.5, y - 31.5).length() / 31.5
-			var alpha := clampf(1.0 - distance, 0.0, 1.0)
-			image.set_pixel(x, y, Color(1, 1, 1, alpha * alpha))
-	return ImageTexture.create_from_image(image)
 
 
 ## A visible strike trail connects the attacker to the actual target.
@@ -974,7 +922,7 @@ func play_matron_phase(phase_number: int) -> void:
 	var aura := PointLight2D.new()
 	aura.color = Color("#a23fe0") if phase_number <= 2 else Color("#d34cff")
 	aura.energy = 0.0
-	aura.texture = _make_soft_glow()
+	aura.texture = SOFT_GLOW
 	aura.texture_scale = 2.4
 	aura.position = Vector2(0, -50)
 	boss.add_child(aura)
