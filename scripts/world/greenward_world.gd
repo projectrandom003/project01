@@ -1097,73 +1097,28 @@ func _spawn_monsters() -> void:
 # --------------------------------------------------------------- ambient
 
 func _setup_ambient() -> void:
+	# Particle emitters are authored in greenward_world.tscn; runtime setup only
+	# supplies generated textures and the current day/night state.
 	ambient = get_node_or_null("PollenMotes") as CPUParticles2D
 	if ambient == null:
-		ambient = CPUParticles2D.new()
-		ambient.name = "PollenMotes"
-		add_child(ambient)
-	ambient.texture = ProceduralArt.soft_glow(Color(1.0, 0.95, 0.72), 32)
-	ambient.amount = 26
-	ambient.lifetime = 10.0
-	ambient.preprocess = 4.0
-	ambient.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
-	ambient.emission_rect_extents = Vector2(760, 440)
-	ambient.direction = Vector2(0.25, -1.0)
-	ambient.spread = 42.0
-	ambient.gravity = Vector2(0, -5)
-	ambient.initial_velocity_min = 6.0
-	ambient.initial_velocity_max = 16.0
-	ambient.scale_amount_min = 0.10
-	ambient.scale_amount_max = 0.32
-	ambient.color = Color(1.0, 0.95, 0.72, 0.5)
-	ambient.z_index = 30
+		push_warning("GreenwardWorld is missing its authored PollenMotes node.")
+	else:
+		ambient.texture = ProceduralArt.soft_glow(Color(1.0, 0.95, 0.72), 32)
 
 	fireflies = get_node_or_null("Fireflies") as CPUParticles2D
 	if fireflies == null:
-		fireflies = CPUParticles2D.new()
-		fireflies.name = "Fireflies"
-		add_child(fireflies)
-	fireflies.texture = ProceduralArt.soft_glow(Color(0.65, 1.0, 0.9), 32)
-	fireflies.amount = 16
-	fireflies.lifetime = 7.0
-	fireflies.preprocess = 3.0
-	fireflies.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
-	fireflies.emission_rect_extents = Vector2(680, 380)
-	fireflies.direction = Vector2(0, -1)
-	fireflies.spread = 180.0
-	fireflies.gravity = Vector2(0, 0)
-	fireflies.initial_velocity_min = 2.0
-	fireflies.initial_velocity_max = 8.0
-	fireflies.scale_amount_min = 0.12
-	fireflies.scale_amount_max = 0.34
-	fireflies.color = Color(0.65, 1.0, 0.9, 0.7)
-	fireflies.z_index = 31
-	fireflies.emitting = day_night.is_night()
+		push_warning("GreenwardWorld is missing its authored Fireflies node.")
+	else:
+		fireflies.texture = ProceduralArt.soft_glow(Color(0.65, 1.0, 0.9), 32)
+		fireflies.emitting = day_night.is_night()
 
-	# LIGHT RAIN hook: one cheap downward CPU particle emitter, capped by
-	# GreenwardStyle.MAX_PARTICLES and disabled on the mobile tier. NO real
-	# precipitation physics, no collisions, no splashes — a seam only.
+	# Lightweight rain remains disabled until the weather director enables it.
 	rain = get_node_or_null("Rain") as CPUParticles2D
 	if rain == null:
-		rain = CPUParticles2D.new()
-		rain.name = "Rain"
-		add_child(rain)
-	rain.texture = ProceduralArt.soft_glow(GreenwardStyle.WATER.glint, 16)
-	# CPUParticles2D.amount must be >= 1; emission is gated via `emitting`.
-	rain.amount = 1
-	rain.lifetime = 1.6
-	rain.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
-	rain.emission_rect_extents = Vector2(760, 40)
-	rain.direction = Vector2(0.15, 1.0)
-	rain.spread = 6.0
-	rain.gravity = Vector2(20, 420)
-	rain.initial_velocity_min = 260.0
-	rain.initial_velocity_max = 340.0
-	rain.scale_amount_min = 0.05
-	rain.scale_amount_max = 0.12
-	rain.color = Color(0.72, 0.88, 0.95, 0.45)
-	rain.z_index = 29
-	rain.emitting = false
+		push_warning("GreenwardWorld is missing its authored Rain node.")
+	else:
+		rain.texture = ProceduralArt.soft_glow(GreenwardStyle.WATER.glint, 16)
+		rain.emitting = false
 
 
 func _setup_weather() -> void:
