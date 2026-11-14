@@ -656,7 +656,7 @@ func _build_village() -> void:
 		"hair": "#c96f3a", "primary": "#5a3a2a", "secondary": "#e8c27a",
 		"accent": "#ffd27a", "skin": "#e8b890",
 	}, "Human", "Traveling Merchant")
-	_spawn_npc("wanderer_pip", "Pip", "wanderer_pip", Vector2(6.0, 12.2), {
+	_spawn_npc("wanderer_pip", "Pip", "wanderer_pip", Vector2(7.5, 12.5), {
 		"hair": "#f2e2a8", "primary": "#3f5a6b", "secondary": "#8fd9c4",
 		"accent": "#ffeaa0", "skin": "#f6e3cf",
 	}, "Beastkin", "Wandering Scout")

@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/village/village_prop.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_prop"]
+size = Vector2(28, 18)
 
 [node name="VillageProp" type="Node2D"]
 script = ExtResource("1_script")
@@ -8,3 +11,13 @@ script = ExtResource("1_script")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 centered = false
 texture_filter = 1
+
+[node name="Collision" type="Node2D" parent="."]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Collision"]
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape" type="CollisionShape2D" parent="Collision/StaticBody2D"]
+shape = SubResource("RectangleShape2D_prop")
+disabled = true

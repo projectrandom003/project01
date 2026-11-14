@@ -291,24 +291,36 @@ visual_scale = 1.02
 visual_flip_h = false
 
 [node name="VillageGateProp" parent="DepthSort" index="14" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(112, 24)
+collision_offset = Vector2(0, -40)
 position = Vector2(307.2, 256)
 prop_kind = "village_gate"
 variant = 0
 prop_scale = 1.05
 
 [node name="EntranceSign" parent="DepthSort" index="15" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(16, 14)
+collision_offset = Vector2(0, -5)
 position = Vector2(280, 236)
 prop_kind = "signpost"
 variant = 1
 prop_scale = 0.95
 
 [node name="SquareBenchA" parent="DepthSort" index="16" instance=ExtResource("7_prop")]
-position = Vector2(-45, 235)
+blocks_movement = true
+collision_size = Vector2(42, 14)
+collision_offset = Vector2(0, -5)
+position = Vector2(-95, 245)
 prop_kind = "bench"
 variant = 0
 prop_scale = 0.95
 
 [node name="SquareBenchB" parent="DepthSort" index="17" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(42, 14)
+collision_offset = Vector2(0, -5)
 position = Vector2(45, 235)
 prop_kind = "bench"
 variant = 1
@@ -328,30 +340,45 @@ variant = 1
 prop_scale = 0.42
 
 [node name="MarketCart" parent="DepthSort" index="20" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(52, 26)
+collision_offset = Vector2(0, -8)
 position = Vector2(168, 405)
 prop_kind = "cart"
 variant = 0
 prop_scale = 0.88
 
 [node name="MarketCrateA" parent="DepthSort" index="21" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(26, 20)
+collision_offset = Vector2(0, -6)
 position = Vector2(118, 386)
 prop_kind = "crate"
 variant = 1
 prop_scale = 0.82
 
 [node name="MarketBarrelA" parent="DepthSort" index="22" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(22, 20)
+collision_offset = Vector2(0, -6)
 position = Vector2(190, 352)
 prop_kind = "barrel"
 variant = 0
 prop_scale = 0.82
 
 [node name="MarketSign" parent="DepthSort" index="23" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(16, 14)
+collision_offset = Vector2(0, -5)
 position = Vector2(210, 316)
 prop_kind = "signpost"
 variant = 0
 prop_scale = 0.82
 
 [node name="MarketStallB" parent="DepthSort" index="24" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(62, 24)
+collision_offset = Vector2(0, -8)
 position = Vector2(235, 374)
 prop_kind = "market_stall"
 variant = 1
@@ -359,24 +386,36 @@ prop_scale = 0.72
 flip_h = true
 
 [node name="ElderBanner" parent="DepthSort" index="25" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(16, 22)
+collision_offset = Vector2(0, -8)
 position = Vector2(-70, 205)
 prop_kind = "banner_post"
 variant = 0
 prop_scale = 0.95
 
 [node name="ElderBench" parent="DepthSort" index="26" instance=ExtResource("7_prop")]
-position = Vector2(-110, 210)
+blocks_movement = true
+collision_size = Vector2(42, 14)
+collision_offset = Vector2(0, -5)
+position = Vector2(-140, 180)
 prop_kind = "bench"
 variant = 1
 prop_scale = 0.9
 
 [node name="ResidentialFenceNW1" parent="DepthSort" index="27" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(48, 12)
+collision_offset = Vector2(0, -4)
 position = Vector2(-60, 150)
 prop_kind = "fence"
 variant = 0
 prop_scale = 0.9
 
 [node name="ResidentialFenceNW2" parent="DepthSort" index="28" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(48, 12)
+collision_offset = Vector2(0, -4)
 position = Vector2(-10, 150)
 prop_kind = "fence"
 variant = 1
@@ -389,18 +428,27 @@ variant = 2
 prop_scale = 0.7
 
 [node name="ResidentialBenchNE" parent="DepthSort" index="30" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(38, 13)
+collision_offset = Vector2(0, -5)
 position = Vector2(165, 230)
 prop_kind = "bench"
 variant = 0
 prop_scale = 0.85
 
 [node name="ResidentialBushNE" parent="DepthSort" index="31" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(26, 16)
+collision_offset = Vector2(0, -5)
 position = Vector2(210, 230)
 prop_kind = "bush"
 variant = 1
 prop_scale = 0.8
 
 [node name="ResidentialFenceSW" parent="DepthSort" index="32" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(46, 12)
+collision_offset = Vector2(0, -4)
 position = Vector2(-245, 220)
 prop_kind = "fence"
 variant = 0
@@ -413,12 +461,18 @@ variant = 0
 prop_scale = 0.65
 
 [node name="ResidentialBarrelSE" parent="DepthSort" index="34" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(22, 20)
+collision_offset = Vector2(0, -6)
 position = Vector2(30, 360)
 prop_kind = "barrel"
 variant = 1
 prop_scale = 0.85
 
 [node name="ResidentialCrateSE" parent="DepthSort" index="35" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(26, 20)
+collision_offset = Vector2(0, -6)
 position = Vector2(-20, 360)
 prop_kind = "crate"
 variant = 0

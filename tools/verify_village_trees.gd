@@ -39,7 +39,7 @@ func _run() -> void:
 	var ok_groups := true
 	var expected_groups: Array[String] = []
 	for def_v in layout_res.tree_groups:
-		if typeof(def_v) == TYPE_DICTIONARY:
+		if typeof(def_v) == TYPE_DICTIONARY and not (def_v.get("trees", []) as Array).is_empty():
 			expected_groups.append(str(def_v.get("name","")))
 	for gname in expected_groups:
 		var count := _count_group_trees(inst1, gname)
@@ -52,6 +52,43 @@ func _run() -> void:
 
 	var snap1 := _snapshot(inst1, layout_res)
 	_assert(snap1.size() > 0, "trees placed for seed 133742")
+	var tree_collision_count := 0
+	for tree_node in _depth_nodes(inst1):
+		if not tree_node.has_meta("village_tree_group"):
+			continue
+		var tree_body := tree_node.get_node_or_null("Collision/StaticBody2D") as StaticBody2D
+		var tree_shape := tree_node.get_node_or_null("Collision/StaticBody2D/CollisionShape2D") as CollisionShape2D
+		_assert(tree_body != null and tree_body.collision_layer == 1 and tree_body.collision_mask == 0, "tree trunk blocks player on world obstacle layer")
+		_assert(tree_shape != null and tree_shape.shape is RectangleShape2D and not tree_shape.disabled, "tree trunk has enabled authored footprint")
+		tree_collision_count += 1
+	_assert(tree_collision_count == snap1.size(), "every placed perimeter tree owns one physical trunk footprint")
+	var tree_player := CharacterBody2D.new()
+	tree_player.collision_layer = 2
+	tree_player.collision_mask = 1
+	var tree_player_shape := CollisionShape2D.new()
+	var tree_player_capsule := CapsuleShape2D.new()
+	tree_player_capsule.radius = 9.0
+	tree_player_capsule.height = 22.0
+	tree_player_shape.shape = tree_player_capsule
+	tree_player_shape.position = Vector2(0, -10)
+	tree_player.add_child(tree_player_shape)
+	root.add_child(tree_player)
+	await physics_frame
+	var first_tree: Node2D = null
+	for candidate in _depth_nodes(inst1):
+		if candidate.has_meta("village_tree_group"):
+			first_tree = candidate as Node2D
+			break
+	if first_tree != null:
+		tree_player.global_position = first_tree.global_position + Vector2(-50, 3)
+		var tree_contact := KinematicCollision2D.new()
+		var tree_blocked := tree_player.test_move(tree_player.global_transform, Vector2(100, 0), tree_contact)
+		_assert(tree_blocked, "player physics movement is blocked by an actual tree trunk")
+		if tree_blocked:
+			_assert(tree_contact.get_collider() is StaticBody2D, "tree movement collision resolves against trunk StaticBody2D")
+	else:
+		_fail("no perimeter tree available for physical movement test")
+	tree_player.queue_free()
 
 	# Determinism: same seed -> same result
 	var inst2 = gv_scene.instantiate()

@@ -72,15 +72,38 @@ func _check_npcs_and_interactables() -> void:
 	var interactables := get_tree().get_nodes_in_group("interactables") if get_tree().has_group("interactables") else []
 	_pass("interactables in group: %d" % interactables.size())
 	for nid in ["elder_maelin", "merchant_sera", "wanderer_pip"]:
-		var ok := false
+		var found: WorldNPC = null
 		for n in found_npcs:
 			if "npc_id" in n and str(n.npc_id) == nid:
-				ok = true
+				found = n as WorldNPC
 				break
-		if ok:
-			_pass("quest NPC present: " + nid)
-		else:
+		if found == null:
 			_fail("quest NPC missing: " + nid)
+			continue
+		_pass("quest NPC present: " + nid)
+		if not found.can_interact() or not found.is_in_group("interactables"):
+			_fail("quest NPC is not registered as an enabled interactable: " + nid)
+			continue
+		if player == null:
+			_fail("cannot test NPC interaction without player: " + nid)
+			continue
+		player.global_position = found.global_position + Vector2(0, 26)
+		player.call("_scan_for_interactable")
+		if player.nearby_interactable != found:
+			_fail("player proximity scan does not select NPC: " + nid)
+			continue
+		var received := [""]
+		var callback := func(dialogue_id: String) -> void:
+			received[0] = dialogue_id
+		if not EventBus.dialogue_requested.is_connected(callback):
+			EventBus.dialogue_requested.connect(callback)
+		player.try_interact()
+		if EventBus.dialogue_requested.is_connected(callback):
+			EventBus.dialogue_requested.disconnect(callback)
+		if received[0] == found.dialogue_id:
+			_pass("player interaction opens correct dialogue: " + nid)
+		else:
+			_fail("player interaction did not emit expected dialogue for: " + nid)
 
 func _check_depth_sort_runtime() -> void:
 	var entities := world.get_node_or_null("Entities") as Node2D
