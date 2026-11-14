@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[node name="HPPlate" type="ProgressBar"]
+offset_left = -36.0
+offset_top = 14.0
+offset_right = 36.0
+offset_bottom = 20.0
+mouse_filter = 2
+show_percentage = false
+min_value = 0.0
+max_value = 1.0
+value = 1.0

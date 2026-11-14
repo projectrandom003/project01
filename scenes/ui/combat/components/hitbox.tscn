@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[node name="Hitbox" type="Control"]
+offset_left = -36.0
+offset_top = -96.0
+offset_right = 36.0
+offset_bottom = 14.0
+mouse_filter = 0

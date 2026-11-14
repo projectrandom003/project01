@@ -40,6 +40,7 @@ var _hp_ratio: float = 1.0
 var _hp_color: Color = Color(0.4, 0.9, 0.5)
 var _name_label: Label = null
 var _intent_label: Label = null
+var _hp_plate: ProgressBar = null
 var _pulse: float = 0.0
 var _hit_shake: float = 0.0
 var _base_scale: float = 1.0
@@ -83,6 +84,23 @@ func setup(p_unit: Combatant, p_is_player: bool) -> void:
 	_intent_label.add_theme_color_override("font_outline_color", Color(0.02, 0.015, 0.025, 0.98))
 	_intent_label.add_theme_constant_override("outline_size", 5)
 	_intent_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_hp_plate = get_node_or_null("HPPlate") as ProgressBar
+	if _hp_plate != null:
+		_hp_plate.min_value = 0.0
+		_hp_plate.max_value = 1.0
+		_hp_plate.show_percentage = false
+		_hp_plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var plate_bg := StyleBoxFlat.new()
+		plate_bg.bg_color = Color(0.02, 0.03, 0.06, 0.85)
+		plate_bg.border_width_left = 1
+		plate_bg.border_width_top = 1
+		plate_bg.border_width_right = 1
+		plate_bg.border_width_bottom = 1
+		plate_bg.border_color = Color(0.01, 0.015, 0.025, 0.95)
+		_hp_plate.add_theme_stylebox_override("background", plate_bg)
+		var plate_fill := StyleBoxFlat.new()
+		plate_fill.bg_color = _hp_color
+		_hp_plate.add_theme_stylebox_override("fill", plate_fill)
 
 	visual = get_node_or_null("ActorVisual") as ActorVisual
 	if visual == null:
@@ -249,6 +267,11 @@ func refresh() -> void:
 	if unit == null:
 		return
 	_hp_ratio = unit.hp_ratio()
+	if _hp_plate != null:
+		_hp_plate.value = _hp_ratio
+		var plate_fill := _hp_plate.get_theme_stylebox("fill") as StyleBoxFlat
+		if plate_fill != null:
+			plate_fill.bg_color = _hp_color
 	_refresh_matron_phase()
 	_name_label.text = ("◆  " if targetable else "") + unit.display_name
 	_name_label.add_theme_color_override("font_color",
@@ -452,20 +475,11 @@ func _draw() -> void:
 	if dead:
 		return
 
-	# HP plate on the ground under the figure.
-	var plate_x := -PLATE_WIDTH * 0.5
-	var plate_y := PLATE_OFFSET
-	draw_rect(Rect2(plate_x - 1.0, plate_y - 1.0, PLATE_WIDTH + 2.0, PLATE_HEIGHT + 2.0),
-		Color(0.02, 0.03, 0.06, 0.85))
-	draw_rect(Rect2(plate_x, plate_y, PLATE_WIDTH, PLATE_HEIGHT), Color(0.12, 0.10, 0.13, 0.95))
-	var fill := PLATE_WIDTH * clampf(_hp_ratio, 0.0, 1.0)
-	if fill > 0.5:
-		draw_rect(Rect2(plate_x, plate_y, fill, PLATE_HEIGHT), _hp_color)
-	else:
-		draw_rect(Rect2(plate_x, plate_y, fill, PLATE_HEIGHT), _hp_color)
-
+	# HP plate is an authored ProgressBar scene so its shape and styling remain editable.
+	if _hp_plate != null:
+		_hp_plate.visible = not dead
 	if _name_label != null:
-		_name_label.position = Vector2(-PLATE_WIDTH * 0.5, plate_y + PLATE_HEIGHT + 2.0)
+		_name_label.position = Vector2(-PLATE_WIDTH * 0.5, PLATE_OFFSET + PLATE_HEIGHT + 2.0)
 		_name_label.size = Vector2(PLATE_WIDTH, 16)
 
 
