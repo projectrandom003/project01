@@ -80,92 +80,10 @@ func _unhandled_input(event: InputEvent) -> void:
 # ------------------------------------------------------------------ build UI
 
 func _build_background() -> void:
-	# Deep gothic sky gradient.
-	var sky_gradient := Gradient.new()
-	sky_gradient.colors = PackedColorArray([
-		Color("#03050a"),
-		Color("#080c18"),
-		Color("#0e0a1a"),
-		Color("#06040e"),
-		Color("#020306"),
-	])
-	sky_gradient.offsets = PackedFloat32Array([0.0, 0.2, 0.45, 0.75, 1.0])
-	var sky_texture := GradientTexture2D.new()
-	sky_texture.gradient = sky_gradient
-	sky_texture.fill = GradientTexture2D.FILL_LINEAR
-	sky_texture.fill_from = Vector2(0.0, 0.0)
-	sky_texture.fill_to = Vector2(0.0, 1.0)
-	var sky_rect := TextureRect.new()
-	sky_rect.texture = sky_texture
-	sky_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	sky_rect.stretch_mode = TextureRect.STRETCH_SCALE
-	UIFactory.set_full_rect(sky_rect)
-	sky_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(sky_rect)
-
-	# Stone floor plane (bottom 35% of screen).
-	var floor_rect := ColorRect.new()
-	floor_rect.color = Color("#0d0b0f")
-	floor_rect.anchor_left = 0.0
-	floor_rect.anchor_right = 1.0
-	floor_rect.anchor_top = 0.65
-	floor_rect.anchor_bottom = 1.0
-	floor_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(floor_rect)
-
-	# Floor tile lines (horizontal).
-	for i in range(6):
-		var line := ColorRect.new()
-		line.color = Color(0.15, 0.12, 0.18, 0.4)
-		line.anchor_left = 0.0
-		line.anchor_right = 1.0
-		line.anchor_top = 0.65 + float(i) * 0.058
-		line.anchor_bottom = 0.65 + float(i) * 0.058 + 0.002
-		line.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(line)
-
-	# Floor tile lines (vertical, perspective).
-	for i in range(8):
-		var vline := ColorRect.new()
-		vline.color = Color(0.12, 0.10, 0.15, 0.3)
-		var x_pos := 0.05 + float(i) * 0.13
-		vline.anchor_left = x_pos
-		vline.anchor_right = x_pos + 0.003
-		vline.anchor_top = 0.65
-		vline.anchor_bottom = 1.0
-		vline.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(vline)
-
-	# Ground shadow under characters (dark gradient).
-	var shadow_gradient := Gradient.new()
-	shadow_gradient.colors = PackedColorArray([Color(0, 0, 0, 0.0), Color(0, 0, 0, 0.5)])
-	shadow_gradient.offsets = PackedFloat32Array([0.0, 1.0])
-	var shadow_tex := GradientTexture2D.new()
-	shadow_tex.gradient = shadow_gradient
-	shadow_tex.fill = GradientTexture2D.FILL_LINEAR
-	shadow_tex.fill_from = Vector2(0.5, 0.0)
-	shadow_tex.fill_to = Vector2(0.5, 1.0)
-	var shadow_rect := TextureRect.new()
-	shadow_rect.texture = shadow_tex
-	shadow_rect.anchor_left = 0.0
-	shadow_rect.anchor_right = 1.0
-	shadow_rect.anchor_top = 0.6
-	shadow_rect.anchor_bottom = 1.0
-	shadow_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	shadow_rect.stretch_mode = TextureRect.STRETCH_SCALE
-	shadow_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(shadow_rect)
-
-	# Vignette overlay (stronger).
-	var vignette := ColorRect.new()
-	vignette.color = Color(0, 0, 0, 0.45)
-	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	UIFactory.set_full_rect(vignette)
-	add_child(vignette)
-
-	# Authored particle layers keep ambience editable independently of screen logic.
-	var ambience := preload("res://scenes/ui/combat/components/combat_ambient_particles.tscn").instantiate() as Node2D
-	add_child(ambience)
+	# Complete arena ambience is authored as a scene so every visual layer can
+	# be adjusted in the editor without touching combat flow or presentation logic.
+	var backdrop := preload("res://scenes/ui/combat/components/combat_screen_backdrop.tscn").instantiate() as Control
+	add_child(backdrop)
 
 
 func _style_combat_panel(panel: PanelContainer, fill: Color, radius: int, margin: int) -> void:

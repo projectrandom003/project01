@@ -1,0 +1,194 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/combat/components/combat_ambient_particles.tscn" id="1"]
+
+[sub_resource type="Gradient" id="SkyGradient"]
+colors = PackedColorArray(0.011765, 0.019608, 0.039216, 1, 0.031373, 0.047059, 0.094118, 1, 0.054902, 0.039216, 0.101961, 1, 0.023529, 0.015686, 0.054902, 1, 0.007843, 0.011765, 0.023529, 1)
+offsets = PackedFloat32Array(0, 0.2, 0.45, 0.75, 1)
+
+[sub_resource type="GradientTexture2D" id="SkyTexture"]
+gradient = SubResource("SkyGradient")
+fill = 0
+fill_from = Vector2(0, 0)
+fill_to = Vector2(0, 1)
+
+[sub_resource type="Gradient" id="GroundShadowGradient"]
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.5)
+offsets = PackedFloat32Array(0, 1)
+
+[sub_resource type="GradientTexture2D" id="GroundShadowTexture"]
+gradient = SubResource("GroundShadowGradient")
+fill = 0
+fill_from = Vector2(0.5, 0)
+fill_to = Vector2(0.5, 1)
+
+[node name="CombatScreenBackdrop" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Sky" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("SkyTexture")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="FloorPlane" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_top = 0.65
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.05098, 0.043137, 0.058824, 1)
+
+[node name="HorizontalLine01" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_right = 1.0
+anchor_top = 0.65
+anchor_bottom = 0.652
+mouse_filter = 2
+color = Color(0.15, 0.12, 0.18, 0.4)
+
+[node name="HorizontalLine02" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_right = 1.0
+anchor_top = 0.708
+anchor_bottom = 0.71
+mouse_filter = 2
+color = Color(0.15, 0.12, 0.18, 0.4)
+
+[node name="HorizontalLine03" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_right = 1.0
+anchor_top = 0.766
+anchor_bottom = 0.768
+mouse_filter = 2
+color = Color(0.15, 0.12, 0.18, 0.4)
+
+[node name="HorizontalLine04" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_right = 1.0
+anchor_top = 0.824
+anchor_bottom = 0.826
+mouse_filter = 2
+color = Color(0.15, 0.12, 0.18, 0.4)
+
+[node name="HorizontalLine05" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_right = 1.0
+anchor_top = 0.882
+anchor_bottom = 0.884
+mouse_filter = 2
+color = Color(0.15, 0.12, 0.18, 0.4)
+
+[node name="HorizontalLine06" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_right = 1.0
+anchor_top = 0.94
+anchor_bottom = 0.942
+mouse_filter = 2
+color = Color(0.15, 0.12, 0.18, 0.4)
+
+[node name="VerticalLine01" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_left = 0.05
+anchor_right = 0.053
+anchor_top = 0.65
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.12, 0.1, 0.15, 0.3)
+
+[node name="VerticalLine02" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_left = 0.18
+anchor_right = 0.183
+anchor_top = 0.65
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.12, 0.1, 0.15, 0.3)
+
+[node name="VerticalLine03" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_left = 0.31
+anchor_right = 0.313
+anchor_top = 0.65
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.12, 0.1, 0.15, 0.3)
+
+[node name="VerticalLine04" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_left = 0.44
+anchor_right = 0.443
+anchor_top = 0.65
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.12, 0.1, 0.15, 0.3)
+
+[node name="VerticalLine05" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_left = 0.57
+anchor_right = 0.573
+anchor_top = 0.65
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.12, 0.1, 0.15, 0.3)
+
+[node name="VerticalLine06" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_left = 0.7
+anchor_right = 0.703
+anchor_top = 0.65
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.12, 0.1, 0.15, 0.3)
+
+[node name="VerticalLine07" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_left = 0.83
+anchor_right = 0.833
+anchor_top = 0.65
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.12, 0.1, 0.15, 0.3)
+
+[node name="VerticalLine08" type="ColorRect" parent="."]
+layout_mode = 1
+anchor_left = 0.96
+anchor_right = 0.963
+anchor_top = 0.65
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.12, 0.1, 0.15, 0.3)
+
+[node name="GroundShadow" type="TextureRect" parent="."]
+layout_mode = 1
+anchor_right = 1.0
+anchor_top = 0.6
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = SubResource("GroundShadowTexture")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="Vignette" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.45)
+
+[node name="Atmosphere" parent="." instance=ExtResource("1")]
