@@ -9,6 +9,7 @@ extends OverlayScreen
 const FEATURED_STAGE_SCENE: PackedScene = preload("res://scenes/ui/components/featured_summon_stage.tscn")
 const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
 const GACHA_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/gacha_screen_layout.tscn")
+const SUMMON_REVEAL_SCENE: PackedScene = preload("res://scenes/ui/components/summon_reveal_overlay.tscn")
 
 var _tabs: HBoxContainer
 var _main: HBoxContainer
@@ -103,26 +104,6 @@ func _ready() -> void:
 	if backdrop != null:
 		backdrop.visible = backdrop.texture != null
 
-class SummonSigil extends Control:
-	var elapsed := 0.0
-	var glow := Color("#b58cff")
-	func _process(delta: float) -> void:
-		elapsed += delta
-		queue_redraw()
-	func _draw() -> void:
-		var center := size * 0.5
-		var radius := minf(size.x, size.y) * (0.20 + 0.12 * clampf(elapsed / 1.8, 0.0, 1.0))
-		var pulse := 1.0 + 0.045 * sin(elapsed * 5.0)
-		for ring in range(3):
-			var r := radius * (0.66 + float(ring) * 0.22) * pulse
-			draw_arc(center, r, elapsed * (0.18 if ring % 2 == 0 else -0.14), elapsed * (0.18 if ring % 2 == 0 else -0.14) + TAU * 0.88, 96, Color(glow.r, glow.g, glow.b, 0.42 - float(ring) * 0.08), 2.0)
-		for i in range(8):
-			var angle := TAU * float(i) / 8.0 + elapsed * 0.22
-			var inner := center + Vector2(cos(angle), sin(angle)) * radius * 0.62
-			var outer := center + Vector2(cos(angle), sin(angle)) * radius * 1.08
-			draw_line(inner, outer, Color(glow.r, glow.g, glow.b, 0.45), 2.0)
-			draw_circle(outer, 3.0 + 1.5 * sin(elapsed * 4.0 + i), Color("#fff0c8"))
-		draw_circle(center, 12.0 + 5.0 * sin(elapsed * 6.0), Color(glow.r, glow.g, glow.b, 0.75))
 
 
 
@@ -409,20 +390,9 @@ func _pull(count: int) -> void:
 func _play_summon_reveal(results: Array) -> void:
 	if _results_layer != null and is_instance_valid(_results_layer):
 		_results_layer.queue_free()
-	_results_layer = Control.new()
-	_results_layer.name = "SummonReveal"
-	_results_layer.z_index = 80
-	UIFactory.set_full_rect(_results_layer)
-	_results_layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	_results_layer = SUMMON_REVEAL_SCENE.instantiate() as Control
 	add_child(_results_layer)
-	var shade := ColorRect.new()
-	shade.color = Color(0.015, 0.008, 0.035, 0.94)
-	UIFactory.set_full_rect(shade)
-	_results_layer.add_child(shade)
-	var sigil := SummonSigil.new()
-	sigil.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	sigil.custom_minimum_size = Vector2(560, 460)
-	sigil.position -= sigil.custom_minimum_size * 0.5
+	var sigil := _results_layer.get_node("SigilCenter/SummonSigil") as SummonSigil
 	var best_rank := 0
 	for roll in results:
 		best_rank = maxi(best_rank, int(GachaService.RARITY_RANK.get(str(roll.get("rarity", "common")), 0)))
@@ -432,21 +402,6 @@ func _play_summon_reveal(results: Array) -> void:
 		sigil.glow = Color("#c18cff")
 	else:
 		sigil.glow = Color("#78c9e8")
-	_results_layer.add_child(sigil)
-	var title := UIFactory.heading("SUMMONING", 28, UITheme.GOLD_BRIGHT)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.anchor_left = 0.2
-	title.anchor_right = 0.8
-	title.anchor_top = 0.18
-	title.anchor_bottom = 0.27
-	_results_layer.add_child(title)
-	var subtitle := UIFactory.label("Ancient bonds answer the call…", 14, UITheme.TEXT_DIM)
-	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	subtitle.anchor_left = 0.2
-	subtitle.anchor_right = 0.8
-	subtitle.anchor_top = 0.78
-	subtitle.anchor_bottom = 0.86
-	_results_layer.add_child(subtitle)
 	await get_tree().create_timer(2.15).timeout
 	if is_instance_valid(_results_layer):
 		_results_layer.queue_free()

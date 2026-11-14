@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/components/summon_sigil.gd" id="1"]
+
+[node name="SummonSigil" type="Control"]
+custom_minimum_size = Vector2(560, 460)
+mouse_filter = 2
+script = ExtResource("1")
