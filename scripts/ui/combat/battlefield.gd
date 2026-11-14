@@ -923,19 +923,16 @@ func spawn_damage_number(actor: BattlefieldActor, text: String, color: Color,
 		delay: float = 0.0) -> void:
 	if actor == null or not is_instance_valid(actor):
 		return
-	var label := Label.new()
+	var label := preload("res://scenes/ui/combat/components/floating_combat_number.tscn").instantiate() as Label
 	label.text = text
 	label.add_theme_font_size_override("font_size", DAMAGE_FONT)
 	label.add_theme_color_override("font_color", color)
 	label.add_theme_color_override("font_outline_color", Color(0.01, 0.02, 0.05, 0.95))
 	label.add_theme_constant_override("outline_size", 6)
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.z_index = 60
 	_stage.add_child(label)
 	var start: Vector2 = actor.position + Vector2(-28.0, -74.0 * actor.visual.visual_scale)
 	label.position = start
-	label.size = Vector2(56, 30)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var tween := create_tween()
 	tween.tween_interval(delay)
 	tween.tween_property(label, "position:y", start.y - 54.0, 0.85) \
