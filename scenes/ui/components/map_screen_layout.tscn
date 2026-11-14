@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/components/world_map_canvas.tscn" id="1"]
+
+[node name="MapScreenLayout" type="HBoxContainer"]
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="Left" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="RegionName" type="Label" parent="Left"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+
+[node name="MapCanvas" parent="Left" instance=ExtResource("1")]
+custom_minimum_size = Vector2(620, 460)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PlayerPosition" type="Label" parent="Left"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+
+[node name="Right" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="PointsHeading" type="Label" parent="Right"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "POINTS OF INTEREST"
+
+[node name="POIList" type="VBoxContainer" parent="Right"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Separator" type="HSeparator" parent="Right"]
+layout_mode = 2
+
+[node name="TrackedHeading" type="Label" parent="Right"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "TRACKED QUEST"
+
+[node name="TrackedQuestContent" type="VBoxContainer" parent="Right"]
+layout_mode = 2
+theme_override_constants/separation = 8
