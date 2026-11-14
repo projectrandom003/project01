@@ -1,7 +1,7 @@
 class_name CollectionScreen
 extends OverlayScreen
 
-const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
+const CENTERED_PORTRAIT_SLOT_SCENE: PackedScene = preload("res://scenes/ui/components/centered_portrait_slot.tscn")
 const ROSTER_CARD_SCENE: PackedScene = preload("res://scenes/ui/components/roster_character_card.tscn")
 const COLLECTION_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/collection_screen_layout.tscn")
 ## Roster, party management, ascension and character detail.
@@ -162,16 +162,15 @@ func _show_detail(uid: String) -> void:
 		return
 	_ascend_armed = (_ascend_armed_uid == instance.uid)
 
-	var portrait_center := CenterContainer.new()
-	var portrait := PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
+	var portrait_slot := CENTERED_PORTRAIT_SLOT_SCENE.instantiate() as CenterContainer
+	var portrait := portrait_slot.get_node("Portrait") as PortraitView
 	# Premium rarities get a larger detail portrait.
 	if UITheme.is_premium_rarity(definition.rarity):
 		portrait.custom_minimum_size = Vector2(196, 232)
 	else:
 		portrait.custom_minimum_size = Vector2(168, 196)
 	portrait.setup_character(definition)  # ZERO final portraits -> procedural fallback
-	portrait_center.add_child(portrait)
-	_detail.add_child(portrait_center)
+	_detail.add_child(portrait_slot)
 
 	var name_label := UIFactory.heading(definition.display_name, 23, UITheme.TEXT)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

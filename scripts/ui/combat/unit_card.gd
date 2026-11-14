@@ -5,7 +5,7 @@ extends PanelContainer
 
 signal clicked(card: CombatUnitCard)
 
-const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
+const CENTERED_PORTRAIT_SLOT_SCENE: PackedScene = preload("res://scenes/ui/components/centered_portrait_slot.tscn")
 
 var unit: Combatant
 var portrait: PortraitView
@@ -31,8 +31,8 @@ func setup(p_unit: Combatant) -> void:
 	var box := UIFactory.vbox(2)
 	add_child(box)
 
-	var portrait_center := CenterContainer.new()
-	portrait = PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
+	var portrait_slot := CENTERED_PORTRAIT_SLOT_SCENE.instantiate() as CenterContainer
+	portrait = portrait_slot.get_node("Portrait") as PortraitView
 	portrait.custom_minimum_size = Vector2(122, 104)
 	var definition: CharacterDef = ContentDB.get_character(unit.def_id)
 	if definition != null:
@@ -46,8 +46,7 @@ func setup(p_unit: Combatant) -> void:
 			unit.rarity,
 			unit.def_id.hash()
 		)
-	portrait_center.add_child(portrait)
-	box.add_child(portrait_center)
+	box.add_child(portrait_slot)
 
 	_name_label = UIFactory.label(unit.display_name, 12, UITheme.TEXT)
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

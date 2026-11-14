@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/components/portrait_view.tscn" id="1"]
+
+[node name="CenteredPortraitSlot" type="CenterContainer"]
+mouse_filter = 2
+
+[node name="Portrait" parent="." instance=ExtResource("1")]
+layout_mode = 2
+mouse_filter = 2
