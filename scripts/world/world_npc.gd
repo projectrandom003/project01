@@ -18,6 +18,7 @@ var _name_label: Label
 var _subtitle_label: Label
 var _time: float = 0.0
 var _quest_marker_state: String = ""
+var quest_marker_y: float = -105.0
 
 
 func setup(p_id: String, p_name: String, p_dialogue: String, p_palette: Dictionary, p_race: String) -> void:
@@ -35,9 +36,12 @@ func _ready() -> void:
 	if role.is_empty():
 		role = _derive_role()
 
-	visual = ActorVisual.new()
+	visual = get_node_or_null("ActorVisual") as ActorVisual
+	if visual == null:
+		visual = ActorVisual.new() # compatibility for direct test instantiation
+		visual.name = "ActorVisual"
+		add_child(visual)
 	visual.setup(palette, ActorVisual.Kind.HUMAN, npc_id, race, "neutral")
-	add_child(visual)
 	# PART 4: exercise the SpriteFramesActorSource registration seam. With no
 	# disk sheets present this keeps the ProceduralActorFrames fallback active.
 	visual.configure_character(npc_id)
@@ -47,23 +51,30 @@ func _ready() -> void:
 		visual.animator.speed_scale = 0.85
 
 	# Name label (warm gold from GreenwardStyle).
-	_name_label = Label.new()
+	_name_label = get_node_or_null("NameLabel") as Label
+	if _name_label == null:
+		_name_label = Label.new()
+		_name_label.name = "NameLabel"
+		_name_label.position = Vector2(-70, -82)
+		_name_label.size = Vector2(140, 22)
+		add_child(_name_label)
 	_name_label.text = display_name
-	_name_label.position = Vector2(-70, -82)
-	_name_label.size = Vector2(140, 22)
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_name_label.add_theme_font_size_override("font_size", 12)
 	_name_label.add_theme_color_override("font_color", GreenwardStyle.UI.gold)
 	_name_label.add_theme_color_override("font_outline_color", GreenwardStyle.INK)
 	_name_label.add_theme_constant_override("outline_size", 4)
 	_name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_name_label)
 
 	# Subtle role / title subtitle beneath the name.
-	_subtitle_label = Label.new()
+	_subtitle_label = get_node_or_null("SubtitleLabel") as Label
+	if _subtitle_label == null:
+		_subtitle_label = Label.new()
+		_subtitle_label.name = "SubtitleLabel"
+		_subtitle_label.position = Vector2(-80, -62)
+		_subtitle_label.size = Vector2(160, 16)
+		add_child(_subtitle_label)
 	_subtitle_label.text = role
-	_subtitle_label.position = Vector2(-80, -62)
-	_subtitle_label.size = Vector2(160, 16)
 	_subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_subtitle_label.add_theme_font_size_override("font_size", 9)
 	var dim := GreenwardStyle.UI.text
@@ -71,7 +82,6 @@ func _ready() -> void:
 	_subtitle_label.add_theme_color_override("font_outline_color", GreenwardStyle.INK)
 	_subtitle_label.add_theme_constant_override("outline_size", 3)
 	_subtitle_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_subtitle_label)
 
 	set_process(true)
 	_refresh_quest_marker()
@@ -128,7 +138,7 @@ func _draw() -> void:
 			"active":
 				marker_color = Color("#78c6e8")
 				symbol = "·"
-		var marker_pos := Vector2(0, -105)
+		var marker_pos := Vector2(0, quest_marker_y)
 		draw_circle(marker_pos, 10.0, Color(marker_color.r, marker_color.g, marker_color.b, 0.18))
 		draw_circle(marker_pos, 6.0, marker_color)
 		draw_string(ThemeDB.fallback_font, marker_pos + Vector2(-3.0, 4.0), symbol, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#14202a"))

@@ -1,0 +1,44 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/characters/playable_visuals/gerald_visual.tscn" id="1_gerald"]
+[ext_resource type="PackedScene" path="res://scenes/characters/playable_visuals/lilith_visual.tscn" id="2_lilith"]
+[ext_resource type="PackedScene" path="res://scenes/characters/playable_visuals/kael_visual.tscn" id="3_kael"]
+
+[node name="PlayableRosterPreview" type="Node2D"]
+
+[node name="Backdrop" type="Polygon2D" parent="."]
+z_index = -10
+polygon = PackedVector2Array(-260, -180, 260, -180, 260, 100, -260, 100)
+color = Color(0.055, 0.067, 0.09, 1)
+
+[node name="GroundLine" type="Line2D" parent="."]
+z_index = -5
+points = PackedVector2Array(-240, 0, 240, 0)
+width = 1.0
+default_color = Color(0.34, 0.39, 0.47, 0.8)
+
+[node name="Gerald" parent="." instance=ExtResource("1_gerald")]
+position = Vector2(-144, 0)
+
+[node name="Lilith" parent="." instance=ExtResource("2_lilith")]
+position = Vector2(0, 0)
+
+[node name="Kael" parent="." instance=ExtResource("3_kael")]
+position = Vector2(144, 0)
+
+[node name="GeraldLabel" type="Label" parent="."]
+position = Vector2(-174, 16)
+text = "GERALD"
+
+[node name="LilithLabel" type="Label" parent="."]
+position = Vector2(-28, 16)
+text = "LILITH"
+
+[node name="KaelLabel" type="Label" parent="."]
+position = Vector2(123, 16)
+text = "KAEL"
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, -50)
+zoom = Vector2(1.5, 1.5)
+enabled = true

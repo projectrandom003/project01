@@ -34,6 +34,8 @@ const BOSS_Y := 0.905
 
 const DAMAGE_FONT := 26
 
+const ACTOR_SCENE: PackedScene = preload("res://scenes/ui/battlefield_actor.tscn")
+
 var arena_id: String = ""
 var _actors: Array = []
 var _by_uid: Dictionary = {}
@@ -49,44 +51,60 @@ func _ready() -> void:
 
 
 func _build_environment() -> void:
-	# The Withered Estate replaces the generic gradient with a bespoke
-	# layered conservatory: stained glass, hanging wisteria, statues, wet
-	# reflective tiles and the Matron's pulsing ritual seal.
-	var backdrop := Control.new()
-	if arena_id == "fallen_matron_encounter":
-		backdrop.set_script(load("res://scripts/ui/combat/withered_estate_backdrop.gd"))
-		backdrop.name = "WitheredEstateBackdrop"
-	elif arena_id in ["corrupted_treant", "elder_hollow"]:
-		backdrop.set_script(load("res://scripts/ui/combat/greenward_boss_backdrop.gd"))
-		backdrop.name = "GreenwardRootArenaBackdrop"
-		backdrop.set("arena_id", arena_id)
-	else:
-		backdrop.set_script(load("res://scripts/ui/combat/greenward_field_backdrop.gd"))
-		backdrop.name = "GreenwardForestBackdrop"
-	UIFactory.set_full_rect(backdrop)
-	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(backdrop)
-
-	# Drifting embers (one light CPU layer, kept cheap for mobile).
-	_embers = CPUParticles2D.new()
-	_embers.amount = 22
-	_embers.lifetime = 7.0
-	_embers.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
-	_embers.emission_rect_extents = Vector2(640, 150)
-	_embers.direction = Vector2(0.15, -1)
-	_embers.initial_velocity_min = 6.0
-	_embers.initial_velocity_max = 20.0
-	_embers.gravity = Vector2(1.5, -2.5)
-	_embers.scale_amount_min = 0.3
-	_embers.scale_amount_max = 0.9
+	# Arena backdrops, particle emitter and actor stage are authored in
+	# battlefield.tscn. Runtime code only selects the appropriate variant.
+	var field_backdrop := get_node_or_null("GreenwardForestBackdrop") as Control
+	var boss_backdrop := get_node_or_null("GreenwardRootArenaBackdrop") as Control
+	var estate_backdrop := get_node_or_null("WitheredEstateBackdrop") as Control
+	# Legacy tests and preview tools may still construct Battlefield.new().
+	# Keep that path working while the shipped game uses the authored scene.
+	if field_backdrop == null and boss_backdrop == null and estate_backdrop == null:
+		var backdrop_scene: PackedScene
+		var backdrop_name := ""
+		if arena_id == "fallen_matron_encounter":
+			backdrop_scene = preload("res://scenes/ui/withered_estate_backdrop.tscn")
+			backdrop_name = "WitheredEstateBackdrop"
+		elif arena_id in ["corrupted_treant", "elder_hollow"]:
+			backdrop_scene = preload("res://scenes/ui/greenward_boss_backdrop.tscn")
+			backdrop_name = "GreenwardRootArenaBackdrop"
+		else:
+			backdrop_scene = preload("res://scenes/ui/greenward_field_backdrop.tscn")
+			backdrop_name = "GreenwardForestBackdrop"
+		var fallback_backdrop := backdrop_scene.instantiate() as Control
+		fallback_backdrop.name = backdrop_name
+		UIFactory.set_full_rect(fallback_backdrop)
+		add_child(fallback_backdrop)
+		field_backdrop = fallback_backdrop if backdrop_name == "GreenwardForestBackdrop" else null
+		boss_backdrop = fallback_backdrop if backdrop_name == "GreenwardRootArenaBackdrop" else null
+		estate_backdrop = fallback_backdrop if backdrop_name == "WitheredEstateBackdrop" else null
+	if field_backdrop != null:
+		field_backdrop.visible = arena_id not in ["fallen_matron_encounter", "corrupted_treant", "elder_hollow"]
+	if boss_backdrop != null:
+		boss_backdrop.visible = arena_id in ["corrupted_treant", "elder_hollow"]
+		boss_backdrop.set("arena_id", arena_id)
+	if estate_backdrop != null:
+		estate_backdrop.visible = arena_id == "fallen_matron_encounter"
+	_embers = get_node_or_null("Embers") as CPUParticles2D
+	if _embers == null:
+		_embers = CPUParticles2D.new()
+		_embers.name = "Embers"
+		_embers.amount = 22
+		_embers.lifetime = 7.0
+		_embers.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+		_embers.emission_rect_extents = Vector2(640, 150)
+		_embers.direction = Vector2(0.15, -1)
+		_embers.initial_velocity_min = 6.0
+		_embers.initial_velocity_max = 20.0
+		_embers.gravity = Vector2(1.5, -2.5)
+		_embers.scale_amount_min = 0.3
+		_embers.scale_amount_max = 0.9
+		add_child(_embers)
 	_embers.color = Color(0.85, 0.6, 0.95, 0.22) if arena_id == "fallen_matron_encounter" else Color(0.62, 0.9, 0.48, 0.20)
-	_embers.z_index = 1
-	add_child(_embers)
-
-	# The actor stage (Node2D) sits above the painted environment.
-	_stage = Node2D.new()
-	_stage.name = "Actors"
-	add_child(_stage)
+	_stage = get_node_or_null("Actors") as Node2D
+	if _stage == null:
+		_stage = Node2D.new()
+		_stage.name = "Actors"
+		add_child(_stage)
 
 
 ## Build the stage from the two teams. Enemies are laid out with the boss
@@ -105,7 +123,7 @@ func setup(party: Array, enemies: Array) -> void:
 func _add_actor(unit: Combatant, is_player: bool) -> void:
 	if unit == null:
 		return
-	var actor := BattlefieldActor.new()
+	var actor := ACTOR_SCENE.instantiate() as BattlefieldActor
 	_stage.add_child(actor)
 	actor.setup(unit, is_player)
 	actor.clicked.connect(_on_actor_clicked)

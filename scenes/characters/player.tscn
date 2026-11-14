@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/characters/actor_visual.tscn" id="2_visual"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
+radius = 9.0
+height = 22.0
+
+[node name="Player" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_player")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -10)
+shape = SubResource("CapsuleShape2D_player")
+
+[node name="ActorVisual" parent="." instance=ExtResource("2_visual")]
+
+[node name="NameLabel" type="Label" parent="."]
+offset_left = -70.0
+offset_top = -78.0
+offset_right = 70.0
+offset_bottom = -58.0
+horizontal_alignment = 1
+mouse_filter = 2
+
+[node name="PersonalGlow" type="PointLight2D" parent="."]
+position = Vector2(0, -18)
+color = Color(1, 0.9, 0.72, 1)
+energy = 0.55
+texture_scale = 2.6
+
+[node name="WaterSurface" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(0, -20)
+scale = Vector2(46, 5)
+modulate = Color(0.35, 0.68, 0.86, 0.58)
+z_index = 5
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, -30)
+position_smoothing_enabled = true
+position_smoothing_speed = 12.0

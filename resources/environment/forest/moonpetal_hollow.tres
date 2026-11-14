@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ForestBiomeProfile" load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/environment/forest/forest_biome_profile.gd" id="1_profile"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_birch_tree.tscn" id="2_birch"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_blossom_tree.tscn" id="3_blossom"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_dead_tree.tscn" id="4_dead"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_spirit_bloom.tscn" id="5_spirit"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_mushroom_patch.tscn" id="6_mushrooms"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_crystal_cluster.tscn" id="7_crystal"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_rune_stone.tscn" id="8_rune"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_fern_patch.tscn" id="9_fern"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_firefly.tscn" id="10_firefly"]
+
+[resource]
+script = ExtResource("1_profile")
+biome_id = &"moonpetal_hollow"
+tree_scenes = Array[PackedScene]([ExtResource("2_birch"), ExtResource("3_blossom"), ExtResource("4_dead")])
+understory_scenes = Array[PackedScene]([ExtResource("5_spirit"), ExtResource("6_mushrooms"), ExtResource("7_crystal"), ExtResource("8_rune"), ExtResource("9_fern")])
+ambient_scenes = Array[PackedScene]([ExtResource("10_firefly")])
+tree_count = 7
+understory_count = 20
+ambient_count = 8
+tree_min_spacing = 112.0
+understory_min_spacing = 30.0
+bounds_inset = Vector2(32, 28)

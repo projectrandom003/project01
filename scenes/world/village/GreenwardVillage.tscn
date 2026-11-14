@@ -1,0 +1,533 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/village/VillageEnvironment.tscn" id="1_env"]
+[ext_resource type="PackedScene" path="res://scenes/world/village/VillagePathSegment.tscn" id="2_path"]
+[ext_resource type="PackedScene" path="res://scenes/world/village/VillageBuildingSlot.tscn" id="3_building"]
+[ext_resource type="PackedScene" path="res://scenes/world/village/VillageLightSource.tscn" id="4_light"]
+[ext_resource type="Resource" path="res://resources/data/village/greenward_village_layout.tres" id="6_layout"]
+[ext_resource type="PackedScene" path="res://scenes/world/village/VillageProp.tscn" id="7_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/forest_tree.tscn" id="8_tree"]
+[ext_resource type="PackedScene" path="res://scenes/world/npcs/edgar.tscn" id="9_edgar"]
+[ext_resource type="PackedScene" path="res://scenes/world/village/VillageDistrict.tscn" id="11_district_scene"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(1200, 900)
+
+[node name="GreenwardVillage" instance=ExtResource("1_env")]
+layout_config = ExtResource("6_layout")
+[node name="EntranceDistrict" parent="PathNetwork" instance=ExtResource("11_district_scene")]
+groups = ["village_district"]
+district_id = &"entrance"
+display_name = "Village Entrance"
+[node name="NavigationAnchor" parent="PathNetwork/EntranceDistrict" index="0"]
+position = Vector2(230, 256)
+metadata/district_id = "entrance"
+
+[node name="CentralSquareDistrict" parent="PathNetwork" instance=ExtResource("11_district_scene")]
+groups = ["village_district"]
+district_id = &"central_square"
+display_name = "Central Square"
+[node name="NavigationAnchor" parent="PathNetwork/CentralSquareDistrict" index="0"]
+position = Vector2(0, 256)
+metadata/district_id = "central_square"
+
+[node name="CivicDistrict" parent="PathNetwork" instance=ExtResource("11_district_scene")]
+groups = ["village_district"]
+district_id = &"civic"
+display_name = "Elder's Quarter"
+[node name="NavigationAnchor" parent="PathNetwork/CivicDistrict" index="0"]
+position = Vector2(-70, 218)
+metadata/district_id = "civic"
+
+[node name="MarketDistrict" parent="PathNetwork" instance=ExtResource("11_district_scene")]
+groups = ["village_district"]
+district_id = &"market"
+display_name = "Market"
+[node name="NavigationAnchor" parent="PathNetwork/MarketDistrict" index="0"]
+position = Vector2(150, 350)
+metadata/district_id = "market"
+
+[node name="ResidentialDistrict" parent="PathNetwork" instance=ExtResource("11_district_scene")]
+groups = ["village_district"]
+district_id = &"residential"
+display_name = "Residential Quarter"
+[node name="NavigationAnchor" parent="PathNetwork/ResidentialDistrict" index="0"]
+position = Vector2(40, 188)
+metadata/district_id = "residential"
+
+[node name="ShrineRiversideDistrict" parent="PathNetwork" instance=ExtResource("11_district_scene")]
+groups = ["village_district"]
+district_id = &"shrine_riverside"
+display_name = "Shrine & Riverside"
+[node name="NavigationAnchor" parent="PathNetwork/ShrineRiversideDistrict" index="0"]
+position = Vector2(-145, 270)
+metadata/district_id = "shrine_riverside"
+
+[node name="GroundBase" type="Polygon2D" parent="Ground" index="0"]
+color = Color(0.258824, 0.364706, 0.235294, 1)
+polygon = PackedVector2Array(-520, -120, 520, -120, 520, 620, -520, 620)
+z_index = -20
+
+[node name="GroundWarmth" type="Polygon2D" parent="Ground" index="1"]
+color = Color(0.360784, 0.423529, 0.266667, 0.55)
+polygon = PackedVector2Array(-220, 120, 260, 120, 320, 360, -260, 380)
+z_index = -19
+
+[node name="EntranceGatePath" parent="PathNetwork/EntranceDistrict" index="0" instance=ExtResource("2_path")]
+position = Vector2(230, 256)
+path_id = "entrance_approach"
+connects = PackedStringArray("village_entrance", "central_square")
+
+[node name="Surface" parent="PathNetwork/EntranceDistrict/EntranceGatePath/Visual" index="0"]
+color = Color(0.76, 0.69, 0.52, 1)
+polygon = PackedVector2Array(100, -30, 100, 30, -130, 30, -130, -30)
+
+[node name="Edge" parent="PathNetwork/EntranceDistrict/EntranceGatePath/Visual" index="1"]
+default_color = Color(0.42, 0.35, 0.25, 0.98)
+width = 3.0
+points = PackedVector2Array(100, -30, 100, 30, -130, 30, -130, -30, 100, -30)
+
+[node name="CentralSquare" parent="PathNetwork/CentralSquareDistrict" index="1" instance=ExtResource("2_path")]
+position = Vector2(0, 256)
+path_id = "central_square"
+connects = PackedStringArray("entrance_approach", "square_to_elder", "square_to_market", "residential_north", "residential_south", "square_to_shrine")
+
+[node name="Surface" parent="PathNetwork/CentralSquareDistrict/CentralSquare/Visual" index="0"]
+color = Color(0.79, 0.72, 0.55, 1)
+polygon = PackedVector2Array(-145, -88, 145, -88, 172, 0, 145, 88, -145, 88, -172, 0)
+
+[node name="Edge" parent="PathNetwork/CentralSquareDistrict/CentralSquare/Visual" index="1"]
+default_color = Color(0.44, 0.36, 0.26, 0.98)
+width = 3.0
+points = PackedVector2Array(-145, -88, 145, -88, 172, 0, 145, 88, -145, 88, -172, 0, -145, -88)
+
+[node name="ToElderPath" parent="PathNetwork/CivicDistrict" index="2" instance=ExtResource("2_path")]
+position = Vector2(-70, 218)
+path_id = "square_to_elder"
+connects = PackedStringArray("central_square", "elder_location")
+
+[node name="Surface" parent="PathNetwork/CivicDistrict/ToElderPath/Visual" index="0"]
+color = Color(0.75, 0.68, 0.51, 1)
+polygon = PackedVector2Array(45, -25, 45, 25, -50, 25, -50, -25)
+
+[node name="Edge" parent="PathNetwork/CivicDistrict/ToElderPath/Visual" index="1"]
+default_color = Color(0.42, 0.35, 0.25, 0.98)
+width = 3.0
+points = PackedVector2Array(45, -25, 45, 25, -50, 25, -50, -25, 45, -25)
+
+[node name="ToMarketPath" parent="PathNetwork/MarketDistrict" index="3" instance=ExtResource("2_path")]
+position = Vector2(85, 300)
+path_id = "square_to_market"
+connects = PackedStringArray("central_square", "market")
+
+[node name="Surface" parent="PathNetwork/MarketDistrict/ToMarketPath/Visual" index="0"]
+color = Color(0.75, 0.68, 0.51, 1)
+polygon = PackedVector2Array(-55, -29, 85, -15, 85, 35, -55, 21)
+
+[node name="Edge" parent="PathNetwork/MarketDistrict/ToMarketPath/Visual" index="1"]
+default_color = Color(0.42, 0.35, 0.25, 0.98)
+width = 3.0
+points = PackedVector2Array(-55, -29, 85, -15, 85, 35, -55, 21, -55, -29)
+
+[node name="ToShrinePath" parent="PathNetwork/ShrineRiversideDistrict" index="4" instance=ExtResource("2_path")]
+position = Vector2(-145, 270)
+path_id = "square_to_shrine"
+connects = PackedStringArray("central_square", "shrine", "riverside")
+
+[node name="Surface" parent="PathNetwork/ShrineRiversideDistrict/ToShrinePath/Visual" index="0"]
+color = Color(0.74, 0.67, 0.5, 1)
+polygon = PackedVector2Array(70, -27, 70, 23, -110, 29, -110, -21)
+
+[node name="Edge" parent="PathNetwork/ShrineRiversideDistrict/ToShrinePath/Visual" index="1"]
+default_color = Color(0.42, 0.34, 0.25, 0.98)
+width = 3.0
+points = PackedVector2Array(70, -27, 70, 23, -110, 29, -110, -21, 70, -27)
+
+[node name="ToRiversidePath" parent="PathNetwork/ShrineRiversideDistrict" index="5" instance=ExtResource("2_path")]
+position = Vector2(-195, 308)
+path_id = "square_to_riverside"
+connects = PackedStringArray("square_to_shrine", "riverside")
+
+[node name="Surface" parent="PathNetwork/ShrineRiversideDistrict/ToRiversidePath/Visual" index="0"]
+color = Color(0.73, 0.66, 0.5, 1)
+polygon = PackedVector2Array(50, -27, 50, 23, -80, 29, -80, -21)
+
+[node name="Edge" parent="PathNetwork/ShrineRiversideDistrict/ToRiversidePath/Visual" index="1"]
+default_color = Color(0.42, 0.34, 0.25, 0.98)
+width = 3.0
+points = PackedVector2Array(50, -27, 50, 23, -80, 29, -80, -21, 50, -27)
+
+[node name="ResidentialNorthPath" parent="PathNetwork/ResidentialDistrict" index="6" instance=ExtResource("2_path")]
+position = Vector2(40, 188)
+path_id = "residential_north"
+connects = PackedStringArray("central_square", "house_nw", "house_ne")
+
+[node name="Surface" parent="PathNetwork/ResidentialDistrict/ResidentialNorthPath/Visual" index="0"]
+color = Color(0.75, 0.68, 0.51, 1)
+polygon = PackedVector2Array(-150, -24, 150, -24, 150, 24, -150, 24)
+
+[node name="Edge" parent="PathNetwork/ResidentialDistrict/ResidentialNorthPath/Visual" index="1"]
+default_color = Color(0.42, 0.35, 0.25, 0.98)
+width = 3.0
+points = PackedVector2Array(-150, -24, 150, -24, 150, 24, -150, 24, -150, -24)
+
+[node name="ResidentialSouthPath" parent="PathNetwork/ResidentialDistrict" index="7" instance=ExtResource("2_path")]
+position = Vector2(-20, 322)
+path_id = "residential_south"
+connects = PackedStringArray("central_square", "house_sw", "house_se", "riverside")
+
+[node name="Surface" parent="PathNetwork/ResidentialDistrict/ResidentialSouthPath/Visual" index="0"]
+color = Color(0.75, 0.68, 0.51, 1)
+polygon = PackedVector2Array(-160, -24, 130, -24, 130, 24, -160, 24)
+
+[node name="Edge" parent="PathNetwork/ResidentialDistrict/ResidentialSouthPath/Visual" index="1"]
+default_color = Color(0.42, 0.35, 0.25, 0.98)
+width = 3.0
+points = PackedVector2Array(-160, -24, 130, -24, 130, 24, -160, 24, -160, -24)
+
+[node name="HomeNW" parent="DepthSort" index="0" instance=ExtResource("3_building")]
+position = Vector2(-40, 120)
+metadata/slot_id = "home_nw"
+metadata/building_kind = "cottage"
+metadata/village_sort_category = "building"
+
+[node name="Building" parent="DepthSort/HomeNW" index="0"]
+building_id = &"home_nw"
+blocks_movement = true
+collision_size = Vector2(96, 30)
+building_kind = "cottage"
+visual_variant = 0
+visual_scale = 0.96
+visual_flip_h = false
+
+[node name="HomeNE" parent="DepthSort" index="1" instance=ExtResource("3_building")]
+position = Vector2(190, 210)
+metadata/slot_id = "home_ne"
+metadata/building_kind = "hut"
+metadata/village_sort_category = "building"
+
+[node name="Building" parent="DepthSort/HomeNE" index="0"]
+building_id = &"home_ne"
+blocks_movement = true
+collision_size = Vector2(78, 28)
+building_kind = "hut"
+visual_variant = 1
+visual_scale = 0.94
+visual_flip_h = true
+
+[node name="HomeSW" parent="DepthSort" index="2" instance=ExtResource("3_building")]
+position = Vector2(-220, 200)
+metadata/slot_id = "home_sw"
+metadata/building_kind = "cottage"
+metadata/village_sort_category = "building"
+
+[node name="Building" parent="DepthSort/HomeSW" index="0"]
+building_id = &"home_sw"
+blocks_movement = true
+collision_size = Vector2(96, 30)
+building_kind = "cottage"
+visual_variant = 1
+visual_scale = 0.94
+visual_flip_h = false
+
+[node name="HomeSE" parent="DepthSort" index="3" instance=ExtResource("3_building")]
+position = Vector2(20, 360)
+metadata/slot_id = "home_se"
+metadata/building_kind = "hut"
+metadata/village_sort_category = "building"
+
+[node name="Building" parent="DepthSort/HomeSE" index="0"]
+building_id = &"home_se"
+blocks_movement = true
+collision_size = Vector2(78, 28)
+building_kind = "hut"
+visual_variant = 2
+visual_scale = 0.92
+visual_flip_h = false
+
+[node name="Well" parent="DepthSort" index="4" instance=ExtResource("3_building")]
+position = Vector2(0, 256)
+metadata/slot_id = "well"
+metadata/building_kind = "well"
+metadata/village_sort_category = "building"
+
+[node name="Building" parent="DepthSort/Well" index="0"]
+building_id = &"well"
+blocks_movement = true
+collision_size = Vector2(46, 24)
+building_kind = "well"
+visual_variant = 1
+visual_scale = 1.08
+visual_flip_h = false
+
+[node name="MarketStall" parent="DepthSort" index="5" instance=ExtResource("3_building")]
+position = Vector2(120, 336)
+metadata/slot_id = "market_stall"
+metadata/building_kind = "market_stall"
+metadata/village_sort_category = "building"
+
+[node name="Building" parent="DepthSort/MarketStall" index="0"]
+building_id = &"market_stall"
+blocks_movement = true
+collision_size = Vector2(82, 28)
+building_kind = "market_stall"
+visual_variant = 0
+visual_scale = 0.92
+visual_flip_h = false
+
+[node name="Shrine" parent="DepthSort" index="6" instance=ExtResource("3_building")]
+position = Vector2(-275.2, 240)
+metadata/slot_id = "shrine"
+metadata/building_kind = "shrine"
+metadata/village_sort_category = "building"
+
+[node name="Building" parent="DepthSort/Shrine" index="0"]
+building_id = &"shrine"
+blocks_movement = true
+collision_size = Vector2(54, 24)
+building_kind = "shrine"
+visual_variant = 0
+visual_scale = 1.02
+visual_flip_h = false
+
+[node name="VillageGateProp" parent="DepthSort" index="14" instance=ExtResource("7_prop")]
+position = Vector2(307.2, 256)
+prop_kind = "village_gate"
+variant = 0
+prop_scale = 1.05
+
+[node name="EntranceSign" parent="DepthSort" index="15" instance=ExtResource("7_prop")]
+position = Vector2(280, 236)
+prop_kind = "signpost"
+variant = 1
+prop_scale = 0.95
+
+[node name="SquareBenchA" parent="DepthSort" index="16" instance=ExtResource("7_prop")]
+position = Vector2(-45, 235)
+prop_kind = "bench"
+variant = 0
+prop_scale = 0.95
+
+[node name="SquareBenchB" parent="DepthSort" index="17" instance=ExtResource("7_prop")]
+position = Vector2(45, 235)
+prop_kind = "bench"
+variant = 1
+prop_scale = 0.95
+flip_h = true
+
+[node name="SquareFlowersA" parent="DepthSort" index="18" instance=ExtResource("7_prop")]
+position = Vector2(-60, 295)
+prop_kind = "flower_cluster"
+variant = 0
+prop_scale = 0.42
+
+[node name="SquareFlowersB" parent="DepthSort" index="19" instance=ExtResource("7_prop")]
+position = Vector2(60, 295)
+prop_kind = "flower_cluster"
+variant = 1
+prop_scale = 0.42
+
+[node name="MarketCart" parent="DepthSort" index="20" instance=ExtResource("7_prop")]
+position = Vector2(168, 405)
+prop_kind = "cart"
+variant = 0
+prop_scale = 0.88
+
+[node name="MarketCrateA" parent="DepthSort" index="21" instance=ExtResource("7_prop")]
+position = Vector2(118, 386)
+prop_kind = "crate"
+variant = 1
+prop_scale = 0.82
+
+[node name="MarketBarrelA" parent="DepthSort" index="22" instance=ExtResource("7_prop")]
+position = Vector2(190, 352)
+prop_kind = "barrel"
+variant = 0
+prop_scale = 0.82
+
+[node name="MarketSign" parent="DepthSort" index="23" instance=ExtResource("7_prop")]
+position = Vector2(210, 316)
+prop_kind = "signpost"
+variant = 0
+prop_scale = 0.82
+
+[node name="MarketStallB" parent="DepthSort" index="24" instance=ExtResource("7_prop")]
+position = Vector2(235, 374)
+prop_kind = "market_stall"
+variant = 1
+prop_scale = 0.72
+flip_h = true
+
+[node name="ElderBanner" parent="DepthSort" index="25" instance=ExtResource("7_prop")]
+position = Vector2(-70, 205)
+prop_kind = "banner_post"
+variant = 0
+prop_scale = 0.95
+
+[node name="ElderBench" parent="DepthSort" index="26" instance=ExtResource("7_prop")]
+position = Vector2(-110, 210)
+prop_kind = "bench"
+variant = 1
+prop_scale = 0.9
+
+[node name="ResidentialFenceNW1" parent="DepthSort" index="27" instance=ExtResource("7_prop")]
+position = Vector2(-60, 150)
+prop_kind = "fence"
+variant = 0
+prop_scale = 0.9
+
+[node name="ResidentialFenceNW2" parent="DepthSort" index="28" instance=ExtResource("7_prop")]
+position = Vector2(-10, 150)
+prop_kind = "fence"
+variant = 1
+prop_scale = 0.9
+
+[node name="ResidentialGardenNW" parent="DepthSort" index="29" instance=ExtResource("7_prop")]
+position = Vector2(-10, 95)
+prop_kind = "flower_cluster"
+variant = 2
+prop_scale = 0.7
+
+[node name="ResidentialBenchNE" parent="DepthSort" index="30" instance=ExtResource("7_prop")]
+position = Vector2(165, 230)
+prop_kind = "bench"
+variant = 0
+prop_scale = 0.85
+
+[node name="ResidentialBushNE" parent="DepthSort" index="31" instance=ExtResource("7_prop")]
+position = Vector2(210, 230)
+prop_kind = "bush"
+variant = 1
+prop_scale = 0.8
+
+[node name="ResidentialFenceSW" parent="DepthSort" index="32" instance=ExtResource("7_prop")]
+position = Vector2(-245, 220)
+prop_kind = "fence"
+variant = 0
+prop_scale = 0.85
+
+[node name="ResidentialGardenSW" parent="DepthSort" index="33" instance=ExtResource("7_prop")]
+position = Vector2(-195, 180)
+prop_kind = "flower_cluster"
+variant = 0
+prop_scale = 0.65
+
+[node name="ResidentialBarrelSE" parent="DepthSort" index="34" instance=ExtResource("7_prop")]
+position = Vector2(30, 360)
+prop_kind = "barrel"
+variant = 1
+prop_scale = 0.85
+
+[node name="ResidentialCrateSE" parent="DepthSort" index="35" instance=ExtResource("7_prop")]
+position = Vector2(-20, 360)
+prop_kind = "crate"
+variant = 0
+prop_scale = 0.85
+
+[node name="ShrineBloomA" parent="DepthSort" index="36" instance=ExtResource("7_prop")]
+position = Vector2(-300, 215)
+prop_kind = "spirit_bloom"
+variant = 1
+prop_scale = 0.28
+
+[node name="ShrineBloomB" parent="DepthSort" index="37" instance=ExtResource("7_prop")]
+position = Vector2(-250, 215)
+prop_kind = "spirit_bloom"
+variant = 2
+prop_scale = 0.25
+
+[node name="RiversideReedsA" parent="DepthSort" index="38" instance=ExtResource("7_prop")]
+position = Vector2(-240, 325)
+prop_kind = "reeds"
+variant = 0
+prop_scale = 0.85
+
+[node name="RiversideReedsB" parent="DepthSort" index="39" instance=ExtResource("7_prop")]
+position = Vector2(-205, 335)
+prop_kind = "reeds"
+variant = 1
+prop_scale = 0.8
+
+[node name="RiversideLantern" parent="DepthSort" index="40" instance=ExtResource("7_prop")]
+position = Vector2(-225, 285)
+prop_kind = "wisp_lantern"
+variant = 0
+prop_scale = 0.75
+
+[node name="LanternEntrance" parent="Lighting" index="0" instance=ExtResource("4_light")]
+position = Vector2(280, 256)
+base_energy = 1.0
+texture_scale = 2.3
+
+[node name="LanternSquare" parent="Lighting" index="1" instance=ExtResource("4_light")]
+position = Vector2(0, 245)
+base_energy = 1.1
+texture_scale = 2.5
+
+[node name="LanternMarket" parent="Lighting" index="2" instance=ExtResource("4_light")]
+position = Vector2(120, 320)
+base_energy = 1.05
+texture_scale = 2.3
+
+[node name="LanternElder" parent="Lighting" index="3" instance=ExtResource("4_light")]
+position = Vector2(-80, 210)
+base_energy = 0.85
+texture_scale = 2.0
+
+[node name="LanternShrine" parent="Lighting" index="4" instance=ExtResource("4_light")]
+position = Vector2(-250, 250)
+light_color = Color(0.58, 0.92, 0.88, 1)
+base_energy = 0.8
+texture_scale = 2.1
+
+[node name="LanternRiverside" parent="Lighting" index="5" instance=ExtResource("4_light")]
+position = Vector2(-205, 305)
+light_color = Color(0.68, 0.88, 1, 1)
+base_energy = 0.75
+texture_scale = 2.0
+
+[node name="WindowNW" parent="Lighting" index="6" instance=ExtResource("4_light")]
+position = Vector2(-40, 105)
+light_color = Color(1, 0.86, 0.58, 1)
+base_energy = 0.35
+texture_scale = 1.1
+
+[node name="WindowNE" parent="Lighting" index="7" instance=ExtResource("4_light")]
+position = Vector2(190, 195)
+light_color = Color(1, 0.86, 0.58, 1)
+base_energy = 0.32
+texture_scale = 1.0
+
+[node name="WindowSW" parent="Lighting" index="8" instance=ExtResource("4_light")]
+position = Vector2(-220, 185)
+light_color = Color(1, 0.86, 0.58, 1)
+base_energy = 0.32
+texture_scale = 1.0
+
+[node name="WindowSE" parent="Lighting" index="9" instance=ExtResource("4_light")]
+position = Vector2(20, 345)
+light_color = Color(1, 0.86, 0.58, 1)
+base_energy = 0.3
+texture_scale = 1.0
+
+[node name="WindowMarket" parent="Lighting" index="10" instance=ExtResource("4_light")]
+position = Vector2(120, 325)
+light_color = Color(1, 0.84, 0.55, 1)
+base_energy = 0.28
+texture_scale = 1.0
+
+[node name="ElderAnchor" type="Marker2D" parent="Logic/NPCAreas" index="0"]
+position = Vector2(-89.6, 185.6)
+metadata/npc_id = "elder_maelin"
+
+[node name="SeraAnchor" type="Marker2D" parent="Logic/NPCAreas" index="1"]
+position = Vector2(130, 336)
+metadata/npc_id = "merchant_sera"
+
+[node name="PipAnchor" type="Marker2D" parent="Logic/NPCAreas" index="2"]
+position = Vector2(-160, 320)
+metadata/npc_id = "wanderer_pip"
+
+[node name="Edgar" parent="DepthSort" index="41" instance=ExtResource("9_edgar")]
+position = Vector2(150, 300)
+metadata/village_sort_category = "npc"

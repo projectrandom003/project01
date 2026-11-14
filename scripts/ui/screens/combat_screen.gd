@@ -9,6 +9,7 @@ signal closed
 
 const TURN_DELAY := 0.78
 const IMPACT_DELAY := 0.58
+const BATTLEFIELD_SCENE: PackedScene = preload("res://scenes/ui/battlefield.tscn")
 
 var group_id: String = ""
 var engine: CombatEngine
@@ -59,7 +60,10 @@ func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	theme = UITheme.build()
-	_build_background()
+	# The arena backdrop is an authored child scene. Keep the old builder only
+	# for direct CombatScreen.new() preview/test fixtures.
+	if get_node_or_null("CombatScreenBackdrop") == null:
+		_build_background()
 	_build_layout()
 	_start_battle()
 
@@ -260,7 +264,7 @@ func _build_layout() -> void:
 
 	# ===== CENTER: the battlefield =====
 	# Party on the left, enemies on the right, real sprites on the stage.
-	_battlefield = Battlefield.new()
+	_battlefield = BATTLEFIELD_SCENE.instantiate() as Battlefield
 	_battlefield.arena_id = group_id
 	_battlefield.name = "Battlefield"
 	_battlefield.size_flags_vertical = Control.SIZE_EXPAND_FILL

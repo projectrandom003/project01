@@ -36,36 +36,41 @@ func _ready() -> void:
 
 
 func _build_visual() -> void:
-	if _sprite != null:
-		return
+	_sprite = get_node_or_null("Sprite") as Sprite2D
+	if _sprite == null:
+		_sprite = Sprite2D.new()
+		_sprite.name = "Sprite"
+		_sprite.centered = false
+		_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		add_child(_sprite)
 	var tex := ProceduralArt.prop_texture("waypoint", 1)
 	if tex == null:
 		tex = ProceduralArt.white_pixel()
-	_sprite = Sprite2D.new()
-	_sprite.name = "Sprite"
 	_sprite.texture = tex
 	_sprite.centered = false
 	_sprite.offset = Vector2(-float(tex.get_width()) * 0.5, -float(tex.get_height()) + 6.0)
-	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-	add_child(_sprite)
 
-	# A soft additively-blended glow so the gate reads as a destination.
-	_light = PointLight2D.new()
-	_light.name = "Glow"
+	# Reuse the authored glow and label; fallbacks keep direct construction safe.
+	_light = get_node_or_null("Glow") as PointLight2D
+	if _light == null:
+		_light = PointLight2D.new()
+		_light.name = "Glow"
+		_light.position = Vector2(0, -36)
+		add_child(_light)
 	_light.texture = ProceduralArt.soft_glow(GreenwardStyle.MAGIC.teal, 96)
 	_light.color = GreenwardStyle.MAGIC.teal
 	_light.energy = 1.0
 	_light.texture_scale = 2.2
 	_light.blend_mode = Light2D.BLEND_MODE_ADD
-	_light.position = Vector2(0, -36)
-	add_child(_light)
 
-	_label = Label.new()
-	_label.name = "Label"
+	_label = get_node_or_null("Label") as Label
+	if _label == null:
+		_label = Label.new()
+		_label.name = "Label"
+		_label.position = Vector2(-64, -96)
+		add_child(_label)
 	_label.text = portal_label
-	_label.position = Vector2(-64, -96)
 	_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_label)
 
 
 func interact() -> void:

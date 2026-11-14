@@ -1,0 +1,53 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/combat/battlefield.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/greenward_field_backdrop.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/greenward_boss_backdrop.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/withered_estate_backdrop.tscn" id="4"]
+
+[node name="Battlefield" type="Control"]
+clip_contents = true
+script = ExtResource("1")
+
+[node name="GreenwardForestBackdrop" parent="." instance=ExtResource("2")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GreenwardRootArenaBackdrop" parent="." instance=ExtResource("3")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WitheredEstateBackdrop" parent="." instance=ExtResource("4")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Embers" type="CPUParticles2D" parent="."]
+position = Vector2(640, 396)
+amount = 22
+lifetime = 7.0
+emission_shape = 3
+emission_rect_extents = Vector2(640, 150)
+direction = Vector2(0.15, -1)
+initial_velocity_min = 6.0
+initial_velocity_max = 20.0
+gravity = Vector2(1.5, -2.5)
+scale_amount_min = 0.3
+scale_amount_max = 0.9
+color = Color(0.62, 0.9, 0.48, 0.2)
+z_index = 1
+
+[node name="Actors" type="Node2D" parent="."]

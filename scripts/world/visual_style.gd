@@ -218,7 +218,7 @@ const PHASES := {
 # TIMING RECONCILED (Phase 3 / Step 4): every value below is the authoritative
 # CharacterAnimator.STATE_FRAMES / STATE_FPS / STATE_LOOPING, in state order
 # IDLE(0) WALK(1) RUN(2) INTERACT(3) ATTACK(4) DAMAGE(5) VICTORY(6) DEFEAT(7):
-#   frames 5,16,16,6,6,2,8,6   fps 9,60,64,12,15,12,12,10
+#   frames 5,16,16,6,6,2,8,6   fps 9,12,16,12,15,12,12,10
 #   loop   true,true,true,false,false,false,false,false
 # The animator, ActorFrameSource, ProceduralActorFrames and these specs MUST stay
 # in lockstep; do not edit one without the others.
@@ -234,7 +234,7 @@ const SPRITE_SPECS := {
 	"state_names": ["IDLE", "WALK", "RUN", "INTERACT", "ATTACK", "DAMAGE", "VICTORY", "DEFEAT"],
 	"direction_names": ["DOWN", "DOWN_RIGHT", "RIGHT", "UP_RIGHT", "UP", "UP_LEFT", "LEFT", "DOWN_LEFT"],
 	"fps": {
-		"IDLE": 9, "WALK": 12, "RUN": 14, "INTERACT": 12,
+		"IDLE": 9, "WALK": 12, "RUN": 16, "INTERACT": 12,
 		"ATTACK": 15, "DAMAGE": 12, "VICTORY": 12, "DEFEAT": 10,
 	},
 	"frames": {
@@ -245,8 +245,8 @@ const SPRITE_SPECS := {
 		"IDLE": true, "WALK": true, "RUN": true, "INTERACT": false,
 		"ATTACK": false, "DAMAGE": false, "VICTORY": false, "DEFEAT": false,
 	},
-	"frame_counts": [5, 7, 7, 6, 6, 2, 8, 6],
-	"fps_values": [9, 12, 14, 12, 15, 12, 12, 10],
+	"frame_counts": [5, 16, 16, 6, 6, 2, 8, 6],
+	"fps_values": [9, 12, 16, 12, 15, 12, 12, 10],
 	"loop_flags": [true, true, true, false, false, false, false, false],
 }
 

@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/environment/village/village_environment.gd" id="1_village"]
+
+[node name="VillageEnvironment" type="Node2D"]
+script = ExtResource("1_village")
+layout_seed = 24017
+
+[node name="GroundDetails" type="Node2D" parent="."]
+
+[node name="PathNetwork" type="Node2D" parent="."]
+
+[node name="Buildings" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="TreeGroups" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Furniture" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="NPCs" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Landmarks" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Lighting" type="Node2D" parent="."]
+
+[node name="Ambient" type="Node2D" parent="."]

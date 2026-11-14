@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dfxpxupf3yovo"]
+
+[ext_resource type="Script" path="res://tools/verify_quest_navigation.gd" id="1_v"]
+
+[node name="VerifyQuestNavigation" type="Node"]
+script = ExtResource("1_v")

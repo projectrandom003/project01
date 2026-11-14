@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="ForestBiomeProfile" load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/environment/forest/forest_biome_profile.gd" id="1_profile"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_willow_tree.tscn" id="2_willow"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_pine_tree.tscn" id="3_pine"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_blossom_tree.tscn" id="4_blossom"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_dead_tree.tscn" id="5_dead"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_shrub.tscn" id="6_shrub"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_berry_bush.tscn" id="7_berry"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_flower_patch.tscn" id="8_flowers"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_fern_patch.tscn" id="9_fern"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_mushroom_patch.tscn" id="10_mushrooms"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_firefly.tscn" id="11_firefly"]
+
+[resource]
+script = ExtResource("1_profile")
+biome_id = &"greenward_forest"
+tree_scenes = Array[PackedScene]([ExtResource("2_willow"), ExtResource("3_pine"), ExtResource("4_blossom"), ExtResource("5_dead")])
+understory_scenes = Array[PackedScene]([ExtResource("6_shrub"), ExtResource("7_berry"), ExtResource("8_flowers"), ExtResource("9_fern"), ExtResource("10_mushrooms")])
+ambient_scenes = Array[PackedScene]([ExtResource("11_firefly")])
+tree_count = 6
+understory_count = 18
+ambient_count = 5
+tree_min_spacing = 104.0
+understory_min_spacing = 28.0
+bounds_inset = Vector2(32, 28)

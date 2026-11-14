@@ -256,6 +256,46 @@
       }
     }
   },
+  "edgar_market_keeper": {
+    "start": "greet",
+    "nodes": {
+      "greet": {
+        "speaker": "Edgar",
+        "portrait": { "hair": "#34231f", "primary": "#49202d", "secondary": "#c9a45a", "accent": "#e4c98c", "skin": "#e6c3a8" },
+        "portrait_asset": "res://assets/characters/edgar/edgar_portrait.jpg",
+        "text": "Welcome. If you are looking for something useful, you have come to the right stall. If you are looking for a bargain, I advise you to lower your expectations.",
+        "choices": [
+          { "text": "You run the market?", "next": "market" },
+          { "text": "Tell me about yourself.", "next": "about" },
+          { "text": "I'll look around.", "next": "" }
+        ]
+      },
+      "market": {
+        "speaker": "Edgar",
+        "portrait": { "hair": "#34231f", "primary": "#49202d", "secondary": "#c9a45a", "accent": "#e4c98c", "skin": "#e6c3a8" },
+        "portrait_asset": "res://assets/characters/edgar/edgar_portrait.jpg",
+        "text": "I keep the stalls in order, settle disputes, and make certain the village has what it needs. A market is more than a place to trade. It is where a village learns to trust itself.",
+        "choices": [
+          { "text": "Sounds like a great deal of work.", "next": "work" },
+          { "text": "I see. Thank you.", "next": "" }
+        ]
+      },
+      "work": {
+        "speaker": "Edgar",
+        "portrait": { "hair": "#34231f", "primary": "#49202d", "secondary": "#c9a45a", "accent": "#e4c98c", "skin": "#e6c3a8" },
+        "portrait_asset": "res://assets/characters/edgar/edgar_portrait.jpg",
+        "text": "It is. Though I find that keeping accounts is easier than keeping people from arguing over the price of turnips.",
+        "next": ""
+      },
+      "about": {
+        "speaker": "Edgar",
+        "portrait": { "hair": "#34231f", "primary": "#49202d", "secondary": "#c9a45a", "accent": "#e4c98c", "skin": "#e6c3a8" },
+        "portrait_asset": "res://assets/characters/edgar/edgar_portrait.jpg",
+        "text": "Edgar. I look after the market here in Greenward. That is enough biography for a first meeting, I think.",
+        "next": ""
+      }
+    }
+  },
   "wanderer_pip": {
     "start": "greet",
     "start_rules": [

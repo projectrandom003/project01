@@ -1,0 +1,82 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tools/preview_boss_presentation_nodes.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/combat/presentation/boss_presentation_rig.tscn" id="2"]
+
+[node name="BossPresentationPreview" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.012, 0.019, 0.028, 1)
+
+[node name="Header" type="Label" parent="."]
+anchor_left = 0.05
+anchor_top = 0.035
+anchor_right = 0.95
+anchor_bottom = 0.09
+theme_override_colors/font_color = Color(0.87, 0.91, 0.94, 1)
+theme_override_font_sizes/font_size = 24
+text = "PROJECT FANTASY  /  BOSS PRESENTATION NODE PROTOTYPE"
+horizontal_alignment = 1
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="Status" type="Label" parent="."]
+anchor_left = 0.05
+anchor_top = 0.11
+anchor_right = 0.95
+anchor_bottom = 0.16
+theme_override_colors/font_color = Color(0.72, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 17
+text = "PREVIEW INITIALIZING"
+horizontal_alignment = 1
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="TargetOne" type="Label" parent="."]
+offset_left = 220.0
+offset_top = 470.0
+offset_right = 320.0
+offset_bottom = 500.0
+theme_override_colors/font_color = Color(0.7, 0.78, 0.84, 0.8)
+text = "ALLY I"
+horizontal_alignment = 1
+mouse_filter = 2
+
+[node name="TargetTwo" type="Label" parent="."]
+offset_left = 450.0
+offset_top = 500.0
+offset_right = 550.0
+offset_bottom = 530.0
+theme_override_colors/font_color = Color(0.7, 0.78, 0.84, 0.8)
+text = "ALLY II"
+horizontal_alignment = 1
+mouse_filter = 2
+
+[node name="TargetThree" type="Label" parent="."]
+offset_left = 680.0
+offset_top = 470.0
+offset_right = 780.0
+offset_bottom = 500.0
+theme_override_colors/font_color = Color(0.7, 0.78, 0.84, 0.8)
+text = "ALLY III"
+horizontal_alignment = 1
+mouse_filter = 2
+
+[node name="BossPresentationRig" parent="." instance=ExtResource("2")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

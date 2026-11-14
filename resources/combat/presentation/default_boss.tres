@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/presentation/boss_presentation_profile.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+visual_style = "roots"
+telegraph_color = Color(0.62, 0.88, 0.58, 1)
+telegraph_scale = 1.0
+impact_color = Color(0.82, 0.96, 0.72, 1)
+impact_scale = 1.0
+phase_color = Color(0.76, 0.94, 0.66, 1)
+phase_title = "THE ENCOUNTER CHANGES"

@@ -57,6 +57,8 @@ var using_temporary_art: bool = true
 signal animation_finished(state: int)
 
 var _sprite: Sprite2D
+var _locomotion_player: AnimationPlayer
+var _locomotion_animation: StringName = &""
 var _sprite_active: bool = false
 var _last_sprite_key: int = -1
 var _custom_source: bool = false
@@ -100,6 +102,7 @@ func setup(p_palette: Dictionary, p_kind: Kind = Kind.HUMAN, p_def_id: String = 
 
 
 func _ready() -> void:
+	_locomotion_player = get_node_or_null("AnimationPlayer") as AnimationPlayer
 	_refresh_colors()
 	_init_animator()
 	if frame_source == null:
@@ -231,14 +234,20 @@ func character_art_report() -> Dictionary:
 
 
 func _ensure_sprite() -> void:
-	if _sprite != null or not is_inside_tree():
+	if not is_inside_tree():
 		return
-	_sprite = Sprite2D.new()
-	_sprite.name = "FrameSprite"
+	# Prefer the Sprite2D authored in scenes/characters/actor_visual.tscn.
+	# Keep the runtime-created fallback for legacy scenes that still instantiate
+	# ActorVisual directly from code.
+	if _sprite == null:
+		_sprite = get_node_or_null("FrameSprite") as Sprite2D
+	if _sprite == null:
+		_sprite = Sprite2D.new()
+		_sprite.name = "FrameSprite"
+		add_child(_sprite)
 	_sprite.centered = false
 	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	_sprite.visible = false
-	add_child(_sprite)
 
 
 func _hide_sprite() -> void:
@@ -255,10 +264,20 @@ func _mirrors_by_facing() -> bool:
 
 ## Set a character's world-height scale while keeping the feet / hover baseline anchored.
 func set_body_scale(value: float) -> void:
-	_base_visual_scale = clampf(value, 0.45, 1.5)
+	_base_visual_scale = clampf(value, 0.45, 4.5)
 	visual_scale = _base_visual_scale
 	if _sprite != null and _sprite.texture != null:
 		_apply_sprite_geometry()
+	_apply_effects_geometry()
+
+
+## Keep node-authored effects in the same character-local scale as the sprite.
+## This is especially important for Gerald: his 8 m body is rendered at ~4.37x,
+## so unscaled combat overlays would otherwise look like tiny sparks at his feet.
+func _apply_effects_geometry() -> void:
+	var effects := get_node_or_null("Effects") as Node2D
+	if effects != null:
+		effects.scale = Vector2.ONE * visual_scale
 
 
 func _apply_sprite_geometry() -> void:
@@ -308,8 +327,27 @@ func _update_sprite_frame() -> void:
 func play(state: int, direction: int = -1, speed_scale: float = 1.0) -> void:
 	if animator != null:
 		animator.play(state, direction, speed_scale)
+	_update_locomotion_animation(state, speed_scale)
 	if not _sprite_active:
 		queue_redraw()
+
+
+## The authored AnimationPlayer handles secondary body motion; CharacterAnimator
+## remains the source of truth for directional sprite frames and one-shots.
+func _update_locomotion_animation(state: int, speed_scale: float = 1.0) -> void:
+	if _locomotion_player == null:
+		return
+	var target: StringName = &"idle_bob"
+	if state == S_WALK:
+		target = &"walk_bob"
+	elif state == S_RUN:
+		target = &"run_bob"
+	if target == _locomotion_animation and _locomotion_player.is_playing():
+		_locomotion_player.speed_scale = maxf(0.1, speed_scale)
+		return
+	_locomotion_animation = target
+	_locomotion_player.speed_scale = maxf(0.1, speed_scale)
+	_locomotion_player.play(target)
 
 
 func set_move_direction(v: Vector2) -> void:
@@ -330,7 +368,8 @@ func play_interact() -> void:
 	_play_state(S_INTERACT)
 
 
-func play_attack() -> void:
+func play_attack(variant: String = "slash_combo") -> void:
+	_set_gerald_attack_variant(variant)
 	_play_state(S_ATTACK)
 
 
@@ -342,11 +381,41 @@ func play_defeat() -> void:
 	_play_state(S_DEFEAT)
 
 
-## Phase-2: start the additive CAST one-shot (state 8) on the animator.
-func play_cast() -> void:
+## Select one of Gerald's authored skill effects and start the shared CAST one-shot.
+## Existing no-argument callers retain the ground-eruption default.
+func play_cast(skill_variant: String = "ground_eruption") -> void:
+	_set_gerald_skill_variant(skill_variant)
 	if animator != null:
 		animator.play_cast()
 	queue_redraw()
+
+
+func play_skill(skill_id: String) -> void:
+	var variant := "ground_eruption"
+	match skill_id.to_lower():
+		"blade_wave":
+			variant = "blade_wave"
+		"guardian_aura":
+			variant = "guardian_aura"
+		"ground_eruption":
+			variant = "ground_eruption"
+	play_cast(variant)
+
+
+func _set_gerald_attack_variant(variant: String) -> void:
+	if character_id != "gerald":
+		return
+	var fx := get_node_or_null("Effects/GeraldCombatFX")
+	if fx != null and fx.has_method("set_attack_variant"):
+		fx.call("set_attack_variant", variant)
+
+
+func _set_gerald_skill_variant(variant: String) -> void:
+	if character_id != "gerald":
+		return
+	var fx := get_node_or_null("Effects/GeraldCombatFX")
+	if fx != null and fx.has_method("set_skill_variant"):
+		fx.call("set_skill_variant", variant)
 
 
 func _play_state(s: int) -> void:
@@ -456,6 +525,10 @@ func _update_locomotion_pose(delta: float) -> void:
 	var bob := 0.0
 	var sway := 0.0
 	var squash := 0.0
+	# Never carry a previous turn-pose rotation into the next locomotion
+	# frame. Gerald changes facing often; accumulating the small turn offset
+	# made his entire sprite progressively spin around its origin.
+	_sprite.rotation = 0.0
 	if character_id == "lilith" or race == "Spirit":
 		# Lilith's lower silhouette is spectral flame, not feet: keep her hovering.
 		bob = sin(anim_time * (3.0 if locomotion else 1.8)) * (2.5 if locomotion else 1.8)
@@ -466,10 +539,16 @@ func _update_locomotion_pose(delta: float) -> void:
 		var contact := pow(maxf(0.0, cos(phase * cadence)), 8.0) if locomotion else 0.0
 		var lift := absf(sin(phase * cadence)) if locomotion else 0.0
 		if character_id == "gerald":
-			# Heavy guardian: compact rise, deliberate landing and slight coat sway.
-			bob = -1.45 * lift
-			sway = sin(phase) * 0.65 if locomotion else sin(anim_time * 1.1) * 0.25
+			# Heavy guardian: compact rise, deliberate landing and a slow, weighty
+			# idle breath. The tiny scale pulse expands from the grounded origin,
+			# while the opposing lateral sway gives his long coat a soft secondary
+			# motion without making an 8 m silhouette look weightless.
+			var breath := sin(anim_time * 1.45)
+			bob = -1.45 * lift if locomotion else -0.42 * breath
+			sway = sin(phase) * 0.65 if locomotion else sin(anim_time * 0.92) * 0.42
 			squash = 0.028 * contact
+			if idle:
+				_sprite.rotation = sin(anim_time * 0.92) * 0.0025
 		elif character_id == "kael":
 			# Kael: quick, light footwork with a more expressive idle breath.
 			bob = -2.45 * lift if locomotion else sin(anim_time * 2.15) * 0.78
@@ -482,14 +561,18 @@ func _update_locomotion_pose(delta: float) -> void:
 			sway = sin(phase) * 1.05 if locomotion else sin(anim_time * 1.5) * 0.3
 			squash = 0.035 * contact
 			_sprite.rotation = 0.0
-	var scale_x := _base_visual_scale * (1.0 + squash * 0.55)
-	var scale_y := _base_visual_scale * (1.0 - squash)
+	var breath_scale := sin(anim_time * 1.45) if character_id == "gerald" and idle else 0.0
+	var scale_x := _base_visual_scale * (1.0 + squash * 0.55 + breath_scale * 0.0015)
+	var scale_y := _base_visual_scale * (1.0 - squash + breath_scale * 0.0035)
 	_sprite.position = Vector2(sway, bob)
 	_sprite.scale = Vector2(scale_x, scale_y)
 	if _turn_pose_remaining > 0.0:
 		_turn_pose_remaining = maxf(0.0, _turn_pose_remaining - delta)
 		var turn_weight := sin(PI * (1.0 - _turn_pose_remaining / TURN_POSE_DURATION))
-		_sprite.rotation += deg_to_rad(3.0) * _turn_pose_sign * turn_weight
+		# Keep Gerald's turn cue subtle and bounded (rotation is reset each frame)
+		# so he still shows a directional turn transition without progressive spin.
+		var turn_deg := 1.6 if character_id == "gerald" else 3.0
+		_sprite.rotation += deg_to_rad(turn_deg) * _turn_pose_sign * turn_weight
 
 
 

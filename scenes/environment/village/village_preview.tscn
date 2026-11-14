@@ -1,0 +1,54 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/environment/village/village_environment.tscn" id="1_root"]
+[ext_resource type="PackedScene" path="res://scenes/environment/village/village_anchor.tscn" id="2_anchor"]
+[ext_resource type="PackedScene" path="res://scenes/environment/village/village_path.tscn" id="3_path"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_prop.tscn" id="4_prop"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_willow_tree.tscn" id="5_willow"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_blossom_tree.tscn" id="6_blossom"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_pine_tree.tscn" id="7_pine"]
+
+[node name="VillagePreview" instance=ExtResource("1_root")]
+apply_authored_anchors_on_ready = true
+layout_seed = 24017
+
+[node name="MainStreet" parent="PathNetwork" instance=ExtResource("3_path")]
+path_points = PackedVector2Array(0, 0, 112, 34, 208, 10, 300, 72)
+path_width = 44.0
+
+[node name="NorthCottage" parent="." instance=ExtResource("2_anchor")]
+anchor_id = &"north_cottage"
+anchor_role = "building"
+scene_to_place = ExtResource("4_prop")
+prop_kind_override = &"cottage"
+position = Vector2(84, -78)
+placement_scale = 1.0
+
+[node name="WestWillow" parent="." instance=ExtResource("2_anchor")]
+anchor_id = &"west_willow"
+anchor_role = "tree"
+scene_to_place = ExtResource("5_willow")
+position = Vector2(-88, -40)
+placement_scale = 0.9
+
+[node name="EastBlossom" parent="." instance=ExtResource("2_anchor")]
+anchor_id = &"east_blossom"
+anchor_role = "tree"
+scene_to_place = ExtResource("6_blossom")
+position = Vector2(340, -12)
+placement_scale = 0.85
+
+[node name="SouthPine" parent="." instance=ExtResource("2_anchor")]
+anchor_id = &"south_pine"
+anchor_role = "tree"
+scene_to_place = ExtResource("7_pine")
+position = Vector2(240, 146)
+placement_scale = 0.95
+
+[node name="MarketLantern" parent="." instance=ExtResource("2_anchor")]
+anchor_id = &"market_lantern"
+anchor_role = "furniture"
+scene_to_place = ExtResource("4_prop")
+prop_kind_override = &"lantern"
+position = Vector2(204, 72)
+placement_scale = 0.7

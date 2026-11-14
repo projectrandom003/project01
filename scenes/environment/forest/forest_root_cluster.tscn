@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_roots"]
+size = Vector2(76, 16)
+
+[node name="ForestRootCluster" type="Node2D"]
+
+[node name="RootShadow" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-48, 4, -34, -7, -12, -8, 2, -16, 22, -12, 42, -4, 50, 5, 25, 11, -25, 11)
+color = Color(0.02, 0.035, 0.025, 0.32)
+
+[node name="MainRoot" type="Line2D" parent="."]
+points = PackedVector2Array(-47, 0, -28, -5, -13, -4, 0, -13, 16, -9, 34, -2, 46, 1)
+width = 9.0
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+default_color = Color(0.32, 0.22, 0.14, 1)
+
+[node name="RootHighlight" type="Line2D" parent="."]
+points = PackedVector2Array(-40, -2, -24, -7, -12, -6, 1, -15, 15, -11, 31, -4)
+width = 2.0
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+default_color = Color(0.58, 0.4, 0.25, 0.9)
+
+[node name="RootBranch" type="Line2D" parent="."]
+points = PackedVector2Array(-9, -4, -19, 5, -30, 8)
+width = 5.0
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+default_color = Color(0.28, 0.19, 0.13, 1)
+
+[node name="RootBranchHighlight" type="Line2D" parent="."]
+points = PackedVector2Array(-12, -4, -21, 4, -29, 6)
+width = 1.4
+default_color = Color(0.55, 0.39, 0.25, 0.85)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_roots")

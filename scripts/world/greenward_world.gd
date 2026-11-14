@@ -20,6 +20,18 @@ extends Node2D
 ## or _ready() order is changed.
 
 const DEFAULT_REGION_ID := "greenward"
+const PLAYER_SCENE: PackedScene = preload("res://scenes/characters/player.tscn")
+const NPC_SCENE: PackedScene = preload("res://scenes/world/world_npc.tscn")
+const MONSTER_SCENE: PackedScene = preload("res://scenes/world/roaming_monster.tscn")
+const INTERACTIVE_PROP_SCENE: PackedScene = preload("res://scenes/world/interactive_prop.tscn")
+const ANIMATED_PROP_SCENE: PackedScene = preload("res://scenes/world/animated_prop.tscn")
+const REGION_PORTAL_SCENE: PackedScene = preload("res://scenes/world/region_portal.tscn")
+const QUEST_MARKER_SCENE: PackedScene = preload("res://scenes/world/quest_destination_marker.tscn")
+const GROUND_CHUNK_SCENE: PackedScene = preload("res://scenes/world/ground_chunk.tscn")
+const FOREST_TREE_SCENE: PackedScene = preload("res://scenes/world/forest_tree.tscn")
+# Step 4 visual prototype: one representative Greenward chunk near the starting
+# village, avoiding important NPCs, portals and quest locations.
+const PROTOTYPE_GROUND_CHUNK := Vector2i(-1, 0)
 var region_id: String = DEFAULT_REGION_ID
 var entry_point: String = ""
 const SAVE_POSITION_INTERVAL := 1.0
@@ -128,6 +140,7 @@ func _ready() -> void:
 	_setup_layers()
 	_setup_noise()
 	_setup_day_night()
+	_integrate_village_depth_sort()
 	_spawn_player()
 	if region_id == DEFAULT_REGION_ID:
 		_build_village()          # includes _build_river()
@@ -144,7 +157,7 @@ func _ready() -> void:
 		_setup_wildlife()
 		_setup_interactive_props()
 		_build_extra_interactive_and_animated()  # PART 4
-	var quest_marker := QuestDestinationMarker.new()
+	var quest_marker := QUEST_MARKER_SCENE.instantiate() as QuestDestinationMarker
 	quest_marker.name = "QuestDestinationMarker"
 	entities.add_child(quest_marker)
 	_spawn_region_portals()       # for BOTH regions (Greenward gate near [30,8])
@@ -160,6 +173,7 @@ func _ready() -> void:
 	current_center = streamer.center_chunk(grid)
 	_update_streaming(grid)
 	_apply_atmosphere()
+	_apply_village_day_phase(day_phase())
 	EventBus.world_ready.emit()
 
 
@@ -213,15 +227,34 @@ func _setup_materials() -> void:
 
 
 func _setup_layers() -> void:
-	terrain_layer = Node2D.new()
-	terrain_layer.name = "Terrain"
+	# Prefer the authored world-scene hierarchy; retain runtime fallbacks for
+	# tests and legacy callers that instantiate GreenwardWorld.new() directly.
+	terrain_layer = get_node_or_null("Terrain") as Node2D
+	if terrain_layer == null:
+		terrain_layer = Node2D.new()
+		terrain_layer.name = "Terrain"
+		add_child(terrain_layer)
 	terrain_layer.z_index = -10
-	add_child(terrain_layer)
 
-	entities = Node2D.new()
-	entities.name = "Entities"
+	entities = get_node_or_null("Entities") as Node2D
+	if entities == null:
+		entities = Node2D.new()
+		entities.name = "Entities"
+		add_child(entities)
 	entities.y_sort_enabled = true
-	add_child(entities)
+
+func _integrate_village_depth_sort() -> void:
+	# Share one world Y-sort container (Entities) so village-authored depth objects
+	# (trees/building slots/visuals) interleave correctly with player, NPCs, and
+	# runtime-spawned props. Ground/PathNetwork/Lighting/AmbientEffects remain in the
+	# village scene layers and are not moved.
+	if entities == null:
+		return
+	var village := get_node_or_null("Village")
+	if village == null:
+		return
+	if village.has_method("set_shared_depth_parent"):
+		village.set_shared_depth_parent(entities)
 
 
 func _setup_noise() -> void:
@@ -239,14 +272,17 @@ func _setup_noise() -> void:
 
 
 func _setup_day_night() -> void:
-	day_night = DayNight.new()
+	day_night = get_node_or_null("DayNight") as DayNight
+	if day_night == null:
+		day_night = DayNight.new() # compatibility for direct GreenwardWorld.new()
+		add_child(day_night)
 	day_night.day_length_seconds = 600.0
-	add_child(day_night)
-	day_night.phase_changed.connect(_on_phase_changed)
+	if not day_night.phase_changed.is_connected(_on_phase_changed):
+		day_night.phase_changed.connect(_on_phase_changed)
 
 
 func _spawn_player() -> void:
-	player = Player.new()
+	player = PLAYER_SCENE.instantiate() as Player
 	player.name = "Player"
 	var placed := false
 
@@ -259,22 +295,40 @@ func _spawn_player() -> void:
 				player.position = IsoMath.grid_to_world(float(g[0]), float(g[1]))
 				placed = true
 
-	# 2) Otherwise resume this region's own saved position.
+	# 2) Otherwise resume this region's own saved position. A near-origin
+	# position is not a valid Greenward spawn: it overlaps the central terrain
+	# collision and leaves the player unable to move. This can happen in older
+	# saves created before the region spawn was initialized correctly.
 	if not placed and GameState.player_region == region_id and GameState.has_region_position(region_id):
-		player.position = GameState.region_position(region_id)
-		placed = true
+		var saved_position := GameState.region_position(region_id)
+		if saved_position.length_squared() > 32.0 * 32.0:
+			player.position = saved_position
+			placed = true
+		else:
+			push_warning("[GreenwardWorld] Ignoring invalid near-origin saved spawn for %s; using region spawn." % region_id)
 
 	# 3) Legacy single-slot position only applies to the DEFAULT (Greenward) region.
-	if not placed and GameState.has_player_position and GameState.player_position.length_squared() > 0.0 and region_id == DEFAULT_REGION_ID:
-		player.position = GameState.player_position
-		placed = true
+	# Older saves can contain a tiny non-zero position near the map origin; checking
+	# only > 0.0 lets that invalid value override the safe region spawn above.
+	if not placed and GameState.has_player_position and region_id == DEFAULT_REGION_ID:
+		var legacy_position := GameState.player_position
+		if legacy_position.length_squared() > 32.0 * 32.0:
+			player.position = legacy_position
+			placed = true
+		else:
+			push_warning("[GreenwardWorld] Ignoring invalid near-origin legacy player position; using region spawn.")
 
 	# 4) Fall back to the region's spawn_grid.
 	if not placed:
 		var spawn: Array = region.get("spawn_grid", [8, 8])
 		player.position = IsoMath.grid_to_world(float(spawn[0]), float(spawn[1]))
 
+	# Apply the resolved spawn after parenting so the scene transform is
+	# authoritative for the newly registered physics body.
+	var resolved_spawn := player.position
 	entities.add_child(player)
+	player.global_position = entities.to_global(resolved_spawn)
+	player.reset_physics_interpolation()
 	GameState.set_player_position(player.position)
 
 
@@ -308,11 +362,39 @@ func _load_chunk(coord: Vector2i) -> void:
 		data = ChunkBuilder.build(
 			coord, region, elevation, moisture, terrain_material, water_material
 		)
-	# `data.detail` (the ground-cover MultiMeshInstance2D) is ALREADY parented
-	# as a child of `data.terrain` by ChunkBuilder. DO NOT re-add or re-parent it:
-	# parenting `data.terrain` here renders it (one draw call) and frees it with
-	# the terrain on chunk unload (no orphan node leaks).
-	terrain_layer.add_child(data.terrain)
+	var use_ground_prototype := region_id == DEFAULT_REGION_ID and coord == PROTOTYPE_GROUND_CHUNK
+	var terrain_node: Node = data.terrain
+	if use_ground_prototype and GROUND_CHUNK_SCENE != null:
+		var ground_chunk := GROUND_CHUNK_SCENE.instantiate()
+		if ground_chunk != null:
+			ground_chunk.name = "GroundChunk_%d_%d" % [coord.x, coord.y]
+			terrain_layer.add_child(ground_chunk)
+			if ground_chunk.has_method("setup"):
+				ground_chunk.setup(
+					coord,
+					int(data.get("chunk_size", chunk_size)),
+					data.get("ground_colors", []),
+					data.get("origin_grid", IsoMath.chunk_origin_grid(coord, chunk_size))
+				)
+			# Keep existing MultiMesh ground path as fallback/compat: do not add the
+			# per-tile diamond terrain MultiMesh for this prototype chunk (avoids the
+			# repeating diamond lattice). Preserve detail layer by reparenting it.
+			var detail_node: Node = data.get("detail", null)
+			if detail_node != null and is_instance_valid(detail_node):
+				if detail_node.get_parent() != null:
+					detail_node.get_parent().remove_child(detail_node)
+				ground_chunk.add_child(detail_node)
+			terrain_node = ground_chunk
+			# Original terrain MultiMesh no longer needed in-tree for this chunk.
+			var old_terrain: Node = data.get("terrain", null)
+			if old_terrain != null and is_instance_valid(old_terrain) and old_terrain != terrain_node:
+				old_terrain.queue_free()
+	else:
+		# `data.detail` (the ground-cover MultiMeshInstance2D) is ALREADY parented
+		# as a child of `data.terrain` by ChunkBuilder. DO NOT re-add or re-parent it:
+		# parenting `data.terrain` here renders it (one draw call) and frees it with
+		# the terrain on chunk unload (no orphan node leaks).
+		terrain_layer.add_child(data.terrain)
 	if data.water != null:
 		data.water.z_index = 1
 		terrain_layer.add_child(data.water)
@@ -326,13 +408,33 @@ func _load_chunk(coord: Vector2i) -> void:
 		var scale_value := float(entry.scale)
 		if bool(entry.get("detail", false)):
 			scale_value *= 0.88
-		var sprite := _make_prop_sprite(str(entry.type), entry.position, scale_value, bool(entry.flip), variant)
-		if sprite != null:
-			entities.add_child(sprite)  # props stay y-sorted in `entities`
-			prop_nodes.append(sprite)
+		var kind_str := str(entry.type)
+		# Phase 3 (Greenward village): suppress streamed tree props inside the
+		# authored village composition area to prevent legacy/new tree duplication.
+		# Wilderness chunk generation/streaming/determinism outside this area is unchanged.
+		if _suppress_streamed_village_tree(kind_str, entry.position):
+			continue
+		var prop_node: Node2D = null
+		if use_ground_prototype and kind_str == "glade_tree" and FOREST_TREE_SCENE != null:
+			var tree := FOREST_TREE_SCENE.instantiate()
+			if tree != null:
+				tree.position = entry.position
+				prop_node = tree
+				entities.add_child(tree)
+				if tree.has_method("setup"):
+					tree.setup("glade_tree", variant, bool(entry.flip), scale_value, wind_material)
+				_record_texture("glade_tree", variant)
+				_bump_prop_count("glade_tree")
+		if prop_node == null:
+			var sprite := _make_prop_sprite(kind_str, entry.position, scale_value, bool(entry.flip), variant)
+			if sprite != null:
+				entities.add_child(sprite)  # props stay y-sorted in `entities`
+				prop_node = sprite
+		if prop_node != null:
+			prop_nodes.append(prop_node)
 
 	loaded_chunks[coord] = {
-		"terrain": data.terrain,
+		"terrain": terrain_node,
 		"water": data.water,
 		"props": prop_nodes,
 	}
@@ -507,6 +609,21 @@ func _add_light(grid_position: Vector2, color: Color, energy: float, light_scale
 	_record_glow(color)
 
 
+const VILLAGE_TREE_KINDS := {
+	"glade_tree": true, "ancient_tree": true, "willow_tree": true, "birch_tree": true,
+	"pine_tree": true, "blossom_tree": true, "dead_tree": true,
+}
+
+func _suppress_streamed_village_tree(kind: String, world_pos: Vector2) -> bool:
+	if region_id != DEFAULT_REGION_ID:
+		return false
+	if not VILLAGE_TREE_KINDS.has(kind):
+		return false
+	# Authored village composition replaces streamed trees in the village design area
+	# (center ~spawn 8,8 => (0,256), radius tuned to cover perimeter groups/clearing).
+	var village_center := IsoMath.grid_to_world(8.0, 8.0)
+	return world_pos.distance_to(village_center) <= 520.0
+
 func _record_texture(kind: String, variant: int) -> void:
 	_texture_keys["prop:%s|%d" % [kind, variant]] = true
 
@@ -522,62 +639,31 @@ func _bump_prop_count(kind: String) -> void:
 # --------------------------------------------------------------- village hub
 
 func _build_village() -> void:
-	# A deliberately open village: four homes frame a broad central green.
-	# The centre stays clear so the player can read routes and NPCs at a glance.
-	var homes := [
-		{ "kind": "hut", "grid": Vector2(3.5, 4.2), "scale": 1.0, "flip": false, "variant": 0 },
-		{ "kind": "cottage", "grid": Vector2(13.0, 4.8), "scale": 0.95, "flip": true, "variant": 1 },
-		{ "kind": "hut", "grid": Vector2(3.6, 10.5), "scale": 0.95, "flip": true, "variant": 1 },
-		{ "kind": "cottage", "grid": Vector2(13.0, 10.4), "scale": 0.95, "flip": false, "variant": 2 },
-	]
-	for home in homes:
-		_add_prop(str(home.kind), home.grid, home.scale, home.flip, home.variant)
-
-	# One readable village landmark and one small service point; no prop pile.
-	_add_prop("well", Vector2(8.0, 5.6), 0.95, false, 1)
-	_add_prop("market_stall", Vector2(11.8, 5.9), 0.9, false, 0)
-	_add_prop("shrine", Vector2(4.8, 11.8), 0.85, false, 0)
-	_add_light(Vector2(8.0, 5.6), GreenwardStyle.LIGHT.warm_lantern, 0.75, 1.8)
-
-	# Sparse lighting marks the main route without filling the village with lamps.
-	var lanterns := [Vector2(5.0, 6.0), Vector2(12.0, 10.2), Vector2(8.0, 12.0)]
-	for index in lanterns.size():
-		_add_prop("lantern", lanterns[index], 0.9, index % 2 == 0, index % 2)
-		if index == 1:
-			_add_light(lanterns[index], GreenwardStyle.LIGHT.warm_lantern, 0.85, 1.8)
-
-	# Small greenery accents stay at the edges, leaving the central green open.
-	var greenery := [
-		["bush", Vector2(5.2, 4.8), 0.85],
-		["flower_cluster", Vector2(11.8, 4.7), 0.8],
-		["fern", Vector2(5.2, 10.8), 0.8],
-		["berry_bush", Vector2(11.8, 10.8), 0.8],
-		["tall_grass", Vector2(7.0, 12.0), 0.8],
-	]
-	for index in greenery.size():
-		var g: Array = greenery[index]
-		_add_prop(str(g[0]), g[1], float(g[2]), index % 2 == 0, index % 3)
+	# Runtime composition aligned with the authored GreenwardVillage scene/layout.
+	# Building/prop/lighting visuals are primarily authored in the village scene to
+	# avoid duplication; this keeps functional elements (NPCs, river boundary) and
+	# preserves quest/dialogue contracts and traversable open routes.
 
 	# Keep the river as the village's southern scenic boundary.
 	_build_river()
 
-	# The three quest/dialogue NPCs remain intact and easy to find.
-	_spawn_npc("elder_maelin", "Elder Maelin", "elder_maelin", Vector2(5.6, 8.0), {
+	# The three quest/dialogue NPCs remain intact and easy to find (district-aligned).
+	_spawn_npc("elder_maelin", "Elder Maelin", "elder_maelin", Vector2(4.4, 7.2), {
 		"hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a",
 		"accent": "#9df5cf", "skin": "#e8c8a8",
 	}, "Elf", "Village Elder")
-	_spawn_npc("merchant_sera", "Sera Quill", "merchant_sera", Vector2(12.2, 8.4), {
+	_spawn_npc("merchant_sera", "Sera Quill", "merchant_sera", Vector2(12.5, 8.5), {
 		"hair": "#c96f3a", "primary": "#5a3a2a", "secondary": "#e8c27a",
 		"accent": "#ffd27a", "skin": "#e8b890",
 	}, "Human", "Traveling Merchant")
-	_spawn_npc("wanderer_pip", "Pip", "wanderer_pip", Vector2(8.2, 11.0), {
+	_spawn_npc("wanderer_pip", "Pip", "wanderer_pip", Vector2(6.0, 12.2), {
 		"hair": "#f2e2a8", "primary": "#3f5a6b", "secondary": "#8fd9c4",
 		"accent": "#ffeaa0", "skin": "#f6e3cf",
 	}, "Beastkin", "Wandering Scout")
 
 
 func _spawn_npc(npc_id: String, display_name: String, dialogue_id: String, grid: Vector2, palette: Dictionary, race: String, role: String = "") -> void:
-	var npc := WorldNPC.new()
+	var npc := NPC_SCENE.instantiate() as WorldNPC
 	npc.role = role  # public presentation var (setup() signature is unchanged)
 	npc.setup(npc_id, display_name, dialogue_id, palette, race)
 	npc.position = IsoMath.grid_to_world(grid.x, grid.y)
@@ -623,7 +709,7 @@ func _build_river() -> void:
 func _add_animated_prop(kind: String, grid_position: Vector2, scale_value: float, flip: bool, motion: int, variant: int = 0) -> AnimatedProp:
 	if _animated_props.size() >= MAX_ANIMATED_PROPS:
 		return null
-	var ap := AnimatedProp.new()
+	var ap := ANIMATED_PROP_SCENE.instantiate() as AnimatedProp
 	ap.setup(kind, IsoMath.grid_to_world(grid_position.x, grid_position.y), scale_value, flip, motion, variant)
 	entities.add_child(ap)
 	_animated_props.append(ap)
@@ -908,7 +994,7 @@ func _spawn_region_portals() -> void:
 		var grid: Variant = eps_dict.get(via, null)
 		if typeof(grid) != TYPE_ARRAY or grid.size() != 2:
 			continue
-		var portal := RegionPortal.new()
+		var portal := REGION_PORTAL_SCENE.instantiate() as RegionPortal
 		portal.setup(region_id, conn)
 		portal.position = IsoMath.grid_to_world(float(grid[0]), float(grid[1]))
 		entities.add_child(portal)
@@ -1000,7 +1086,7 @@ func _spawn_monsters() -> void:
 			var angle := rng.randf_range(0.0, TAU)
 			var distance := rng.randf_range(0.2, radius)
 			var grid_position := center + Vector2(cos(angle), sin(angle)) * distance
-			var monster := RoamingMonster.new()
+			var monster := MONSTER_SCENE.instantiate() as RoamingMonster
 			monster.spawn_index = spawn_index  # deterministic per-spawn variety
 			monster.setup(group_id, IsoMath.grid_to_world(grid_position.x, grid_position.y), enemy_def, is_boss)
 			entities.add_child(monster)
@@ -1011,8 +1097,11 @@ func _spawn_monsters() -> void:
 # --------------------------------------------------------------- ambient
 
 func _setup_ambient() -> void:
-	ambient = CPUParticles2D.new()
-	ambient.name = "PollenMotes"
+	ambient = get_node_or_null("PollenMotes") as CPUParticles2D
+	if ambient == null:
+		ambient = CPUParticles2D.new()
+		ambient.name = "PollenMotes"
+		add_child(ambient)
 	ambient.texture = ProceduralArt.soft_glow(Color(1.0, 0.95, 0.72), 32)
 	ambient.amount = 26
 	ambient.lifetime = 10.0
@@ -1028,10 +1117,12 @@ func _setup_ambient() -> void:
 	ambient.scale_amount_max = 0.32
 	ambient.color = Color(1.0, 0.95, 0.72, 0.5)
 	ambient.z_index = 30
-	add_child(ambient)
 
-	fireflies = CPUParticles2D.new()
-	fireflies.name = "Fireflies"
+	fireflies = get_node_or_null("Fireflies") as CPUParticles2D
+	if fireflies == null:
+		fireflies = CPUParticles2D.new()
+		fireflies.name = "Fireflies"
+		add_child(fireflies)
 	fireflies.texture = ProceduralArt.soft_glow(Color(0.65, 1.0, 0.9), 32)
 	fireflies.amount = 16
 	fireflies.lifetime = 7.0
@@ -1048,13 +1139,15 @@ func _setup_ambient() -> void:
 	fireflies.color = Color(0.65, 1.0, 0.9, 0.7)
 	fireflies.z_index = 31
 	fireflies.emitting = day_night.is_night()
-	add_child(fireflies)
 
 	# LIGHT RAIN hook: one cheap downward CPU particle emitter, capped by
 	# GreenwardStyle.MAX_PARTICLES and disabled on the mobile tier. NO real
 	# precipitation physics, no collisions, no splashes — a seam only.
-	rain = CPUParticles2D.new()
-	rain.name = "Rain"
+	rain = get_node_or_null("Rain") as CPUParticles2D
+	if rain == null:
+		rain = CPUParticles2D.new()
+		rain.name = "Rain"
+		add_child(rain)
 	rain.texture = ProceduralArt.soft_glow(GreenwardStyle.WATER.glint, 16)
 	# CPUParticles2D.amount must be >= 1; emission is gated via `emitting`.
 	rain.amount = 1
@@ -1071,7 +1164,6 @@ func _setup_ambient() -> void:
 	rain.color = Color(0.72, 0.88, 0.95, 0.45)
 	rain.z_index = 29
 	rain.emitting = false
-	add_child(rain)
 
 
 func _setup_weather() -> void:
@@ -1095,16 +1187,18 @@ func _setup_fog() -> void:
 	# canvas layer (default 0) with z_index 20 — BELOW the ambient particles
 	# (30/31) and, because the HUD is on CanvasLayer layer 10, it can NEVER
 	# cover the HUD/UI. A Sprite2D is not a Control, so it is mouse-transparent.
-	fog_quad = Sprite2D.new()
-	fog_quad.name = "Fog"
+	fog_quad = get_node_or_null("Fog") as Sprite2D
+	if fog_quad == null:
+		fog_quad = Sprite2D.new()
+		fog_quad.name = "Fog"
+		fog_quad.centered = true
+		fog_quad.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		add_child(fog_quad)
 	fog_quad.texture = ProceduralArt.white_pixel()  # 2x2 white; shader ignores it
-	fog_quad.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-	fog_quad.centered = true
 	fog_quad.scale = FOG_SIZE / 2.0
 	fog_quad.z_index = 20
 	fog_quad.material = fog_material
 	fog_quad.position = player.position if player != null else Vector2.ZERO
-	add_child(fog_quad)
 	# Cheap / disabled on the mobile tier.
 	fog_quad.visible = GreenwardStyle.performance_tier() != "mobile"
 
@@ -1157,7 +1251,7 @@ func _setup_interactive_props() -> void:
 
 
 func _add_interactive_prop(kind: String, grid_position: Vector2, display_name: String, lore: String, variant: int = 0, rewards: Dictionary = {}) -> void:
-	var prop := InteractiveProp.new()
+	var prop := INTERACTIVE_PROP_SCENE.instantiate() as InteractiveProp
 	prop.setup(kind, IsoMath.grid_to_world(grid_position.x, grid_position.y), display_name, lore, variant)
 	if not rewards.is_empty():
 		var stable_id := region_id + "_" + display_name.to_lower().replace(" ", "_").replace("'", "")
@@ -1273,8 +1367,24 @@ func _apply_rain(wp: Dictionary) -> void:
 
 func _on_phase_changed(phase_name: String) -> void:
 	_apply_atmosphere()
+	_apply_village_day_phase(phase_name)
 	if phase_name != _last_area_name:
 		_last_area_name = phase_name
+
+
+func _apply_village_day_phase(phase_name: String = "") -> void:
+	var village := get_node_or_null("Village")
+	if village == null or not village.has_method("apply_day_phase"):
+		return
+	var p_name := phase_name if not phase_name.is_empty() else day_phase()
+	var phase := GreenwardStyle.phase(p_name)
+	var is_night := bool(phase.get("fireflies", false)) or day_night != null and day_night.is_night()
+	# Boost practical light output at night for readability while keeping day subtle.
+	var le := float(phase.get("light_energy", 0.5))
+	var mult := lerpf(0.55, 1.55, clampf(le, 0.0, 1.2))
+	if is_night:
+		mult = maxf(mult, 1.15)
+	village.apply_day_phase(is_night, mult)
 
 
 func current_area_name() -> String:

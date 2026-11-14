@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[node name="TreeGroup" type="Node2D"]
+
+[node name="Trees" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Anchors" type="Node2D" parent="."]
+
+[node name="Clearings" type="Node2D" parent="."]

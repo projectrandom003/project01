@@ -30,6 +30,7 @@ var _spawn_grace: float = 3.0
 
 var visual: ActorVisual
 var visual_definition: Dictionary = {}
+var _accent_sprite: Sprite2D
 var _roam_target: Vector2
 var _roam_timer: float = 0.0
 var _player: Node2D
@@ -69,7 +70,11 @@ func _ready() -> void:
 	if def_id == "glade_wisp":
 		kind = ActorVisual.Kind.SPIRIT
 
-	visual = ActorVisual.new()
+	visual = get_node_or_null("ActorVisual") as ActorVisual
+	if visual == null:
+		visual = ActorVisual.new() # compatibility for direct test instantiation
+		visual.name = "ActorVisual"
+		add_child(visual)
 	visual.setup(tinted, kind, def_id, "Monster", str(visual_definition.get("element", "neutral")))
 	visual.is_boss = is_boss
 	visual.visual_scale = (1.35 if is_boss else 1.0) * scale_variance
@@ -78,23 +83,33 @@ func _ready() -> void:
 	if not is_boss and def_id != "moonpetal_sprite":
 		var silhouettes := ["mossling", "thornhound", "fae_marauder", "glade_wisp", "corrupted_treant"]
 		visual.def_id = str(silhouettes[(vseed >> 3) % silhouettes.size()])
-	add_child(visual)
 	# PART 4: exercise the SpriteFramesActorSource registration seam for this
 	# enemy definition id. No disk sheets exist, so the procedural fallback stays.
 	visual.configure_character(def_id)
 	_add_accent(vseed)
 
-	_name_label = Label.new()
+	_name_label = get_node_or_null("NameLabel") as Label
+	if _name_label == null:
+		_name_label = Label.new()
+		_name_label.name = "NameLabel"
+		_name_label.position = Vector2(-80, -100 if is_boss else -68)
+		_name_label.size = Vector2(160, 22)
+		add_child(_name_label)
 	_name_label.text = enemy_name
-	_name_label.position = Vector2(-80, -100 if is_boss else -68)
-	_name_label.size = Vector2(160, 22)
+	_name_label.position.y = -100 if is_boss else -68
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_name_label.add_theme_font_size_override("font_size", 12 if not is_boss else 15)
 	_name_label.add_theme_color_override("font_color", GreenwardStyle.MAGIC.ember if not is_boss else GreenwardStyle.UI.gold)
 	_name_label.add_theme_color_override("font_outline_color", GreenwardStyle.INK)
 	_name_label.add_theme_constant_override("outline_size", 4)
 	_name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_name_label)
+
+	_accent_sprite = get_node_or_null("Accent") as Sprite2D
+	if _accent_sprite == null:
+		_accent_sprite = Sprite2D.new()
+		_accent_sprite.name = "Accent"
+		_accent_sprite.centered = false
+		add_child(_accent_sprite)
 
 	EventBus.battle_finished.connect(_on_battle_finished)
 
@@ -123,15 +138,13 @@ func _add_accent(vseed: int) -> void:
 	var tex := ProceduralArt.prop_texture(kind, vseed % 2)
 	if tex == null:
 		return
-	var s := Sprite2D.new()
-	s.name = "Accent"
-	s.texture = tex
-	s.centered = false
-	s.offset = Vector2(-float(tex.get_width()) * 0.5, -float(tex.get_height()) + 6.0)
-	s.scale = Vector2.ONE * 0.4
-	s.position = Vector2(14.0 * (1.0 if vseed % 2 == 0 else -1.0), 0.0)
-	s.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-	add_child(s)
+	if _accent_sprite == null:
+		return
+	_accent_sprite.texture = tex
+	_accent_sprite.offset = Vector2(-float(tex.get_width()) * 0.5, -float(tex.get_height()) + 6.0)
+	_accent_sprite.scale = Vector2.ONE * 0.4
+	_accent_sprite.position = Vector2(14.0 * (1.0 if vseed % 2 == 0 else -1.0), 0.0)
+	_accent_sprite.visible = true
 
 
 func _process(delta: float) -> void:

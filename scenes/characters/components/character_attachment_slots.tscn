@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/characters/equipment/equipment_mount.tscn" id="1_mount"]
+
+[node name="AttachmentSlots" type="Node2D"]
+
+[node name="BackEquipment" type="Node2D" parent="."]
+position = Vector2(0, -56)
+z_index = -1
+
+[node name="Mount" parent="BackEquipment" instance=ExtResource("1_mount")]
+
+[node name="HairAccessory" type="Node2D" parent="."]
+position = Vector2(0, -112)
+z_index = 1
+
+[node name="Mount" parent="HairAccessory" instance=ExtResource("1_mount")]
+
+[node name="LeftHandEquipment" type="Node2D" parent="."]
+position = Vector2(-14, -54)
+z_index = 1
+
+[node name="Mount" parent="LeftHandEquipment" instance=ExtResource("1_mount")]
+
+[node name="RightHandEquipment" type="Node2D" parent="."]
+position = Vector2(14, -54)
+z_index = 1
+
+[node name="Mount" parent="RightHandEquipment" instance=ExtResource("1_mount")]
+
+[node name="ChestAccessory" type="Node2D" parent="."]
+position = Vector2(0, -64)
+z_index = 1
+
+[node name="Mount" parent="ChestAccessory" instance=ExtResource("1_mount")]

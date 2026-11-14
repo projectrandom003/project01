@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/presentation/boss_presentation_profile.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+visual_style = "bloom"
+telegraph_color = Color(0.98, 0.31, 0.76, 1)
+telegraph_scale = 1.0
+impact_color = Color(0.85, 0.45, 1, 1)
+impact_scale = 1.28
+phase_color = Color(0.96, 0.55, 1, 1)
+phase_title = "THE GARDEN CLAIMS ITS DUE"

@@ -25,6 +25,10 @@ var _touch_switch: Button
 var _hint_label: Label
 var _minimap: Minimap
 
+## Shared quest navigation resolver injected by the owner (GameScreen).
+## A single instance must be reused across consumers; HUD must not create its own.
+var quest_resolver: QuestNavigationResolver = null
+
 var _prompt_timer: float = 0.0
 var _refresh_timer: float = 0.0
 var _last_prompt: String = ""
@@ -146,26 +150,53 @@ func refresh_quest() -> void:
 		return
 	var state := GameState.quest_state(tracked)
 	var step: Dictionary = GameState.quest_step(tracked)
-	var step_text := str(step.get("text", "Quest complete"))
 	if state == "complete":
-		step_text = "Complete"
-	elif state == "not_started":
-		step_text = "Available · " + step_text
-	var distance := GameState.distance_to_tracked()
-	var arrow := _quest_arrow()
+		_quest_label.text = "◆  %s — Complete" % str(definition.get("name", tracked))
+		_quest_label.visible = true
+		return
+	if state == "not_started":
+		var available_text := "Available · " + str(step.get("text", "Quest available"))
+		_quest_label.text = "◆  %s — %s" % [str(definition.get("name", tracked)), available_text]
+		_quest_label.visible = true
+		return
+
+	var resolver: QuestNavigationResolver = quest_resolver if quest_resolver != null else QuestNavigationResolver.shared()
+	var resolved: Dictionary = resolver.get_resolved_target()
+	var step_text := str(resolved.get("step_text", step.get("text", "")))
 	var suffix := ""
-	if state != "complete" and distance > 1.0:
-		suffix = "  (%s %.0f tiles)" % [arrow, distance / IsoMath.TILE_W]
+	if str(resolved.get("status", "")) == QuestNavigationResolver.STATUS_UNREACHABLE:
+		suffix = "  · Unreachable"
+	elif not bool(resolved.get("same_frame", false)):
+		# Cross-region: travel guidance to next connection only (no fake distance/arrow).
+		var next_hop: Dictionary = resolved.get("next_hop", {})
+		var route: Array = resolved.get("route", [])
+		if not route.is_empty() and not next_hop.is_empty():
+			var hop_to := str(next_hop.get("to", str(resolved.get("target_region_id", ""))))
+			var hop_label := str(next_hop.get("label", ""))
+			var travel := hop_label if not hop_label.is_empty() else ("Travel to %s" % hop_to)
+			suffix = "  · %s" % travel
+		else:
+			suffix = "  · Travel to %s" % str(resolved.get("target_region_id", "destination"))
+	else:
+		# Same-region objective: meaningful local distance and direction.
+		var dist_val: Variant = resolved.get("distance", null)
+		if dist_val != null:
+			var dist := float(dist_val)
+			if dist > 1.0:
+				var dir_val: Variant = resolved.get("direction", Vector2.ZERO)
+				var arrow := _quest_arrow(dir_val if typeof(dir_val) == TYPE_VECTOR2 else Vector2.ZERO)
+				suffix = "  (%s %.0f tiles)" % [arrow, dist / IsoMath.TILE_W]
 	_quest_label.text = "◆  %s — %s%s" % [str(definition.get("name", tracked)), step_text, suffix]
 	_quest_label.visible = true
 
 
-func _quest_arrow() -> String:
-	# Returns a coarse 8-direction arrow toward the tracked quest destination.
-	var dir := GameState.direction_to_tracked()
-	if dir.length_squared() < 0.0001:
+func _quest_arrow(dir: Variant = null) -> String:
+	# Returns a coarse 8-direction arrow toward the given/resolved direction.
+	if dir == null or typeof(dir) != TYPE_VECTOR2:
+		dir = Vector2.ZERO
+	if (dir as Vector2).length_squared() < 0.0001:
 		return "•"
-	var angle := dir.angle()
+	var angle := (dir as Vector2).angle()
 	if angle < 0.0:
 		angle += TAU
 	var sector := int(round(angle / (PI * 0.25))) % 8

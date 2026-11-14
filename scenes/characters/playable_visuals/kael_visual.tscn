@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="SpriteFrames" path="res://assets/characters/kael_avatar/world_sheet.tres" id="1_frames"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/directional_equipment/directional_equipment_layers.tscn" id="2_directional"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_effects.tscn" id="3_effects"]
+
+[node name="KaelVisual" type="Node2D"]
+
+[node name="GroundShadow" type="Polygon2D" parent="."]
+z_index = -1
+polygon = PackedVector2Array(-18, -2, -9, -6, 9, -6, 18, -2, 9, 2, -9, 2)
+color = Color(0.035, 0.045, 0.055, 0.34)
+
+[node name="Body" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("1_frames")
+animation = &"idle_0"
+frame = 0
+centered = false
+offset = Vector2(-48, -128)
+texture_filter = 1
+playing = false
+
+[node name="DirectionalEquipment" parent="." instance=ExtResource("2_directional")]
+
+[node name="Effects" parent="." instance=ExtResource("3_effects")]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="Audio" type="Node2D" parent="."]

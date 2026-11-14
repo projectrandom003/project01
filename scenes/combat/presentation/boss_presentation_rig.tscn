@@ -1,0 +1,33 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/presentation/boss_presentation_rig.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/combat/presentation/boss_telegraph.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/combat/presentation/boss_impact.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/combat/presentation/boss_phase_cue.tscn" id="4"]
+[ext_resource type="Resource" path="res://resources/combat/presentation/default_boss.tres" id="5"]
+[ext_resource type="Resource" path="res://resources/combat/presentation/elder_hollow.tres" id="6"]
+[ext_resource type="Resource" path="res://resources/combat/presentation/fallen_matron.tres" id="7"]
+
+[node name="BossPresentationRig" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1")
+default_profile = ExtResource("5")
+elder_hollow_profile = ExtResource("6")
+fallen_matron_profile = ExtResource("7")
+
+[node name="WorldEffects" type="Node2D" parent="."]
+z_index = 30
+
+[node name="PhaseCue" parent="." instance=ExtResource("4")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+z_index = 80

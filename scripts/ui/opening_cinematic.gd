@@ -22,8 +22,14 @@ var _fade := 0.0
 func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	var backdrop := LaunchForestBackdrop.new()
-	backdrop.name = "IllustratedForest"
+	# Use the current Reverie key art for the New Journey prologue instead
+	# of the retired procedural launch-forest/loading backdrop.
+	var backdrop := TextureRect.new()
+	backdrop.name = "ReveriePrologueArtwork"
+	backdrop.texture = load("res://assets/ui/backgrounds/reverie_title_screen.jpg") as Texture2D
+	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	UIFactory.set_full_rect(backdrop)
 	add_child(backdrop)
 	var shade := ColorRect.new()

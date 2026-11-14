@@ -48,21 +48,9 @@ func _ready() -> void:
 		UIFactory.set_full_rect(backdrop)
 		add_child(backdrop)
 
-	_progress_label = Label.new()
-	_progress_label.name = "LiveLoadingCaption"
-	_progress_label.text = "LOADING...  0%"
-	_progress_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_progress_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_progress_label.add_theme_font_size_override("font_size", 19)
-	_progress_label.add_theme_color_override("font_color", Color("#f5e9f3"))
-	_progress_label.add_theme_color_override("font_shadow_color", Color(0.02, 0.01, 0.04, 0.95))
-	_progress_label.add_theme_constant_override("shadow_offset_x", 1)
-	_progress_label.add_theme_constant_override("shadow_offset_y", 2)
-	_progress_label.anchor_left = 0.36
-	_progress_label.anchor_right = 0.64
-	_progress_label.anchor_top = 0.735
-	_progress_label.anchor_bottom = 0.785
-	add_child(_progress_label)
+	# The artwork already contains the word "Loading...". Do not draw a
+	# second caption over it; the animated fill below is the live progress cue.
+	_progress_label = null
 
 	_progress_bar = ProgressBar.new()
 	_progress_bar.name = "LiveArtworkProgressFill"

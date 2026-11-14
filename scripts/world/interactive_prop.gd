@@ -62,18 +62,20 @@ func _ready() -> void:
 
 
 func _build_visual() -> void:
-	if _sprite != null:
-		return
+	if _sprite == null:
+		_sprite = get_node_or_null("Sprite") as Sprite2D
+	if _sprite == null:
+		_sprite = Sprite2D.new() # compatibility for bare InteractiveProp.new()
+		_sprite.name = "Sprite"
+		_sprite.centered = false
+		_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		add_child(_sprite)
 	var tex := ProceduralArt.prop_texture(prop_kind, variant)
 	if tex == null:
 		tex = ProceduralArt.white_pixel()
-	_sprite = Sprite2D.new()
-	_sprite.name = "Sprite"
 	_sprite.texture = tex
 	_sprite.centered = false
 	_sprite.offset = Vector2(-float(tex.get_width()) * 0.5, -float(tex.get_height()) + 6.0)
-	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-	add_child(_sprite)
 
 
 func _process(delta: float) -> void:

@@ -48,15 +48,22 @@ var _base_scale: float = 1.0
 func setup(p_unit: Combatant, p_is_player: bool) -> void:
 	unit = p_unit
 	is_player = p_is_player
-	var hit := Control.new()
-	hit.name = "Hitbox"
+	var hit := get_node_or_null("Hitbox") as Control
+	if hit == null:
+		hit = Control.new()
+		hit.name = "Hitbox"
+		add_child(hit)
 	hit.custom_minimum_size = Vector2(72, 110)
 	hit.position = Vector2(-36, -96)
 	hit.size = Vector2(72, 110)
 	hit.mouse_filter = Control.MOUSE_FILTER_STOP
-	hit.gui_input.connect(_on_hit_input)
-	add_child(hit)
-	_name_label = Label.new()
+	if not hit.gui_input.is_connected(_on_hit_input):
+		hit.gui_input.connect(_on_hit_input)
+	_name_label = get_node_or_null("NameLabel") as Label
+	if _name_label == null:
+		_name_label = Label.new()
+		_name_label.name = "NameLabel"
+		add_child(_name_label)
 	_name_label.text = unit.display_name
 	_name_label.add_theme_font_size_override("font_size", 11)
 	_name_label.add_theme_color_override("font_color", UITheme.TEXT)
@@ -64,9 +71,11 @@ func setup(p_unit: Combatant, p_is_player: bool) -> void:
 	_name_label.add_theme_constant_override("outline_size", 4)
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_name_label)
-	_intent_label = Label.new()
-	_intent_label.name = "EnemyIntent"
+	_intent_label = get_node_or_null("EnemyIntent") as Label
+	if _intent_label == null:
+		_intent_label = Label.new()
+		_intent_label.name = "EnemyIntent"
+		add_child(_intent_label)
 	_intent_label.visible = false
 	_intent_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_intent_label.add_theme_font_size_override("font_size", 10)
@@ -74,10 +83,12 @@ func setup(p_unit: Combatant, p_is_player: bool) -> void:
 	_intent_label.add_theme_color_override("font_outline_color", Color(0.02, 0.015, 0.025, 0.98))
 	_intent_label.add_theme_constant_override("outline_size", 5)
 	_intent_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_intent_label)
 
-	visual = ActorVisual.new()
-	add_child(visual)
+	visual = get_node_or_null("ActorVisual") as ActorVisual
+	if visual == null:
+		visual = ActorVisual.new()
+		visual.name = "ActorVisual"
+		add_child(visual)
 	visual.is_boss = unit.is_boss
 	if is_player:
 		var definition := ContentDB.get_character(unit.def_id)

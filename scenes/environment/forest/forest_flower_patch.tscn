@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/environment/forest/forest_vegetation.tscn" id="1_base"]
+
+[node name="FlowerPatch" instance=ExtResource("1_base")]
+prop_kind = "flower_cluster"

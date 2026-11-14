@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://dryua5pkvw4jk"]
 
-[ext_resource type="Script" path="res://tools/preview_fallen_matron_battle.gd" id="1"]
+[ext_resource type="Script" uid="uid://c0c3pfd1jkau6" path="res://tools/preview_fallen_matron_battle.gd" id="1"]
 
-[node name="FallenMatronBattlePreview" type="Control"]
+[node name="FallenMatronBattlePreview" type="Control" unique_id=1056412804]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

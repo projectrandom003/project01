@@ -100,6 +100,12 @@ static func build(
 	var detail_transforms: Array = []
 	var detail_instance_colors: Array = []
 	var props: Array = []
+	# Prototype support: per-tile base colors for a continuous chunk ground surface
+	# (row-major oy*chunk_size + ox). Kept alongside the existing MultiMesh path.
+	var ground_colors: Array = []
+	ground_colors.resize(chunk_size * chunk_size)
+	for i in ground_colors.size():
+		ground_colors[i] = Color(0, 0, 0, 0)
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _seed_for(coord, int(region.get("noise_seed", 1)))
@@ -125,14 +131,16 @@ static func build(
 
 			if is_water:
 				var depth := clampf((water_level - elevation_value) / maxf(0.001, water_level - deep_level), 0.0, 1.0)
+				var base_w := water_deep.darkened(0.15 + depth * 0.25)
 				terrain_transforms.append(transform)
-				terrain_colors.append(water_deep.darkened(0.15 + depth * 0.25))
+				terrain_colors.append(base_w)
 				var wcolor := water_shallow.lerp(water_deep, depth)
 				if depth < 0.25:
 					wcolor = wcolor.lerp(foam_color, (0.25 - depth) * 0.45) # shoreline foam in the shallows
 				water_transforms.append(transform)
 				water_colors.append(wcolor * Color(1, 1, 1, 0.86))
 				water_tiles.append(center)
+				ground_colors[oy * chunk_size + ox] = Color(base_w.r, base_w.g, base_w.b, 1.0)
 				# A few lily pads / foam flecks near the river banks (detail layer).
 				if river_dist <= RIVER_HALF_WIDTH + 1.0 and rng.randf() < detail_density * 0.5:
 					var wc: Color = detail_palette[5] if rng.randf() < 0.5 else detail_palette[6]
@@ -195,6 +203,7 @@ static func build(
 
 			terrain_transforms.append(transform)
 			terrain_colors.append(tile_color)
+			ground_colors[oy * chunk_size + ox] = Color(tile_color.r, tile_color.g, tile_color.b, 1.0)
 
 			var in_clearing := _in_clearing(Vector2(gx, gy), clearings)
 			var near_path := _near_path(Vector2(gx, gy), paths)
@@ -283,6 +292,9 @@ static func build(
 		"props": props,
 		"water_tiles": water_tiles,
 		"detail": detail_node,
+		"ground_colors": ground_colors,
+		"origin_grid": origin_grid,
+		"chunk_size": chunk_size,
 	}
 
 

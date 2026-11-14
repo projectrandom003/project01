@@ -1,0 +1,51 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_attachment_slots.tscn" id="1_slots"]
+[ext_resource type="Script" path="res://scripts/world/directional_equipment_layers.gd" id="2_script"]
+[ext_resource type="Script" path="res://scripts/world/character_equipment_controller.gd" id="3_controller"]
+
+[node name="DirectionalEquipmentLayers" type="Node2D"]
+script = ExtResource("2_script")
+
+[node name="EquipmentController" type="Node" parent="."]
+script = ExtResource("3_controller")
+
+[node name="Down" type="Node2D" parent="."]
+visible = true
+
+[node name="Slots" parent="Down" instance=ExtResource("1_slots")]
+
+[node name="DownRight" type="Node2D" parent="."]
+visible = false
+
+[node name="Slots" parent="DownRight" instance=ExtResource("1_slots")]
+
+[node name="Right" type="Node2D" parent="."]
+visible = false
+
+[node name="Slots" parent="Right" instance=ExtResource("1_slots")]
+
+[node name="UpRight" type="Node2D" parent="."]
+visible = false
+
+[node name="Slots" parent="UpRight" instance=ExtResource("1_slots")]
+
+[node name="Up" type="Node2D" parent="."]
+visible = false
+
+[node name="Slots" parent="Up" instance=ExtResource("1_slots")]
+
+[node name="UpLeft" type="Node2D" parent="."]
+visible = false
+
+[node name="Slots" parent="UpLeft" instance=ExtResource("1_slots")]
+
+[node name="Left" type="Node2D" parent="."]
+visible = false
+
+[node name="Slots" parent="Left" instance=ExtResource("1_slots")]
+
+[node name="DownLeft" type="Node2D" parent="."]
+visible = false
+
+[node name="Slots" parent="DownLeft" instance=ExtResource("1_slots")]

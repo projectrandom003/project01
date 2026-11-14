@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/environment/village/village_path.gd" id="1_path"]
+
+[node name="VillagePath" type="Node2D"]
+script = ExtResource("1_path")
+
+[node name="Edge" type="Line2D" parent="."]
+z_index = -1
+texture_filter = 1
+begin_cap_mode = 2
+end_cap_mode = 2
+joint_mode = 2
+antialiased = true
+
+[node name="Surface" type="Line2D" parent="."]
+texture_filter = 1
+begin_cap_mode = 2
+end_cap_mode = 2
+joint_mode = 2
+antialiased = true
+
+[node name="Highlight" type="Line2D" parent="."]
+z_index = 1
+texture_filter = 1
+begin_cap_mode = 2
+end_cap_mode = 2
+joint_mode = 2
+antialiased = true

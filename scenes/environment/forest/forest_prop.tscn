@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/environment/forest/forest_prop.gd" id="1_prop"]
+
+[node name="ForestProp" type="Node2D"]
+script = ExtResource("1_prop")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+visible = false
+centered = false
+texture_filter = 1
+
+[node name="Visual" type="Sprite2D" parent="."]
+centered = false
+texture_filter = 1

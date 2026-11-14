@@ -136,7 +136,14 @@ func _draw() -> void:
 	if portrait_texture == null:
 		_draw_procedural_base(w, h, unit)
 	else:
-		draw_texture_rect(portrait_texture, Rect2(Vector2.ZERO, size), false)
+		# Preserve painted portrait proportions. Stretching a tall portrait into
+		# the wide HUD card distorts the face and makes the art look soft.
+		var texture_size := portrait_texture.get_size()
+		if texture_size.x > 0.0 and texture_size.y > 0.0:
+			var fit_scale := minf(w / texture_size.x, h / texture_size.y)
+			var fitted_size := texture_size * fit_scale
+			var fitted_rect := Rect2((size - fitted_size) * 0.5, fitted_size)
+			draw_texture_rect(portrait_texture, fitted_rect, false)
 
 	# Painted portraits already contain their own species details; only the
 	# procedural fallback needs the extra race ornament drawn over the base.

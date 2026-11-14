@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/environment/forest/forest_obstacle.gd" id="1_obstacle"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_obstacle"]
+size = Vector2(42, 20)
+
+[node name="ForestObstacle" type="Node2D"]
+script = ExtResource("1_obstacle")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+visible = false
+centered = false
+texture_filter = 1
+
+[node name="Visual" type="Sprite2D" parent="."]
+centered = false
+texture_filter = 1
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_obstacle")

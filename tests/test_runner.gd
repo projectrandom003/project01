@@ -1426,7 +1426,10 @@ func _test_actor_frame_source() -> void:
 			if tex2 == null or tex2.get_image().get_width() != 96 or tex2.get_image().get_height() != 128:
 				full_ok = false
 	check(full_ok, "all frames of IDLE/RUN/VICTORY render at 96x128")
-	check(full_count == 20, "sampled all frames of 3 states (bounded)", str(full_count))
+	var expected_full_count := 0
+	for raws2 in [CharacterAnimator.State.IDLE, CharacterAnimator.State.RUN, CharacterAnimator.State.VICTORY]:
+		expected_full_count += int(CharacterAnimator.STATE_FRAMES[int(raws2)])
+	check(full_count == expected_full_count, "sampled all frames of 3 states (bounded)", "%d (expected %d)" % [full_count, expected_full_count])
 
 	var c1 := src.frame(CharacterAnimator.State.WALK, CharacterAnimator.Direction.RIGHT, 0)
 	var c2 := src.frame(CharacterAnimator.State.WALK, CharacterAnimator.Direction.RIGHT, 0)

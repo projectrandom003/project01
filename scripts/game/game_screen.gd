@@ -8,12 +8,26 @@ extends Node
 
 signal exit_to_menu
 
+const GREENWARD_WORLD_SCENE: PackedScene = preload("res://scenes/world/greenward_world.tscn")
+const GAME_UI_SCENE: PackedScene = preload("res://scenes/ui/game_ui.tscn")
+const COMBAT_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/combat_screen.tscn")
+const GACHA_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/gacha_screen.tscn")
+const COLLECTION_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/collection_screen.tscn")
+const INVENTORY_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/inventory_screen.tscn")
+const QUEST_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/quest_screen.tscn")
+const MAP_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/map_screen.tscn")
+const PAUSE_MENU_SCENE: PackedScene = preload("res://scenes/ui/pause_menu.tscn")
+
 var world: GreenwardWorld
 var ui_layer: CanvasLayer
 var hud: HUD
 var dialogue: DialogueBox
 var overlay_root: Control
 var combat_root: Control
+
+## Single shared quest navigation resolver owned by GameScreen and injected into
+## HUD (and later consumers). Do not instantiate separate resolvers per consumer.
+var quest_resolver: QuestNavigationResolver = QuestNavigationResolver.new()
 
 var active_overlay: OverlayScreen = null
 var active_combat: CombatScreen = null
@@ -115,7 +129,7 @@ func _build_world(region_id: String = "greenward", entry_point: String = "") -> 
 	if rid.is_empty() or not ContentDB.regions.has(rid):
 		rid = "greenward"
 	current_region_id = rid
-	world = GreenwardWorld.new()
+	world = GREENWARD_WORLD_SCENE.instantiate() as GreenwardWorld
 	world.region_id = rid
 	world.entry_point = entry_point
 	world.name = "World_" + rid
@@ -123,31 +137,17 @@ func _build_world(region_id: String = "greenward", entry_point: String = "") -> 
 
 
 func _build_ui() -> void:
-	ui_layer = CanvasLayer.new()
-	ui_layer.name = "UI"
-	ui_layer.layer = 10
+	# The top-level presentation hierarchy is authored in game_ui.tscn.
+	# GameScreen retains orchestration/signals; the editor owns the node layout.
+	ui_layer = GAME_UI_SCENE.instantiate() as CanvasLayer
 	add_child(ui_layer)
-
-	hud = HUD.new()
-	hud.name = "HUD"
-	ui_layer.add_child(hud)
-
-	dialogue = DialogueBox.new()
-	dialogue.name = "Dialogue"
-	ui_layer.add_child(dialogue)
+	hud = ui_layer.get_node("HUD") as HUD
+	dialogue = ui_layer.get_node("Dialogue") as DialogueBox
+	overlay_root = ui_layer.get_node("Overlays") as Control
+	combat_root = ui_layer.get_node("Combat") as Control
+	if hud != null:
+		hud.quest_resolver = quest_resolver
 	dialogue.closed.connect(_on_dialogue_closed)
-
-	overlay_root = Control.new()
-	overlay_root.name = "Overlays"
-	UIFactory.set_full_rect(overlay_root)
-	overlay_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	ui_layer.add_child(overlay_root)
-
-	combat_root = Control.new()
-	combat_root.name = "Combat"
-	UIFactory.set_full_rect(combat_root)
-	combat_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	ui_layer.add_child(combat_root)
 
 	hud.screen_requested.connect(open_screen)
 	hud.menu_requested.connect(_open_pause_menu)
@@ -261,7 +261,7 @@ func _on_encounter_requested(group_id: String, source: Node) -> void:
 	if group_id.is_empty():
 		return
 	_set_world_active(false)
-	var combat := CombatScreen.new()
+	var combat := COMBAT_SCREEN_SCENE.instantiate() as CombatScreen
 	combat.name = "Battle"
 	combat.group_id = group_id
 	active_combat = combat
@@ -281,21 +281,22 @@ func _on_combat_closed() -> void:
 func open_screen(screen_id: String) -> void:
 	if _is_busy() or active_combat != null:
 		return
-	var screen: OverlayScreen = null
+	var screen_scene: PackedScene
 	match screen_id:
 		"gacha":
-			screen = GachaScreen.new()
+			screen_scene = GACHA_SCREEN_SCENE
 		"collection":
-			screen = CollectionScreen.new()
+			screen_scene = COLLECTION_SCREEN_SCENE
 		"inventory":
-			screen = InventoryScreen.new()
+			screen_scene = INVENTORY_SCREEN_SCENE
 		"quests":
-			screen = QuestScreen.new()
+			screen_scene = QUEST_SCREEN_SCENE
 		"map":
-			screen = MapScreen.new()
+			screen_scene = MAP_SCREEN_SCENE
 		_:
 			push_warning("[GameScreen] Unknown screen: " + screen_id)
 			return
+	var screen := screen_scene.instantiate() as OverlayScreen
 	active_overlay = screen
 	screen.closed.connect(_on_overlay_closed)
 	overlay_root.add_child(screen)
@@ -313,7 +314,7 @@ func _on_overlay_closed() -> void:
 func _open_pause_menu() -> void:
 	if _is_busy() or active_combat != null:
 		return
-	var menu := PauseMenu.new()
+	var menu := PAUSE_MENU_SCENE.instantiate() as PauseMenu
 	active_overlay = menu
 	menu.closed.connect(_on_overlay_closed)
 	menu.main_menu_requested.connect(_return_to_title)

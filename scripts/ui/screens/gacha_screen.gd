@@ -233,53 +233,66 @@ func _rebuild_main() -> void:
 	var featured_rarity := featured_def.rarity if featured_def != null else "legendary"
 	_featured_id = featured_id
 	_featured_premium = UITheme.is_premium_rarity(featured_rarity)
-	# Rarity-tinted feature stage. The stage is a real sized composition layer,
-	# not a tiny icon sitting in an oversized empty panel.
+	# Use Nyx's supplied bespoke banner artwork when she is featured; keep
+	# the procedural portrait stage as the fallback for every other banner.
 	var featured_effect := UITheme.rarity_effect(featured_rarity)
 	var featured_glow: Color = featured_effect.get("glow", UITheme.GOLD_BRIGHT)
 	var featured_aura := clampf(float(featured_effect.get("aura", 0.0)), 0.0, 1.0)
-	var portrait_backdrop := UIFactory.panel(
-		Color("#090d1a").lerp(Color(featured_glow.r, featured_glow.g, featured_glow.b, 1.0), 0.06 + featured_aura * 0.12),
-		Color(featured_glow.r, featured_glow.g, featured_glow.b, 0.42 + featured_aura * 0.38),
-		14,
-		2 if _featured_premium else 1,
-		8
-	)
-	var stage_layer := Control.new()
-	stage_layer.custom_minimum_size = Vector2(0, 330)
-	stage_layer.clip_contents = true
-	portrait_backdrop.add_child(stage_layer)
-	var stage := FeaturedStage.new()
-	stage.accent = featured_glow
-	UIFactory.set_full_rect(stage)
-	stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	stage_layer.add_child(stage)
-	var portrait_center := CenterContainer.new()
-	UIFactory.set_full_rect(portrait_center)
-	portrait_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	stage_layer.add_child(portrait_center)
-	var portrait := PortraitView.new()
-	portrait.custom_minimum_size = Vector2(252, 292)
-	portrait.show_frame = false
-	if featured_def != null:
-		portrait.setup_character(featured_def)
-		var featured_portrait_path := "res://assets/portraits/summon/%s.png" % featured_def.id
-		if ResourceLoader.exists(featured_portrait_path):
-			var featured_texture := load(featured_portrait_path) as Texture2D
-			if featured_texture != null:
-				portrait.set_portrait_texture(featured_texture)
+	var nyx_banner_path := "res://assets/characters/nyx/Nyx_Vaelora_Hollow_Moon_Overture.png"
+	var has_nyx_banner_art := featured_id == "nyx" and ResourceLoader.exists(nyx_banner_path)
+	if has_nyx_banner_art:
+		var banner_art := TextureRect.new()
+		banner_art.name = "NyxFeaturedBannerArtwork"
+		banner_art.texture = load(nyx_banner_path) as Texture2D
+		banner_art.custom_minimum_size = Vector2(0, 260)
+		banner_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		banner_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		banner_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		art.add_child(banner_art)
 	else:
-		portrait.setup({}, "Human", "neutral", "legendary", 0)
-	portrait_center.add_child(portrait)
-	art.add_child(portrait_backdrop)
+		var portrait_backdrop := UIFactory.panel(
+			Color("#090d1a").lerp(Color(featured_glow.r, featured_glow.g, featured_glow.b, 1.0), 0.06 + featured_aura * 0.12),
+			Color(featured_glow.r, featured_glow.g, featured_glow.b, 0.42 + featured_aura * 0.38),
+			14,
+			2 if _featured_premium else 1,
+			8
+		)
+		var stage_layer := Control.new()
+		stage_layer.custom_minimum_size = Vector2(0, 330)
+		stage_layer.clip_contents = true
+		portrait_backdrop.add_child(stage_layer)
+		var stage := FeaturedStage.new()
+		stage.accent = featured_glow
+		UIFactory.set_full_rect(stage)
+		stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		stage_layer.add_child(stage)
+		var portrait_center := CenterContainer.new()
+		UIFactory.set_full_rect(portrait_center)
+		portrait_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		stage_layer.add_child(portrait_center)
+		var portrait := PortraitView.new()
+		portrait.custom_minimum_size = Vector2(252, 292)
+		portrait.show_frame = false
+		if featured_def != null:
+			portrait.setup_character(featured_def)
+			var featured_portrait_path := "res://assets/portraits/summon/%s.png" % featured_def.id
+			if ResourceLoader.exists(featured_portrait_path):
+				var featured_texture := load(featured_portrait_path) as Texture2D
+				if featured_texture != null:
+					portrait.set_portrait_texture(featured_texture)
+		else:
+			portrait.setup({}, "Human", "neutral", "legendary", 0)
+		portrait_center.add_child(portrait)
+		art.add_child(portrait_backdrop)
 
-	var banner_name := UIFactory.heading(str(banner.get("name", _selected_banner)), 24, UITheme.GOLD_BRIGHT)
-	banner_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	art.add_child(banner_name)
-	var subtitle := UIFactory.label(str(banner.get("subtitle", "")), 12, UITheme.TEXT_DIM)
-	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	art.add_child(subtitle)
+	if not has_nyx_banner_art:
+		var banner_name := UIFactory.heading(str(banner.get("name", _selected_banner)), 24, UITheme.GOLD_BRIGHT)
+		banner_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		art.add_child(banner_name)
+		var subtitle := UIFactory.label(str(banner.get("subtitle", "")), 12, UITheme.TEXT_DIM)
+		subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		art.add_child(subtitle)
 	var chips := UIFactory.hbox(6)
 	chips.alignment = BoxContainer.ALIGNMENT_CENTER
 	chips.add_child(UIFactory.chip(str(banner.get("type", "standard")).capitalize(), UITheme.VIOLET))

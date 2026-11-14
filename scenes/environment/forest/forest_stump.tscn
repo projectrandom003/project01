@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=3]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_stump"]
+size = Vector2(30, 18)
+
+[node name="ForestStump" type="Node2D"]
+
+[node name="Shadow" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-21, -1, -13, -13, 13, -13, 23, -1, 17, 7, -16, 7)
+color = Color(0.015, 0.025, 0.02, 0.35)
+
+[node name="StumpBody" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-17, -5, -14, -28, 12, -28, 17, -5, 12, 5, -12, 5)
+color = Color(0.35, 0.22, 0.14, 1)
+
+[node name="BarkHighlight" type="Line2D" parent="."]
+points = PackedVector2Array(-11, -24, -8, -10, -10, -3)
+width = 2.0
+default_color = Color(0.62, 0.43, 0.27, 0.9)
+
+[node name="CutSurface" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-14, -28, -8, -33, 11, -32, 15, -27, 9, -22, -10, -22)
+color = Color(0.66, 0.47, 0.31, 1)
+
+[node name="GrowthRing" type="Line2D" parent="."]
+points = PackedVector2Array(-8, -28, -4, -31, 7, -30, 10, -27, 6, -24, -5, -25)
+width = 1.2
+default_color = Color(0.34, 0.22, 0.14, 1)
+
+[node name="Moss" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-13, -18, -8, -22, -2, -20, 1, -17, -6, -15)
+color = Color(0.22, 0.4, 0.2, 0.95)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_stump")

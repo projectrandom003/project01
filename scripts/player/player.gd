@@ -10,12 +10,31 @@ extends CharacterBody2D
 ## try_interact(), current_prompt(), input_enabled, visual, camera,
 ## nearby_interactable, WALK_SPEED/RUN_SPEED, the "player" group) is preserved.
 
+const ACTOR_VISUAL_SCENE: PackedScene = preload("res://scenes/characters/actor_visual.tscn")
 const WALK_SPEED := 235.0
 const RUN_SPEED := 350.0
 const ACCELERATION := 1700.0
 const FRICTION := 2100.0
+## Movement-feel tuning. Reversing or sharply turning against current velocity
+## brakes up to TURN_BRAKE_MULT x harder so direction changes feel snappy.
+const TURN_BRAKE_MULT := 1.8
+## Walk <-> sprint target speed eases at this rate (1/s) instead of snapping.
+const SPEED_BLEND_RATE := 10.0
+## Below this speed with no input the player stops dead (no idle creep).
+const STOP_SNAP_SPEED := 18.0
+## Touch joystick sprint: push past ENTER, ease back below EXIT (hysteresis).
+const TOUCH_SPRINT_ENTER := 0.92
+const TOUCH_SPRINT_EXIT := 0.80
+## Camera leads the player's movement by up to LOOKAHEAD px (vertical damped).
+const LOOKAHEAD := 28.0
+const LOOKAHEAD_VERTICAL := 0.6
+const LOOKAHEAD_RATE := 5.0
 const MIN_ZOOM := 0.72
 const MAX_ZOOM := 1.85
+## Gerald is a large Guardian, but must remain within the scale of the
+## village environment. His sprite is deliberately a little shorter than a
+## standard 128 px glade tree; do not compensate by zooming the camera out.
+const GERALD_CAMERA_ZOOM_FACTOR := 1.0
 
 ## The Wanderer's original hero palette (unchanged placeholder identity).
 const HERO_PALETTE := {
@@ -40,15 +59,18 @@ var nearby_interactable: Interactable = null
 ## whose validated world_sheet.tres is driving the Sprite2D.
 var avatar_id: String = ""
 
-# Canonical in-world height ratios. Kael is the 183 cm reference; these
-# ratios keep the three siblings visually consistent without changing hitboxes.
+# World-art scale ratios. Kael's 183 px frame is the 1.0 reference.
+# Gerald's 128 px frame is scaled to 0.75x Kael's rendered frame height.
+# These values affect sprite geometry only, not gameplay collision dimensions.
 const AVATAR_HEIGHT_SCALE := {
 	"kael": 1.0,
-	"gerald": 200.0 / 183.0,
+	"gerald": (0.75 * 183.0) / 128.0,
 	"lilith": 130.0 / 183.0,
 }
 
 var _zoom: float = 1.1
+var _speed_target: float = WALK_SPEED
+var _touch_sprint: bool = false
 var _scan_accumulator: float = 0.0
 var _glow_timer: float = 0.0
 var _in_water: bool = false
@@ -63,50 +85,76 @@ func _ready() -> void:
 	collision_layer = 2
 	collision_mask = 1
 
-	var shape := CollisionShape2D.new()
-	var capsule := CapsuleShape2D.new()
-	capsule.radius = 9.0
-	capsule.height = 22.0
-	shape.shape = capsule
-	shape.position = Vector2(0, -10)
-	add_child(shape)
+	# Prefer the authored Player scene hierarchy. Runtime fallbacks preserve
+	# compatibility with headless tests and legacy callers that still use Player.new().
+	var shape := get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if shape == null:
+		shape = CollisionShape2D.new()
+		var capsule := CapsuleShape2D.new()
+		capsule.radius = 9.0
+		capsule.height = 22.0
+		shape.shape = capsule
+		shape.position = Vector2(0, -10)
+		add_child(shape)
 
-	visual = ActorVisual.new()
+	visual = get_node_or_null("ActorVisual") as ActorVisual
+	if visual == null:
+		visual = ACTOR_VISUAL_SCENE.instantiate() as ActorVisual
+		add_child(visual)
 	# Hero palette kept as stable String literals (matches GreenwardStyle.MAGIC /
 	# CANOPY accents; there is no character-palette entry in GreenwardStyle).
 	visual.setup(HERO_PALETTE, ActorVisual.Kind.HUMAN, "player", "Human", "wind")
-	add_child(visual)
 	# Do not attach the generic Wanderer demo frames here. The player must
 	# never render a placeholder before Kael's final playable art is selected.
 
-	_name_label = Label.new()
+	_name_label = get_node_or_null("NameLabel") as Label
+	if _name_label == null:
+		_name_label = Label.new() # compatibility for Player.new() test fixtures
+		_name_label.name = "NameLabel"
+		_name_label.position = Vector2(-70, -78)
+		_name_label.size = Vector2(140, 20)
+		add_child(_name_label)
 	_name_label.text = str(GameState.profile.get("name", "Wanderer"))
-	_name_label.position = Vector2(-70, -78)
-	_name_label.size = Vector2(140, 20)
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_name_label.add_theme_font_size_override("font_size", 11)
 	_name_label.add_theme_color_override("font_color", Color(0.86, 0.95, 1.0, 0.9))
 	_name_label.add_theme_color_override("font_outline_color", Color(0.02, 0.03, 0.06, 0.9))
 	_name_label.add_theme_constant_override("outline_size", 4)
 	_name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_name_label)
 
-	camera = Camera2D.new()
-	camera.position = Vector2(0, -30)
-	camera.position_smoothing_enabled = true
-	camera.position_smoothing_speed = 12.0
+	camera = get_node_or_null("Camera2D") as Camera2D
+	if camera == null:
+		camera = Camera2D.new()
+		camera.position = Vector2(0, -30)
+		camera.position_smoothing_enabled = true
+		camera.position_smoothing_speed = 12.0
+		add_child(camera)
 	camera.zoom = Vector2.ONE * _zoom
-	add_child(camera)
 	camera.make_current()
 
 	# Warm personal light so the hero reads against night ambience.
-	_glow = PointLight2D.new()
-	_glow.texture = ProceduralArt.soft_glow(Color(1.0, 0.86, 0.62, 0.55), 128)
+	_glow = get_node_or_null("PersonalGlow") as PointLight2D
+	if _glow == null:
+		_glow = PointLight2D.new() # compatibility for Player.new() test fixtures
+		_glow.name = "PersonalGlow"
+		_glow.position = Vector2(0, -18)
+		add_child(_glow)
+	_glow.texture = ProceduralArt.soft_glow(Color(1.0, 0.86, 0.88, 0.55), 128)
 	_glow.color = Color(1.0, 0.9, 0.72)
 	_glow.energy = 0.55
 	_glow.texture_scale = 2.6
-	_glow.position = Vector2(0, -18)
-	add_child(_glow)
+	_water_surface = get_node_or_null("WaterSurface") as Sprite2D
+	if _water_surface == null:
+		_water_surface = Sprite2D.new() # compatibility for Player.new() test fixtures
+		_water_surface.name = "WaterSurface"
+		_water_surface.texture = ProceduralArt.white_pixel()
+		_water_surface.scale = Vector2(46, 5)
+		_water_surface.position = Vector2(0, -20)
+		_water_surface.modulate = Color(0.35, 0.68, 0.86, 0.58)
+		_water_surface.z_index = 5
+		_water_surface.visible = false
+		add_child(_water_surface)
+	_water_surface.texture = ProceduralArt.white_pixel()
 
 	_connect_visual_events()
 	# Kael is the canonical player-controlled protagonist. Start the world
@@ -119,18 +167,32 @@ func _physics_process(delta: float) -> void:
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta)
 		move_and_slide()
 		visual.walking = false
+		_touch_sprint = false
+		_update_camera_lookahead(delta, Vector2.ZERO, 0.0)
 		if visual != null:
 			visual.set_move_direction(Vector2.ZERO)
 			visual.play(ANIM_IDLE)
 		return
 
 	var input_vector := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	if TouchInput.move_vector.length_squared() > 0.01:
+	var touch_driven := TouchInput.move_vector.length_squared() > 0.01
+	if touch_driven:
 		input_vector = TouchInput.move_vector
 	input_vector = input_vector.limit_length(1.0)
 
+	# Keyboard/gamepad sprint action, or (touch) joystick pushed to the edge.
 	var sprinting := Input.is_action_pressed("sprint")
-	var speed := RUN_SPEED if sprinting else WALK_SPEED
+	if touch_driven:
+		var push := input_vector.length()
+		if _touch_sprint:
+			_touch_sprint = push >= TOUCH_SPRINT_EXIT
+		else:
+			_touch_sprint = push >= TOUCH_SPRINT_ENTER
+		sprinting = sprinting or _touch_sprint
+	else:
+		_touch_sprint = false
+	var nominal_speed := RUN_SPEED if sprinting else WALK_SPEED
+	var speed := nominal_speed
 	# Water slows movement: check world water detection.
 	var world := get_tree().get_first_node_in_group("world")
 	var in_water := false
@@ -142,27 +204,54 @@ func _physics_process(delta: float) -> void:
 	if in_water:
 		# Swimming is deliberately slower than walking on land, but remains responsive.
 		speed *= 0.5
+	# Ease the speed target so walk <-> sprint transitions ramp instead of snapping.
+	_speed_target = lerpf(_speed_target, speed, 1.0 - exp(-SPEED_BLEND_RATE * delta))
 	if input_vector.length_squared() > 0.001:
-		velocity = velocity.move_toward(input_vector * speed, ACCELERATION * delta)
+		var accel := ACCELERATION
+		if velocity.length_squared() > 25.0:
+			# Reversing / hard turns brake harder so direction changes feel crisp.
+			var align := velocity.normalized().dot(input_vector.normalized())
+			if align < 0.3:
+				accel *= lerpf(TURN_BRAKE_MULT, 1.0, clampf((align + 1.0) / 1.3, 0.0, 1.0))
+		velocity = velocity.move_toward(input_vector * _speed_target, accel * delta)
 		if absf(input_vector.x) > 0.08:
 			visual.facing = 1.0 if input_vector.x > 0.0 else -1.0
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta)
+		if velocity.length() < STOP_SNAP_SPEED:
+			velocity = Vector2.ZERO
 
 	move_and_slide()
 
-	# Drive the 8-direction animator from actual movement. The authored
-	# locomotion sheets are 7 frames; a modest playback lift avoids the visibly
-	# stepped 12/14 fps cadence at normal game framerates without skipping poses.
-	var movement_ratio := clampf(velocity.length() / maxf(1.0, speed), 0.0, 1.0)
-	var moving := velocity.length() > 18.0
+	# Drive the 8-direction animator from actual movement. The locomotion
+	# sheets are 16 frames per direction (movement rebuild); the 1.36 / 1.40
+	# playback lift is tuned to that stride. Playback is scaled by real speed
+	# relative to the NOMINAL (non-water) speed, so feet slow down while wading
+	# or accelerating instead of pedalling at full pace.
+	var movement_ratio := clampf(velocity.length() / maxf(1.0, nominal_speed), 0.0, 1.0)
+	var moving := velocity.length() > STOP_SNAP_SPEED
 	visual.set_move_direction(velocity.normalized() if moving else input_vector)
 	visual.walking = moving  # backward-compatible assignment
 	if moving:
-		var locomotion_speed := (1.40 if sprinting else 1.36) * lerpf(0.90, 1.0, movement_ratio)
+		var locomotion_speed := (1.40 if sprinting else 1.36) * lerpf(0.55, 1.0, movement_ratio)
 		visual.play(ANIM_RUN if sprinting else ANIM_WALK, -1, locomotion_speed)
 	else:
 		visual.play(ANIM_IDLE, -1, 1.0)
+	_update_camera_lookahead(delta, velocity, movement_ratio)
+
+
+
+## Camera leads the movement direction a little so the player sees more of
+## where they are heading. Uses Camera2D.offset so camera.position (and its
+## smoothing speed) stay exactly as configured.
+func _update_camera_lookahead(delta: float, move_velocity: Vector2, ratio: float) -> void:
+	if camera == null:
+		return
+	var target := Vector2.ZERO
+	if move_velocity.length_squared() > 1.0:
+		var dir := move_velocity.normalized()
+		target = Vector2(dir.x, dir.y * LOOKAHEAD_VERTICAL) * LOOKAHEAD * ratio
+	camera.offset = camera.offset.lerp(target, 1.0 - exp(-LOOKAHEAD_RATE * delta))
 
 
 func _process(delta: float) -> void:
@@ -252,6 +341,7 @@ func set_avatar(character_id: String) -> void:
 	# Apply the canonical lore-height ratio through the sprite geometry API,
 	# preserving a stable ground/hover anchor during every animation pose.
 	visual.set_body_scale(float(AVATAR_HEIGHT_SCALE.get(character_id, 1.0)))
+	_apply_camera_zoom()
 	if _name_label != null:
 		_name_label.text = definition.display_name
 	EventBus.toast_requested.emit("Now playing as " + definition.display_name)
@@ -259,8 +349,14 @@ func set_avatar(character_id: String) -> void:
 
 func _set_zoom(value: float) -> void:
 	_zoom = clampf(value, MIN_ZOOM, MAX_ZOOM)
-	if camera != null:
-		camera.zoom = Vector2.ONE * _zoom
+	_apply_camera_zoom()
+
+
+func _apply_camera_zoom() -> void:
+	if camera == null:
+		return
+	var avatar_factor := GERALD_CAMERA_ZOOM_FACTOR if avatar_id == "gerald" else 1.0
+	camera.zoom = Vector2.ONE * (_zoom * avatar_factor)
 
 
 func _update_water_visual(in_water: bool) -> void:
@@ -271,20 +367,9 @@ func _update_water_visual(in_water: bool) -> void:
 			visual.position = Vector2(0, 44)
 		else:
 			visual.position = Vector2.ZERO
-	# Water surface ripple overlay
-	if in_water:
-		if _water_surface == null:
-			_water_surface = Sprite2D.new()
-			_water_surface.texture = ProceduralArt.white_pixel()
-			_water_surface.scale = Vector2(46, 5)
-			_water_surface.position = Vector2(0, -20)
-			_water_surface.modulate = Color(0.35, 0.68, 0.86, 0.58)
-			_water_surface.z_index = 5
-			add_child(_water_surface)
-	else:
-		if _water_surface != null and is_instance_valid(_water_surface):
-			_water_surface.queue_free()
-			_water_surface = null
+	# Authored WaterSurface child is toggled rather than created/freed at runtime.
+	if _water_surface != null:
+		_water_surface.visible = in_water
 
 
 func _scan_for_interactable() -> void:

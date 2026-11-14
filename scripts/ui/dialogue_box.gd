@@ -157,6 +157,13 @@ func _show_node(node_id: String) -> void:
 	_name_label.text = _dialogue_id.replace("_", " ").to_upper()
 	var palette: Dictionary = _node.get("portrait", {})
 	_portrait.setup(palette, _race_for_speaker(speaker), "neutral", "legendary", _dialogue_id.hash())
+	# Named story NPCs may provide a real portrait asset per dialogue node.
+	# Missing/invalid paths safely retain the existing procedural portrait.
+	var portrait_path := str(_node.get("portrait_asset", ""))
+	if not portrait_path.is_empty() and ResourceLoader.exists(portrait_path):
+		var portrait_resource: Resource = load(portrait_path)
+		if portrait_resource is Texture2D:
+			_portrait.set_portrait_texture(portrait_resource as Texture2D)
 	_target_text = str(_node.get("text", ""))
 	_text_label.text = _target_text
 	_text_label.visible_characters = 0
