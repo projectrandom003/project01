@@ -21,6 +21,11 @@ const PLATE_WIDTH := 72.0
 const PLATE_HEIGHT := 6.0
 const PLATE_OFFSET := 14.0
 
+const HITBOX_SCENE: PackedScene = preload("res://scenes/ui/combat/components/hitbox.tscn")
+const NAME_LABEL_SCENE: PackedScene = preload("res://scenes/ui/combat/components/combatant_name_label.tscn")
+const ENEMY_INTENT_SCENE: PackedScene = preload("res://scenes/ui/combat/components/enemy_intent_label.tscn")
+const ACTOR_VISUAL_SCENE: PackedScene = preload("res://scenes/characters/actor_visual.tscn")
+
 var unit: Combatant = null
 var visual: ActorVisual = null
 var _matron_art: Sprite2D = null
@@ -51,8 +56,7 @@ func setup(p_unit: Combatant, p_is_player: bool) -> void:
 	is_player = p_is_player
 	var hit := get_node_or_null("Hitbox") as Control
 	if hit == null:
-		hit = Control.new()
-		hit.name = "Hitbox"
+		hit = HITBOX_SCENE.instantiate() as Control
 		add_child(hit)
 	hit.custom_minimum_size = Vector2(72, 110)
 	hit.position = Vector2(-36, -96)
@@ -62,8 +66,7 @@ func setup(p_unit: Combatant, p_is_player: bool) -> void:
 		hit.gui_input.connect(_on_hit_input)
 	_name_label = get_node_or_null("NameLabel") as Label
 	if _name_label == null:
-		_name_label = Label.new()
-		_name_label.name = "NameLabel"
+		_name_label = NAME_LABEL_SCENE.instantiate() as Label
 		add_child(_name_label)
 	_name_label.text = unit.display_name
 	_name_label.add_theme_font_size_override("font_size", 11)
@@ -74,8 +77,7 @@ func setup(p_unit: Combatant, p_is_player: bool) -> void:
 	_name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_intent_label = get_node_or_null("EnemyIntent") as Label
 	if _intent_label == null:
-		_intent_label = Label.new()
-		_intent_label.name = "EnemyIntent"
+		_intent_label = ENEMY_INTENT_SCENE.instantiate() as Label
 		add_child(_intent_label)
 	_intent_label.visible = false
 	_intent_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -104,8 +106,7 @@ func setup(p_unit: Combatant, p_is_player: bool) -> void:
 
 	visual = get_node_or_null("ActorVisual") as ActorVisual
 	if visual == null:
-		visual = ActorVisual.new()
-		visual.name = "ActorVisual"
+		visual = ACTOR_VISUAL_SCENE.instantiate() as ActorVisual
 		add_child(visual)
 	visual.is_boss = unit.is_boss
 	if is_player:
