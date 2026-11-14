@@ -1,0 +1,341 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/components/summoning_chamber_atmosphere.gd" id="1"]
+
+[node name="SummoningChamberAtmosphere" type="Control"]
+mouse_filter = 2
+script = ExtResource("1")
+
+[node name="Beam" type="ColorRect" parent="."]
+mouse_filter = 2
+color = Color(0.73, 0.42, 1, 0.035)
+
+[node name="Rings" type="Node2D" parent="."]
+
+[node name="Ring0" type="Line2D" parent="Rings"]
+points = PackedVector2Array(1, 0, 0.99786, 0.0654, 0.99144, 0.13053, 0.98079, 0.19509, 0.96593, 0.25882, 0.94693, 0.32144, 0.92388, 0.38268, 0.89687, 0.44229, 0.86603, 0.5, 0.83147, 0.55557, 0.79335, 0.60876, 0.75184, 0.65935, 0.70711, 0.70711, 0.65935, 0.75184, 0.60876, 0.79335, 0.55557, 0.83147, 0.5, 0.86603, 0.44229, 0.89687, 0.38268, 0.92388, 0.32144, 0.94693, 0.25882, 0.96593, 0.19509, 0.98079, 0.13053, 0.99144, 0.0654, 0.99786, 0, 1, -0.0654, 0.99786, -0.13053, 0.99144, -0.19509, 0.98079, -0.25882, 0.96593, -0.32144, 0.94693, -0.38268, 0.92388, -0.44229, 0.89687, -0.5, 0.86603, -0.55557, 0.83147, -0.60876, 0.79335, -0.65935, 0.75184, -0.70711, 0.70711, -0.75184, 0.65935, -0.79335, 0.60876, -0.83147, 0.55557, -0.86603, 0.5, -0.89687, 0.44229, -0.92388, 0.38268, -0.94693, 0.32144, -0.96593, 0.25882, -0.98079, 0.19509, -0.99144, 0.13053, -0.99786, 0.0654, -1, 0, -0.99786, -0.0654, -0.99144, -0.13053, -0.98079, -0.19509, -0.96593, -0.25882, -0.94693, -0.32144, -0.92388, -0.38268, -0.89687, -0.44229, -0.86603, -0.5, -0.83147, -0.55557, -0.79335, -0.60876, -0.75184, -0.65935, -0.70711, -0.70711, -0.65935, -0.75184, -0.60876, -0.79335, -0.55557, -0.83147, -0.5, -0.86603, -0.44229, -0.89687, -0.38268, -0.92388, -0.32144, -0.94693, -0.25882, -0.96593, -0.19509, -0.98079, -0.13053, -0.99144, -0.0654, -0.99786, 0, -1, 0.0654, -0.99786, 0.13053, -0.99144, 0.19509, -0.98079, 0.25882, -0.96593, 0.32144, -0.94693, 0.38268, -0.92388, 0.44229, -0.89687, 0.5, -0.86603, 0.55557, -0.83147, 0.60876, -0.79335, 0.65935, -0.75184, 0.70711, -0.70711, 0.75184, -0.65935, 0.79335, -0.60876, 0.83147, -0.55557, 0.86603, -0.5, 0.89687, -0.44229, 0.92388, -0.38268, 0.94693, -0.32144, 0.96593, -0.25882, 0.98079, -0.19509, 0.99144, -0.13053, 0.99786, -0.0654, 1, 0)
+width = 1.5
+
+[node name="Ring1" type="Line2D" parent="Rings"]
+points = PackedVector2Array(1, 0, 0.99786, 0.0654, 0.99144, 0.13053, 0.98079, 0.19509, 0.96593, 0.25882, 0.94693, 0.32144, 0.92388, 0.38268, 0.89687, 0.44229, 0.86603, 0.5, 0.83147, 0.55557, 0.79335, 0.60876, 0.75184, 0.65935, 0.70711, 0.70711, 0.65935, 0.75184, 0.60876, 0.79335, 0.55557, 0.83147, 0.5, 0.86603, 0.44229, 0.89687, 0.38268, 0.92388, 0.32144, 0.94693, 0.25882, 0.96593, 0.19509, 0.98079, 0.13053, 0.99144, 0.0654, 0.99786, 0, 1, -0.0654, 0.99786, -0.13053, 0.99144, -0.19509, 0.98079, -0.25882, 0.96593, -0.32144, 0.94693, -0.38268, 0.92388, -0.44229, 0.89687, -0.5, 0.86603, -0.55557, 0.83147, -0.60876, 0.79335, -0.65935, 0.75184, -0.70711, 0.70711, -0.75184, 0.65935, -0.79335, 0.60876, -0.83147, 0.55557, -0.86603, 0.5, -0.89687, 0.44229, -0.92388, 0.38268, -0.94693, 0.32144, -0.96593, 0.25882, -0.98079, 0.19509, -0.99144, 0.13053, -0.99786, 0.0654, -1, 0, -0.99786, -0.0654, -0.99144, -0.13053, -0.98079, -0.19509, -0.96593, -0.25882, -0.94693, -0.32144, -0.92388, -0.38268, -0.89687, -0.44229, -0.86603, -0.5, -0.83147, -0.55557, -0.79335, -0.60876, -0.75184, -0.65935, -0.70711, -0.70711, -0.65935, -0.75184, -0.60876, -0.79335, -0.55557, -0.83147, -0.5, -0.86603, -0.44229, -0.89687, -0.38268, -0.92388, -0.32144, -0.94693, -0.25882, -0.96593, -0.19509, -0.98079, -0.13053, -0.99144, -0.0654, -0.99786, 0, -1, 0.0654, -0.99786, 0.13053, -0.99144, 0.19509, -0.98079, 0.25882, -0.96593, 0.32144, -0.94693, 0.38268, -0.92388, 0.44229, -0.89687, 0.5, -0.86603, 0.55557, -0.83147, 0.60876, -0.79335, 0.65935, -0.75184, 0.70711, -0.70711, 0.75184, -0.65935, 0.79335, -0.60876, 0.83147, -0.55557, 0.86603, -0.5, 0.89687, -0.44229, 0.92388, -0.38268, 0.94693, -0.32144, 0.96593, -0.25882, 0.98079, -0.19509, 0.99144, -0.13053, 0.99786, -0.0654, 1, 0)
+width = 1.5
+
+[node name="Ring2" type="Line2D" parent="Rings"]
+points = PackedVector2Array(1, 0, 0.99786, 0.0654, 0.99144, 0.13053, 0.98079, 0.19509, 0.96593, 0.25882, 0.94693, 0.32144, 0.92388, 0.38268, 0.89687, 0.44229, 0.86603, 0.5, 0.83147, 0.55557, 0.79335, 0.60876, 0.75184, 0.65935, 0.70711, 0.70711, 0.65935, 0.75184, 0.60876, 0.79335, 0.55557, 0.83147, 0.5, 0.86603, 0.44229, 0.89687, 0.38268, 0.92388, 0.32144, 0.94693, 0.25882, 0.96593, 0.19509, 0.98079, 0.13053, 0.99144, 0.0654, 0.99786, 0, 1, -0.0654, 0.99786, -0.13053, 0.99144, -0.19509, 0.98079, -0.25882, 0.96593, -0.32144, 0.94693, -0.38268, 0.92388, -0.44229, 0.89687, -0.5, 0.86603, -0.55557, 0.83147, -0.60876, 0.79335, -0.65935, 0.75184, -0.70711, 0.70711, -0.75184, 0.65935, -0.79335, 0.60876, -0.83147, 0.55557, -0.86603, 0.5, -0.89687, 0.44229, -0.92388, 0.38268, -0.94693, 0.32144, -0.96593, 0.25882, -0.98079, 0.19509, -0.99144, 0.13053, -0.99786, 0.0654, -1, 0, -0.99786, -0.0654, -0.99144, -0.13053, -0.98079, -0.19509, -0.96593, -0.25882, -0.94693, -0.32144, -0.92388, -0.38268, -0.89687, -0.44229, -0.86603, -0.5, -0.83147, -0.55557, -0.79335, -0.60876, -0.75184, -0.65935, -0.70711, -0.70711, -0.65935, -0.75184, -0.60876, -0.79335, -0.55557, -0.83147, -0.5, -0.86603, -0.44229, -0.89687, -0.38268, -0.92388, -0.32144, -0.94693, -0.25882, -0.96593, -0.19509, -0.98079, -0.13053, -0.99144, -0.0654, -0.99786, 0, -1, 0.0654, -0.99786, 0.13053, -0.99144, 0.19509, -0.98079, 0.25882, -0.96593, 0.32144, -0.94693, 0.38268, -0.92388, 0.44229, -0.89687, 0.5, -0.86603, 0.55557, -0.83147, 0.60876, -0.79335, 0.65935, -0.75184, 0.70711, -0.70711, 0.75184, -0.65935, 0.79335, -0.60876, 0.83147, -0.55557, 0.86603, -0.5, 0.89687, -0.44229, 0.92388, -0.38268, 0.94693, -0.32144, 0.96593, -0.25882, 0.98079, -0.19509, 0.99144, -0.13053, 0.99786, -0.0654, 1, 0)
+width = 1.5
+
+[node name="Motes" type="Node2D" parent="."]
+
+[node name="Mote0" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote1" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote2" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote3" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote4" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote5" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote6" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote7" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote8" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote9" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote10" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote11" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote12" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote13" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote14" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote15" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote16" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote17" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote18" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote19" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote20" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote21" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote22" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote23" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote24" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote25" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote26" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote27" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote28" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote29" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote30" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote31" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote32" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote33" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote34" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote35" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote36" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote37" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote38" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote39" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote40" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote41" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote42" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote43" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote44" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote45" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote46" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote47" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote48" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote49" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote50" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote51" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote52" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote53" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote54" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote55" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote56" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote57" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote58" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote59" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote60" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote61" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote62" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Mote63" type="Polygon2D" parent="Motes"]
+polygon = PackedVector2Array(-1, 0, 0, -1, 1, 0, 0, 1)
+color = Color(0.86, 0.72, 1, 0.3)
+
+[node name="Petals" type="Node2D" parent="."]
+
+[node name="Petal0" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
+
+[node name="Petal1" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
+
+[node name="Petal2" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
+
+[node name="Petal3" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
+
+[node name="Petal4" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
+
+[node name="Petal5" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
+
+[node name="Petal6" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
+
+[node name="Petal7" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
+
+[node name="Petal8" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
+
+[node name="Petal9" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
+
+[node name="Petal10" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
+
+[node name="Petal11" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
+
+[node name="Petal12" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
+
+[node name="Petal13" type="Polygon2D" parent="Petals"]
+polygon = PackedVector2Array(-4, 0, 0, -2, 5, 0, 0, 3)
+color = Color(0.78, 0.22, 0.48, 0.42)
