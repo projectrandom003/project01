@@ -19,52 +19,31 @@ var _reset_armed: bool = false
 func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	theme = UITheme.build()
-
-	var artwork := TextureRect.new()
-	artwork.name = "ReverieTitleArtwork"
-	artwork.texture = load("res://assets/ui/backgrounds/reverie_title_screen.jpg") as Texture2D
-	artwork.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	artwork.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	artwork.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	UIFactory.set_full_rect(artwork)
-	add_child(artwork)
-
-	var shade := ColorRect.new()
-	shade.name = "TitleArtworkReadabilityShade"
-	shade.color = Color(0.012, 0.009, 0.028, 0.08)
-	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	UIFactory.set_full_rect(shade)
-	add_child(shade)
-
-	# Six live hit areas are aligned to the six illustrated menu plaques.
-	# Their faces retain the artwork's dark glass / filigree character.
-	var menu_specs := [
-		{"name": "ContinueButton", "text": "CONTINUE", "y": 0.475, "accent": Color("#f0d5f5"), "action": "continue"},
-		{"name": "NewJourneyButton", "text": "▤   NEW JOURNEY", "y": 0.552, "accent": Color("#d9b9e7"), "action": "new"},
-		{"name": "LoadGameButton", "text": "♜   LOAD GAME", "y": 0.628, "accent": Color("#d9b9e7"), "action": "load"},
-		{"name": "SettingsButton", "text": "⚙   SETTINGS", "y": 0.700, "accent": Color("#d9b9e7"), "action": "settings"},
-		{"name": "ExtrasButton", "text": "✥   EXTRAS", "y": 0.772, "accent": Color("#d9b9e7"), "action": "extras"},
-		{"name": "QuitGameButton", "text": "✧   QUIT", "y": 0.844, "accent": Color("#c5b7d8"), "action": "quit"},
-	]
-	for spec in menu_specs:
-		var button := Button.new()
-		button.name = str(spec.name)
-		button.text = str(spec.text)
-		button.focus_mode = Control.FOCUS_ALL
-		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	# Artwork and six plaque hit areas are pre-authored in main_menu.tscn.
+	# Runtime code binds actions, save-state availability and visual states.
+	var actions := {
+		"ContinueButton": {"action": "continue", "accent": Color("#f0d5f5"), "primary": true},
+		"NewJourneyButton": {"action": "new", "accent": Color("#d9b9e7"), "primary": false},
+		"LoadGameButton": {"action": "load", "accent": Color("#d9b9e7"), "primary": false},
+		"SettingsButton": {"action": "settings", "accent": Color("#d9b9e7"), "primary": false},
+		"ExtrasButton": {"action": "extras", "accent": Color("#d9b9e7"), "primary": false},
+		"QuitGameButton": {"action": "quit", "accent": Color("#c5b7d8"), "primary": false},
+	}
+	for node_name in actions:
+		var button := get_node(node_name) as Button
+		var spec: Dictionary = actions[node_name]
+		var action := str(spec.action)
 		button.add_theme_font_size_override("font_size", 17)
 		button.add_theme_color_override("font_color", Color("#f0e5f3"))
 		button.add_theme_color_override("font_hover_color", Color("#ffffff"))
 		button.add_theme_color_override("font_pressed_color", Color("#fff0dc"))
-		_style_ornate_menu_button(button, spec.accent, str(spec.action) == "continue")
-		if str(spec.action) == "continue" or str(spec.action) == "load":
+		_style_ornate_menu_button(button, spec.accent, bool(spec.primary))
+		if action in ["continue", "load"]:
 			button.disabled = not SaveService.has_save()
-		button.set_meta("menu_action", str(spec.action))
-		button.pressed.connect(_on_menu_action.bind(str(spec.action)))
-		add_child(button)
-		if spec.action == "continue":
+		button.pressed.connect(_on_menu_action.bind(action))
+		if action == "continue":
 			_play_button = button
-		if spec.action == "new":
+		elif action == "new":
 			_reset_button = button
 	continue_button_focus()
 	resized.connect(_layout_art_menu)

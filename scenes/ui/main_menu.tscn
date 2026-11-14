@@ -1,0 +1,101 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/backgrounds/reverie_title_screen.jpg" id="2_art"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="ReverieTitleArtwork" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_art")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="TitleArtworkReadabilityShade" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.012, 0.009, 0.028, 0.08)
+
+[node name="ContinueButton" type="Button" parent="."]
+layout_mode = 1
+anchor_left = 0.505
+anchor_top = 0.445
+anchor_right = 0.704
+anchor_bottom = 0.505
+focus_mode = 2
+mouse_default_cursor_shape = 2
+text = "CONTINUE"
+metadata/menu_action = "continue"
+
+[node name="NewJourneyButton" type="Button" parent="."]
+layout_mode = 1
+anchor_left = 0.505
+anchor_top = 0.522
+anchor_right = 0.704
+anchor_bottom = 0.582
+focus_mode = 2
+mouse_default_cursor_shape = 2
+text = "▤   NEW JOURNEY"
+metadata/menu_action = "new"
+
+[node name="LoadGameButton" type="Button" parent="."]
+layout_mode = 1
+anchor_left = 0.505
+anchor_top = 0.598
+anchor_right = 0.704
+anchor_bottom = 0.658
+focus_mode = 2
+mouse_default_cursor_shape = 2
+text = "♜   LOAD GAME"
+metadata/menu_action = "load"
+
+[node name="SettingsButton" type="Button" parent="."]
+layout_mode = 1
+anchor_left = 0.505
+anchor_top = 0.67
+anchor_right = 0.704
+anchor_bottom = 0.73
+focus_mode = 2
+mouse_default_cursor_shape = 2
+text = "⚙   SETTINGS"
+metadata/menu_action = "settings"
+
+[node name="ExtrasButton" type="Button" parent="."]
+layout_mode = 1
+anchor_left = 0.505
+anchor_top = 0.742
+anchor_right = 0.704
+anchor_bottom = 0.802
+focus_mode = 2
+mouse_default_cursor_shape = 2
+text = "✥   EXTRAS"
+metadata/menu_action = "extras"
+
+[node name="QuitGameButton" type="Button" parent="."]
+layout_mode = 1
+anchor_left = 0.505
+anchor_top = 0.814
+anchor_right = 0.704
+anchor_bottom = 0.874
+focus_mode = 2
+mouse_default_cursor_shape = 2
+text = "✧   QUIT"
+metadata/menu_action = "quit"

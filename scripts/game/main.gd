@@ -3,6 +3,7 @@ extends Control
 ## persistent session lives in the GameState autoload, not in this node.
 
 var menu: MainMenu
+const MAIN_MENU_SCENE: PackedScene = preload("res://scenes/ui/main_menu.tscn")
 const OPENING_CINEMATIC_SCENE: PackedScene = preload("res://scenes/ui/opening_cinematic.tscn")
 const LoadingScreenScript = preload("res://scripts/ui/loading_screen.gd")
 
@@ -10,8 +11,7 @@ const LoadingScreenScript = preload("res://scripts/ui/loading_screen.gd")
 func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	theme = UITheme.build()
-	menu = MainMenu.new()
-	menu.name = "MainMenu"
+	menu = MAIN_MENU_SCENE.instantiate() as MainMenu
 	add_child(menu)
 	menu.play_requested.connect(_start_game)
 	menu.quit_requested.connect(_quit)
