@@ -32,60 +32,15 @@ func _ready() -> void:
 	set_process(false)
 	theme = UITheme.build()
 
-	var dim := ColorRect.new()
-	dim.color = Color(0.01, 0.02, 0.04, 0.64)
-	UIFactory.set_full_rect(dim)
-	dim.mouse_filter = Control.MOUSE_FILTER_STOP
-	add_child(dim)
-
-	var panel := UIFactory.panel(Color("#0d1424"), Color(UITheme.GOLD.r, UITheme.GOLD.g, UITheme.GOLD.b, 0.35), 16, 1, 18, true)
-	panel.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	panel.offset_left = 48
-	panel.offset_right = -48
-	panel.offset_top = -314
-	panel.offset_bottom = -26
-	add_child(panel)
-
-	var row := UIFactory.hbox(18)
-	panel.add_child(row)
-
-	_portrait = PortraitView.new()
-	_portrait.custom_minimum_size = Vector2(196, 248)
-	_portrait.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_portrait = get_node("DialoguePanel/ContentRow/Portrait") as PortraitView
+	_speaker_label = get_node("DialoguePanel/ContentRow/TextColumn/Header/SpeakerLabel") as Label
+	_name_label = get_node("DialoguePanel/ContentRow/TextColumn/Header/NameLabel") as Label
+	_text_label = get_node("DialoguePanel/ContentRow/TextColumn/TextLabel") as RichTextLabel
+	_choices_box = get_node("DialoguePanel/ContentRow/TextColumn/ChoicesBox") as VBoxContainer
+	_continue_button = get_node("DialoguePanel/ContentRow/TextColumn/Footer/ContinueButton") as Button
+	_hint_label = get_node("DialoguePanel/ContentRow/TextColumn/Footer/HintLabel") as Label
 	_portrait.setup({}, "Human", "neutral", "legendary", 0)
-	row.add_child(_portrait)
-
-	var column := UIFactory.vbox(8)
-	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	column.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	row.add_child(column)
-
-	var header := UIFactory.hbox(10)
-	_speaker_label = UIFactory.heading("Speaker", 21, UITheme.GOLD_BRIGHT)
-	_name_label = UIFactory.label("", 11, UITheme.TEXT_FAINT)
-	_name_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	header.add_child(_speaker_label)
-	header.add_child(_name_label)
-	header.add_child(UIFactory.spacer())
-	column.add_child(header)
-
-	_text_label = UIFactory.rich("", 16, UITheme.TEXT, 104)
-	_text_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_text_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	column.add_child(_text_label)
-
-	_choices_box = UIFactory.vbox(6)
-	column.add_child(_choices_box)
-
-	var footer := UIFactory.hbox(10)
-	_hint_label = UIFactory.label("", 11, UITheme.TEXT_FAINT)
-	footer.add_child(_hint_label)
-	footer.add_child(UIFactory.spacer())
-	_continue_button = UIFactory.button("Continue", true)
-	_continue_button.custom_minimum_size = Vector2(150, 36)
 	_continue_button.pressed.connect(_on_continue)
-	footer.add_child(_continue_button)
-	column.add_child(footer)
 
 
 func _process(delta: float) -> void:
