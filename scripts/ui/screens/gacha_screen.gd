@@ -93,19 +93,11 @@ func _ready() -> void:
 		glass.content_margin_top = 18
 		glass.content_margin_bottom = 18
 		shell_panel.add_theme_stylebox_override("panel", glass)
-	# Dedicated static summoning key art. Keep this pass intentionally still;
-	# ambient particles and cinematic animation will be layered in separately.
-	var art_path := "res://assets/ui/backgrounds/reverie_summoning_chamber.jpg"
-	if ResourceLoader.exists(art_path):
-		var backdrop := TextureRect.new()
-		backdrop.name = "SummoningChamberIllustration"
-		backdrop.texture = load(art_path) as Texture2D
-		backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		UIFactory.set_full_rect(backdrop)
-		add_child(backdrop)
-		move_child(backdrop, 0)
+	# Summoning chamber key art is an authored TextureRect in gacha_screen.tscn.
+	# Keep the node in the editor; runtime logic only controls its availability.
+	var backdrop := get_node_or_null("SummoningChamberIllustration") as TextureRect
+	if backdrop != null:
+		backdrop.visible = backdrop.texture != null
 
 class SummonSigil extends Control:
 	var elapsed := 0.0
