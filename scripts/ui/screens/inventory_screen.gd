@@ -5,6 +5,7 @@ extends OverlayScreen
 ## stats through CombatFactory.
 
 const ITEM_CARD_SCENE: PackedScene = preload("res://scenes/ui/components/inventory_item_card.tscn")
+const INVENTORY_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/inventory_screen_layout.tscn")
 
 var _grid: GridContainer
 var _detail: VBoxContainer
@@ -20,42 +21,31 @@ func _init() -> void:
 
 
 func _build_content() -> void:
-	var top := UIFactory.hbox(8)
-	top.add_child(UIFactory.chip("Gold  " + UIFactory.number(GameState.currency("gold")), UITheme.GOLD))
-	top.add_child(UIFactory.chip("Crystals  " + UIFactory.number(GameState.currency("crystals")), UITheme.TEAL))
-	top.add_child(UIFactory.chip("Gems  " + UIFactory.number(GameState.currency("gems")), UITheme.VIOLET))
-	content.add_child(top)
+	var layout := INVENTORY_LAYOUT_SCENE.instantiate() as VBoxContainer
+	layout.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	content.add_child(layout)
 
-	var filters := UIFactory.hbox(8)
-	for entry in [["all", "All"], ["material", "Materials"], ["equipment", "Equipment"], ["currency", "Currencies"]]:
-		var filter_id := str(entry[0])
-		var button := UIFactory.small_button(str(entry[1]))
-		button.pressed.connect(func() -> void: _set_filter(filter_id))
-		filters.add_child(button)
-	filters.add_child(UIFactory.spacer())
-	filters.add_child(UIFactory.label("Equipment changes combat stats immediately", 11, UITheme.TEXT_FAINT))
-	content.add_child(filters)
+	var wallet := layout.get_node("Wallet") as HBoxContainer
+	wallet.add_child(UIFactory.chip("Gold  " + UIFactory.number(GameState.currency("gold")), UITheme.GOLD))
+	wallet.add_child(UIFactory.chip("Crystals  " + UIFactory.number(GameState.currency("crystals")), UITheme.TEAL))
+	wallet.add_child(UIFactory.chip("Gems  " + UIFactory.number(GameState.currency("gems")), UITheme.VIOLET))
 
-	var split := UIFactory.hbox(14)
-	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content.add_child(split)
+	var filters := layout.get_node("Filters") as HBoxContainer
+	var filter_buttons := {
+		"all": filters.get_node("AllButton") as Button,
+		"material": filters.get_node("MaterialsButton") as Button,
+		"equipment": filters.get_node("EquipmentButton") as Button,
+		"currency": filters.get_node("CurrenciesButton") as Button,
+	}
+	for filter_id in filter_buttons:
+		var button: Button = filter_buttons[filter_id]
+		button.add_theme_color_override("font_color", UITheme.TEXT_DIM)
+		button.add_theme_stylebox_override("normal", UITheme.style(Color("#111a2d"), UITheme.BORDER_SOFT, 8, 1, 8))
+		button.pressed.connect(func() -> void: _set_filter(str(filter_id)))
+	(filters.get_node("FilterHint") as Label).add_theme_color_override("font_color", UITheme.TEXT_FAINT)
 
-	var left := UIFactory.vbox(10)
-	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left.custom_minimum_size = Vector2(560, 0)
-	split.add_child(left)
-	var scroll := UIFactory.scroll()
-	left.add_child(scroll)
-	_grid = UIFactory.grid(4, 10)
-	scroll.add_child(_grid)
-
-	var detail_panel := UIFactory.panel(Color("#0a101d"), UITheme.BORDER_SOFT, 12, 1, 12)
-	detail_panel.custom_minimum_size = Vector2(400, 0)
-	split.add_child(detail_panel)
-	var detail_scroll := UIFactory.scroll()
-	detail_panel.add_child(detail_scroll)
-	_detail = UIFactory.vbox(10)
-	detail_scroll.add_child(_detail)
+	_grid = layout.get_node("Split/Left/GridScroll/ItemGrid") as GridContainer
+	_detail = layout.get_node("Split/DetailPanel/DetailScroll/DetailContent") as VBoxContainer
 
 
 func _set_filter(value: String) -> void:
