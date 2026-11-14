@@ -39,6 +39,7 @@ func _ready() -> void:
 		UIFactory.set_full_rect(fallback)
 		add_child(fallback)
 	_party_layer = get_node("PartyLayer") as Node2D
+	_build_party()
 
 	var error := ResourceLoader.load_threaded_request(SCENE_PATH, "PackedScene", true)
 	if error != OK and error != ERR_BUSY:

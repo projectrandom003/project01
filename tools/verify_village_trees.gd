@@ -1,9 +1,9 @@
-extends SceneTree
+﻿extends Node
 ## Focused verifier for Phase 3 village tree composition.
 
 var _failures: Array[String] = []
 
-func _init() -> void:
+func _ready() -> void:
 	call_deferred("_run")
 
 func _fail(msg: String) -> void:
@@ -33,9 +33,9 @@ func _run() -> void:
 
 	# Instance 1
 	var inst1 = gv_scene.instantiate()
-	root.add_child(inst1)
-	await process_frame
-	await process_frame
+	get_tree().root.add_child(inst1)
+	await get_tree().process_frame
+	await get_tree().process_frame
 	var ok_groups := true
 	var expected_groups: Array[String] = []
 	for def_v in layout_res.tree_groups:
@@ -72,8 +72,11 @@ func _run() -> void:
 	tree_player_shape.shape = tree_player_capsule
 	tree_player_shape.position = Vector2(0, -10)
 	tree_player.add_child(tree_player_shape)
-	root.add_child(tree_player)
-	await physics_frame
+	get_tree().root.add_child(tree_player)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await get_tree().physics_frame
+	await get_tree().physics_frame
 	var first_tree: Node2D = null
 	for candidate in _depth_nodes(inst1):
 		if candidate.has_meta("village_tree_group"):
@@ -92,9 +95,9 @@ func _run() -> void:
 
 	# Determinism: same seed -> same result
 	var inst2 = gv_scene.instantiate()
-	root.add_child(inst2)
-	await process_frame
-	await process_frame
+	get_tree().root.add_child(inst2)
+	await get_tree().process_frame
+	await get_tree().process_frame
 	var snap2 := _snapshot(inst2, layout_res)
 	_assert(_snapshots_equal(snap1, snap2), "placement deterministic for same seed")
 
@@ -104,9 +107,9 @@ func _run() -> void:
 	var inst3 = gv_scene.instantiate()
 	inst3.layout_config = layout2
 	# repopulate if already populated with default
-	root.add_child(inst3)
-	await process_frame
-	await process_frame
+	get_tree().root.add_child(inst3)
+	await get_tree().process_frame
+	await get_tree().process_frame
 	if inst3.has_method("repopulate_tree_groups"):
 		inst3.repopulate_tree_groups()
 	var snap3 := _snapshot(inst3, layout2)
@@ -173,7 +176,7 @@ func _run() -> void:
 	_assert(inside and not outside, "village tree suppression radius covers composition area (520) and excludes wilderness")
 
 	inst1.queue_free(); inst2.queue_free(); inst3.queue_free()
-	await process_frame
+	await get_tree().process_frame
 	_finish()
 
 func _count_group_trees(inst: Node, group_name: String) -> int:
@@ -314,9 +317,10 @@ func _finish() -> void:
 	if _failures.is_empty():
 		print("verify_village_trees: OK (%d checks passed contextually)" % 0)
 		print("OK")
-		quit(0)
+		get_tree().quit(0)
 	else:
 		print("verify_village_trees: FAILED (%d)" % _failures.size())
 		for f in _failures:
 			print(" - " + f)
-		quit(1)
+		get_tree().quit(1)
+
