@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[node name="Camera2D" type="Camera2D"]
+position = Vector2(0, -30)
+position_smoothing_enabled = true
+position_smoothing_speed = 12.0

@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[node name="PersonalGlow" type="PointLight2D"]
+position = Vector2(0, -18)
+color = Color(1, 0.9, 0.72, 1)
+energy = 0.55
+texture_scale = 2.6
