@@ -5,6 +5,7 @@ extends OverlayScreen
 
 const QUEST_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/quest_screen_layout.tscn")
 const QUEST_CARD_SCENE: PackedScene = preload("res://scenes/ui/components/quest_list_card.tscn")
+const QUEST_OBJECTIVE_ROW_SCENE: PackedScene = preload("res://scenes/ui/components/quest_objective_row.tscn")
 
 var _list: VBoxContainer
 var _detail: VBoxContainer
@@ -105,16 +106,13 @@ func _show_detail(quest_id: String) -> void:
 		var active := state == "active" and index == current
 		var marker := "✓" if done else ("◆" if active else "○")
 		var color := UITheme.GREEN if done else (UITheme.GOLD if active else UITheme.TEXT_FAINT)
-		var row := UIFactory.hbox(8)
-		row.add_child(UIFactory.label(marker, 14, color))
-		var text := str(step.get("text", "Objective"))
+		var objective_text := str(step.get("text", "Objective"))
 		if str(step.get("type", "")) == "kill":
 			var entry: Dictionary = GameState.quests.get(quest_id, {})
 			var progress := int(entry.get("progress", 0)) if active else (int(step.get("count", 1)) if done else 0)
-			text += "  (%d/%d)" % [progress, int(step.get("count", 1))]
-		var label := UIFactory.wrapped(text, 12, color if (done or active) else UITheme.TEXT_DIM)
-		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		row.add_child(label)
+			objective_text += "  (%d/%d)" % [progress, int(step.get("count", 1))]
+		var row := QUEST_OBJECTIVE_ROW_SCENE.instantiate() as QuestObjectiveRow
+		row.setup(marker, objective_text, color if (done or active) else UITheme.TEXT_DIM)
 		_detail.add_child(row)
 
 	_detail.add_child(UIFactory.separator())

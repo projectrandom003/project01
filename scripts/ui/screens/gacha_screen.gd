@@ -11,6 +11,7 @@ const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/por
 const GACHA_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/gacha_screen_layout.tscn")
 const SUMMON_REVEAL_SCENE: PackedScene = preload("res://scenes/ui/components/summon_reveal_overlay.tscn")
 const SUMMON_RESULTS_SCENE: PackedScene = preload("res://scenes/ui/components/summon_results_overlay.tscn")
+const SUMMON_RESULT_CARD_SCENE: PackedScene = preload("res://scenes/ui/components/summon_result_card.tscn")
 
 var _tabs: HBoxContainer
 var _main: HBoxContainer
@@ -441,10 +442,11 @@ func _show_results(results: Array) -> void:
 	grid.columns = mini(5, maxi(1, results.size()))
 	for index in results.size():
 		var roll: Dictionary = results[index]
-		var card := _result_card(roll)
+		var card := SUMMON_RESULT_CARD_SCENE.instantiate() as SummonResultCard
+		card.setup(roll)
 		grid.add_child(card)
 		card.modulate = Color(1, 1, 1, 0)
-		var is_premium := bool(card.get_meta("premium", false))
+		var is_premium := card.premium
 		var tween := create_tween()
 		if is_premium:
 			tween.tween_interval(index * 0.09)
@@ -472,65 +474,6 @@ func _show_results(results: Array) -> void:
 			_results_layer = null
 	)
 
-
-
-func _result_card(roll: Dictionary) -> PanelContainer:
-	var character_id := str(roll.get("character_id", ""))
-	var definition: CharacterDef = ContentDB.get_character(character_id)
-	var rarity := str(roll.get("rarity", "common"))
-	var color := UITheme.rarity_color(rarity)
-	var premium := UITheme.is_premium_rarity(rarity)
-	var effect := UITheme.rarity_effect(rarity)
-	var glow: Color = effect.get("glow", UITheme.GOLD_BRIGHT)
-	# Premium cards get a wider, glow-tinted border + brighter background.
-	var card_bg := Color("#0d1526")
-	var card_border := color
-	var card_width := 2
-	if premium:
-		card_bg = Color("#0d1526").lerp(Color(glow.r, glow.g, glow.b, 1.0), 0.10)
-		card_border = Color(glow.r, glow.g, glow.b, 0.95)
-		card_width = int(effect.get("border_width", 3))
-	var card := UIFactory.panel(card_bg, card_border, 10, card_width, 8)
-	card.set_meta("premium", premium)
-	card.custom_minimum_size = Vector2(172, 238)
-	var box := UIFactory.vbox(4)
-	card.add_child(box)
-	var portrait := PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
-	portrait.custom_minimum_size = Vector2(150, 150)
-	if definition != null:
-		portrait.setup_character(definition)
-	else:
-		portrait.setup({}, "Human", "neutral", rarity, 0)
-	box.add_child(portrait)
-	var name_label := UIFactory.label(definition.display_name if definition != null else character_id, 13, UITheme.TEXT)
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	box.add_child(name_label)
-	var rarity_label := UIFactory.label(rarity.capitalize(), 10, color)
-	rarity_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(rarity_label)
-	# Premium tier flourish label ("LEGENDARY" / "MYTHIC").
-	if premium:
-		var tier_label := UIFactory.label("✦ " + UITheme.rarity_tier_label(rarity) + " ✦", 9, glow)
-		tier_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		box.add_child(tier_label)
-	if bool(roll.get("featured", false)):
-		var featured_label := UIFactory.label("FEATURED", 9, UITheme.GOLD)
-		featured_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		box.add_child(featured_label)
-	elif bool(roll.get("is_new", false)):
-		var new_label := UIFactory.label("NEW", 9, UITheme.GREEN)
-		new_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		box.add_child(new_label)
-	elif int(roll.get("awakening_gain", 0)) > 0:
-		var dupe_label := UIFactory.label("AWAKENING +1", 9, UITheme.TEAL)
-		dupe_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		box.add_child(dupe_label)
-	elif bool(roll.get("guaranteed", false)):
-		var guaranteed_label := UIFactory.label("GUARANTEED", 9, UITheme.VIOLET)
-		guaranteed_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		box.add_child(guaranteed_label)
-	return card
 
 
 ## Additive presentation report (Phase 5). ZERO final portraits exist; featured
