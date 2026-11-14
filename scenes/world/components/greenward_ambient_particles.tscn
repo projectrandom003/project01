@@ -1,0 +1,53 @@
+[gd_scene format=3]
+
+[node name="GreenwardAmbientParticles" type="Node2D"]
+
+[node name="PollenMotes" type="CPUParticles2D" parent="."]
+z_index = 30
+emitting = true
+amount = 26
+lifetime = 10.0
+preprocess = 4.0
+emission_shape = 3
+emission_rect_extents = Vector2(760, 440)
+direction = Vector2(0.25, -1)
+spread = 42.0
+gravity = Vector2(0, -5)
+initial_velocity_min = 6.0
+initial_velocity_max = 16.0
+scale_amount_min = 0.1
+scale_amount_max = 0.32
+color = Color(1, 0.95, 0.72, 0.5)
+
+[node name="Fireflies" type="CPUParticles2D" parent="."]
+z_index = 31
+emitting = false
+amount = 16
+lifetime = 7.0
+preprocess = 3.0
+emission_shape = 3
+emission_rect_extents = Vector2(680, 380)
+direction = Vector2(0, -1)
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 2.0
+initial_velocity_max = 8.0
+scale_amount_min = 0.12
+scale_amount_max = 0.34
+color = Color(0.65, 1, 0.9, 0.7)
+
+[node name="Rain" type="CPUParticles2D" parent="."]
+z_index = 29
+emitting = false
+amount = 1
+lifetime = 1.6
+emission_shape = 3
+emission_rect_extents = Vector2(760, 40)
+direction = Vector2(0.15, 1)
+spread = 6.0
+gravity = Vector2(20, 420)
+initial_velocity_min = 260.0
+initial_velocity_max = 340.0
+scale_amount_min = 0.05
+scale_amount_max = 0.12
+color = Color(0.72, 0.88, 0.95, 0.45)

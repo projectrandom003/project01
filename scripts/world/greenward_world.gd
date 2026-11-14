@@ -1097,28 +1097,22 @@ func _spawn_monsters() -> void:
 # --------------------------------------------------------------- ambient
 
 func _setup_ambient() -> void:
-	# Particle emitters are authored in greenward_world.tscn; runtime setup only
-	# supplies generated textures and the current day/night state.
-	ambient = get_node_or_null("PollenMotes") as CPUParticles2D
-	if ambient == null:
-		push_warning("GreenwardWorld is missing its authored PollenMotes node.")
-	else:
-		ambient.texture = ProceduralArt.soft_glow(Color(1.0, 0.95, 0.72), 32)
-
-	fireflies = get_node_or_null("Fireflies") as CPUParticles2D
-	if fireflies == null:
-		push_warning("GreenwardWorld is missing its authored Fireflies node.")
-	else:
-		fireflies.texture = ProceduralArt.soft_glow(Color(0.65, 1.0, 0.9), 32)
-		fireflies.emitting = day_night.is_night()
-
+	# Reusable particle scene is the single source of emitter configuration.
+	# The fallback supports headless tests that instantiate GreenwardWorld.new().
+	var effects := get_node_or_null("AmbientEffects") as Node2D
+	if effects == null:
+		effects = preload("res://scenes/world/components/greenward_ambient_particles.tscn").instantiate() as Node2D
+		effects.name = "AmbientEffects"
+		add_child(effects)
+	ambient = effects.get_node("PollenMotes") as CPUParticles2D
+	fireflies = effects.get_node("Fireflies") as CPUParticles2D
+	rain = effects.get_node("Rain") as CPUParticles2D
+	ambient.texture = ProceduralArt.soft_glow(Color(1.0, 0.95, 0.72), 32)
+	fireflies.texture = ProceduralArt.soft_glow(Color(0.65, 1.0, 0.9), 32)
+	fireflies.emitting = day_night.is_night()
 	# Lightweight rain remains disabled until the weather director enables it.
-	rain = get_node_or_null("Rain") as CPUParticles2D
-	if rain == null:
-		push_warning("GreenwardWorld is missing its authored Rain node.")
-	else:
-		rain.texture = ProceduralArt.soft_glow(GreenwardStyle.WATER.glint, 16)
-		rain.emitting = false
+	rain.texture = ProceduralArt.soft_glow(GreenwardStyle.WATER.glint, 16)
+	rain.emitting = false
 
 
 func _setup_weather() -> void:
