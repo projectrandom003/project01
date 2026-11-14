@@ -49,11 +49,14 @@ var _hp_plate: ProgressBar = null
 var _pulse: float = 0.0
 var _hit_shake: float = 0.0
 var _base_scale: float = 1.0
+var _ground_fx: BattlefieldActorGroundFX = null
 
 
 func setup(p_unit: Combatant, p_is_player: bool) -> void:
 	unit = p_unit
 	is_player = p_is_player
+	_ground_fx = preload("res://scenes/ui/combat/components/battlefield_actor_ground_fx.tscn").instantiate() as BattlefieldActorGroundFX
+	add_child(_ground_fx)
 	var hit := get_node_or_null("Hitbox") as Control
 	if hit == null:
 		hit = HITBOX_SCENE.instantiate() as Control
@@ -75,6 +78,8 @@ func setup(p_unit: Combatant, p_is_player: bool) -> void:
 	_name_label.add_theme_constant_override("outline_size", 4)
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_name_label.position = Vector2(-PLATE_WIDTH * 0.5, PLATE_OFFSET + PLATE_HEIGHT + 2.0)
+	_name_label.size = Vector2(PLATE_WIDTH, 16)
 	_intent_label = get_node_or_null("EnemyIntent") as Label
 	if _intent_label == null:
 		_intent_label = ENEMY_INTENT_SCENE.instantiate() as Label
@@ -160,6 +165,11 @@ func setup(p_unit: Combatant, p_is_player: bool) -> void:
 				_base_scale *= BOSS_MULTIPLIER
 	visual.visual_scale = _base_scale
 	_hp_color = UITheme.GREEN if is_player else UITheme.DANGER
+	var element_color := UITheme.element_color(unit.element)
+	if element_color == UITheme.TEXT_DIM:
+		element_color = Color("#c6cad6")
+	_ground_fx.configure(is_player, unit.is_boss, unit.def_id == "fallen_matron", element_color)
+	_sync_ground_fx()
 	face(Vector2(-1.0, 0.0) if is_player else Vector2(1.0, 0.0))
 	refresh()
 
@@ -280,6 +290,7 @@ func set_home(position: Vector2) -> void:
 
 func _process(delta: float) -> void:
 	_pulse += delta
+	_sync_ground_fx()
 	_refresh_matron_phase()
 	if _hit_shake > 0.0:
 		_hit_shake = maxf(0.0, _hit_shake - delta * 4.0)
@@ -395,62 +406,10 @@ func play_death() -> void:
 	_name_label.modulate = Color(1, 1, 1, 0.0)
 
 
-func _draw() -> void:
-	# Ground shadow (drawn under the figure: a Node2D paints itself before its
-	# children, so the figure sits on top of it).
-	var shadow_radius := 16.0 * _base_scale * (1.25 if unit != null and unit.is_boss else 1.0)
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-	draw_circle(Vector2(0, 2), shadow_radius * 0.55, Color(0, 0, 0, 0.22))
-	draw_circle(Vector2(0, 2), shadow_radius * 0.34, Color(0, 0, 0, 0.20))
-
-	# Enemy identity sigils: a quiet elemental rune under each monster makes
-	# crowded encounters easier to parse without competing with target rings.
-	if not is_player and unit != null and unit.is_alive():
-		var element_color := UITheme.element_color(unit.element)
-		if element_color == UITheme.TEXT_DIM:
-			element_color = Color("#c6cad6")
-		var rune_alpha := 0.12 + 0.05 * (0.5 + 0.5 * sin(_pulse * 1.8))
-		var rune_color := Color(element_color.r, element_color.g, element_color.b, rune_alpha)
-		var rune_radius := shadow_radius * (1.05 if unit.is_boss else 0.82)
-		draw_arc(Vector2(0, 2), rune_radius, _pulse * 0.12, _pulse * 0.12 + TAU * 0.82, 40, rune_color, 2.0 if unit.is_boss else 1.3)
-		if unit.is_boss:
-			draw_arc(Vector2(0, 2), rune_radius * 1.18, -_pulse * 0.08, -_pulse * 0.08 + TAU * 0.62, 36, Color(rune_color.r, rune_color.g, rune_color.b, rune_alpha * 0.7), 1.0)
-
-	# The Fallen Matron's corruption expands at 66% and 33% HP. The
-	# concentric violet sigils sit behind her illustration and pulse gently.
-	if _matron_art != null and _matron_phase > 0:
-		var pulse := 0.5 + 0.5 * sin(_pulse * (2.2 + float(_matron_phase) * 0.55))
-		var alpha := 0.24 + float(_matron_phase - 1) * 0.13 + pulse * 0.12
-		var glow := Color(0.68, 0.24, 0.98, alpha)
-		var center := Vector2(0, -88)
-		var radius := 48.0 + float(_matron_phase - 1) * 7.0
-		draw_arc(center, radius, _pulse * -0.35, _pulse * -0.35 + PI * 1.55, 42, glow, 2.2 + float(_matron_phase) * 0.55, true)
-		draw_arc(center, radius + 11.0, _pulse * 0.22, _pulse * 0.22 + PI * 1.15, 36, Color(0.88, 0.46, 1.0, alpha * 0.72), 1.5, true)
-		if _matron_phase == 3:
-			draw_arc(center, radius + 22.0, _pulse * -0.16, _pulse * -0.16 + PI * 1.75, 48, Color(0.96, 0.3, 0.88, alpha * 0.8), 2.0, true)
-
-	# Target marker: a pulsing ring under a targetable enemy.
-	if targetable and not dead:
-		var glow := 0.5 + 0.5 * sin(_pulse * 4.0)
-		var marker_color := Color(UITheme.GOLD_BRIGHT.r, UITheme.GOLD_BRIGHT.g, UITheme.GOLD_BRIGHT.b, 0.35 + 0.35 * glow)
-		draw_arc(Vector2(0, 2), shadow_radius * (0.75 + 0.06 * glow), 0.0, TAU, 32, marker_color, 3.0)
-		draw_arc(Vector2(0, 2), shadow_radius * (0.92 + 0.08 * glow), 0.0, TAU, 32,
-			Color(marker_color.r, marker_color.g, marker_color.b, marker_color.a * 0.48), 1.2)
-
-	# Active actor: a teal arc so the current turn is obvious.
-	if active and not dead:
-		draw_arc(Vector2(0, 2), shadow_radius * 0.92, 0.0, TAU, 28,
-			Color(UITheme.TEAL.r, UITheme.TEAL.g, UITheme.TEAL.b, 0.75), 2.5)
-
-	if dead:
+func _sync_ground_fx() -> void:
+	if _ground_fx == null or not is_instance_valid(_ground_fx) or unit == null:
 		return
-
-	# HP plate is an authored ProgressBar scene so its shape and styling remain editable.
-	if _hp_plate != null:
-		_hp_plate.visible = not dead
-	if _name_label != null:
-		_name_label.position = Vector2(-PLATE_WIDTH * 0.5, PLATE_OFFSET + PLATE_HEIGHT + 2.0)
-		_name_label.size = Vector2(PLATE_WIDTH, 16)
+	_ground_fx.update_state(_pulse, targetable, active, dead, _base_scale, _matron_phase)
 
 
 func _on_hit_input(event: InputEvent) -> void:
