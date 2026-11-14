@@ -6,6 +6,8 @@ signal main_menu_requested
 signal reset_requested
 signal navigate_requested(screen_id: String)
 
+const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
+
 var _reset_armed: bool = false
 var _reset_button: Button
 
@@ -99,7 +101,7 @@ func _build_content() -> void:
 			continue
 		var member := UIFactory.vbox(3)
 		member.custom_minimum_size = Vector2(92, 0)
-		var portrait := PortraitView.new()
+		var portrait := PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
 		portrait.custom_minimum_size = Vector2(82, 86)
 		portrait.setup_character(definition)
 		member.add_child(portrait)

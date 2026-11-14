@@ -10,6 +10,7 @@ signal closed
 const TURN_DELAY := 0.78
 const IMPACT_DELAY := 0.58
 const BATTLEFIELD_SCENE: PackedScene = preload("res://scenes/ui/battlefield.tscn")
+const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
 
 var group_id: String = ""
 var engine: CombatEngine
@@ -293,7 +294,7 @@ func _build_roster(units: Array) -> void:
 	_roster_rows.clear()
 	for unit in units:
 		var row := preload("res://scenes/ui/combat/components/party_roster_entry.tscn").instantiate() as HBoxContainer
-		var portrait := PortraitView.new()
+		var portrait := PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
 		portrait.custom_minimum_size = Vector2(30, 38)
 		var definition := ContentDB.get_character(unit.def_id)
 		if definition != null:
@@ -814,7 +815,7 @@ func _update_turn_order() -> void:
 		var unit: Combatant = engine.combatants[sequence[index]]
 		if unit == null:
 			continue
-		var portrait := PortraitView.new()
+		var portrait := PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
 		portrait.show_frame = true
 		portrait.show_rarity_effect = false
 		portrait.selected = index == 0

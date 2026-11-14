@@ -5,6 +5,8 @@ extends PanelContainer
 
 signal clicked(card: CombatUnitCard)
 
+const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
+
 var unit: Combatant
 var portrait: PortraitView
 var _name_label: Label
@@ -30,7 +32,7 @@ func setup(p_unit: Combatant) -> void:
 	add_child(box)
 
 	var portrait_center := CenterContainer.new()
-	portrait = PortraitView.new()
+	portrait = PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
 	portrait.custom_minimum_size = Vector2(122, 104)
 	var definition: CharacterDef = ContentDB.get_character(unit.def_id)
 	if definition != null:

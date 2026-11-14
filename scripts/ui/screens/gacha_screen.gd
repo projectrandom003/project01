@@ -7,6 +7,7 @@ extends OverlayScreen
 ## and ownership grant behind the authoritative server boundary.
 
 const FEATURED_STAGE_SCENE: PackedScene = preload("res://scenes/ui/components/featured_summon_stage.tscn")
+const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
 
 var _tabs: HBoxContainer
 var _main: HBoxContainer
@@ -229,7 +230,7 @@ func _rebuild_main() -> void:
 		UIFactory.set_full_rect(portrait_center)
 		portrait_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		stage_layer.add_child(portrait_center)
-		var portrait := PortraitView.new()
+		var portrait := PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
 		portrait.custom_minimum_size = Vector2(252, 292)
 		portrait.show_frame = false
 		if featured_def != null:
@@ -575,7 +576,7 @@ func _result_card(roll: Dictionary) -> PanelContainer:
 	card.custom_minimum_size = Vector2(172, 238)
 	var box := UIFactory.vbox(4)
 	card.add_child(box)
-	var portrait := PortraitView.new()
+	var portrait := PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
 	portrait.custom_minimum_size = Vector2(150, 150)
 	if definition != null:
 		portrait.setup_character(definition)

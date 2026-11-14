@@ -1,5 +1,7 @@
 class_name CollectionScreen
 extends OverlayScreen
+
+const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
 ## Roster, party management, ascension and character detail.
 
 var _grid: GridContainer
@@ -126,7 +128,7 @@ func _make_card(instance: CharacterInstance) -> PanelContainer:
 	var box := UIFactory.vbox(4)
 	card.add_child(box)
 
-	var portrait := PortraitView.new()
+	var portrait := PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
 	portrait.custom_minimum_size = Vector2(108, 108)
 	portrait.setup_character(definition)  # ZERO final portraits -> procedural fallback
 	box.add_child(portrait)
@@ -219,7 +221,7 @@ func _show_detail(uid: String) -> void:
 	_ascend_armed = (_ascend_armed_uid == instance.uid)
 
 	var portrait_center := CenterContainer.new()
-	var portrait := PortraitView.new()
+	var portrait := PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
 	# Premium rarities get a larger detail portrait.
 	if UITheme.is_premium_rarity(definition.rarity):
 		portrait.custom_minimum_size = Vector2(196, 232)
