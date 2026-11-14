@@ -81,10 +81,33 @@ func _build_content() -> void:
 		var definition: Dictionary = ContentDB.get_quest(tracked)
 		var step: Dictionary = GameState.quest_step(tracked)
 		right.add_child(UIFactory.label(str(definition.get("name", tracked)), 13, UITheme.TEXT))
-		right.add_child(UIFactory.label(str(step.get("text", "")), 11, UITheme.TEXT_DIM))
-		var dist := GameState.distance_to_tracked()
-		var arrow := _quest_arrow()
-		right.add_child(UIFactory.label("%s  %.0f tiles" % [arrow, dist / 16.0], 12, UITheme.TEAL))
+		var resolver: QuestNavigationResolver = QuestNavigationResolver.shared()
+		var game_screen := get_tree().get_first_node_in_group("game_screen")
+		if game_screen != null and game_screen.get("quest_resolver") is QuestNavigationResolver:
+			resolver = game_screen.get("quest_resolver") as QuestNavigationResolver
+		var resolved := resolver.get_resolved_target(GameState.player_region, player_world)
+		var objective_text := str(resolved.get("step_text", step.get("text", "")))
+		right.add_child(UIFactory.label(objective_text, 11, UITheme.TEXT_DIM))
+		if not bool(resolved.get("valid", false)):
+			right.add_child(UIFactory.label("Destination unavailable", 12, UITheme.TEXT_FAINT))
+		elif not bool(resolved.get("same_frame", false)):
+			var next_hop: Dictionary = resolved.get("next_hop", {})
+			var route: Array = resolved.get("route", [])
+			if not route.is_empty() and not next_hop.is_empty():
+				var hop_label := str(next_hop.get("label", ""))
+				if hop_label.is_empty():
+					hop_label = "Travel to " + str(next_hop.get("to", resolved.get("target_region_id", "destination")))
+				right.add_child(UIFactory.label("Next: " + hop_label, 12, UITheme.TEAL))
+			else:
+				right.add_child(UIFactory.label("No route to destination", 12, UITheme.TEXT_FAINT))
+		elif str(resolved.get("status", "")) == QuestNavigationResolver.STATUS_UNREACHABLE:
+			right.add_child(UIFactory.label("Destination unreachable", 12, UITheme.TEXT_FAINT))
+		else:
+			var distance_value: Variant = resolved.get("distance", null)
+			var direction_value: Variant = resolved.get("direction", Vector2.ZERO)
+			var arrow := _quest_arrow(direction_value)
+			if distance_value != null:
+				right.add_child(UIFactory.label("%s  %.0f tiles" % [arrow, float(distance_value) / IsoMath.TILE_W], 12, UITheme.TEAL))
 
 
 func _refresh() -> void:
@@ -92,8 +115,8 @@ func _refresh() -> void:
 		_map_canvas.refresh_map()
 
 
-func _quest_arrow() -> String:
-	var dir := GameState.direction_to_tracked()
+func _quest_arrow(direction: Variant = null) -> String:
+	var dir: Vector2 = direction if typeof(direction) == TYPE_VECTOR2 else GameState.direction_to_tracked()
 	if dir.length_squared() < 0.0001:
 		return "•"
 	var angle := dir.angle()

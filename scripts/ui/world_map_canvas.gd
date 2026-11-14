@@ -29,9 +29,18 @@ func refresh_map() -> void:
 		var definition: Dictionary = ContentDB.get_quest(tracked)
 		_has_quest = str(definition.get("region", "greenward")) == GameState.player_region
 		if _has_quest:
-			# Use the same live target as the HUD compass and in-world beacon.
-			# Kill objectives follow the nearest living matching monster.
-			_quest_grid = IsoMath.world_to_grid(GameState.quest_target_position(tracked))
+			# Resolve through the GameScreen-owned instance so the full map,
+			# minimap, HUD compass and world beacon all point at one live target.
+			var resolver: QuestNavigationResolver = QuestNavigationResolver.shared()
+			var game_screen := get_tree().get_first_node_in_group("game_screen")
+			if game_screen != null and game_screen.get("quest_resolver") is QuestNavigationResolver:
+				resolver = game_screen.get("quest_resolver") as QuestNavigationResolver
+			var player_position: Vector2 = (player as Node2D).global_position if player is Node2D else GameState.player_position
+			var resolved := resolver.get_resolved_target(GameState.player_region, player_position)
+			var target_position: Variant = resolved.get("target_local_pos", null)
+			_has_quest = bool(resolved.get("valid", false)) and bool(resolved.get("same_frame", false)) and typeof(target_position) == TYPE_VECTOR2
+			if _has_quest:
+				_quest_grid = IsoMath.world_to_grid(target_position as Vector2)
 	if player is Node2D and "velocity" in player and player.velocity.length_squared() > 1.0:
 		_player_facing = player.velocity.normalized()
 	queue_redraw()
