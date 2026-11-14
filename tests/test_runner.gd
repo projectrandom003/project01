@@ -1568,6 +1568,17 @@ func _test_chunk_visual_quality() -> void:
 		var influence_gap := elder_center.distance_to(matron_center) - float(elder_zone.get("radius", 0.0)) - float(matron_zone.get("radius", 0.0))
 		check(influence_gap > 0.0, "boss biome influence fields do not overlap", str(influence_gap))
 		check(elder_zone.get("color") != matron_zone.get("color"), "boss territories use distinct biome palettes")
+		# Navigation must classify the two boss areas independently inside the
+		# same region, and must not confuse either with the village approach.
+		var navigation := QuestNavigationResolver.new()
+		var elder_world := IsoMath.grid_to_world(-88.0, 76.0)
+		var matron_world := IsoMath.grid_to_world(116.0, 78.0)
+		var village_world := IsoMath.grid_to_world(8.0, 8.0)
+		check(navigation._territory_for("greenward", elder_world, {}) == "elder_hollow", "Elder Hollow resolves as its own navigation territory")
+		check(navigation._territory_for("greenward", matron_world, {}) == "withered_estate", "Fallen Matron resolves as its own navigation territory")
+		check(navigation._territory_for("greenward", village_world, {}).is_empty(), "Greenward village approach is outside both boss territories")
+		check(QuestNavigationResolver._in_territory("greenward", elder_world, "elder_hollow"), "Elder Hollow territory membership is recognized")
+		check(not QuestNavigationResolver._in_territory("greenward", elder_world, "withered_estate"), "Elder Hollow is not classified as the Matron territory")
 	var seed := int(region.get("noise_seed", 1337))
 	var elevation := FastNoiseLite.new()
 	elevation.seed = seed
