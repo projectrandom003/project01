@@ -2,6 +2,7 @@ class_name CollectionScreen
 extends OverlayScreen
 
 const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
+const ROSTER_CARD_SCENE: PackedScene = preload("res://scenes/ui/components/roster_character_card.tscn")
 ## Roster, party management, ascension and character detail.
 
 var _grid: GridContainer
@@ -106,61 +107,19 @@ func _has_uid(instances: Array, uid: String) -> bool:
 
 func _make_card(instance: CharacterInstance) -> PanelContainer:
 	var definition: CharacterDef = ContentDB.get_character(instance.char_id)
-	var effect := UITheme.rarity_effect(definition.rarity) if definition != null else UITheme.rarity_effect("common")
-	var premium := UITheme.is_premium_rarity(definition.rarity) if definition != null else false
+	var rarity := definition.rarity if definition != null else "common"
+	var effect := UITheme.rarity_effect(rarity)
+	var premium := UITheme.is_premium_rarity(rarity)
 	var glow: Color = effect.get("glow", UITheme.GOLD_BRIGHT)
-	# Premium cards get a wider border + a brighter, glow-tinted background.
-	var card_bg := Color("#111a2d")
-	var card_border := UITheme.BORDER_SOFT
-	var card_width := 1
-	if premium:
-		card_bg = Color("#16203a")
-		card_border = Color(glow.r, glow.g, glow.b, 0.55)
-		card_width = int(effect.get("border_width", 3))
-	var card := UIFactory.panel(card_bg, card_border, 10, card_width, 8)
-	card.custom_minimum_size = Vector2(126, 174)
-	card.mouse_filter = Control.MOUSE_FILTER_STOP
-	card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	var tier_text := UITheme.rarity_tier_label(rarity) if premium else ""
+	var card := ROSTER_CARD_SCENE.instantiate() as RosterCharacterCard
+	card.setup(instance.uid, definition, instance.level, GameState.party.has(instance.uid), premium, glow, tier_text)
 	card.set_meta("premium", premium)
-	card.set_meta("rarity", definition.rarity if definition != null else "common")
+	card.set_meta("rarity", rarity)
 	if premium:
 		_premium_count += 1
-	var box := UIFactory.vbox(4)
-	card.add_child(box)
-
-	var portrait := PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
-	portrait.custom_minimum_size = Vector2(108, 108)
-	portrait.setup_character(definition)  # ZERO final portraits -> procedural fallback
-	box.add_child(portrait)
-
-	var name_label := UIFactory.label(definition.display_name if definition != null else instance.char_id, 12, UITheme.TEXT)
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	box.add_child(name_label)
-
-	var subtitle := "Lv %d · %s" % [instance.level, definition.rarity.capitalize() if definition != null else "?"]
-	var sub_label := UIFactory.label(subtitle, 10, UITheme.TEXT_DIM)
-	sub_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(sub_label)
-
-	# Small premium tier label ("LEGENDARY" / "MYTHIC").
-	if premium:
-		var tier_text := UITheme.rarity_tier_label(definition.rarity)
-		if not tier_text.is_empty():
-			var tier_label := UIFactory.label("✦ " + tier_text, 9, glow)
-			tier_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			box.add_child(tier_label)
-
-	if GameState.party.has(instance.uid):
-		var badge := UIFactory.label("IN PARTY", 9, UITheme.GOLD)
-		badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		box.add_child(badge)
-
 	var uid := instance.uid
-	card.gui_input.connect(func(event: InputEvent) -> void:
-		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			_select(uid)
-	)
+	card.selected.connect(_select)
 	card.mouse_entered.connect(func() -> void:
 		if _selected_uid != uid:
 			card.add_theme_stylebox_override("panel", UITheme.style(Color("#17233c"), UITheme.GOLD, 10, 1, 8))
