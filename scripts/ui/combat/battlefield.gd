@@ -93,8 +93,7 @@ func _build_environment() -> void:
 	_embers.color = Color(0.85, 0.6, 0.95, 0.22) if arena_id == "fallen_matron_encounter" else Color(0.62, 0.9, 0.48, 0.20)
 	_stage = get_node_or_null("Actors") as Node2D
 	if _stage == null:
-		_stage = Node2D.new()
-		_stage.name = "Actors"
+		_stage = preload("res://scenes/ui/combat/components/battlefield_actor_stage.tscn").instantiate() as Node2D
 		add_child(_stage)
 
 
