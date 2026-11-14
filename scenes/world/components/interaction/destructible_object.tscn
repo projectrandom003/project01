@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/components/interaction/destructible_object.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_destructible"]
+size = Vector2(32, 24)
+
+[node name="DestructibleObject" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="IntactSprite" type="Sprite2D" parent="Visual"]
+centered = false
+texture_filter = 1
+
+[node name="DamagedSprite" type="Sprite2D" parent="Visual"]
+visible = false
+centered = false
+texture_filter = 1
+
+[node name="CollisionBody" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionBody"]
+shape = SubResource("RectangleShape2D_destructible")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

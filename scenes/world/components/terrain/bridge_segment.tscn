@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/components/bridge_segment.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bridge_walk"]
+size = Vector2(96, 28)
+
+[node name="BridgeSegment" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Deck" type="Sprite2D" parent="Visual"]
+centered = false
+texture_filter = 1
+
+[node name="Rails" type="Node2D" parent="Visual"]
+
+[node name="Supports" type="Node2D" parent="Visual"]
+
+[node name="WalkableArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WalkableArea"]
+shape = SubResource("RectangleShape2D_bridge_walk")
+disabled = true
+
+[node name="NavigationObstacle" type="NavigationObstacle2D" parent="."]
+affect_navigation_mesh = true
+avoidance_enabled = false

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnvironmentPresentationConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/components/environment_presentation_config.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+day_night_enabled = true
+ambient_particles_enabled = true
+weather_enabled = true
+fog_enabled = true
+water_presentation_enabled = true
+localized_lights_enabled = true
+environmental_sound_enabled = true
+fog_density_scale = 1.0
+ambient_tint = Color(1, 1, 1, 1)
+weather_bias = []
+metadata = {}

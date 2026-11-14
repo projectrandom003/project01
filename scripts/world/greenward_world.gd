@@ -19,6 +19,15 @@ extends Node2D
 ## visual_standards_report); NO existing node is repositioned and NO public API
 ## or _ready() order is changed.
 
+@export var presentation_config: Resource
+@onready var terrain_transitions: Node2D = get_node_or_null("TerrainTransitions") as Node2D
+@onready var water_and_bridges: Node2D = get_node_or_null("WaterAndBridges") as Node2D
+@onready var navigation_root: Node2D = get_node_or_null("Navigation") as Node2D
+@onready var environment_presentation: Node2D = get_node_or_null("EnvironmentPresentation") as Node2D
+@onready var localized_lights_root: Node2D = get_node_or_null("EnvironmentPresentation/LocalizedLights") as Node2D
+@onready var water_presentation_root: Node2D = get_node_or_null("EnvironmentPresentation/WaterPresentation") as Node2D
+@onready var ambient_sound_root: Node2D = get_node_or_null("EnvironmentPresentation/AmbientSound") as Node2D
+
 const DEFAULT_REGION_ID := "greenward"
 const PLAYER_SCENE: PackedScene = preload("res://scenes/characters/player.tscn")
 const NPC_SCENE: PackedScene = preload("res://scenes/world/world_npc.tscn")

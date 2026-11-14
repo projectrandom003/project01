@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="VegetationVariation" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/components/vegetation_variation.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+kind = "glade_tree"
+variant = 0
+scale = 1.0
+flip_h = false
+tint = Color(1, 1, 1, 1)
+wind_enabled = true
+wind_sway_amount = 0.03
+shadow_enabled = true
+seasonal_offset = 0.0
+metadata = {}

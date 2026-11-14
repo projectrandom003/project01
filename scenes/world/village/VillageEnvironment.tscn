@@ -8,8 +8,14 @@ script = ExtResource("1_script")
 [node name="Ground" type="Node2D" parent="."]
 z_index = -10
 
+[node name="TerrainTransitions" type="Node2D" parent="."]
+z_index = -9
+
 [node name="PathNetwork" type="Node2D" parent="."]
 z_index = -4
+
+[node name="WaterAndBridges" type="Node2D" parent="."]
+z_index = -3
 
 [node name="DepthSort" type="Node2D" parent="."]
 y_sort_enabled = true
@@ -22,7 +28,13 @@ y_sort_enabled = true
 
 [node name="TreeGroupDefs" type="Node2D" parent="Logic"]
 
+[node name="InteractionPoints" type="Node2D" parent="Logic"]
+
+[node name="Navigation" type="Node2D" parent="Logic"]
+
 [node name="Lighting" type="Node2D" parent="."]
+
+[node name="EnvironmentPresentation" type="Node2D" parent="."]
 
 [node name="AmbientEffects" type="Node2D" parent="."]
 z_index = 20

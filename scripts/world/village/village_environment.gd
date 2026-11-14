@@ -7,16 +7,22 @@ extends Node2D
 signal village_ready
 
 @export var layout_config: Resource
+@export var environment_presentation_config: Resource
 
 @onready var ground: Node2D = $Ground
+@onready var terrain_transitions: Node2D = get_node_or_null("TerrainTransitions") as Node2D
 @onready var path_network: Node2D = $PathNetwork
+@onready var water_and_bridges: Node2D = get_node_or_null("WaterAndBridges") as Node2D
 @onready var depth_sort: Node2D = $DepthSort
 @onready var lighting: Node2D = $Lighting
+@onready var environment_presentation: Node2D = get_node_or_null("EnvironmentPresentation") as Node2D
 @onready var ambient_effects: Node2D = $AmbientEffects
 @onready var logic: Node = get_node_or_null("Logic")
 @onready var building_slots_root: Node2D = get_node_or_null("Logic/BuildingSlots") as Node2D
 @onready var npc_areas_root: Node2D = get_node_or_null("Logic/NPCAreas") as Node2D
 @onready var tree_group_defs_root: Node2D = get_node_or_null("Logic/TreeGroupDefs") as Node2D
+@onready var interaction_points_root: Node2D = get_node_or_null("Logic/InteractionPoints") as Node2D
+@onready var navigation_root: Node2D = get_node_or_null("Logic/Navigation") as Node2D
 
 # Backward-compatible aliases (logical groups; sortable visuals live in depth_sort)
 @onready var buildings: Node2D = building_slots_root if building_slots_root != null else depth_sort
@@ -24,7 +30,7 @@ signal village_ready
 @onready var vegetation: Node2D = depth_sort
 @onready var furniture: Node2D = depth_sort
 @onready var npcs: Node2D = npc_areas_root if npc_areas_root != null else depth_sort
-@onready var interactive_locations: Node2D = depth_sort
+@onready var interactive_locations: Node2D = interaction_points_root if interaction_points_root != null else depth_sort
 
 var _shared_depth_parent: Node2D = null
 

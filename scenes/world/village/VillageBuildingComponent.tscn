@@ -11,6 +11,20 @@ script = ExtResource("1_script")
 [node name="Visual" type="Node2D" parent="."]
 y_sort_enabled = true
 
+[node name="Foundation" type="Node2D" parent="Visual"]
+
+[node name="Walls" type="Node2D" parent="Visual"]
+
+[node name="Roof" type="Node2D" parent="Visual"]
+
+[node name="Doors" type="Node2D" parent="Visual"]
+
+[node name="Windows" type="Node2D" parent="Visual"]
+
+[node name="Decorations" type="Node2D" parent="Visual"]
+
+[node name="Lighting" type="Node2D" parent="Visual"]
+
 [node name="Sprite" type="Sprite2D" parent="Visual"]
 centered = false
 texture_filter = 1

@@ -40,6 +40,21 @@ func setup(kind: String, v: int, flip_h: bool = false, p_scale: float = 1.0, win
 		set_meta("_flip", flip_h)
 	_apply_flip_and_wind(flip_h, wind_mat)
 
+func apply_variation(vres: Resource) -> void:
+	if vres == null:
+		return
+	if "kind" in vres and String(vres.kind) != "": prop_kind = String(vres.kind)
+	if "variant" in vres: variant = int(vres.variant)
+	if "scale" in vres: scale = Vector2.ONE * float(vres.scale)
+	if "wind_enabled" in vres: wind_enabled = bool(vres.wind_enabled)
+	var flip_h := bool(vres.flip_h) if "flip_h" in vres else bool(get_meta("_flip", false))
+	var wind_mat: Material = get_meta("_wind_mat", null) if has_meta("_wind_mat") else null
+	if is_node_ready():
+		_apply_art(wind_mat)
+	_apply_flip_and_wind(flip_h, wind_mat)
+	if shadow_sprite != null and "shadow_enabled" in vres:
+		shadow_sprite.visible = bool(vres.shadow_enabled)
+
 
 func _apply_flip_and_wind(flip_h: bool, wind_mat: Material) -> void:
 	for s in [shadow_sprite, trunk_sprite, canopy_sprite]:
