@@ -415,7 +415,7 @@ func _spawn_kael_lance(from: Vector2, to: Vector2, fire: Color, gold: Color, pal
 
 func _spawn_kael_rally_ring(center: Vector2, fire: Color, gold: Color) -> void:
 	for ring_index in 3:
-		var ring := Line2D.new()
+		var ring := preload("res://scenes/ui/combat/components/magic_effect_line.tscn").instantiate() as Line2D
 		ring.width = 2.0 if ring_index == 0 else 1.2
 		ring.default_color = Color(gold.r, gold.g, gold.b, 0.78 - float(ring_index) * 0.16)
 		var pts := PackedVector2Array()
@@ -445,7 +445,7 @@ func _spawn_kael_aura(ally: BattlefieldActor) -> void:
 
 func _spawn_kael_ground_seal(center: Vector2, fire: Color, gold: Color) -> void:
 	for ring_index in 3:
-		var ring := Line2D.new()
+		var ring := preload("res://scenes/ui/combat/components/magic_effect_line.tscn").instantiate() as Line2D
 		ring.width = 2.6 - float(ring_index) * 0.55
 		ring.default_color = Color(fire.r, fire.g, fire.b, 0.78 - float(ring_index) * 0.16)
 		var pts := PackedVector2Array()
@@ -466,10 +466,8 @@ func _spawn_kael_ground_seal(center: Vector2, fire: Color, gold: Color) -> void:
 
 
 func _spawn_kael_ultimate_burst(center: Vector2, fire: Color, gold: Color, pale: Color) -> void:
-	var bloom := PointLight2D.new()
+	var bloom := preload("res://scenes/ui/combat/components/effect_glow_light.tscn").instantiate() as PointLight2D
 	bloom.color = fire
-	bloom.energy = 0.0
-	bloom.texture = SOFT_GLOW
 	bloom.texture_scale = 0.3
 	bloom.position = center
 	bloom.z_index = 54
@@ -487,7 +485,7 @@ func _spawn_kael_ultimate_burst(center: Vector2, fire: Color, gold: Color, pale:
 	burst.emitting = true
 	_spawn_kael_cross_slash(center, Vector2.RIGHT, pale, 2.1)
 	_spawn_kael_cross_slash(center, Vector2.RIGHT.rotated(PI * 0.5), fire, 1.8)
-	var ring := Line2D.new()
+	var ring := preload("res://scenes/ui/combat/components/magic_effect_line.tscn").instantiate() as Line2D
 	ring.width = 5.0
 	ring.default_color = Color(fire.r, fire.g, fire.b, 0.9)
 	var points := PackedVector2Array()
@@ -614,30 +612,10 @@ func _spawn_soul_drain(from: Vector2, to: Vector2) -> void:
 
 func _play_matron_verdict(boss: BattlefieldActor, target_pos: Vector2) -> void:
 	# Stage 1 — the garden goes silent; the Matron gathers the whole arena.
-	var veil := ColorRect.new()
-	veil.name = "MatronVerdictVeil"
-	veil.color = Color(0.025, 0.002, 0.045, 0.0)
-	veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	veil.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	veil.z_index = 20
-	add_child(veil)
-	var title := Label.new()
-	title.name = "MatronVerdictTitle"
-	title.text = "THE GARDEN CLAIMS ITS DUE"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 24)
-	title.add_theme_color_override("font_color", Color("#f0b8ff"))
-	title.add_theme_color_override("font_outline_color", Color("#25052f"))
-	title.add_theme_constant_override("outline_size", 7)
-	title.anchor_left = 0.08
-	title.anchor_right = 0.92
-	title.anchor_top = 0.12
-	title.anchor_bottom = 0.23
-	title.modulate.a = 0.0
-	title.z_index = 26
-	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(title)
+	var overlay := preload("res://scenes/ui/combat/components/matron_verdict_overlay.tscn").instantiate() as Control
+	add_child(overlay)
+	var veil := overlay.get_node("Veil") as ColorRect
+	var title := overlay.get_node("Title") as Label
 	var seal_center := boss.position + Vector2(0, -72)
 	_spawn_verdict_seal(seal_center)
 	var intro := create_tween()
@@ -673,37 +651,33 @@ func _play_matron_verdict(boss: BattlefieldActor, target_pos: Vector2) -> void:
 	intro.parallel().tween_property(boss, "scale", Vector2.ONE, 0.48).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	intro.parallel().tween_property(boss, "position", boss.home_position, 0.48).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	intro.tween_callback(func() -> void:
-		if is_instance_valid(veil):
-			veil.queue_free()
-		if is_instance_valid(title):
-			title.queue_free()
+		if is_instance_valid(overlay):
+			overlay.queue_free()
 	)
 
 
 func _spawn_verdict_seal(center: Vector2) -> void:
-	var seal := Node2D.new()
-	seal.name = "MatronVerdictSeal"
+	var seal := preload("res://scenes/ui/combat/components/matron_verdict_seal.tscn").instantiate() as Node2D
 	seal.position = center
 	seal.z_index = 24
-	add_child(seal)
-	for radius in [34.0, 58.0, 82.0]:
-		var ring := Line2D.new()
+	var radii := [34.0, 58.0, 82.0]
+	for ring_index in radii.size():
+		var ring := seal.get_node("Ring%d" % (ring_index + 1)) as Line2D
+		var radius: float = radii[ring_index]
 		ring.width = 2.2 if radius < 60.0 else 1.4
 		ring.default_color = Color(0.82, 0.34, 1.0, 0.78)
-		ring.closed = true
 		var points := PackedVector2Array()
 		for i in range(97):
 			var angle := TAU * float(i) / 96.0
 			points.append(Vector2(cos(angle), sin(angle)) * radius)
 		ring.points = points
-		seal.add_child(ring)
 	for i in range(8):
 		var angle := TAU * float(i) / 8.0
-		var spoke := Line2D.new()
+		var spoke := seal.get_node("Spoke%d" % (i + 1)) as Line2D
 		spoke.width = 2.0
 		spoke.default_color = Color("#eaa5ff")
 		spoke.points = PackedVector2Array([Vector2(cos(angle), sin(angle)) * 22.0, Vector2(cos(angle), sin(angle)) * 82.0])
-		seal.add_child(spoke)
+	add_child(seal)
 	var pulse := create_tween()
 	pulse.tween_property(seal, "rotation", TAU * 0.5, 1.7)
 	pulse.parallel().tween_property(seal, "scale", Vector2(1.16, 1.16), 0.85)
@@ -754,7 +728,7 @@ func _spawn_verdict_column(center: Vector2) -> void:
 
 func _spawn_ritual_rings(center: Vector2) -> void:
 	for ring_index in range(3):
-		var ring := Line2D.new()
+		var ring := preload("res://scenes/ui/combat/components/magic_effect_line.tscn").instantiate() as Line2D
 		var points := PackedVector2Array()
 		for point_index in range(49):
 			var angle := TAU * float(point_index) / 48.0
@@ -881,10 +855,8 @@ func play_matron_phase(phase_number: int) -> void:
 	_spawn_matron_burst(center + Vector2(-42, 12))
 	_spawn_matron_burst(center + Vector2(42, 12))
 	_spawn_ritual_rings(boss.position)
-	var aura := PointLight2D.new()
+	var aura := preload("res://scenes/ui/combat/components/effect_glow_light.tscn").instantiate() as PointLight2D
 	aura.color = Color("#a23fe0") if phase_number <= 2 else Color("#d34cff")
-	aura.energy = 0.0
-	aura.texture = SOFT_GLOW
 	aura.texture_scale = 2.4
 	aura.position = Vector2(0, -50)
 	boss.add_child(aura)

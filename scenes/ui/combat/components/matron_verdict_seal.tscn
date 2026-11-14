@@ -1,0 +1,50 @@
+[gd_scene format=3]
+
+[node name="MatronVerdictSeal" type="Node2D"]
+
+[node name="Ring1" type="Line2D" parent="."]
+closed = true
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Ring2" type="Line2D" parent="."]
+closed = true
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Ring3" type="Line2D" parent="."]
+closed = true
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Spoke1" type="Line2D" parent="."]
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Spoke2" type="Line2D" parent="."]
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Spoke3" type="Line2D" parent="."]
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Spoke4" type="Line2D" parent="."]
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Spoke5" type="Line2D" parent="."]
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Spoke6" type="Line2D" parent="."]
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Spoke7" type="Line2D" parent="."]
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Spoke8" type="Line2D" parent="."]
+begin_cap_mode = 2
+end_cap_mode = 2

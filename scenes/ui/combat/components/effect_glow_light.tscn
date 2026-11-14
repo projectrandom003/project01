@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://scenes/ui/combat/components/soft_glow.tres" id="1"]
+
+[node name="EffectGlowLight" type="PointLight2D"]
+energy = 0.0
+texture = ExtResource("1")
+texture_scale = 1.0
