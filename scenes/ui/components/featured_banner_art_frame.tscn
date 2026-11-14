@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/components/featured_summon_stage.tscn" id="1"]
+
+[node name="FeaturedBannerArtFrame" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 330)
+
+[node name="FrameContent" type="Control" parent="."]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 330)
+
+[node name="StageLayer" type="Control" parent="FrameContent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+clip_contents = true
+
+[node name="Stage" parent="FrameContent/StageLayer" instance=ExtResource("1")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PortraitCenter" type="CenterContainer" parent="FrameContent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

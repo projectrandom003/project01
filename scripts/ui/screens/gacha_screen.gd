@@ -6,12 +6,14 @@ extends OverlayScreen
 ## OFFLINE NOTE: this vertical slice rolls on the client. Phase 12 moves the RNG
 ## and ownership grant behind the authoritative server boundary.
 
-const FEATURED_STAGE_SCENE: PackedScene = preload("res://scenes/ui/components/featured_summon_stage.tscn")
+const FEATURED_BANNER_ART_FRAME_SCENE: PackedScene = preload("res://scenes/ui/components/featured_banner_art_frame.tscn")
+const FEATURED_BANNER_ARTWORK_SCENE: PackedScene = preload("res://scenes/ui/components/featured_banner_artwork.tscn")
 const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
 const GACHA_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/gacha_screen_layout.tscn")
 const SUMMON_REVEAL_SCENE: PackedScene = preload("res://scenes/ui/components/summon_reveal_overlay.tscn")
 const SUMMON_RESULTS_SCENE: PackedScene = preload("res://scenes/ui/components/summon_results_overlay.tscn")
 const SUMMON_RESULT_CARD_SCENE: PackedScene = preload("res://scenes/ui/components/summon_result_card.tscn")
+const RARITY_RATE_ROW_SCENE: PackedScene = preload("res://scenes/ui/components/rarity_rate_row.tscn")
 
 var _tabs: HBoxContainer
 var _main: HBoxContainer
@@ -175,35 +177,25 @@ func _rebuild_main() -> void:
 	var nyx_banner_path := "res://assets/characters/nyx/Nyx_Vaelora_Hollow_Moon_Overture.png"
 	var has_nyx_banner_art := featured_id == "nyx" and ResourceLoader.exists(nyx_banner_path)
 	if has_nyx_banner_art:
-		var banner_art := TextureRect.new()
+		var banner_art := FEATURED_BANNER_ARTWORK_SCENE.instantiate() as TextureRect
 		banner_art.name = "NyxFeaturedBannerArtwork"
 		banner_art.texture = load(nyx_banner_path) as Texture2D
-		banner_art.custom_minimum_size = Vector2(0, 260)
-		banner_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		banner_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		banner_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		art.add_child(banner_art)
 	else:
-		var portrait_backdrop := UIFactory.panel(
-			Color("#090d1a").lerp(Color(featured_glow.r, featured_glow.g, featured_glow.b, 1.0), 0.06 + featured_aura * 0.12),
-			Color(featured_glow.r, featured_glow.g, featured_glow.b, 0.42 + featured_aura * 0.38),
-			14,
-			2 if _featured_premium else 1,
-			8
+		var portrait_backdrop := FEATURED_BANNER_ART_FRAME_SCENE.instantiate() as PanelContainer
+		portrait_backdrop.add_theme_stylebox_override(
+			"panel",
+			UITheme.style(
+				Color("#090d1a").lerp(Color(featured_glow.r, featured_glow.g, featured_glow.b, 1.0), 0.06 + featured_aura * 0.12),
+				Color(featured_glow.r, featured_glow.g, featured_glow.b, 0.42 + featured_aura * 0.38),
+				14,
+				2 if _featured_premium else 1,
+				8
+			)
 		)
-		var stage_layer := Control.new()
-		stage_layer.custom_minimum_size = Vector2(0, 330)
-		stage_layer.clip_contents = true
-		portrait_backdrop.add_child(stage_layer)
-		var stage := FEATURED_STAGE_SCENE.instantiate() as FeaturedSummonStage
+		var stage := portrait_backdrop.get_node("FrameContent/StageLayer/Stage") as FeaturedSummonStage
 		stage.accent = featured_glow
-		UIFactory.set_full_rect(stage)
-		stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		stage_layer.add_child(stage)
-		var portrait_center := CenterContainer.new()
-		UIFactory.set_full_rect(portrait_center)
-		portrait_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		stage_layer.add_child(portrait_center)
+		var portrait_center := portrait_backdrop.get_node("FrameContent/PortraitCenter") as CenterContainer
 		var portrait := PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
 		portrait.custom_minimum_size = Vector2(252, 292)
 		portrait.show_frame = false
@@ -266,16 +258,9 @@ func _rebuild_main() -> void:
 	rates_box.add_child(UIFactory.label("APPEARANCE RATES", 10, UITheme.TEXT_FAINT))
 	var rates: Dictionary = banner.get("rates", {})
 	for rarity in GachaService.RARITY_ORDER:
-		var row := UIFactory.hbox(8)
 		var color := UITheme.rarity_color(rarity)
-		var dot := ColorRect.new()
-		dot.color = color
-		dot.custom_minimum_size = Vector2(8, 8)
-		dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(dot)
-		row.add_child(UIFactory.label(rarity.capitalize(), 12, color))
-		row.add_child(UIFactory.spacer())
-		row.add_child(UIFactory.label(UIFactory.percent(float(rates.get(rarity, 0.0))), 12, UITheme.TEXT))
+		var row := RARITY_RATE_ROW_SCENE.instantiate() as RarityRateRow
+		row.setup(rarity, UIFactory.percent(float(rates.get(rarity, 0.0))), color)
 		rates_box.add_child(row)
 	var guarantee := UIFactory.wrapped(
 		"10-pull guarantees at least one Epic or better. Featured rate-up: %s. "
