@@ -4,6 +4,8 @@ extends OverlayScreen
 ## copy from the bag, returns the previously equipped piece, and changes combat
 ## stats through CombatFactory.
 
+const ITEM_CARD_SCENE: PackedScene = preload("res://scenes/ui/components/inventory_item_card.tscn")
+
 var _grid: GridContainer
 var _detail: VBoxContainer
 var _cards: Dictionary = {}
@@ -118,42 +120,23 @@ func _rebuild_grid() -> void:
 func _make_card(item_id: String) -> PanelContainer:
 	var item: Dictionary = ContentDB.get_item(item_id)
 	var color := Color(str(item.get("color", "#9aa8c2")))
-	var card := UIFactory.panel(Color("#111a2d"), UITheme.BORDER_SOFT, 10, 1, 8)
-	card.custom_minimum_size = Vector2(126, 132)
-	card.mouse_filter = Control.MOUSE_FILTER_STOP
-	card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	var box := UIFactory.vbox(4)
-	card.add_child(box)
-
-	var icon_center := CenterContainer.new()
-	var icon := UIFactory.panel(color.darkened(0.62), color, 8, 1, 4)
-	icon.custom_minimum_size = Vector2(52, 52)
-	var letter := UIFactory.label(str(item.get("name", "?")).substr(0, 1).to_upper(), 22, color)
-	letter.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	icon.add_child(letter)
-	icon_center.add_child(icon)
-	box.add_child(icon_center)
-
-	var name_label := UIFactory.label(str(item.get("name", item_id)), 11, UITheme.TEXT)
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	box.add_child(name_label)
+	var card := ITEM_CARD_SCENE.instantiate() as InventoryItemCard
 	var count := GameState.currency(item_id) if str(item.get("category", "")) == "currency" else GameState.item_count(item_id)
 	var equipped_count := _equipped_by(item_id).size() if str(item.get("category", "")) == "equipment" else 0
 	var count_text := "Equipped" if count <= 0 and equipped_count > 0 else "×%s  ·  E%d" % [UIFactory.number(count), equipped_count] if equipped_count > 0 else "×%s" % UIFactory.number(count)
-	var count_label := UIFactory.label(count_text, 10, UITheme.TEAL if equipped_count > 0 else UITheme.TEXT_DIM)
-	count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(count_label)
-
-	card.gui_input.connect(func(event: InputEvent) -> void:
-		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			_selected_item = item_id
-			_rebuild_grid()
-			_show_detail(item_id)
+	card.setup(
+		item_id,
+		str(item.get("name", item_id)),
+		count_text,
+		color,
+		item_id == _selected_item
+	)
+	card.selected.connect(func(selected_id: String) -> void:
+		_selected_item = selected_id
+		_rebuild_grid()
+		_show_detail(selected_id)
 	)
 	_cards[item_id] = card
-	if item_id == _selected_item:
-		card.add_theme_stylebox_override("panel", UITheme.style(Color("#1a2947"), color, 10, 2, 8))
 	return card
 
 
