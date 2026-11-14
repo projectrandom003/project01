@@ -1,0 +1,17 @@
+[gd_scene format=3]
+
+[node name="InventoryItemIcon" type="CenterContainer"]
+mouse_filter = 2
+
+[node name="Frame" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(88, 88)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Letter" type="Label" parent="Frame"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "I"
+horizontal_alignment = 1
+vertical_alignment = 1
+mouse_filter = 2

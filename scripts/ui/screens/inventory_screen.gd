@@ -5,6 +5,7 @@ extends OverlayScreen
 ## stats through CombatFactory.
 
 const ITEM_CARD_SCENE: PackedScene = preload("res://scenes/ui/components/inventory_item_card.tscn")
+const INVENTORY_ITEM_ICON_SCENE: PackedScene = preload("res://scenes/ui/components/inventory_item_icon.tscn")
 const INVENTORY_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/inventory_screen_layout.tscn")
 
 var _grid: GridContainer
@@ -143,13 +144,12 @@ func _show_detail(item_id: String) -> void:
 	var category := str(item.get("category", "material"))
 	var rarity := str(item.get("rarity", "common"))
 
-	var icon_center := CenterContainer.new()
-	var icon := UIFactory.panel(color.darkened(0.62), color, 12, 1, 10)
-	icon.custom_minimum_size = Vector2(88, 88)
-	var letter := UIFactory.label(str(item.get("name", "?")).substr(0, 1).to_upper(), 38, color)
-	letter.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	icon.add_child(letter)
-	icon_center.add_child(icon)
+	var icon_center := INVENTORY_ITEM_ICON_SCENE.instantiate() as CenterContainer
+	var icon_frame := icon_center.get_node("Frame") as PanelContainer
+	icon_frame.add_theme_stylebox_override("panel", UITheme.style(color.darkened(0.62), color, 12, 1, 10))
+	var letter := icon_center.get_node("Frame/Letter") as Label
+	letter.text = str(item.get("name", "?")).substr(0, 1).to_upper()
+	letter.add_theme_color_override("font_color", color)
 	_detail.add_child(icon_center)
 
 	var name_label := UIFactory.heading(str(item.get("name", item_id)), 22, UITheme.TEXT)
