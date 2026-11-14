@@ -11,8 +11,6 @@ signal menu_requested
 signal interact_requested
 signal switch_avatar_requested
 
-const MINIMAP_SCENE: PackedScene = preload("res://scenes/ui/minimap.tscn")
-
 var joystick: TouchJoystick
 var _area_label: Label
 var _phase_label: Label
@@ -41,14 +39,7 @@ func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	theme = UITheme.build()
-
-	_build_top_bar()
-	_build_minimap()
-	_build_party_panel()
-	_build_actions()
-	_build_prompt()
-	_build_toasts()
-	_build_touch()
+	_bind_authored_ui()
 
 	EventBus.currency_changed.connect(refresh_currency)
 	EventBus.party_changed.connect(refresh_party)
@@ -244,159 +235,33 @@ func _on_quest_updated(_quest_id: String) -> void:
 	refresh_quest()
 
 
-# ------------------------------------------------------------------- builders
+# ----------------------------------------------------------- authored bindings
 
-func _build_top_bar() -> void:
-	var top := MarginContainer.new()
-	top.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	top.offset_bottom = 82
-	top.add_theme_constant_override("margin_left", 22)
-	top.add_theme_constant_override("margin_right", 22)
-	top.add_theme_constant_override("margin_top", 12)
-	top.add_theme_constant_override("margin_bottom", 8)
-	add_child(top)
+func _bind_authored_ui() -> void:
+	_area_label = get_node("TopBar/TopRow/LocationInfo/AreaLabel") as Label
+	_phase_label = get_node("TopBar/TopRow/LocationInfo/PhaseLabel") as Label
+	_quest_label = get_node("TopBar/TopRow/LocationInfo/QuestLabel") as Label
+	_currency_box = get_node("TopBar/TopRow/CurrencyBox") as HBoxContainer
+	_party_box = get_node("PartyPanel/PartyContent/PartyBox") as VBoxContainer
+	_minimap = get_node("Minimap") as Minimap
+	_prompt_panel = get_node("PromptCenter/PromptPanel") as PanelContainer
+	_prompt_label = get_node("PromptCenter/PromptPanel/PromptLabel") as Label
+	_toast_box = get_node("ToastBox") as VBoxContainer
+	joystick = get_node("Joystick") as TouchJoystick
+	_touch_interact = get_node("TouchInteractButton") as Button
+	_touch_switch = get_node("TouchSwitchButton") as Button
+	_hint_label = get_node("HintLabel") as Label
 
-	var row := UIFactory.hbox(14)
-	top.add_child(row)
-
-	var left := UIFactory.vbox(1)
-	left.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	_area_label = UIFactory.heading("Greenward", 25, UITheme.TEXT)
-	_phase_label = UIFactory.label("Morning", 12, UITheme.TEAL)
-	_quest_label = UIFactory.label("", 12, UITheme.GOLD)
-	_quest_label.visible = false
-	left.add_child(_area_label)
-	left.add_child(_phase_label)
-	left.add_child(_quest_label)
-	row.add_child(left)
-	row.add_child(UIFactory.spacer())
-
-	_currency_box = UIFactory.hbox(8)
-	_currency_box.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(_currency_box)
-
-
-func _build_minimap() -> void:
-	_minimap = MINIMAP_SCENE.instantiate() as Minimap
 	_minimap.quest_resolver = quest_resolver
-	_minimap.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	_minimap.offset_left = -244
-	_minimap.offset_right = -20
-	_minimap.offset_top = 90
-	_minimap.offset_bottom = 314
-	add_child(_minimap)
-
-
-func _build_party_panel() -> void:
-	var panel := UIFactory.panel(Color(0.045, 0.065, 0.115, 0.78), UITheme.BORDER_SOFT, 12, 1, 10)
-	panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	panel.offset_left = 20
-	panel.offset_top = 92
-	panel.offset_right = 290
-	panel.offset_bottom = 92
-	panel.custom_minimum_size = Vector2(260, 0)
-	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(panel)
-
-	var box := UIFactory.vbox(7)
-	box.add_child(UIFactory.label("PARTY", 10, UITheme.TEXT_FAINT))
-	_party_box = UIFactory.vbox(6)
-	box.add_child(_party_box)
-	panel.add_child(box)
-
-
-func _build_actions() -> void:
-	var actions := UIFactory.vbox(7)
-	actions.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	actions.offset_left = -158
-	actions.offset_right = -20
-	actions.offset_top = -306
-	actions.offset_bottom = -20
-	add_child(actions)
-
-	var entries := [
-		{ "id": "gacha", "text": "Summon" },
-		{ "id": "collection", "text": "Roster" },
-		{ "id": "inventory", "text": "Inventory" },
-		{ "id": "quests", "text": "Quests" },
-		{ "id": "map", "text": "Map" },
-	]
-	for entry in entries:
-		var screen_id := str(entry.id)
-		var button := UIFactory.button(str(entry.text))
-		button.custom_minimum_size = Vector2(138, 42)
-		button.pressed.connect(func() -> void: screen_requested.emit(screen_id))
-		actions.add_child(button)
-
-	var menu := UIFactory.button("Menu", true)
-	menu.custom_minimum_size = Vector2(138, 42)
-	menu.pressed.connect(func() -> void: menu_requested.emit())
-	actions.add_child(menu)
-
-	_hint_label = UIFactory.label("WASD move  ·  E interact  ·  Tab switch hero  ·  Esc menu", 10, UITheme.TEXT_FAINT)
-	_hint_label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	_hint_label.offset_left = -320
-	_hint_label.offset_right = -20
-	_hint_label.offset_top = -332
-	_hint_label.offset_bottom = -310
-	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	add_child(_hint_label)
-
-
-func _build_prompt() -> void:
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	center.offset_top = -104
-	center.offset_bottom = -34
-	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(center)
-
-	_prompt_panel = UIFactory.panel(Color("#111a2c"), Color(UITheme.TEAL.r, UITheme.TEAL.g, UITheme.TEAL.b, 0.6), 22, 1, 10, true)
-	_prompt_panel.visible = false
-	_prompt_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_prompt_label = UIFactory.label("", 13, UITheme.TEXT)
-	_prompt_panel.add_child(_prompt_label)
-	center.add_child(_prompt_panel)
-
-
-func _build_toasts() -> void:
-	_toast_box = UIFactory.vbox(6)
-	_toast_box.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	_toast_box.offset_left = -260
-	_toast_box.offset_right = 260
-	_toast_box.offset_top = 92
-	_toast_box.offset_bottom = 92
-	_toast_box.alignment = BoxContainer.ALIGNMENT_BEGIN
-	_toast_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_toast_box)
-
-
-func _build_touch() -> void:
-	joystick = TouchJoystick.new()
-	joystick.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	joystick.offset_left = 18
-	joystick.offset_right = 188
-	joystick.offset_top = -188
-	joystick.offset_bottom = -18
-	joystick.visible = TouchInput.using_touch
-	add_child(joystick)
-
-	_touch_interact = UIFactory.button("Interact", true)
-	_touch_interact.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	_touch_interact.offset_left = -158
-	_touch_interact.offset_right = -20
-	_touch_interact.offset_top = -360
-	_touch_interact.offset_bottom = -314
-	_touch_interact.visible = false
+	get_node("ActionStack/SummonButton").pressed.connect(func() -> void: screen_requested.emit("gacha"))
+	get_node("ActionStack/RosterButton").pressed.connect(func() -> void: screen_requested.emit("collection"))
+	get_node("ActionStack/InventoryButton").pressed.connect(func() -> void: screen_requested.emit("inventory"))
+	get_node("ActionStack/QuestsButton").pressed.connect(func() -> void: screen_requested.emit("quests"))
+	get_node("ActionStack/MapButton").pressed.connect(func() -> void: screen_requested.emit("map"))
+	get_node("ActionStack/MenuButton").pressed.connect(func() -> void: menu_requested.emit())
 	_touch_interact.pressed.connect(func() -> void: interact_requested.emit())
-	add_child(_touch_interact)
-
-	_touch_switch = UIFactory.button("Switch", true)
-	_touch_switch.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	_touch_switch.offset_left = -158
-	_touch_switch.offset_right = -20
-	_touch_switch.offset_top = -412
-	_touch_switch.offset_bottom = -366
-	_touch_switch.visible = TouchInput.using_touch
 	_touch_switch.pressed.connect(func() -> void: switch_avatar_requested.emit())
-	add_child(_touch_switch)
+
+	joystick.visible = TouchInput.using_touch
+	_touch_switch.visible = TouchInput.using_touch
+	_touch_interact.visible = false
