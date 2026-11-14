@@ -1,0 +1,289 @@
+[gd_scene load_steps=4 format=3]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav"]
+bg_color = Color(0.039, 0.075, 0.125, 1)
+border_color = Color(0.6, 0.68, 0.78, 0.2)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 14.0
+content_margin_top = 14.0
+content_margin_right = 14.0
+content_margin_bottom = 14.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_objective"]
+bg_color = Color(0.043, 0.09, 0.133, 1)
+border_color = Color(0.76, 0.68, 0.42, 0.28)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_summary"]
+bg_color = Color(0.051, 0.082, 0.141, 1)
+border_color = Color(0.7, 0.7, 0.7, 0.22)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[node name="PauseMenuLayout" type="HBoxContainer"]
+size_flags_vertical = 3
+theme_override_constants/separation = 18
+
+[node name="NavigationPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(236, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_nav")
+
+[node name="Navigation" type="VBoxContainer" parent="NavigationPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="NavigationHeading" type="Label" parent="NavigationPanel/Navigation"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.68, 0.72, 0.8, 1)
+text = "DESTINATIONS"
+
+[node name="RosterButton" type="Button" parent="NavigationPanel/Navigation"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "Character Roster   ›"
+
+[node name="InventoryButton" type="Button" parent="NavigationPanel/Navigation"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "Inventory   ›"
+
+[node name="SummonButton" type="Button" parent="NavigationPanel/Navigation"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "Summon   ›"
+
+[node name="QuestsButton" type="Button" parent="NavigationPanel/Navigation"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "Quest Log   ›"
+
+[node name="MapButton" type="Button" parent="NavigationPanel/Navigation"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "World Map   ›"
+
+[node name="NavigationSpacer" type="Control" parent="NavigationPanel/Navigation"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="ResumeButton" type="Button" parent="NavigationPanel/Navigation"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Resume Adventure"
+
+[node name="Overview" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="ProfileName" type="Label" parent="Overview"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+
+[node name="ProfileMeta" type="Label" parent="Overview"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.68, 0.72, 0.8, 1)
+
+[node name="SummaryGrid" type="GridContainer" parent="Overview"]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 4
+
+[node name="GoldSummary" type="PanelContainer" parent="Overview/SummaryGrid"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_summary")
+
+[node name="Content" type="VBoxContainer" parent="Overview/SummaryGrid/GoldSummary"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="Overview/SummaryGrid/GoldSummary/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "GOLD"
+
+[node name="Value" type="Label" parent="Overview/SummaryGrid/GoldSummary/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="CrystalsSummary" type="PanelContainer" parent="Overview/SummaryGrid"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_summary")
+
+[node name="Content" type="VBoxContainer" parent="Overview/SummaryGrid/CrystalsSummary"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="Overview/SummaryGrid/CrystalsSummary/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "CRYSTALS"
+
+[node name="Value" type="Label" parent="Overview/SummaryGrid/CrystalsSummary/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="QuestsSummary" type="PanelContainer" parent="Overview/SummaryGrid"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_summary")
+
+[node name="Content" type="VBoxContainer" parent="Overview/SummaryGrid/QuestsSummary"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="Overview/SummaryGrid/QuestsSummary/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "ACTIVE QUESTS"
+
+[node name="Value" type="Label" parent="Overview/SummaryGrid/QuestsSummary/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="RegionSummary" type="PanelContainer" parent="Overview/SummaryGrid"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_summary")
+
+[node name="Content" type="VBoxContainer" parent="Overview/SummaryGrid/RegionSummary"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="Overview/SummaryGrid/RegionSummary/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "REGION"
+
+[node name="Value" type="Label" parent="Overview/SummaryGrid/RegionSummary/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="ObjectivePanel" type="PanelContainer" parent="Overview"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_objective")
+
+[node name="ObjectiveContent" type="VBoxContainer" parent="Overview/ObjectivePanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ObjectiveHeading" type="Label" parent="Overview/ObjectivePanel/ObjectiveContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.68, 0.72, 0.8, 1)
+text = "CURRENT OBJECTIVE"
+
+[node name="QuestName" type="Label" parent="Overview/ObjectivePanel/ObjectiveContent"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+
+[node name="QuestText" type="Label" parent="Overview/ObjectivePanel/ObjectiveContent"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+autowrap_mode = 3
+
+[node name="NoObjective" type="Label" parent="Overview/ObjectivePanel/ObjectiveContent"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "No tracked objective"
+
+[node name="NoObjectiveHint" type="Label" parent="Overview/ObjectivePanel/ObjectiveContent"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+autowrap_mode = 3
+text = "Open the Quest Log to choose a story chapter or side quest."
+
+[node name="ObjectiveActions" type="HBoxContainer" parent="Overview/ObjectivePanel/ObjectiveContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="QuestButton" type="Button" parent="Overview/ObjectivePanel/ObjectiveContent/ObjectiveActions"]
+custom_minimum_size = Vector2(120, 34)
+layout_mode = 2
+text = "Quest Log"
+
+[node name="ObjectiveMapButton" type="Button" parent="Overview/ObjectivePanel/ObjectiveContent/ObjectiveActions"]
+custom_minimum_size = Vector2(120, 34)
+layout_mode = 2
+text = "World Map"
+
+[node name="PartyHeading" type="Label" parent="Overview"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.68, 0.72, 0.8, 1)
+text = "YOUR PARTY"
+
+[node name="PartyRow" type="HBoxContainer" parent="Overview"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="OverviewSpacer" type="Control" parent="Overview"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="Footer" type="HBoxContainer" parent="Overview"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SaveButton" type="Button" parent="Overview/Footer"]
+custom_minimum_size = Vector2(112, 40)
+layout_mode = 2
+text = "Save Now"
+
+[node name="TitleButton" type="Button" parent="Overview/Footer"]
+custom_minimum_size = Vector2(150, 40)
+layout_mode = 2
+text = "Return to Title"
+
+[node name="FooterSpacer" type="Control" parent="Overview/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="ResetButton" type="Button" parent="Overview/Footer"]
+custom_minimum_size = Vector2(130, 40)
+layout_mode = 2
+text = "Reset Journey"
+
+[node name="SaveHint" type="Label" parent="Overview"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.68, 0.72, 0.8, 1)
+text = "Progress saves locally. Reset permanently erases this device's save."
