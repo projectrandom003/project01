@@ -9,49 +9,127 @@ var _time: float = 0.0
 var _gradient_texture: GradientTexture2D
 var _built_static_for_size := Vector2.ZERO
 
-@onready var _sky_gradient: ColorRect = $SkyGradient
-@onready var _moon_layer: Node2D = $MoonLayer
-@onready var _halo_outer: Polygon2D = $MoonLayer/HaloOuter
-@onready var _halo_inner: Polygon2D = $MoonLayer/HaloInner
-@onready var _blood_moon: Polygon2D = $MoonLayer/BloodMoon
-@onready var _moon_shadow: Polygon2D = $MoonLayer/MoonShadow
-@onready var _moon_arc: Line2D = $MoonLayer/MoonArc
-@onready var _distant_mountains: Polygon2D = $DistantMountains
-@onready var _city_layer: Node2D = $CityLayer
-@onready var _village_layer: Node2D = $VillageLayer
-@onready var _first_tree: Node2D = $FirstTree
-@onready var _tree_trunk: Polygon2D = $FirstTree/Trunk
-@onready var _tree_branches: Node2D = $FirstTree/Branches
-@onready var _tree_roots: Node2D = $FirstTree/Roots
-@onready var _stone_arch: Node2D = $StoneArch
-@onready var _left_pillar: Line2D = $StoneArch/LeftPillar
-@onready var _right_pillar: Line2D = $StoneArch/RightPillar
-@onready var _arch_curve: Line2D = $StoneArch/ArchCurve
-@onready var _left_break: Line2D = $StoneArch/LeftBreak
-@onready var _right_break: Line2D = $StoneArch/RightBreak
-@onready var _left_base: ColorRect = $StoneArch/LeftBase
-@onready var _right_base: ColorRect = $StoneArch/RightBase
-@onready var _stone_path: Node2D = $StonePath
-@onready var _path_surface: Polygon2D = $StonePath/PathSurface
-@onready var _path_lines: Node2D = $StonePath/PathLines
-@onready var _magical_seal: Node2D = $MagicalSeal
-@onready var _outer_ring: Line2D = $MagicalSeal/OuterRing
-@onready var _inner_ring: Line2D = $MagicalSeal/InnerRing
-@onready var _seal_spokes: Node2D = $MagicalSeal/Spokes
-@onready var _foreground_trees: Node2D = $ForegroundTrees
-@onready var _fog_layer: Node2D = $Atmosphere/FogLayer
-@onready var _fireflies_layer: Node2D = $Atmosphere/FirefliesLayer
-@onready var _petals_layer: Node2D = $Atmosphere/PetalsLayer
-@onready var _overlay_draw: Node2D = $Atmosphere/OverlayDraw
+var _sky_gradient: ColorRect
+var _moon_layer: Node2D
+var _halo_outer: Polygon2D
+var _halo_inner: Polygon2D
+var _blood_moon: Polygon2D
+var _moon_shadow: Polygon2D
+var _moon_arc: Line2D
+var _distant_mountains: Polygon2D
+var _city_layer: Node2D
+var _village_layer: Node2D
+var _first_tree: Node2D
+var _tree_trunk: Polygon2D
+var _tree_branches: Node2D
+var _tree_roots: Node2D
+var _stone_arch: Node2D
+var _left_pillar: Line2D
+var _right_pillar: Line2D
+var _arch_curve: Line2D
+var _left_break: Line2D
+var _right_break: Line2D
+var _left_base: ColorRect
+var _right_base: ColorRect
+var _stone_path: Node2D
+var _path_surface: Polygon2D
+var _path_lines: Node2D
+var _magical_seal: Node2D
+var _outer_ring: Line2D
+var _inner_ring: Line2D
+var _seal_spokes: Node2D
+var _foreground_trees: Node2D
+var _fog_layer: Node2D
+var _fireflies_layer: Node2D
+var _petals_layer: Node2D
+var _overlay_draw: Node2D
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_ensure_scene_nodes()
 	set_process(true)
 	resized.connect(_on_resized)
 	_setup_sky_gradient()
 	_ensure_repeated_nodes()
 	_rebuild_layout()
 	_update_animation(0.0)
+
+func _ensure_scene_nodes() -> void:
+	# Prefer authored scene nodes; build minimal hierarchy when instantiated via script (.new()).
+	_sky_gradient = _ensure_child_control(self, "SkyGradient", "ColorRect") as ColorRect
+	_sky_gradient.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_sky_gradient.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_sky_gradient.color = Color(0.0313726, 0.0313726, 0.0745098, 1)
+	_moon_layer = _ensure_child_node2d(self, "MoonLayer")
+	_halo_outer = _ensure_child_node2d(_moon_layer, "HaloOuter", "Polygon2D") as Polygon2D
+	_halo_inner = _ensure_child_node2d(_moon_layer, "HaloInner", "Polygon2D") as Polygon2D
+	_blood_moon = _ensure_child_node2d(_moon_layer, "BloodMoon", "Polygon2D") as Polygon2D
+	_moon_shadow = _ensure_child_node2d(_moon_layer, "MoonShadow", "Polygon2D") as Polygon2D
+	_moon_arc = _ensure_child_node2d(_moon_layer, "MoonArc", "Line2D") as Line2D
+	_distant_mountains = _ensure_child_node2d(self, "DistantMountains", "Polygon2D") as Polygon2D
+	_city_layer = _ensure_child_node2d(self, "CityLayer")
+	_village_layer = _ensure_child_node2d(self, "VillageLayer")
+	_first_tree = _ensure_child_node2d(self, "FirstTree")
+	_tree_trunk = _ensure_child_node2d(_first_tree, "Trunk", "Polygon2D") as Polygon2D
+	_tree_branches = _ensure_child_node2d(_first_tree, "Branches")
+	_tree_roots = _ensure_child_node2d(_first_tree, "Roots")
+	_stone_arch = _ensure_child_node2d(self, "StoneArch")
+	_left_pillar = _ensure_child_node2d(_stone_arch, "LeftPillar", "Line2D") as Line2D
+	_right_pillar = _ensure_child_node2d(_stone_arch, "RightPillar", "Line2D") as Line2D
+	_arch_curve = _ensure_child_node2d(_stone_arch, "ArchCurve", "Line2D") as Line2D
+	_left_break = _ensure_child_node2d(_stone_arch, "LeftBreak", "Line2D") as Line2D
+	_right_break = _ensure_child_node2d(_stone_arch, "RightBreak", "Line2D") as Line2D
+	_left_base = _ensure_child_control(_stone_arch, "LeftBase", "ColorRect") as ColorRect
+	_right_base = _ensure_child_control(_stone_arch, "RightBase", "ColorRect") as ColorRect
+	_stone_path = _ensure_child_node2d(self, "StonePath")
+	_path_surface = _ensure_child_node2d(_stone_path, "PathSurface", "Polygon2D") as Polygon2D
+	_path_lines = _ensure_child_node2d(_stone_path, "PathLines")
+	_magical_seal = _ensure_child_node2d(self, "MagicalSeal")
+	_outer_ring = _ensure_child_node2d(_magical_seal, "OuterRing", "Line2D") as Line2D
+	_inner_ring = _ensure_child_node2d(_magical_seal, "InnerRing", "Line2D") as Line2D
+	_seal_spokes = _ensure_child_node2d(_magical_seal, "Spokes")
+	_foreground_trees = _ensure_child_node2d(self, "ForegroundTrees")
+	var atmosphere := _ensure_child_node2d(self, "Atmosphere")
+	_fog_layer = _ensure_child_node2d(atmosphere, "FogLayer")
+	_fireflies_layer = _ensure_child_node2d(atmosphere, "FirefliesLayer")
+	_petals_layer = _ensure_child_node2d(atmosphere, "PetalsLayer")
+	_overlay_draw = _ensure_child_node2d(atmosphere, "OverlayDraw")
+	var vignette := _ensure_child_control(self, "BottomVignette", "ColorRect") as ColorRect
+	vignette.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	vignette.anchor_top = 0.93
+	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vignette.color = Color(0.025, 0.018, 0.035, 0.54)
+
+func _create_typed_node(type_name: String) -> Node:
+	match type_name:
+		"Node2D":
+			return Node2D.new()
+		"Polygon2D":
+			return Polygon2D.new()
+		"Line2D":
+			return Line2D.new()
+		"ColorRect":
+			return ColorRect.new()
+		"TextureRect":
+			return TextureRect.new()
+		_:
+			return Node2D.new()
+
+func _ensure_child_node2d(parent: Node, node_name: String, type_name: String = "Node2D") -> Node2D:
+	var existing := parent.get_node_or_null(node_name)
+	if existing == null:
+		existing = _create_typed_node(type_name)
+		existing.name = node_name
+		parent.add_child(existing)
+	return existing as Node2D
+
+func _ensure_child_control(parent: Node, node_name: String, type_name: String = "Control") -> Control:
+	var existing := parent.get_node_or_null(node_name)
+	if existing == null:
+		existing = _create_typed_node(type_name)
+		existing.name = node_name
+		parent.add_child(existing)
+	return existing as Control
 
 func _on_resized() -> void:
 	_rebuild_layout()
@@ -80,7 +158,8 @@ func _setup_sky_gradient() -> void:
 		tex_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tex_rect.stretch_mode = TextureRect.STRETCH_SCALE
 		add_child(tex_rect)
-		move_child(tex_rect, _sky_gradient.get_index() + 1)
+		if _sky_gradient != null and _sky_gradient.get_parent() == self:
+			move_child(tex_rect, _sky_gradient.get_index() + 1)
 	else:
 		tex_rect.texture = _gradient_texture
 
