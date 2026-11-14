@@ -29,6 +29,8 @@ const REGION_PORTAL_SCENE: PackedScene = preload("res://scenes/world/region_port
 const QUEST_MARKER_SCENE: PackedScene = preload("res://scenes/world/quest_destination_marker.tscn")
 const GROUND_CHUNK_SCENE: PackedScene = preload("res://scenes/world/ground_chunk.tscn")
 const FOREST_TREE_SCENE: PackedScene = preload("res://scenes/world/forest_tree.tscn")
+const WORLD_PROP_SPRITE_SCENE: PackedScene = preload("res://scenes/world/components/world_prop_sprite.tscn")
+const WORLD_POINT_LIGHT_SCENE: PackedScene = preload("res://scenes/world/components/world_point_light.tscn")
 # Step 4 visual prototype: one representative Greenward chunk near the starting
 # village, avoiding important NPCs, portals and quest locations.
 const PROTOTYPE_GROUND_CHUNK := Vector2i(-1, 0)
@@ -572,7 +574,7 @@ func _make_prop_sprite(type: String, world_position: Vector2, scale_value: float
 		return null
 	_record_texture(type, variant)
 	_bump_prop_count(type)
-	var sprite := Sprite2D.new()
+	var sprite := WORLD_PROP_SPRITE_SCENE.instantiate() as Sprite2D
 	sprite.texture = texture
 	sprite.centered = false
 	sprite.offset = Vector2(-texture.get_width() * 0.5, -texture.get_height() + 6.0)
@@ -597,7 +599,7 @@ func _add_prop(type: String, grid_position: Vector2, scale_value: float = 1.0, f
 func _add_light(grid_position: Vector2, color: Color, energy: float, light_scale: float) -> void:
 	if _lights.size() >= MAX_LIGHTS:
 		return
-	var light := PointLight2D.new()
+	var light := WORLD_POINT_LIGHT_SCENE.instantiate() as PointLight2D
 	light.texture = ProceduralArt.soft_glow(color, 128)
 	light.color = color
 	light.energy = energy
