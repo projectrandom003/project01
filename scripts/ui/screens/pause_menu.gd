@@ -6,7 +6,7 @@ signal main_menu_requested
 signal reset_requested
 signal navigate_requested(screen_id: String)
 
-const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
+const PAUSE_PARTY_MEMBER_SCENE: PackedScene = preload("res://scenes/ui/components/pause_party_member.tscn")
 const PAUSE_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/pause_menu_layout.tscn")
 
 var _reset_armed: bool = false
@@ -90,18 +90,8 @@ func _build_content() -> void:
 		var definition: CharacterDef = ContentDB.get_character(instance.char_id)
 		if definition == null:
 			continue
-		var member := UIFactory.vbox(3)
-		member.custom_minimum_size = Vector2(92, 0)
-		var portrait := PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
-		portrait.custom_minimum_size = Vector2(82, 86)
-		portrait.setup_character(definition)
-		member.add_child(portrait)
-		var member_name := UIFactory.label(definition.display_name, 10, UITheme.TEXT)
-		member_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		member.add_child(member_name)
-		var level_label := UIFactory.label("Lv. %d" % int(instance.level), 9, UITheme.TEXT_FAINT)
-		level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		member.add_child(level_label)
+		var member := PAUSE_PARTY_MEMBER_SCENE.instantiate() as VBoxContainer
+		member.setup(definition, int(instance.level))
 		party_row.add_child(member)
 
 	var footer := overview.get_node("Footer") as HBoxContainer
