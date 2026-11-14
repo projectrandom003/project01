@@ -163,39 +163,9 @@ func _build_background() -> void:
 	UIFactory.set_full_rect(vignette)
 	add_child(vignette)
 
-	# Atmospheric particles (floating embers/dust).
-	var particles := CPUParticles2D.new()
-	particles.amount = 30
-	particles.lifetime = 6.0
-	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
-	particles.emission_rect_extents = Vector2(640, 200)
-	particles.direction = Vector2(0.2, -1)
-	particles.initial_velocity_min = 8.0
-	particles.initial_velocity_max = 25.0
-	particles.gravity = Vector2(2, -3)
-	particles.scale_amount_min = 0.3
-	particles.scale_amount_max = 1.0
-	particles.color = Color(0.7, 0.5, 0.9, 0.25)
-	particles.z_index = 1
-	particles.position = Vector2(640, 300)
-	add_child(particles)
-
-	# Second particle layer (darker dust).
-	var dust := CPUParticles2D.new()
-	dust.amount = 15
-	dust.lifetime = 8.0
-	dust.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
-	dust.emission_rect_extents = Vector2(640, 360)
-	dust.direction = Vector2(-0.1, -0.5)
-	dust.initial_velocity_min = 3.0
-	dust.initial_velocity_max = 8.0
-	dust.gravity = Vector2(-1, -2)
-	dust.scale_amount_min = 0.5
-	dust.scale_amount_max = 2.0
-	dust.color = Color(0.3, 0.25, 0.4, 0.15)
-	dust.z_index = 1
-	dust.position = Vector2(640, 360)
-	add_child(dust)
+	# Authored particle layers keep ambience editable independently of screen logic.
+	var ambience := preload("res://scenes/ui/combat/components/combat_ambient_particles.tscn").instantiate() as Node2D
+	add_child(ambience)
 
 
 func _style_combat_panel(panel: PanelContainer, fill: Color, radius: int, margin: int) -> void:
