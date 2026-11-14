@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[node name="NPCQuestMarker" type="Node2D"]
+
+[node name="Glow" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -13, 13, 0, 0, 13, -13, 0)
+color = Color(0.91, 0.77, 0.43, 0.18)
+
+[node name="Core" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -8, 8, 0, 0, 8, -8, 0)
+color = Color(0.91, 0.77, 0.43, 1)
+
+[node name="Symbol" type="Label" parent="."]
+offset_left = -5.0
+offset_top = -9.0
+offset_right = 5.0
+offset_bottom = 9.0
+text = "!"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_colors/font_color = Color(0.08, 0.12, 0.16, 1)
+theme_override_font_sizes/font_size = 12
+mouse_filter = 2

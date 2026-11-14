@@ -1,15 +1,22 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/world_npc.gd" id="1_npc"]
 [ext_resource type="PackedScene" path="res://scenes/characters/actor_visual.tscn" id="2_visual"]
 [ext_resource type="PackedScene" path="res://scenes/world/components/npc_name_label.tscn" id="3_name"]
 [ext_resource type="PackedScene" path="res://scenes/world/components/npc_subtitle_label.tscn" id="4_subtitle"]
+[ext_resource type="PackedScene" path="res://scenes/world/components/npc_interaction_ring.tscn" id="5_ring"]
+[ext_resource type="PackedScene" path="res://scenes/world/components/npc_quest_marker.tscn" id="6_marker"]
 
 [node name="WorldNPC" type="Node2D"]
 script = ExtResource("1_npc")
+
+[node name="InteractionRing" parent="." instance=ExtResource("5_ring")]
 
 [node name="ActorVisual" parent="." instance=ExtResource("2_visual")]
 
 [node name="NameLabel" parent="." instance=ExtResource("3_name")]
 
 [node name="SubtitleLabel" parent="." instance=ExtResource("4_subtitle")]
+
+[node name="QuestMarker" parent="." instance=ExtResource("6_marker")]
+position = Vector2(0, -105)

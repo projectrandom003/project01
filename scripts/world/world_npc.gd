@@ -16,9 +16,13 @@ var race: String = "Human"
 var visual: ActorVisual
 var _name_label: Label
 var _subtitle_label: Label
+var _interaction_ring: Node2D
+var _quest_marker: Node2D
+var _quest_marker_glow: Polygon2D
+var _quest_marker_core: Polygon2D
+var _quest_marker_symbol: Label
 var _time: float = 0.0
 var _quest_marker_state: String = ""
-var quest_marker_y: float = -105.0
 
 
 func setup(p_id: String, p_name: String, p_dialogue: String, p_palette: Dictionary, p_race: String) -> void:
@@ -41,6 +45,12 @@ func _ready() -> void:
 		visual = ActorVisual.new() # compatibility for direct test instantiation
 		visual.name = "ActorVisual"
 		add_child(visual)
+	_interaction_ring = get_node_or_null("InteractionRing") as Node2D
+	_quest_marker = get_node_or_null("QuestMarker") as Node2D
+	if _quest_marker != null:
+		_quest_marker_glow = _quest_marker.get_node_or_null("Glow") as Polygon2D
+		_quest_marker_core = _quest_marker.get_node_or_null("Core") as Polygon2D
+		_quest_marker_symbol = _quest_marker.get_node_or_null("Symbol") as Label
 	visual.setup(palette, ActorVisual.Kind.HUMAN, npc_id, race, "neutral")
 	# PART 4: exercise the SpriteFramesActorSource registration seam. With no
 	# disk sheets present this keeps the ProceduralActorFrames fallback active.
@@ -96,7 +106,25 @@ func _exit_tree() -> void:
 
 func _refresh_quest_marker(_quest_id: String = "") -> void:
 	_quest_marker_state = GameState.quest_marker_for_npc(npc_id)
-	queue_redraw()
+	if _quest_marker == null:
+		return
+	_quest_marker.visible = not _quest_marker_state.is_empty()
+	if _quest_marker_state.is_empty():
+		return
+	var marker_color := Color("#e9c66d")
+	var symbol := "!"
+	match _quest_marker_state:
+		"ready":
+			marker_color = Color("#8ee0a0")
+		"active":
+			marker_color = Color("#78c6e8")
+			symbol = "·"
+	if _quest_marker_glow != null:
+		_quest_marker_glow.color = Color(marker_color.r, marker_color.g, marker_color.b, 0.18)
+	if _quest_marker_core != null:
+		_quest_marker_core.color = marker_color
+	if _quest_marker_symbol != null:
+		_quest_marker_symbol.text = symbol
 
 
 func _derive_role() -> String:
@@ -118,30 +146,12 @@ func _derive_role() -> String:
 
 func _process(delta: float) -> void:
 	_time += delta
-	queue_redraw()
-
-
-func _draw() -> void:
-	# Soft interaction ring/plate under the NPC's feet; gently pulses.
-	var c := GreenwardStyle.MAGIC.teal
-	var pulse := 0.35 + 0.15 * sin(_time * 2.0)
-	draw_arc(Vector2(0, 0), 16.0, 0.0, TAU, 24, Color(c.r, c.g, c.b, pulse * 0.5), 2.0)
-	draw_arc(Vector2(0, 0), 22.0, 0.0, TAU, 24, Color(c.r, c.g, c.b, pulse * 0.22), 1.5)
-	# Quest giver / turn-in marker floats above the NPC nameplate.
-	if not _quest_marker_state.is_empty():
-		var marker_color := Color("#e9c66d")
-		var symbol := "!"
-		match _quest_marker_state:
-			"ready":
-				marker_color = Color("#8ee0a0")
-				symbol = "!"
-			"active":
-				marker_color = Color("#78c6e8")
-				symbol = "·"
-		var marker_pos := Vector2(0, quest_marker_y)
-		draw_circle(marker_pos, 10.0, Color(marker_color.r, marker_color.g, marker_color.b, 0.18))
-		draw_circle(marker_pos, 6.0, marker_color)
-		draw_string(ThemeDB.fallback_font, marker_pos + Vector2(-3.0, 4.0), symbol, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#14202a"))
+	if _interaction_ring != null:
+		var pulse := 1.0 + 0.035 * sin(_time * 2.0)
+		_interaction_ring.scale = Vector2(pulse, pulse)
+	if _quest_marker != null and _quest_marker.visible:
+		var marker_pulse := 1.0 + 0.07 * sin(_time * 2.8)
+		_quest_marker.scale = Vector2(marker_pulse, marker_pulse)
 
 
 func interact() -> void:
