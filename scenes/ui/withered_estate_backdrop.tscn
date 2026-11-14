@@ -1,5 +1,166 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
+
 [ext_resource type="Script" path="res://scripts/ui/combat/withered_estate_backdrop.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/withered_estate_battle.svg" id="2"]
+
 [node name="WitheredEstateBackdrop" type="Control"]
 mouse_filter = 2
 script = ExtResource("1")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LightShafts" type="Node2D" parent="."]
+
+[node name="Beam0" type="Polygon2D" parent="LightShafts"]
+polygon = PackedVector2Array(-1, 0, 1, 0, 2.8, 0.72, -1.6, 0.72)
+color = Color(0.72, 0.58, 0.88, 0.05)
+
+[node name="Beam1" type="Polygon2D" parent="LightShafts"]
+polygon = PackedVector2Array(-1, 0, 1, 0, 2.8, 0.72, -1.6, 0.72)
+color = Color(0.72, 0.58, 0.88, 0.05)
+
+[node name="Beam2" type="Polygon2D" parent="LightShafts"]
+polygon = PackedVector2Array(-1, 0, 1, 0, 2.8, 0.72, -1.6, 0.72)
+color = Color(0.72, 0.58, 0.88, 0.05)
+
+[node name="FogLayers" type="Node2D" parent="."]
+
+[node name="Fog0" type="Polygon2D" parent="FogLayers"]
+polygon = PackedVector2Array(-1, 0.2, -0.55, -0.23, 0.3, -0.15, 1, 0.37, 0.4, 0.57)
+color = Color(0.67, 0.49, 0.75, 0.04)
+
+[node name="Fog1" type="Polygon2D" parent="FogLayers"]
+polygon = PackedVector2Array(-1, 0.2, -0.55, -0.23, 0.3, -0.15, 1, 0.37, 0.4, 0.57)
+color = Color(0.67, 0.49, 0.75, 0.04)
+
+[node name="Fog2" type="Polygon2D" parent="FogLayers"]
+polygon = PackedVector2Array(-1, 0.2, -0.55, -0.23, 0.3, -0.15, 1, 0.37, 0.4, 0.57)
+color = Color(0.67, 0.49, 0.75, 0.04)
+
+[node name="GroundSigil" type="Node2D" parent="."]
+
+[node name="Ring0" type="Line2D" parent="GroundSigil"]
+points = PackedVector2Array(1, 0, 0.99144, 0.13053, 0.96593, 0.25882, 0.92388, 0.38268, 0.86603, 0.5, 0.79335, 0.60876, 0.70711, 0.70711, 0.60876, 0.79335, 0.5, 0.86603, 0.38268, 0.92388, 0.25882, 0.96593, 0.13053, 0.99144, 0, 1, -0.13053, 0.99144, -0.25882, 0.96593, -0.38268, 0.92388, -0.5, 0.86603, -0.60876, 0.79335, -0.70711, 0.70711, -0.79335, 0.60876, -0.86603, 0.5, -0.92388, 0.38268, -0.96593, 0.25882, -0.99144, 0.13053, -1, 0, -0.99144, -0.13053, -0.96593, -0.25882, -0.92388, -0.38268, -0.86603, -0.5, -0.79335, -0.60876, -0.70711, -0.70711, -0.60876, -0.79335, -0.5, -0.86603, -0.38268, -0.92388, -0.25882, -0.96593, -0.13053, -0.99144, 0, -1, 0.13053, -0.99144, 0.25882, -0.96593, 0.38268, -0.92388, 0.5, -0.86603, 0.60876, -0.79335, 0.70711, -0.70711, 0.79335, -0.60876, 0.86603, -0.5, 0.92388, -0.38268, 0.96593, -0.25882, 0.99144, -0.13053, 1, 0)
+width = 1.8
+closed = true
+default_color = Color(0.72, 0.3, 0.96, 0.27)
+
+[node name="Ring1" type="Line2D" parent="GroundSigil"]
+points = PackedVector2Array(1, 0, 0.99144, 0.13053, 0.96593, 0.25882, 0.92388, 0.38268, 0.86603, 0.5, 0.79335, 0.60876, 0.70711, 0.70711, 0.60876, 0.79335, 0.5, 0.86603, 0.38268, 0.92388, 0.25882, 0.96593, 0.13053, 0.99144, 0, 1, -0.13053, 0.99144, -0.25882, 0.96593, -0.38268, 0.92388, -0.5, 0.86603, -0.60876, 0.79335, -0.70711, 0.70711, -0.79335, 0.60876, -0.86603, 0.5, -0.92388, 0.38268, -0.96593, 0.25882, -0.99144, 0.13053, -1, 0, -0.99144, -0.13053, -0.96593, -0.25882, -0.92388, -0.38268, -0.86603, -0.5, -0.79335, -0.60876, -0.70711, -0.70711, -0.60876, -0.79335, -0.5, -0.86603, -0.38268, -0.92388, -0.25882, -0.96593, -0.13053, -0.99144, 0, -1, 0.13053, -0.99144, 0.25882, -0.96593, 0.38268, -0.92388, 0.5, -0.86603, 0.60876, -0.79335, 0.70711, -0.70711, 0.79335, -0.60876, 0.86603, -0.5, 0.92388, -0.38268, 0.96593, -0.25882, 0.99144, -0.13053, 1, 0)
+width = 1.8
+closed = true
+default_color = Color(0.72, 0.3, 0.96, 0.27)
+
+[node name="Ring2" type="Line2D" parent="GroundSigil"]
+points = PackedVector2Array(1, 0, 0.99144, 0.13053, 0.96593, 0.25882, 0.92388, 0.38268, 0.86603, 0.5, 0.79335, 0.60876, 0.70711, 0.70711, 0.60876, 0.79335, 0.5, 0.86603, 0.38268, 0.92388, 0.25882, 0.96593, 0.13053, 0.99144, 0, 1, -0.13053, 0.99144, -0.25882, 0.96593, -0.38268, 0.92388, -0.5, 0.86603, -0.60876, 0.79335, -0.70711, 0.70711, -0.79335, 0.60876, -0.86603, 0.5, -0.92388, 0.38268, -0.96593, 0.25882, -0.99144, 0.13053, -1, 0, -0.99144, -0.13053, -0.96593, -0.25882, -0.92388, -0.38268, -0.86603, -0.5, -0.79335, -0.60876, -0.70711, -0.70711, -0.60876, -0.79335, -0.5, -0.86603, -0.38268, -0.92388, -0.25882, -0.96593, -0.13053, -0.99144, 0, -1, 0.13053, -0.99144, 0.25882, -0.96593, 0.38268, -0.92388, 0.5, -0.86603, 0.60876, -0.79335, 0.70711, -0.70711, 0.79335, -0.60876, 0.86603, -0.5, 0.92388, -0.38268, 0.96593, -0.25882, 0.99144, -0.13053, 1, 0)
+width = 1.8
+closed = true
+default_color = Color(0.72, 0.3, 0.96, 0.27)
+
+[node name="CorruptionMotes" type="Node2D" parent="."]
+
+[node name="Mote0" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote1" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote2" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote3" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote4" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote5" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote6" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote7" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote8" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote9" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote10" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote11" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote12" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote13" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote14" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote15" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote16" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote17" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote18" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote19" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote20" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote21" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote22" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
+
+[node name="Mote23" type="Polygon2D" parent="CorruptionMotes"]
+polygon = PackedVector2Array(0, -1, 1, 0, 0, 1, -1, 0)
+color = Color(0.84, 0.58, 1, 0.36)
