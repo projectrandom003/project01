@@ -1,5 +1,122 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
+
 [ext_resource type="Script" path="res://scripts/ui/combat/greenward_field_backdrop.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/greenward_battle.svg" id="2"]
+
 [node name="GreenwardFieldBackdrop" type="Control"]
 mouse_filter = 2
 script = ExtResource("1")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Mist0" type="ColorRect" parent="."]
+mouse_filter = 2
+color = Color(0.76, 0.88, 0.68, 0.035)
+size = Vector2(400, 24)
+
+[node name="Mist1" type="ColorRect" parent="."]
+mouse_filter = 2
+color = Color(0.76, 0.88, 0.68, 0.035)
+size = Vector2(400, 24)
+
+[node name="Mist2" type="ColorRect" parent="."]
+mouse_filter = 2
+color = Color(0.76, 0.88, 0.68, 0.035)
+size = Vector2(400, 24)
+
+[node name="Mist3" type="ColorRect" parent="."]
+mouse_filter = 2
+color = Color(0.76, 0.88, 0.68, 0.035)
+size = Vector2(400, 24)
+
+[node name="Fireflies" type="Node2D" parent="."]
+
+[node name="Firefly0" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly1" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly2" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly3" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly4" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly5" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly6" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly7" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly8" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly9" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly10" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly11" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly12" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly13" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly14" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly15" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly16" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly17" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly18" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
+
+[node name="Firefly19" type="Polygon2D" parent="Fireflies"]
+polygon = PackedVector2Array(1, 0, 0.707, 0.707, 0, 1, -0.707, 0.707, -1, 0, -0.707, -0.707, 0, -1, 0.707, -0.707)
+color = Color(0.82, 0.94, 0.62, 0.35)
