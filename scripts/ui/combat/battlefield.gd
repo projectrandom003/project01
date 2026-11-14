@@ -877,11 +877,8 @@ func _spawn_attack_trail(from: Vector2, to: Vector2, element: String) -> void:
 	var color := UITheme.element_color(element)
 	if color == UITheme.TEXT_DIM:
 		color = Color(0.88, 0.9, 1.0)
-	var trail := Line2D.new()
-	trail.width = 5.0
+	var trail := preload("res://scenes/ui/combat/components/attack_trail.tscn").instantiate() as Line2D
 	trail.default_color = Color(color.r, color.g, color.b, 0.88)
-	trail.begin_cap_mode = Line2D.LINE_CAP_ROUND
-	trail.end_cap_mode = Line2D.LINE_CAP_ROUND
 	trail.points = PackedVector2Array([
 		from + Vector2(0, -38),
 		(from + to) * 0.5 + Vector2(0, -64),
@@ -900,11 +897,8 @@ func _spawn_slash(pos: Vector2, direction: Vector2, element: String) -> void:
 	var color := UITheme.element_color(element)
 	if color == UITheme.TEXT_DIM:
 		color = Color(0.92, 0.92, 0.98)
-	var slash := Line2D.new()
-	slash.width = 7.0
+	var slash := preload("res://scenes/ui/combat/components/impact_slash.tscn").instantiate() as Line2D
 	slash.default_color = Color(color.r, color.g, color.b, 0.9)
-	slash.begin_cap_mode = Line2D.LINE_CAP_ROUND
-	slash.end_cap_mode = Line2D.LINE_CAP_ROUND
 	var normal := Vector2(-direction.y, direction.x)
 	slash.points = PackedVector2Array([
 		pos - direction * 22.0 - normal * 26.0,
@@ -949,19 +943,8 @@ func spawn_elemental_burst(pos: Vector2, element: String) -> void:
 	var color := UITheme.element_color(element)
 	if color == UITheme.TEXT_DIM:
 		color = Color(0.85, 0.85, 0.9)
-	var particles := CPUParticles2D.new()
-	particles.amount = 14
-	particles.lifetime = 0.55
-	particles.one_shot = true
-	particles.explosiveness = 0.9
+	var particles := preload("res://scenes/ui/combat/components/elemental_burst.tscn").instantiate() as CPUParticles2D
 	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
-	particles.emission_sphere_radius = 7.0
-	particles.direction = Vector2(0, -1)
-	particles.initial_velocity_min = 40.0
-	particles.initial_velocity_max = 110.0
-	particles.gravity = Vector2(0, 90)
-	particles.scale_amount_min = 0.4
-	particles.scale_amount_max = 1.1
 	particles.color = color
 	particles.z_index = 35
 	particles.position = pos
