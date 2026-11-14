@@ -18,6 +18,8 @@ var _protagonists: Array[ActorVisual] = []
 var _caption: Label
 var _skip_button: Button
 var _fade := 0.0
+var _timeline_progress: ColorRect
+var _fade_overlay: ColorRect
 
 func _ready() -> void:
 	UIFactory.set_full_rect(self)
@@ -28,6 +30,8 @@ func _ready() -> void:
 	_character_layer = get_node("CharacterLayer") as Node2D
 	_caption = get_node("Caption") as Label
 	_skip_button = get_node("SkipButton") as Button
+	_timeline_progress = get_node("TimelineTrack/TimelineProgress") as ColorRect
+	_fade_overlay = get_node("CinematicFade") as ColorRect
 	_skip_button.pressed.connect(_finish)
 	_build_protagonists()
 	_update_caption()
@@ -73,7 +77,10 @@ func _process(delta: float) -> void:
 	_update_caption()
 	_layout_protagonists()
 	_fade = clampf((_elapsed - (DURATION - 0.8)) / 0.8, 0.0, 1.0)
-	queue_redraw()
+	_timeline_progress.anchor_right = clampf(_elapsed / DURATION, 0.0, 1.0)
+	var fade_color := _fade_overlay.color
+	fade_color.a = _fade
+	_fade_overlay.color = fade_color
 	if _elapsed >= DURATION:
 		_finish()
 
@@ -84,15 +91,6 @@ func _update_caption() -> void:
 		_caption.modulate.a = 0.0
 		var tween := create_tween()
 		tween.tween_property(_caption, "modulate:a", 1.0, 0.65)
-
-func _draw() -> void:
-	# Fine gold timeline and a final cinematic fade; the scenery itself is now
-	# supplied by the shared illustrated, animated background node.
-	var progress := clampf(_elapsed / DURATION, 0.0, 1.0)
-	draw_rect(Rect2(size.x * 0.12, size.y * 0.965, size.x * 0.76, 2.0), Color(0.85, 0.86, 0.72, 0.20))
-	draw_rect(Rect2(size.x * 0.12, size.y * 0.965, size.x * 0.76 * progress, 2.0), Color("#e0c98e", 0.95))
-	if _fade > 0.0:
-		draw_rect(Rect2(Vector2.ZERO, size), Color(0.01, 0.015, 0.03, _fade))
 
 func _finish() -> void:
 	if _done:
