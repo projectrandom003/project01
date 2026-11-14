@@ -11,12 +11,15 @@ signal menu_requested
 signal interact_requested
 signal switch_avatar_requested
 
+const PARTY_ENTRY_SCENE: PackedScene = preload("res://scenes/ui/components/hud_party_entry.tscn")
+
 var joystick: TouchJoystick
 var _area_label: Label
 var _phase_label: Label
 var _quest_label: Label
 var _currency_box: HBoxContainer
 var _party_box: VBoxContainer
+var _party_empty_label: Label
 var _prompt_panel: PanelContainer
 var _prompt_label: Label
 var _toast_box: VBoxContainer
@@ -105,35 +108,23 @@ func refresh_currency() -> void:
 func refresh_party() -> void:
 	if _party_box == null:
 		return
-	UIFactory.clear(_party_box)
+	for child in _party_box.get_children():
+		if child != _party_empty_label:
+			child.queue_free()
 	var instances := GameState.party_instances()
+	_party_empty_label.visible = instances.is_empty()
 	if instances.is_empty():
-		_party_box.add_child(UIFactory.label("No party formed", 13, UITheme.TEXT_FAINT))
 		return
 	for instance in instances:
 		var definition: CharacterDef = ContentDB.get_character(instance.char_id)
 		if definition == null:
 			continue
-		var row := UIFactory.hbox(8)
-		var portrait := PortraitView.new()
-		portrait.custom_minimum_size = Vector2(42, 42)
-		portrait.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		var row := PARTY_ENTRY_SCENE.instantiate() as HBoxContainer
+		var portrait := row.get_node("Portrait") as PortraitView
 		portrait.setup_character(definition)
-		row.add_child(portrait)
-		var text := UIFactory.vbox(1)
-		text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		text.add_child(UIFactory.label(definition.display_name, 13, UITheme.TEXT))
-		text.add_child(UIFactory.label(
-			"Lv %d  ·  %s" % [instance.level, definition.role],
-			11,
-			UITheme.TEXT_DIM
-		))
-		row.add_child(text)
-		var element_dot := ColorRect.new()
-		element_dot.color = UITheme.element_color(definition.element)
-		element_dot.custom_minimum_size = Vector2(6, 6)
-		element_dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(element_dot)
+		(row.get_node("Details/CharacterName") as Label).text = definition.display_name
+		(row.get_node("Details/CharacterMeta") as Label).text = "Lv %d  ·  %s" % [instance.level, definition.role]
+		(row.get_node("ElementDot") as ColorRect).color = UITheme.element_color(definition.element)
 		_party_box.add_child(row)
 
 
@@ -243,6 +234,7 @@ func _bind_authored_ui() -> void:
 	_quest_label = get_node("TopBar/TopRow/LocationInfo/QuestLabel") as Label
 	_currency_box = get_node("TopBar/TopRow/CurrencyBox") as HBoxContainer
 	_party_box = get_node("PartyPanel/PartyContent/PartyBox") as VBoxContainer
+	_party_empty_label = get_node("PartyPanel/PartyContent/PartyBox/NoPartyLabel") as Label
 	_minimap = get_node("Minimap") as Minimap
 	_prompt_panel = get_node("PromptCenter/PromptPanel") as PanelContainer
 	_prompt_label = get_node("PromptCenter/PromptPanel/PromptLabel") as Label
