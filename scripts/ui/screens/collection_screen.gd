@@ -3,6 +3,7 @@ extends OverlayScreen
 
 const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
 const ROSTER_CARD_SCENE: PackedScene = preload("res://scenes/ui/components/roster_character_card.tscn")
+const COLLECTION_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/collection_screen_layout.tscn")
 ## Roster, party management, ascension and character detail.
 
 var _grid: GridContainer
@@ -26,39 +27,21 @@ func _init() -> void:
 
 
 func _build_content() -> void:
-	var split := UIFactory.hbox(14)
-	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content.add_child(split)
+	var layout := COLLECTION_LAYOUT_SCENE.instantiate() as HBoxContainer
+	layout.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	content.add_child(layout)
 
-	var left := UIFactory.vbox(10)
-	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left.custom_minimum_size = Vector2(560, 0)
-	split.add_child(left)
-
-	var filters := UIFactory.hbox(8)
-	var all_button := UIFactory.small_button("All characters")
+	var filters := layout.get_node("Left/Filters") as HBoxContainer
+	var all_button := filters.get_node("AllCharactersButton") as Button
+	var party_button := filters.get_node("PartyOnlyButton") as Button
+	for button in [all_button, party_button]:
+		button.add_theme_stylebox_override("normal", UITheme.style(Color("#111a2d"), UITheme.BORDER_SOFT, 8, 1, 8))
 	all_button.pressed.connect(func() -> void: _set_filter("all"))
-	filters.add_child(all_button)
-	var party_button := UIFactory.small_button("Party only")
 	party_button.pressed.connect(func() -> void: _set_filter("party"))
-	filters.add_child(party_button)
-	filters.add_child(UIFactory.spacer())
-	filters.add_child(UIFactory.label("Click a character to inspect", 11, UITheme.TEXT_FAINT))
-	left.add_child(filters)
+	(filters.get_node("FilterHint") as Label).add_theme_color_override("font_color", UITheme.TEXT_FAINT)
 
-	var scroll := UIFactory.scroll()
-	left.add_child(scroll)
-	_grid = UIFactory.grid(4, 10)
-	scroll.add_child(_grid)
-
-	var detail_panel := UIFactory.panel(Color("#0a101d"), UITheme.BORDER_SOFT, 12, 1, 12)
-	detail_panel.custom_minimum_size = Vector2(400, 0)
-	split.add_child(detail_panel)
-	var detail_scroll := UIFactory.scroll()
-	detail_panel.add_child(detail_scroll)
-	_detail = UIFactory.vbox(10)
-	detail_scroll.add_child(_detail)
-
+	_grid = layout.get_node("Left/GridScroll/CharacterGrid") as GridContainer
+	_detail = layout.get_node("DetailPanel/DetailScroll/DetailContent") as VBoxContainer
 	_rebuild_grid()
 
 
