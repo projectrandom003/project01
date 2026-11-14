@@ -3,6 +3,8 @@ extends OverlayScreen
 ## Functional world map: region name, player position, POIs, quest markers,
 ## and directional guidance to the tracked quest objective.
 
+const MAP_CANVAS_SCENE: PackedScene = preload("res://scenes/ui/components/world_map_canvas.tscn")
+
 var _info_box: VBoxContainer
 var _map_canvas: Control
 
@@ -29,8 +31,7 @@ func _build_content() -> void:
 	if not region.is_empty():
 		region_name = str(region.get("name", GameState.player_region))
 	left.add_child(UIFactory.heading(region_name, 18, UITheme.TEXT))
-	_map_canvas = Control.new()
-	_map_canvas.set_script(load("res://scripts/ui/world_map_canvas.gd"))
+	_map_canvas = MAP_CANVAS_SCENE.instantiate() as Control
 	_map_canvas.custom_minimum_size = Vector2(620, 460)
 	_map_canvas.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_map_canvas.size_flags_vertical = Control.SIZE_EXPAND_FILL
