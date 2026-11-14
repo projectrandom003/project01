@@ -1549,6 +1549,25 @@ func _test_procedural_variety() -> void:
 func _test_chunk_visual_quality() -> void:
 	var region: Dictionary = ContentDB.get_region("greenward")
 	check(not region.is_empty(), "greenward region loads for chunk build")
+	# Boss territories must remain independent and far enough apart that their
+	# biome influence fields cannot merge into one ambiguous arena.
+	var boss_zones: Array = ChunkBuilder._boss_zones(region)
+	check(boss_zones.size() == 2, "Greenward defines two distinct boss territories", str(boss_zones.size()))
+	var elder_zone: Dictionary = {}
+	var matron_zone: Dictionary = {}
+	for zone in boss_zones:
+		if str(zone.get("id", "")) == "elder":
+			elder_zone = zone
+		elif str(zone.get("id", "")) == "matron":
+			matron_zone = zone
+	check(not elder_zone.is_empty(), "Elder Hollow has its own terrain zone")
+	check(not matron_zone.is_empty(), "Fallen Matron has its own terrain zone")
+	if not elder_zone.is_empty() and not matron_zone.is_empty():
+		var elder_center: Vector2 = elder_zone.get("center", Vector2.ZERO)
+		var matron_center: Vector2 = matron_zone.get("center", Vector2.ZERO)
+		var influence_gap := elder_center.distance_to(matron_center) - float(elder_zone.get("radius", 0.0)) - float(matron_zone.get("radius", 0.0))
+		check(influence_gap > 0.0, "boss biome influence fields do not overlap", str(influence_gap))
+		check(elder_zone.get("color") != matron_zone.get("color"), "boss territories use distinct biome palettes")
 	var seed := int(region.get("noise_seed", 1337))
 	var elevation := FastNoiseLite.new()
 	elevation.seed = seed
