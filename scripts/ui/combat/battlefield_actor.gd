@@ -135,13 +135,11 @@ func setup(p_unit: Combatant, p_is_player: bool) -> void:
 		if ResourceLoader.exists(matron_texture_path):
 			var matron_texture := load(matron_texture_path) as Texture2D
 			if matron_texture != null:
-				_matron_art = Sprite2D.new()
-				_matron_art.name = "FallenMatronIllustration"
+				_matron_art = preload("res://scenes/ui/combat/components/fallen_matron_illustration.tscn").instantiate() as Sprite2D
 				_matron_art.texture = matron_texture
 				_matron_art.position = _matron_art_home
 				# Normalize the source cutout to a consistent on-stage height.
 				_matron_art.scale = Vector2.ONE * (180.0 / 528.0)
-				_matron_art.z_index = 4
 				add_child(_matron_art)
 				visual.visible = false
 				_start_matron_idle_particles()
@@ -180,24 +178,8 @@ func face(direction: Vector2) -> void:
 func _start_matron_idle_particles() -> void:
 	# The Matron's cutout is intentionally preserved; drifting violet motes,
 	# stronger breathing and veil sway keep the boss visibly alive between turns.
-	var motes := CPUParticles2D.new()
-	motes.name = "MatronCorruptionMotes"
-	motes.amount = 18
-	motes.lifetime = 3.2
-	motes.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
-	motes.emission_sphere_radius = 54.0
-	motes.position = Vector2(0, -88)
-	motes.direction = Vector2(0, -1)
-	motes.spread = 42.0
-	motes.initial_velocity_min = 5.0
-	motes.initial_velocity_max = 18.0
-	motes.gravity = Vector2(0, -5.0)
-	motes.scale_amount_min = 0.35
-	motes.scale_amount_max = 0.85
-	motes.color = Color(0.72, 0.32, 0.96, 0.62)
-	motes.z_index = 6
+	var motes := preload("res://scenes/ui/combat/components/matron_corruption_motes.tscn").instantiate() as CPUParticles2D
 	add_child(motes)
-	motes.emitting = true
 
 
 func _refresh_matron_phase() -> void:
@@ -240,24 +222,11 @@ func _refresh_matron_phase() -> void:
 
 
 func _spawn_matron_phase_burst() -> void:
-	var burst := CPUParticles2D.new()
-	burst.name = "MatronPhaseBurst"
+	var burst := preload("res://scenes/ui/combat/components/matron_phase_burst.tscn").instantiate() as CPUParticles2D
 	burst.amount = 42 if _matron_phase == 3 else 30
-	burst.one_shot = true
-	burst.explosiveness = 0.92
-	burst.lifetime = 0.85
-	burst.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
-	burst.emission_sphere_radius = 22.0
-	burst.direction = Vector2.UP
-	burst.spread = 180.0
-	burst.initial_velocity_min = 35.0
 	burst.initial_velocity_max = 125.0 if _matron_phase == 3 else 90.0
-	burst.gravity = Vector2(0.0, -18.0)
-	burst.scale_amount_min = 0.35
-	burst.scale_amount_max = 1.05
 	burst.color = Color("#ed72ff") if _matron_phase == 3 else Color("#b96cff")
 	burst.position = _matron_art_home + Vector2(0, -55)
-	burst.z_index = 7
 	add_child(burst)
 	burst.finished.connect(burst.queue_free)
 	burst.emitting = true

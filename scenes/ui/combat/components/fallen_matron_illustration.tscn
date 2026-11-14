@@ -1,0 +1,4 @@
+[gd_scene format=3]
+
+[node name="FallenMatronIllustration" type="Sprite2D"]
+z_index = 4
