@@ -59,6 +59,13 @@ func _ready() -> void:
 	refresh_quest()
 
 
+func set_quest_resolver(resolver: QuestNavigationResolver) -> void:
+	quest_resolver = resolver
+	if _minimap != null:
+		_minimap.quest_resolver = resolver
+	refresh_quest()
+
+
 func _process(delta: float) -> void:
 	_prompt_timer += delta
 	_refresh_timer += delta
@@ -269,6 +276,7 @@ func _build_top_bar() -> void:
 
 func _build_minimap() -> void:
 	_minimap = Minimap.new()
+	_minimap.quest_resolver = quest_resolver
 	_minimap.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 	_minimap.offset_left = -244
 	_minimap.offset_right = -20

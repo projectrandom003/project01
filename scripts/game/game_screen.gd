@@ -146,7 +146,7 @@ func _build_ui() -> void:
 	overlay_root = ui_layer.get_node("Overlays") as Control
 	combat_root = ui_layer.get_node("Combat") as Control
 	if hud != null:
-		hud.quest_resolver = quest_resolver
+		hud.set_quest_resolver(quest_resolver)
 	dialogue.closed.connect(_on_dialogue_closed)
 
 	hud.screen_requested.connect(open_screen)

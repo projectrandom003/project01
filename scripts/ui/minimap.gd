@@ -11,6 +11,8 @@ var _expand_button: Button
 var _collapse_button: Button
 var _canvas: Control
 var _world: Node = null
+## Shared resolver injected by GameScreen through HUD; keeps compass, map and beacon aligned.
+var quest_resolver: QuestNavigationResolver = null
 var _update_timer: float = 0.0
 
 var _player_grid: Vector2 = Vector2.ZERO
@@ -119,12 +121,22 @@ func _update_markers() -> void:
 
 	var tracked := GameState.tracked_quest()
 	if not tracked.is_empty() and GameState.quest_state(tracked) == "active":
-		var definition: Dictionary = ContentDB.get_quest(tracked)
-		if str(definition.get("region", "greenward")) == GameState.player_region:
-			# Match the HUD compass and world beacon: follow the actual living
-			# quest target when one exists, not only its authored spawn centre.
-			_quest_marker = IsoMath.world_to_grid(GameState.quest_target_position(tracked))
-			_has_quest_marker = true
+		var resolver := quest_resolver
+		if resolver == null:
+			var game_screen := get_tree().get_first_node_in_group("game_screen")
+			if game_screen != null and game_screen.get("quest_resolver") is QuestNavigationResolver:
+				resolver = game_screen.get("quest_resolver") as QuestNavigationResolver
+		if resolver != null:
+			var player := get_tree().get_first_node_in_group("player")
+			var player_pos: Vector2 = player.global_position if player is Node2D else Vector2.ZERO
+			var resolved := resolver.get_resolved_target(GameState.player_region, player_pos)
+			# Never draw a false local arrow for another region or an invalid target.
+			# For same-region objectives, use the exact same live target as the HUD.
+			if bool(resolved.get("valid", false)) and bool(resolved.get("same_frame", false)):
+				var target_pos: Variant = resolved.get("target_local_pos", null)
+				if typeof(target_pos) == TYPE_VECTOR2:
+					_quest_marker = IsoMath.world_to_grid(target_pos as Vector2)
+					_has_quest_marker = true
 
 
 func _on_draw() -> void:
