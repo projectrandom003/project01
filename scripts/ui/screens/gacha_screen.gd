@@ -8,6 +8,7 @@ extends OverlayScreen
 
 const FEATURED_STAGE_SCENE: PackedScene = preload("res://scenes/ui/components/featured_summon_stage.tscn")
 const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
+const GACHA_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/gacha_screen_layout.tscn")
 
 var _tabs: HBoxContainer
 var _main: HBoxContainer
@@ -133,21 +134,11 @@ func _init() -> void:
 
 
 func _build_content() -> void:
-	var note := UIFactory.panel(Color("#161326"), Color(UITheme.VIOLET.r, UITheme.VIOLET.g, UITheme.VIOLET.b, 0.35), 8, 1, 8)
-	note.add_child(UIFactory.wrapped(
-		"Offline vertical slice: summon results, pity and ownership are generated locally. "
-		+ "They are not authoritative and will move to the server in Phase 12.",
-		11,
-		UITheme.TEXT_DIM
-	))
-	content.add_child(note)
-
-	_tabs = UIFactory.hbox(8)
-	content.add_child(_tabs)
-
-	_main = UIFactory.hbox(16)
-	_main.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content.add_child(_main)
+	var layout := GACHA_LAYOUT_SCENE.instantiate() as VBoxContainer
+	layout.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	content.add_child(layout)
+	_tabs = layout.get_node("BannerTabs") as HBoxContainer
+	_main = layout.get_node("Main") as HBoxContainer
 
 
 func _refresh() -> void:
