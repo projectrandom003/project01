@@ -517,7 +517,11 @@ func _test_ui() -> void:
 		screen.queue_free()
 		await get_tree().process_frame
 
-	var menu := MainMenu.new()
+	var menu_scene := load("res://scenes/ui/main_menu.tscn") as PackedScene
+	check(menu_scene != null, "Authored title menu scene loads")
+	var menu := menu_scene.instantiate() as MainMenu if menu_scene != null else null
+	if menu == null:
+		return
 	add_child(menu)
 	await get_tree().process_frame
 	check(menu.get_child_count() > 0, "Title menu builds")
