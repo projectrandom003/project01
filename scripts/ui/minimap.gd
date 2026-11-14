@@ -29,28 +29,13 @@ func _ready() -> void:
 	size = Vector2(MAP_SIZE, MAP_SIZE)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
-	var panel := UIFactory.panel(Color("#0a0f1a"), UITheme.BORDER_SOFT, 8, 1, 4)
-	panel.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(panel)
-
-	_canvas = Control.new()
-	_canvas.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_canvas = get_node("MapCanvas") as Control
+	_expand_button = get_node("ExpandButton") as Button
+	_collapse_button = get_node("CollapseButton") as Button
 	_canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_canvas)
 	_canvas.draw.connect(_on_draw)
-
-	_expand_button = UIFactory.small_button("Map")
-	_expand_button.custom_minimum_size = Vector2(40, 20)
-	_expand_button.position = Vector2(MAP_SIZE - 44, 4)
-	_expand_button.pressed.connect(func() -> void: _request_full_map())
-	add_child(_expand_button)
-
-	_collapse_button = UIFactory.small_button("-")
-	_collapse_button.custom_minimum_size = Vector2(20, 20)
-	_collapse_button.position = Vector2(MAP_SIZE - 68, 4)
-	_collapse_button.pressed.connect(func() -> void: _toggle_collapse())
-	add_child(_collapse_button)
-
+	_expand_button.pressed.connect(_request_full_map)
+	_collapse_button.pressed.connect(_toggle_collapse)
 	_find_world()
 
 

@@ -11,6 +11,8 @@ signal menu_requested
 signal interact_requested
 signal switch_avatar_requested
 
+const MINIMAP_SCENE: PackedScene = preload("res://scenes/ui/minimap.tscn")
+
 var joystick: TouchJoystick
 var _area_label: Label
 var _phase_label: Label
@@ -275,7 +277,7 @@ func _build_top_bar() -> void:
 
 
 func _build_minimap() -> void:
-	_minimap = Minimap.new()
+	_minimap = MINIMAP_SCENE.instantiate() as Minimap
 	_minimap.quest_resolver = quest_resolver
 	_minimap.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 	_minimap.offset_left = -244
