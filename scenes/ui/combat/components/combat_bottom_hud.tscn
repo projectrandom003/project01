@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[node name="CombatBottomHUD" type="HBoxContainer"]
+theme_override_constants/separation = 10
+custom_minimum_size = Vector2(0, 180)
+
+[node name="ActiveInfoPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(280, 0)
+
+[node name="InfoContent" type="VBoxContainer" parent="ActiveInfoPanel"]
+theme_override_constants/separation = 4
+
+[node name="ActorLabel" type="Label" parent="ActiveInfoPanel/InfoContent"]
+text = "Preparing..."
+
+[node name="HPBar" type="ProgressBar" parent="ActiveInfoPanel/InfoContent"]
+custom_minimum_size = Vector2(0, 12)
+show_percentage = false
+
+[node name="EnergyBar" type="ProgressBar" parent="ActiveInfoPanel/InfoContent"]
+custom_minimum_size = Vector2(0, 8)
+show_percentage = false
+
+[node name="StatusLabel" type="Label" parent="ActiveInfoPanel/InfoContent"]
+
+[node name="RosterPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(210, 0)
+
+[node name="RosterContent" type="VBoxContainer" parent="RosterPanel"]
+theme_override_constants/separation = 3
+
+[node name="RosterCaption" type="Label" parent="RosterPanel/RosterContent"]
+text = "PARTY"
+
+[node name="RosterItems" type="VBoxContainer" parent="RosterPanel/RosterContent"]
+theme_override_constants/separation = 2
+
+[node name="SkillsPanel" type="PanelContainer" parent="."]
+size_flags_horizontal = 3
+
+[node name="SkillsContent" type="VBoxContainer" parent="SkillsPanel"]
+theme_override_constants/separation = 5
+
+[node name="SkillItems" type="HFlowContainer" parent="SkillsPanel/SkillsContent"]
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 4
+size_flags_vertical = 3
+
+[node name="HintLabel" type="Label" parent="SkillsPanel/SkillsContent"]
+
+[node name="LogPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(260, 0)
+
+[node name="LogContent" type="VBoxContainer" parent="LogPanel"]
+theme_override_constants/separation = 4
+
+[node name="LogCaption" type="Label" parent="LogPanel/LogContent"]
+text = "BATTLE LOG"
+
+[node name="LogText" type="RichTextLabel" parent="LogPanel/LogContent"]
+fit_content = false
+scroll_active = true
+scroll_following = true
+size_flags_vertical = 3

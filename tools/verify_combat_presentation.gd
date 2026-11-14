@@ -99,5 +99,45 @@ func _run() -> void:
 	else:
 		failures += 1
 		push_error("[combat-ui] FAIL Fallen Matron initiative portrait missing")
+	# Both result states must be authored scenes with their dynamic content bound correctly.
+	screen._pending_rewards = {"gold": 12, "crystals": 3, "xp": 45, "items": {}}
+	screen._show_result(true)
+	var victory_overlay_ok := screen._result_layer != null and screen._result_layer.scene_file_path.ends_with("battle_result_overlay.tscn")
+	if victory_overlay_ok:
+		var victory_content := screen._result_layer.get_node("Center/Panel/Content")
+		victory_overlay_ok = victory_content.get_node("Title").text == "VICTORY" and victory_content.get_node("RewardsRow").get_child_count() == 3 and victory_content.get_node("Actions").get_child_count() == 1
+	if victory_overlay_ok:
+		checks += 1
+		print("[combat-ui] PASS authored victory overlay binds rewards and claim action")
+	else:
+		failures += 1
+		push_error("[combat-ui] FAIL authored victory overlay or reward binding")
+	screen._result_layer.queue_free()
+	screen._result_layer = null
+	await get_tree().process_frame
+	screen._show_result(false)
+	var defeat_overlay_ok: bool = screen._result_layer != null and str(screen._result_layer.get_node("Center/Panel/Content/Title").text) == "DEFEAT"
+	if defeat_overlay_ok:
+		var defeat_content := screen._result_layer.get_node("Center/Panel/Content")
+		defeat_overlay_ok = defeat_content.get_node("DefeatDetails").visible and defeat_content.get_node("Actions").get_child_count() == 2
+	if defeat_overlay_ok:
+		checks += 1
+		print("[combat-ui] PASS authored defeat overlay binds retry and retreat actions")
+	else:
+		failures += 1
+		push_error("[combat-ui] FAIL authored defeat overlay or action binding")
+	screen._confirm_retreat()
+	var retreat_overlay_ok := screen._confirm_layer != null and screen._confirm_layer.scene_file_path.ends_with("retreat_confirmation_overlay.tscn")
+	if retreat_overlay_ok:
+		retreat_overlay_ok = screen._confirm_layer.get_node("Center/Panel/Content/Actions").get_child_count() == 2
+	if retreat_overlay_ok:
+		checks += 1
+		print("[combat-ui] PASS authored retreat confirmation binds stay and leave actions")
+	else:
+		failures += 1
+		push_error("[combat-ui] FAIL authored retreat confirmation overlay")
+	if screen._confirm_layer != null:
+		screen._confirm_layer.queue_free()
+		screen._confirm_layer = null
 	print("[combat-ui] %d passed, %d failed" % [checks, failures])
 	get_tree().quit(1 if failures > 0 else 0)

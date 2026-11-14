@@ -198,6 +198,19 @@ func _build_background() -> void:
 	add_child(dust)
 
 
+func _style_combat_panel(panel: PanelContainer, fill: Color, radius: int, margin: int) -> void:
+	var style := StyleBoxFlat.new()
+	style.bg_color = fill
+	style.border_color = UITheme.BORDER_SOFT
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(radius)
+	style.content_margin_left = margin
+	style.content_margin_right = margin
+	style.content_margin_top = margin
+	style.content_margin_bottom = margin
+	panel.add_theme_stylebox_override("panel", style)
+
+
 func _build_layout() -> void:
 	var margin := UIFactory.margin(16)
 	UIFactory.set_full_rect(margin)
@@ -205,61 +218,69 @@ func _build_layout() -> void:
 	var root := UIFactory.vbox(6)
 	margin.add_child(root)
 
-	# ===== TOP: compact header + turn order =====
-	var header := UIFactory.hbox(10)
-	_title_label = UIFactory.heading("Battle", 20, UITheme.GOLD_BRIGHT)
+	# ===== TOP: authored, reusable combat header =====
+	var header := preload("res://scenes/ui/combat/components/combat_header.tscn").instantiate() as HBoxContainer
+	_title_label = header.get_node("TitleLabel") as Label
+	_title_label.add_theme_font_size_override("font_size", 20)
+	_title_label.add_theme_color_override("font_color", UITheme.GOLD_BRIGHT)
+	_round_label = header.get_node("RoundLabel") as Label
+	_round_label.add_theme_font_size_override("font_size", 10)
+	_round_label.add_theme_color_override("font_color", UITheme.TEXT_DIM)
+	_auto_button = header.get_node("AutoButton") as Button
+	_auto_button.add_theme_stylebox_override("normal", UIFactory.small_button("AUTO  OFF", UITheme.TEXT_DIM).get_theme_stylebox("normal").duplicate())
+	_auto_button.toggled.connect(_on_auto_toggled)
+	_speed_button = header.get_node("SpeedButton") as Button
+	_speed_button.add_theme_stylebox_override("normal", UIFactory.small_button("1x", UITheme.TEAL).get_theme_stylebox("normal").duplicate())
+	_speed_button.pressed.connect(_cycle_speed)
+	var retreat := header.get_node("RetreatButton") as Button
+	retreat.add_theme_stylebox_override("normal", UIFactory.button("Retreat", false, true).get_theme_stylebox("normal").duplicate())
+	retreat.pressed.connect(_confirm_retreat)
 	_boss_bar_container = null
 	_boss_name_label = null
 	_boss_hp_bar = null
 	_boss_phase_label = null
 	_camera_shake_timer = 0.0
 	_camera_shake_intensity = 0.0
-	header.add_child(_title_label)
-	_round_label = UIFactory.label("Round 1", 10, UITheme.TEXT_DIM)
-	header.add_child(_round_label)
-	header.add_child(UIFactory.spacer())
-	_auto_button = UIFactory.small_button("AUTO  OFF", UITheme.TEXT_DIM)
-	_auto_button.toggle_mode = true
-	_auto_button.custom_minimum_size = Vector2(92, 30)
-	_auto_button.tooltip_text = "Automatically choose skills and targets for your party"
-	_auto_button.toggled.connect(_on_auto_toggled)
-	header.add_child(_auto_button)
-	_speed_button = UIFactory.small_button("1x", UITheme.TEAL)
-	_speed_button.custom_minimum_size = Vector2(60, 30)
-	_speed_button.tooltip_text = "Cycle battle speed"
-	_speed_button.pressed.connect(_cycle_speed)
-	header.add_child(_speed_button)
-	var retreat := UIFactory.button("Retreat", false, true)
-	retreat.custom_minimum_size = Vector2(80, 28)
-	retreat.pressed.connect(_confirm_retreat)
-	header.add_child(retreat)
 	root.add_child(header)
 
-	# Boss health bar (hidden by default).
-	_boss_bar_container = UIFactory.vbox(4)
-	_boss_bar_container.visible = false
-	var boss_bar_panel := UIFactory.panel(Color("#1a0a0a"), Color(UITheme.DANGER.r, UITheme.DANGER.g, UITheme.DANGER.b, 0.6), 8, 1, 6)
-	_boss_bar_container.add_child(boss_bar_panel)
-	var boss_bar_inner := UIFactory.vbox(2)
-	boss_bar_panel.add_child(boss_bar_inner)
-	_boss_name_label = UIFactory.heading("Boss", 16, UITheme.DANGER)
-	_boss_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	boss_bar_inner.add_child(_boss_name_label)
-	_boss_hp_bar = UIFactory.bar(UITheme.DANGER, 10)
-	_boss_hp_bar.custom_minimum_size = Vector2(0, 14)
-	boss_bar_inner.add_child(_boss_hp_bar)
-	_boss_phase_label = UIFactory.label("Phase 1", 9, UITheme.TEXT_DIM)
-	_boss_phase_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	boss_bar_inner.add_child(_boss_phase_label)
+	# Boss health presentation is an independently editable PackedScene.
+	_boss_bar_container = preload("res://scenes/ui/combat/components/boss_health_panel.tscn").instantiate() as VBoxContainer
+	_boss_name_label = _boss_bar_container.get_node("Panel/Content/BossName") as Label
+	_boss_name_label.add_theme_font_size_override("font_size", 16)
+	_boss_name_label.add_theme_color_override("font_color", UITheme.DANGER)
+	_boss_hp_bar = _boss_bar_container.get_node("Panel/Content/HealthBar") as ProgressBar
+	_boss_hp_bar.add_theme_stylebox_override("fill", UIFactory.bar(UITheme.DANGER, 10).get_theme_stylebox("fill").duplicate())
+	_boss_phase_label = _boss_bar_container.get_node("Panel/Content/PhaseLabel") as Label
+	_boss_phase_label.add_theme_font_size_override("font_size", 9)
+	_boss_phase_label.add_theme_color_override("font_color", UITheme.TEXT_DIM)
+	var boss_panel_style := StyleBoxFlat.new()
+	boss_panel_style.bg_color = Color("#1a0a0a")
+	boss_panel_style.border_color = Color(UITheme.DANGER.r, UITheme.DANGER.g, UITheme.DANGER.b, 0.6)
+	boss_panel_style.set_border_width_all(1)
+	boss_panel_style.set_corner_radius_all(8)
+	boss_panel_style.content_margin_left = 6
+	boss_panel_style.content_margin_right = 6
+	boss_panel_style.content_margin_top = 6
+	boss_panel_style.content_margin_bottom = 6
+	(_boss_bar_container.get_node("Panel") as PanelContainer).add_theme_stylebox_override("panel", boss_panel_style)
 	root.add_child(_boss_bar_container)
 
-	# Turn order timeline (compact).
-	var turn_panel := UIFactory.panel(Color(0.05, 0.075, 0.13, 0.7), UITheme.BORDER_SOFT, 6, 1, 4)
-	var turn_row := UIFactory.hbox(6)
-	turn_row.add_child(UIFactory.label("TURN", 8, UITheme.TEXT_FAINT))
-	_turn_box = UIFactory.hbox(4)
-	turn_row.add_child(_turn_box)
-	turn_panel.add_child(turn_row)
+	# Turn order timeline is a reusable scene with a stable node contract.
+	var turn_panel := preload("res://scenes/ui/combat/components/turn_order_panel.tscn").instantiate() as PanelContainer
+	var turn_style := StyleBoxFlat.new()
+	turn_style.bg_color = Color(0.05, 0.075, 0.13, 0.7)
+	turn_style.border_color = UITheme.BORDER_SOFT
+	turn_style.set_border_width_all(1)
+	turn_style.set_corner_radius_all(6)
+	turn_style.content_margin_left = 4
+	turn_style.content_margin_right = 4
+	turn_style.content_margin_top = 4
+	turn_style.content_margin_bottom = 4
+	turn_panel.add_theme_stylebox_override("panel", turn_style)
+	var turn_caption := turn_panel.get_node("TurnRow/Caption") as Label
+	turn_caption.add_theme_font_size_override("font_size", 8)
+	turn_caption.add_theme_color_override("font_color", UITheme.TEXT_FAINT)
+	_turn_box = turn_panel.get_node("TurnRow/TurnItems") as HBoxContainer
 	root.add_child(turn_panel)
 
 	# ===== CENTER: the battlefield =====
@@ -275,64 +296,45 @@ func _build_layout() -> void:
 	root.add_child(_battlefield)
 
 	# ===== BOTTOM: active character info + skills =====
-	var bottom := UIFactory.hbox(10)
-	bottom.custom_minimum_size = Vector2(0, 180)
+	# Bottom combat HUD: authored panel hierarchy with script-owned data binding.
+	var bottom := preload("res://scenes/ui/combat/components/combat_bottom_hud.tscn").instantiate() as HBoxContainer
 	root.add_child(bottom)
+	var info_panel := bottom.get_node("ActiveInfoPanel") as PanelContainer
+	var roster_panel := bottom.get_node("RosterPanel") as PanelContainer
+	var skills_panel := bottom.get_node("SkillsPanel") as PanelContainer
+	var log_panel := bottom.get_node("LogPanel") as PanelContainer
+	_style_combat_panel(info_panel, Color("#0b1220"), 8, 8)
+	_style_combat_panel(roster_panel, Color("#0b1220"), 8, 8)
+	_style_combat_panel(skills_panel, Color("#0b1220"), 8, 8)
+	_style_combat_panel(log_panel, Color("#0a101c"), 8, 6)
 
-	# Active character info panel.
-	var info_panel := UIFactory.panel(Color("#0b1220"), UITheme.BORDER_SOFT, 8, 1, 8)
-	info_panel.custom_minimum_size = Vector2(280, 0)
-	bottom.add_child(info_panel)
-	var info_box := UIFactory.vbox(4)
-	info_panel.add_child(info_box)
-	_actor_label = UIFactory.heading("Preparing...", 14, UITheme.TEXT)
-	info_box.add_child(_actor_label)
-	_hp_bar = UIFactory.bar(UITheme.GREEN, 10)
-	_hp_bar.custom_minimum_size = Vector2(0, 12)
-	info_box.add_child(_hp_bar)
-	_energy_bar = UIFactory.bar(UITheme.GOLD, 6)
-	_energy_bar.custom_minimum_size = Vector2(0, 8)
-	info_box.add_child(_energy_bar)
-	_status_label = UIFactory.label("", 9, UITheme.TEAL)
-	info_box.add_child(_status_label)
+	_actor_label = bottom.get_node("ActiveInfoPanel/InfoContent/ActorLabel") as Label
+	_actor_label.add_theme_font_size_override("font_size", 14)
+	_actor_label.add_theme_color_override("font_color", UITheme.TEXT)
+	_hp_bar = bottom.get_node("ActiveInfoPanel/InfoContent/HPBar") as ProgressBar
+	_hp_bar.add_theme_stylebox_override("fill", UIFactory.bar(UITheme.GREEN, 10).get_theme_stylebox("fill").duplicate())
+	_energy_bar = bottom.get_node("ActiveInfoPanel/InfoContent/EnergyBar") as ProgressBar
+	_energy_bar.add_theme_stylebox_override("fill", UIFactory.bar(UITheme.GOLD, 6).get_theme_stylebox("fill").duplicate())
+	_status_label = bottom.get_node("ActiveInfoPanel/InfoContent/StatusLabel") as Label
+	_status_label.add_theme_font_size_override("font_size", 9)
+	_status_label.add_theme_color_override("font_color", UITheme.TEAL)
 
-	# Party roster (compact): every ally's portrait, name and HP.
-	var roster_panel := UIFactory.panel(Color("#0b1220"), UITheme.BORDER_SOFT, 8, 1, 8)
-	roster_panel.custom_minimum_size = Vector2(210, 0)
-	bottom.add_child(roster_panel)
-	var roster_box := UIFactory.vbox(3)
-	roster_panel.add_child(roster_box)
-	roster_box.add_child(UIFactory.label("PARTY", 8, UITheme.TEXT_FAINT))
-	_roster_box = UIFactory.vbox(2)
-	roster_box.add_child(_roster_box)
+	var roster_caption := bottom.get_node("RosterPanel/RosterContent/RosterCaption") as Label
+	roster_caption.add_theme_font_size_override("font_size", 8)
+	roster_caption.add_theme_color_override("font_color", UITheme.TEXT_FAINT)
+	_roster_box = bottom.get_node("RosterPanel/RosterContent/RosterItems") as VBoxContainer
 
-	# Skills panel.
-	var skills_panel := UIFactory.panel(Color("#0b1220"), UITheme.BORDER_SOFT, 8, 1, 8)
-	skills_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	bottom.add_child(skills_panel)
-	var skills_content := UIFactory.vbox(5)
-	skills_panel.add_child(skills_content)
-	_skills_box = HFlowContainer.new()
-	_skills_box.add_theme_constant_override("h_separation", 6)
-	_skills_box.add_theme_constant_override("v_separation", 4)
-	_skills_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	skills_content.add_child(_skills_box)
-	_hint_label = UIFactory.label("", 10, UITheme.TEXT_DIM)
-	skills_content.add_child(_hint_label)
+	_skills_box = bottom.get_node("SkillsPanel/SkillsContent/SkillItems") as HFlowContainer
+	_hint_label = bottom.get_node("SkillsPanel/SkillsContent/HintLabel") as Label
+	_hint_label.add_theme_font_size_override("font_size", 10)
+	_hint_label.add_theme_color_override("font_color", UITheme.TEXT_DIM)
 
-	# Log panel.
-	var log_panel := UIFactory.panel(Color("#0a101c"), UITheme.BORDER_SOFT, 8, 1, 6)
-	log_panel.custom_minimum_size = Vector2(260, 0)
-	bottom.add_child(log_panel)
-	var log_box := UIFactory.vbox(4)
-	log_panel.add_child(log_box)
-	log_box.add_child(UIFactory.label("BATTLE LOG", 8, UITheme.TEXT_FAINT))
-	_log_label = UIFactory.rich("", 9, UITheme.TEXT_DIM)
-	_log_label.fit_content = false
-	_log_label.scroll_active = true
-	_log_label.scroll_following = true
-	_log_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	log_box.add_child(_log_label)
+	var log_caption := bottom.get_node("LogPanel/LogContent/LogCaption") as Label
+	log_caption.add_theme_font_size_override("font_size", 8)
+	log_caption.add_theme_color_override("font_color", UITheme.TEXT_FAINT)
+	_log_label = bottom.get_node("LogPanel/LogContent/LogText") as RichTextLabel
+	_log_label.add_theme_font_size_override("normal_font_size", 9)
+	_log_label.add_theme_color_override("default_color", UITheme.TEXT_DIM)
 
 func _start_battle() -> void:
 	_resolved = false
@@ -1045,61 +1047,45 @@ func _finish_battle(victory: bool) -> void:
 func _show_result(victory: bool) -> void:
 	if _result_layer != null and is_instance_valid(_result_layer):
 		_result_layer.queue_free()
-	_result_layer = Control.new()
-	UIFactory.set_full_rect(_result_layer)
-	_result_layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	_result_layer = preload("res://scenes/ui/combat/components/battle_result_overlay.tscn").instantiate() as Control
 	add_child(_result_layer)
+	var panel := _result_layer.get_node("Center/Panel") as PanelContainer
+	_style_combat_panel(panel, Color("#0b1120"), 16, 24)
+	var panel_style := panel.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
+	panel_style.border_color = Color(UITheme.GOLD.r, UITheme.GOLD.g, UITheme.GOLD.b, 0.5) if victory else Color(UITheme.DANGER.r, UITheme.DANGER.g, UITheme.DANGER.b, 0.5)
+	panel.add_theme_stylebox_override("panel", panel_style)
 
-	var dim := ColorRect.new()
-	dim.color = Color(0.01, 0.02, 0.04, 0.82)
-	UIFactory.set_full_rect(dim)
-	_result_layer.add_child(dim)
-	var center := CenterContainer.new()
-	UIFactory.set_full_rect(center)
-	_result_layer.add_child(center)
-	var panel := UIFactory.panel(Color("#0b1120"), Color(UITheme.GOLD.r, UITheme.GOLD.g, UITheme.GOLD.b, 0.5) if victory else Color(UITheme.DANGER.r, UITheme.DANGER.g, UITheme.DANGER.b, 0.5), 16, 1, 24, true)
-	panel.custom_minimum_size = Vector2(520, 0)
-	center.add_child(panel)
-	var box := UIFactory.vbox(12)
-	panel.add_child(box)
+	var content := _result_layer.get_node("Center/Panel/Content") as VBoxContainer
+	var title := content.get_node("Title") as Label
+	title.text = "VICTORY" if victory else "DEFEAT"
+	title.add_theme_font_size_override("font_size", 40)
+	title.add_theme_color_override("font_color", UITheme.GOLD_BRIGHT if victory else UITheme.DANGER)
+	var subtitle := content.get_node("Subtitle") as Label
+	subtitle.text = "The glade breathes easier." if victory else "The roots remember your name. Try again."
+	subtitle.add_theme_font_size_override("font_size", 13)
+	subtitle.add_theme_color_override("font_color", UITheme.TEXT_DIM)
 
-	var title := UIFactory.heading("VICTORY" if victory else "DEFEAT", 40, UITheme.GOLD_BRIGHT if victory else UITheme.DANGER)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(title)
-	var subtitle := UIFactory.label(
-		"The glade breathes easier." if victory else "The roots remember your name. Try again.",
-		13,
-		UITheme.TEXT_DIM
-	)
-	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(subtitle)
-	box.add_child(UIFactory.separator())
-
+	var rewards_caption := content.get_node("RewardsCaption") as Label
+	var rewards_row := content.get_node("RewardsRow") as HBoxContainer
+	var details := content.get_node("Details") as VBoxContainer
+	var defeat_details := content.get_node("DefeatDetails") as Label
+	rewards_caption.visible = victory
+	rewards_row.visible = victory
+	defeat_details.visible = not victory
 	if victory:
-		box.add_child(UIFactory.label("REWARDS", 10, UITheme.TEXT_FAINT))
-		var rewards_row := UIFactory.hbox(8)
-		rewards_row.alignment = BoxContainer.ALIGNMENT_CENTER
+		rewards_caption.add_theme_font_size_override("font_size", 10)
+		rewards_caption.add_theme_color_override("font_color", UITheme.TEXT_FAINT)
 		rewards_row.add_child(UIFactory.chip("+%s Gold" % UIFactory.number(int(_pending_rewards.get("gold", 0))), UITheme.GOLD))
 		rewards_row.add_child(UIFactory.chip("+%s Crystals" % UIFactory.number(int(_pending_rewards.get("crystals", 0))), UITheme.TEAL))
 		rewards_row.add_child(UIFactory.chip("+%s XP" % UIFactory.number(int(_pending_rewards.get("xp", 0))), UITheme.GREEN))
-		box.add_child(rewards_row)
 		for item_id in _pending_rewards.get("items", {}).keys():
 			var item: Dictionary = ContentDB.get_item(str(item_id))
-			box.add_child(UIFactory.label(
-				"• %s ×%d" % [str(item.get("name", item_id)), int(_pending_rewards["items"][item_id])],
-				12,
-				UITheme.TEXT_DIM
-			))
+			details.add_child(UIFactory.label("• %s ×%d" % [str(item.get("name", item_id)), int(_pending_rewards["items"][item_id])], 12, UITheme.TEXT_DIM))
 	else:
-		box.add_child(UIFactory.wrapped(
-			"Defeat is not a loss of progress in this slice. Retry with the same party or retreat to the world.",
-			12,
-			UITheme.TEXT_DIM
-		))
+		defeat_details.add_theme_font_size_override("font_size", 12)
+		defeat_details.add_theme_color_override("font_color", UITheme.TEXT_DIM)
 
-	box.add_child(UIFactory.separator())
-	var actions := UIFactory.hbox(10)
-	actions.alignment = BoxContainer.ALIGNMENT_CENTER
+	var actions := content.get_node("Actions") as HBoxContainer
 	if victory:
 		var claim := UIFactory.button("Claim Rewards", true)
 		claim.custom_minimum_size = Vector2(220, 46)
@@ -1114,7 +1100,6 @@ func _show_result(victory: bool) -> void:
 		retreat.custom_minimum_size = Vector2(160, 46)
 		retreat.pressed.connect(func() -> void: _claim(false))
 		actions.add_child(retreat)
-	box.add_child(actions)
 
 
 func _retry() -> void:
@@ -1127,35 +1112,29 @@ func _retry() -> void:
 func _confirm_retreat() -> void:
 	if _resolved or _confirm_layer != null:
 		return
-	_confirm_layer = Control.new()
-	UIFactory.set_full_rect(_confirm_layer)
-	_confirm_layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	_confirm_layer = preload("res://scenes/ui/combat/components/retreat_confirmation_overlay.tscn").instantiate() as Control
 	add_child(_confirm_layer)
-	var dim := ColorRect.new()
-	dim.color = Color(0.01, 0.02, 0.04, 0.7)
-	UIFactory.set_full_rect(dim)
-	_confirm_layer.add_child(dim)
-	var center := CenterContainer.new()
-	UIFactory.set_full_rect(center)
-	_confirm_layer.add_child(center)
-	var panel := UIFactory.panel(Color("#0b1120"), Color(UITheme.DANGER.r, UITheme.DANGER.g, UITheme.DANGER.b, 0.5), 14, 1, 20, true)
-	panel.custom_minimum_size = Vector2(420, 0)
-	center.add_child(panel)
-	var box := UIFactory.vbox(12)
-	panel.add_child(box)
-	box.add_child(UIFactory.heading("Retreat?", 24, UITheme.DANGER))
-	box.add_child(UIFactory.wrapped("The encounter ends without rewards and the monster returns to the glade.", 12, UITheme.TEXT_DIM))
-	var actions := UIFactory.hbox(10)
-	var stay := UIFactory.button("Keep Fighting", true)
+	var panel := _confirm_layer.get_node("Center/Panel") as PanelContainer
+	_style_combat_panel(panel, Color("#0b1120"), 14, 20)
+	var panel_style := panel.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
+	panel_style.border_color = Color(UITheme.DANGER.r, UITheme.DANGER.g, UITheme.DANGER.b, 0.5)
+	panel.add_theme_stylebox_override("panel", panel_style)
+	var content := _confirm_layer.get_node("Center/Panel/Content") as VBoxContainer
+	var title := content.get_node("Title") as Label
+	title.add_theme_font_size_override("font_size", 24)
+	title.add_theme_color_override("font_color", UITheme.DANGER)
+	var description := content.get_node("Description") as Label
+	description.add_theme_font_size_override("font_size", 12)
+	description.add_theme_color_override("font_color", UITheme.TEXT_DIM)
+	var stay := content.get_node("Actions/StayButton") as Button
+	stay.add_theme_stylebox_override("normal", UIFactory.button("Keep Fighting", true).get_theme_stylebox("normal").duplicate())
 	stay.pressed.connect(func() -> void:
 		_confirm_layer.queue_free()
 		_confirm_layer = null
 	)
-	actions.add_child(stay)
-	var leave := UIFactory.button("Retreat", false, true)
+	var leave := content.get_node("Actions/LeaveButton") as Button
+	leave.add_theme_stylebox_override("normal", UIFactory.button("Retreat", false, true).get_theme_stylebox("normal").duplicate())
 	leave.pressed.connect(func() -> void: _claim(false))
-	actions.add_child(leave)
-	box.add_child(actions)
 
 
 func _claim(victory: bool) -> void:

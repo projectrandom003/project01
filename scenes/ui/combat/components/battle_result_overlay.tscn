@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[node name="BattleResultOverlay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.01, 0.02, 0.04, 0.82)
+mouse_filter = 2
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(520, 0)
+
+[node name="Content" type="VBoxContainer" parent="Center/Panel"]
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Center/Panel/Content"]
+text = "VICTORY"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Center/Panel/Content"]
+text = "The glade breathes easier."
+horizontal_alignment = 1
+
+[node name="DividerTop" type="HSeparator" parent="Center/Panel/Content"]
+
+[node name="RewardsCaption" type="Label" parent="Center/Panel/Content"]
+text = "REWARDS"
+
+[node name="RewardsRow" type="HBoxContainer" parent="Center/Panel/Content"]
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Details" type="VBoxContainer" parent="Center/Panel/Content"]
+theme_override_constants/separation = 4
+
+[node name="DefeatDetails" type="Label" parent="Center/Panel/Content"]
+text = "Defeat is not a loss of progress in this slice. Retry with the same party or retreat to the world."
+autowrap_mode = 3
+
+[node name="DividerBottom" type="HSeparator" parent="Center/Panel/Content"]
+
+[node name="Actions" type="HBoxContainer" parent="Center/Panel/Content"]
+theme_override_constants/separation = 10
+alignment = 1

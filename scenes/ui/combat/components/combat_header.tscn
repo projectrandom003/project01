@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[node name="CombatHeader" type="HBoxContainer"]
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="."]
+text = "Battle"
+
+[node name="RoundLabel" type="Label" parent="."]
+text = "Round 1"
+
+[node name="Spacer" type="Control" parent="."]
+size_flags_horizontal = 3
+
+[node name="AutoButton" type="Button" parent="."]
+text = "AUTO  OFF"
+toggle_mode = true
+custom_minimum_size = Vector2(92, 30)
+tooltip_text = "Automatically choose skills and targets for your party"
+
+[node name="SpeedButton" type="Button" parent="."]
+text = "1x"
+custom_minimum_size = Vector2(60, 30)
+tooltip_text = "Cycle battle speed"
+
+[node name="RetreatButton" type="Button" parent="."]
+text = "Retreat"
+custom_minimum_size = Vector2(80, 28)

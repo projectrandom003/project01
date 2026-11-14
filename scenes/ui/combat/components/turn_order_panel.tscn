@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[node name="TurnOrderPanel" type="PanelContainer"]
+
+[node name="TurnRow" type="HBoxContainer" parent="."]
+theme_override_constants/separation = 6
+
+[node name="Caption" type="Label" parent="TurnRow"]
+text = "TURN"
+
+[node name="TurnItems" type="HBoxContainer" parent="TurnRow"]
+theme_override_constants/separation = 4

@@ -1,0 +1,50 @@
+[gd_scene format=3]
+
+[node name="RetreatConfirmationOverlay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.01, 0.02, 0.04, 0.7)
+mouse_filter = 2
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(420, 0)
+
+[node name="Content" type="VBoxContainer" parent="Center/Panel"]
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Center/Panel/Content"]
+text = "Retreat?"
+
+[node name="Description" type="Label" parent="Center/Panel/Content"]
+text = "The encounter ends without rewards and the monster returns to the glade."
+autowrap_mode = 3
+
+[node name="Actions" type="HBoxContainer" parent="Center/Panel/Content"]
+theme_override_constants/separation = 10
+
+[node name="StayButton" type="Button" parent="Center/Panel/Content/Actions"]
+text = "Keep Fighting"
+
+[node name="LeaveButton" type="Button" parent="Center/Panel/Content/Actions"]
+text = "Retreat"
