@@ -3,7 +3,7 @@ extends Control
 ## persistent session lives in the GameState autoload, not in this node.
 
 var menu: MainMenu
-const OpeningCinematicScript = preload("res://scripts/ui/opening_cinematic.gd")
+const OPENING_CINEMATIC_SCENE: PackedScene = preload("res://scenes/ui/opening_cinematic.tscn")
 const LoadingScreenScript = preload("res://scripts/ui/loading_screen.gd")
 
 
@@ -24,7 +24,7 @@ func _start_game() -> void:
 		_launch_game()
 		return
 	menu.visible = false
-	var intro = OpeningCinematicScript.new()
+	var intro := OPENING_CINEMATIC_SCENE.instantiate()
 	intro.name = "OpeningCinematic"
 	add_child(intro)
 	intro.finished.connect(_launch_game)
