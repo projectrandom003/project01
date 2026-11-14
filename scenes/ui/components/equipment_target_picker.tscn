@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[node name="EquipmentTargetPicker" type="OptionButton"]
+custom_minimum_size = Vector2(0, 36)
+theme_override_font_sizes/font_size = 12
+size_flags_horizontal = 3

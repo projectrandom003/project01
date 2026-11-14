@@ -6,6 +6,7 @@ extends OverlayScreen
 
 const ITEM_CARD_SCENE: PackedScene = preload("res://scenes/ui/components/inventory_item_card.tscn")
 const INVENTORY_ITEM_ICON_SCENE: PackedScene = preload("res://scenes/ui/components/inventory_item_icon.tscn")
+const EQUIPMENT_TARGET_PICKER_SCENE: PackedScene = preload("res://scenes/ui/components/equipment_target_picker.tscn")
 const INVENTORY_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/inventory_screen_layout.tscn")
 
 var _grid: GridContainer
@@ -197,9 +198,7 @@ func _show_detail(item_id: String) -> void:
 						_detail.add_child(unequip_button)
 		var target_row := UIFactory.vbox(4)
 		target_row.add_child(UIFactory.label("Equip to", 11, UITheme.TEXT_FAINT))
-		var picker := OptionButton.new()
-		picker.custom_minimum_size = Vector2(0, 36)
-		picker.add_theme_font_size_override("font_size", 12)
+		var picker := EQUIPMENT_TARGET_PICKER_SCENE.instantiate() as OptionButton
 		var index := 0
 		for instance in GameState.roster:
 			var definition: CharacterDef = ContentDB.get_character(instance.char_id)
