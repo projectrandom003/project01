@@ -3,6 +3,9 @@ extends OverlayScreen
 ## Quest journal: active, available and completed stories with step-by-step
 ## progress and a tracked quest shown on the HUD.
 
+const QUEST_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/quest_screen_layout.tscn")
+const QUEST_CARD_SCENE: PackedScene = preload("res://scenes/ui/components/quest_list_card.tscn")
+
 var _list: VBoxContainer
 var _detail: VBoxContainer
 var _selected_quest: String = ""
@@ -15,26 +18,11 @@ func _init() -> void:
 
 
 func _build_content() -> void:
-	var split := UIFactory.hbox(14)
-	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content.add_child(split)
-
-	var left := UIFactory.vbox(10)
-	left.custom_minimum_size = Vector2(380, 0)
-	split.add_child(left)
-	left.add_child(UIFactory.label("QUESTS", 10, UITheme.TEXT_FAINT))
-	var scroll := UIFactory.scroll()
-	left.add_child(scroll)
-	_list = UIFactory.vbox(8)
-	scroll.add_child(_list)
-
-	var detail_panel := UIFactory.panel(Color("#0a101d"), UITheme.BORDER_SOFT, 12, 1, 12)
-	detail_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	split.add_child(detail_panel)
-	var detail_scroll := UIFactory.scroll()
-	detail_panel.add_child(detail_scroll)
-	_detail = UIFactory.vbox(10)
-	detail_scroll.add_child(_detail)
+	var layout := QUEST_LAYOUT_SCENE.instantiate() as HBoxContainer
+	layout.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	content.add_child(layout)
+	_list = layout.get_node("QuestListPanel/ListScroll/QuestList") as VBoxContainer
+	_detail = layout.get_node("DetailPanel/DetailScroll/DetailContent") as VBoxContainer
 
 
 func _refresh() -> void:
@@ -72,27 +60,15 @@ func _make_card(quest_id: String) -> PanelContainer:
 	var quest: Dictionary = ContentDB.get_quest(quest_id)
 	var state := GameState.quest_state(quest_id)
 	var state_color := UITheme.GOLD if state == "active" else (UITheme.GREEN if state == "complete" else UITheme.TEXT_DIM)
-	var card := UIFactory.panel(Color("#111a2d"), UITheme.BORDER_SOFT, 10, 1, 10)
-	card.mouse_filter = Control.MOUSE_FILTER_STOP
-	card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	var box := UIFactory.vbox(4)
-	card.add_child(box)
-	var header := UIFactory.hbox(8)
-	header.add_child(UIFactory.label(str(quest.get("name", quest_id)), 14, UITheme.TEXT))
-	header.add_child(UIFactory.spacer())
-	header.add_child(UIFactory.chip(state.replace("_", " ").capitalize(), state_color))
-	box.add_child(header)
 	var step: Dictionary = GameState.quest_step(quest_id)
 	var step_text := str(step.get("text", "Complete" if state == "complete" else "Speak with the quest giver"))
-	box.add_child(UIFactory.wrapped(step_text, 11, UITheme.TEXT_DIM))
-	if str(GameState.flags.get("tracked_quest", "")) == quest_id:
-		box.add_child(UIFactory.label("◆ TRACKED", 9, UITheme.GOLD))
-
-	card.gui_input.connect(func(event: InputEvent) -> void:
-		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			_selected_quest = quest_id
-			_rebuild_list()
-			_show_detail(quest_id)
+	var tracked := str(GameState.flags.get("tracked_quest", "")) == quest_id
+	var card := QUEST_CARD_SCENE.instantiate() as QuestListCard
+	card.setup(quest_id, str(quest.get("name", quest_id)), state.replace("_", " ").capitalize(), state_color, step_text, tracked)
+	card.selected.connect(func(selected_id: String) -> void:
+		_selected_quest = selected_id
+		_rebuild_list()
+		_show_detail(selected_id)
 	)
 	_cards[quest_id] = card
 	if quest_id == _selected_quest:
