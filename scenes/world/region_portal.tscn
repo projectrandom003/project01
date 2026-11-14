@@ -5,6 +5,23 @@
 [node name="RegionPortal" type="Node2D"]
 script = ExtResource("1_portal")
 
+[node name="PortalBase" type="Polygon2D" parent="."]
+position = Vector2(0, 2)
+color = Color(0.176471, 0.258824, 0.282353, 0.45)
+polygon = PackedVector2Array(28, 0, 25.9, 10.6, 19.8, 19.8, 10.6, 25.9, 0, 28, -10.6, 25.9, -19.8, 19.8, -25.9, 10.6, -28, 0, -25.9, -10.6, -19.8, -19.8, -10.6, -25.9, 0, -28, 10.6, -25.9, 19.8, -19.8, 25.9, -10.6)
+
+[node name="PortalRing" type="Line2D" parent="."]
+points = PackedVector2Array(30, 0, 27.72, 11.48, 21.21, 21.21, 11.48, 27.72, 0, 30, -11.48, 27.72, -21.21, 21.21, -27.72, 11.48, -30, 0, -27.72, -11.48, -21.21, -21.21, -11.48, -27.72, 0, -30, 11.48, -27.72, 21.21, -21.21, 27.72, -11.48, 30, 0)
+width = 2.0
+default_color = Color(0.498039, 0.890196, 0.878431, 0.55)
+antialiased = true
+
+[node name="PortalInnerRing" type="Line2D" parent="."]
+points = PackedVector2Array(18, 0, 16.63, 6.89, 12.73, 12.73, 6.89, 16.63, 0, 18, -6.89, 16.63, -12.73, 12.73, -16.63, 6.89, -18, 0, -16.63, -6.89, -12.73, -12.73, -6.89, -16.63, 0, -18, 6.89, -16.63, 12.73, -12.73, 16.63, -6.89, 18, 0)
+width = 1.4
+default_color = Color(0.498039, 0.890196, 0.878431, 0.35)
+antialiased = true
+
 [node name="Sprite" type="Sprite2D" parent="."]
 centered = false
 texture_filter = 1

@@ -6,21 +6,36 @@ extends Node2D
 var _time := 0.0
 var _distance := INF
 
-@onready var _ground_halo: Polygon2D = $GroundHalo
-@onready var _outer_ring: Line2D = $OuterRing
-@onready var _secondary_ring: Line2D = $SecondaryRing
-@onready var _beacon_glow: Line2D = $BeaconGlow
-@onready var _beacon_core: Line2D = $BeaconCore
-@onready var _target_glyph: Polygon2D = $TargetGlyph
-@onready var _target_core: Polygon2D = $TargetCore
-@onready var _sparks: Array[Polygon2D] = [
-	$Sparks/Spark0, $Sparks/Spark1, $Sparks/Spark2, $Sparks/Spark3
-]
+var _ground_halo: Polygon2D
+var _outer_ring: Line2D
+var _secondary_ring: Line2D
+var _beacon_glow: Line2D
+var _beacon_core: Line2D
+var _target_glyph: Polygon2D
+var _target_core: Polygon2D
+var _sparks: Array[Polygon2D] = []
 
 
 func _ready() -> void:
+	_resolve_nodes()
 	z_index = 35
 	set_process(true)
+
+
+func _resolve_nodes() -> void:
+	_ground_halo = get_node_or_null("GroundHalo") as Polygon2D
+	_outer_ring = get_node_or_null("OuterRing") as Line2D
+	_secondary_ring = get_node_or_null("SecondaryRing") as Line2D
+	_beacon_glow = get_node_or_null("BeaconGlow") as Line2D
+	_beacon_core = get_node_or_null("BeaconCore") as Line2D
+	_target_glyph = get_node_or_null("TargetGlyph") as Polygon2D
+	_target_core = get_node_or_null("TargetCore") as Polygon2D
+	_sparks.clear()
+	var sparks_root := get_node_or_null("Sparks")
+	if sparks_root != null:
+		for child in sparks_root.get_children():
+			if child is Polygon2D:
+				_sparks.append(child as Polygon2D)
 
 
 func _process(delta: float) -> void:
@@ -60,6 +75,8 @@ func _process(delta: float) -> void:
 
 
 func _animate_nodes() -> void:
+	if _ground_halo == null or _outer_ring == null or _secondary_ring == null or _beacon_glow == null or _beacon_core == null or _target_glyph == null or _target_core == null:
+		return
 	var proximity := 1.0 - clampf(_distance / 420.0, 0.0, 1.0)
 	var pulse := 0.5 + 0.5 * sin(_time * (2.2 + proximity * 2.5))
 	var strength := 0.18 + proximity * 0.72
@@ -84,8 +101,11 @@ func _animate_nodes() -> void:
 	_target_core.color = Color(1.0, 1.0, 1.0, strength)
 
 	for i in _sparks.size():
+		var spark := _sparks[i]
+		if spark == null:
+			continue
 		var angle := _time * (0.7 + proximity) + TAU * float(i) / 4.0
 		var point := Vector2(cos(angle) * (ring_radius + 5.0), -2.0 + sin(angle) * (ring_radius * 0.55))
-		_sparks[i].position = point
-		_sparks[i].scale = Vector2.ONE * (0.8 + proximity * 0.55)
-		_sparks[i].color = Color(color.r, color.g, color.b, strength * 0.9)
+		spark.position = point
+		spark.scale = Vector2.ONE * (0.8 + proximity * 0.55)
+		spark.color = Color(color.r, color.g, color.b, strength * 0.9)

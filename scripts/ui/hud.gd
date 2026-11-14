@@ -243,31 +243,50 @@ func _on_quest_updated(_quest_id: String) -> void:
 # ----------------------------------------------------------- authored bindings
 
 func _bind_authored_ui() -> void:
-	_area_label = get_node("TopBar/TopRow/LocationInfo/AreaLabel") as Label
-	_phase_label = get_node("TopBar/TopRow/LocationInfo/PhaseLabel") as Label
-	_quest_label = get_node("TopBar/TopRow/LocationInfo/QuestLabel") as Label
-	_currency_box = get_node("TopBar/TopRow/CurrencyBox") as HBoxContainer
-	_party_box = get_node("PartyPanel/PartyContent/PartyBox") as VBoxContainer
-	_party_empty_label = get_node("PartyPanel/PartyContent/PartyBox/NoPartyLabel") as Label
-	_minimap = get_node("Minimap") as Minimap
-	_prompt_panel = get_node("PromptCenter/PromptPanel") as PanelContainer
-	_prompt_label = get_node("PromptCenter/PromptPanel/PromptLabel") as Label
-	_toast_box = get_node("ToastBox") as VBoxContainer
-	joystick = get_node("Joystick") as TouchJoystick
-	_touch_interact = get_node("TouchInteractButton") as Button
-	_touch_switch = get_node("TouchSwitchButton") as Button
-	_hint_label = get_node("HintLabel") as Label
+	_area_label = get_node_or_null("TopBar/TopRow/LocationInfo/AreaLabel") as Label
+	_phase_label = get_node_or_null("TopBar/TopRow/LocationInfo/PhaseLabel") as Label
+	_quest_label = get_node_or_null("TopBar/TopRow/LocationInfo/QuestLabel") as Label
+	_currency_box = get_node_or_null("TopBar/TopRow/CurrencyBox") as HBoxContainer
+	_party_box = get_node_or_null("PartyPanel/PartyContent/PartyBox") as VBoxContainer
+	_party_empty_label = get_node_or_null("PartyPanel/PartyContent/PartyBox/NoPartyLabel") as Label
+	_minimap = get_node_or_null("Minimap") as Minimap
+	_prompt_panel = get_node_or_null("PromptCenter/PromptPanel") as PanelContainer
+	_prompt_label = get_node_or_null("PromptCenter/PromptPanel/PromptLabel") as Label
+	_toast_box = get_node_or_null("ToastBox") as VBoxContainer
+	joystick = get_node_or_null("Joystick") as TouchJoystick
+	_touch_interact = get_node_or_null("TouchInteractButton") as Button
+	_touch_switch = get_node_or_null("TouchSwitchButton") as Button
+	_hint_label = get_node_or_null("HintLabel") as Label
 
-	_minimap.quest_resolver = quest_resolver
-	get_node("ActionStack/SummonButton").pressed.connect(func() -> void: screen_requested.emit("gacha"))
-	get_node("ActionStack/RosterButton").pressed.connect(func() -> void: screen_requested.emit("collection"))
-	get_node("ActionStack/InventoryButton").pressed.connect(func() -> void: screen_requested.emit("inventory"))
-	get_node("ActionStack/QuestsButton").pressed.connect(func() -> void: screen_requested.emit("quests"))
-	get_node("ActionStack/MapButton").pressed.connect(func() -> void: screen_requested.emit("map"))
-	get_node("ActionStack/MenuButton").pressed.connect(func() -> void: menu_requested.emit())
-	_touch_interact.pressed.connect(func() -> void: interact_requested.emit())
-	_touch_switch.pressed.connect(func() -> void: switch_avatar_requested.emit())
+	# Fallback for script-only/headless test instantiation without authored HUD scene.
+	if _quest_label == null:
+		_quest_label = Label.new()
+		_quest_label.name = "QuestLabel"
+		_quest_label.visible = false
+		add_child(_quest_label)
 
-	joystick.visible = TouchInput.using_touch
-	_touch_switch.visible = TouchInput.using_touch
-	_touch_interact.visible = false
+	if _minimap != null:
+		_minimap.quest_resolver = quest_resolver
+	var summon_btn := get_node_or_null("ActionStack/SummonButton") as Button
+	if summon_btn: summon_btn.pressed.connect(func() -> void: screen_requested.emit("gacha"))
+	var roster_btn := get_node_or_null("ActionStack/RosterButton") as Button
+	if roster_btn: roster_btn.pressed.connect(func() -> void: screen_requested.emit("collection"))
+	var inv_btn := get_node_or_null("ActionStack/InventoryButton") as Button
+	if inv_btn: inv_btn.pressed.connect(func() -> void: screen_requested.emit("inventory"))
+	var quests_btn := get_node_or_null("ActionStack/QuestsButton") as Button
+	if quests_btn: quests_btn.pressed.connect(func() -> void: screen_requested.emit("quests"))
+	var map_btn := get_node_or_null("ActionStack/MapButton") as Button
+	if map_btn: map_btn.pressed.connect(func() -> void: screen_requested.emit("map"))
+	var menu_btn := get_node_or_null("ActionStack/MenuButton") as Button
+	if menu_btn: menu_btn.pressed.connect(func() -> void: menu_requested.emit())
+	if _touch_interact:
+		_touch_interact.pressed.connect(func() -> void: interact_requested.emit())
+	if _touch_switch:
+		_touch_switch.pressed.connect(func() -> void: switch_avatar_requested.emit())
+
+	if joystick:
+		joystick.visible = TouchInput.using_touch
+	if _touch_switch:
+		_touch_switch.visible = TouchInput.using_touch
+	if _touch_interact:
+		_touch_interact.visible = false
