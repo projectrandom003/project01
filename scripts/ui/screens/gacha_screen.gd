@@ -10,6 +10,7 @@ const FEATURED_STAGE_SCENE: PackedScene = preload("res://scenes/ui/components/fe
 const PORTRAIT_VIEW_SCENE: PackedScene = preload("res://scenes/ui/components/portrait_view.tscn")
 const GACHA_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/gacha_screen_layout.tscn")
 const SUMMON_REVEAL_SCENE: PackedScene = preload("res://scenes/ui/components/summon_reveal_overlay.tscn")
+const SUMMON_RESULTS_SCENE: PackedScene = preload("res://scenes/ui/components/summon_results_overlay.tscn")
 
 var _tabs: HBoxContainer
 var _main: HBoxContainer
@@ -413,29 +414,16 @@ func _show_results(results: Array) -> void:
 	_result_cards = results.size()
 	if _results_layer != null and is_instance_valid(_results_layer):
 		_results_layer.queue_free()
-	_results_layer = Control.new()
-	UIFactory.set_full_rect(_results_layer)
-	_results_layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	_results_layer = SUMMON_RESULTS_SCENE.instantiate() as Control
 	add_child(_results_layer)
 
-	var dim := ColorRect.new()
-	dim.color = Color(0.01, 0.02, 0.05, 0.82)
-	UIFactory.set_full_rect(dim)
-	_results_layer.add_child(dim)
-
-	var center := CenterContainer.new()
-	UIFactory.set_full_rect(center)
-	_results_layer.add_child(center)
-
-	var panel := UIFactory.panel(Color("#0b1120"), Color(UITheme.GOLD.r, UITheme.GOLD.g, UITheme.GOLD.b, 0.45), 16, 1, 20, true)
-	panel.custom_minimum_size = Vector2(minf(1120, 1180), 0)
-	center.add_child(panel)
-	var box := UIFactory.vbox(12)
-	panel.add_child(box)
-
-	var header := UIFactory.hbox(10)
-	header.add_child(UIFactory.heading("Summon Results", 24, UITheme.GOLD_BRIGHT))
-	header.add_child(UIFactory.spacer())
+	var panel := _results_layer.get_node("Center/Panel") as PanelContainer
+	panel.custom_minimum_size = Vector2(minf(1120.0, 1180.0), 0.0)
+	panel.add_theme_stylebox_override(
+		"panel",
+		UITheme.style(Color("#0b1120"), Color(UITheme.GOLD.r, UITheme.GOLD.g, UITheme.GOLD.b, 0.45), 16, 1, 20, true)
+	)
+	var header_chip_slot := _results_layer.get_node("Center/Panel/Content/Header/BestChipSlot") as HBoxContainer
 	var best_rank := -1
 	for roll in results:
 		best_rank = maxi(best_rank, int(GachaService.RARITY_RANK.get(str(roll.get("rarity", "common")), 0)))
@@ -443,18 +431,14 @@ func _show_results(results: Array) -> void:
 	for rarity in GachaService.RARITY_ORDER:
 		if int(GachaService.RARITY_RANK.get(rarity, 0)) == best_rank:
 			best_name = rarity.capitalize()
-	header.add_child(UIFactory.chip("Best: " + best_name, UITheme.rarity_color(best_name.to_lower())))
-	# Premium "Best:" flourish when the top rarity is legendary / mythic.
+	header_chip_slot.add_child(UIFactory.chip("Best: " + best_name, UITheme.rarity_color(best_name.to_lower())))
 	if UITheme.is_premium_rarity(best_name.to_lower()):
 		var best_effect := UITheme.rarity_effect(best_name.to_lower())
 		var best_glow: Color = best_effect.get("glow", UITheme.GOLD_BRIGHT)
-		var best_flourish := UIFactory.label("✦ " + UITheme.rarity_tier_label(best_name.to_lower()) + " ✦", 13, best_glow)
-		header.add_child(best_flourish)
-	box.add_child(header)
-	box.add_child(UIFactory.separator())
+		header_chip_slot.add_child(UIFactory.label("✦ " + UITheme.rarity_tier_label(best_name.to_lower()) + " ✦", 13, best_glow))
 
-	var grid := UIFactory.grid(mini(5, maxi(1, results.size())), 10)
-	box.add_child(grid)
+	var grid := _results_layer.get_node("Center/Panel/Content/ResultGrid") as GridContainer
+	grid.columns = mini(5, maxi(1, results.size()))
 	for index in results.size():
 		var roll: Dictionary = results[index]
 		var card := _result_card(roll)
@@ -463,7 +447,6 @@ func _show_results(results: Array) -> void:
 		var is_premium := bool(card.get_meta("premium", false))
 		var tween := create_tween()
 		if is_premium:
-			# Longer stagger + a subtle scale pop for legendary / mythic reveals.
 			tween.tween_interval(index * 0.09)
 			tween.tween_property(card, "modulate:a", 1.0, 0.16)
 			card.pivot_offset = card.custom_minimum_size * 0.5
@@ -471,34 +454,24 @@ func _show_results(results: Array) -> void:
 			tween.tween_property(card, "scale", Vector2.ONE, 0.24).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 			_reveal_animations += 1
 		else:
-			# Existing staggered fade-in, unchanged.
 			tween.tween_interval(index * 0.055)
 			tween.tween_property(card, "modulate:a", 1.0, 0.16)
 
-	var footer := UIFactory.hbox(10)
-	footer.add_child(UIFactory.wrapped(
-		"Duplicates raise Awakening. This result is already saved locally.",
-		11,
-		UITheme.TEXT_FAINT
-	))
-	footer.add_child(UIFactory.spacer())
-	var again := UIFactory.button("Summon Again", false)
+	var footer := _results_layer.get_node("Center/Panel/Content/Footer") as HBoxContainer
+	var again := footer.get_node("SummonAgainButton") as Button
 	again.pressed.connect(func() -> void:
 		if _results_layer != null:
 			_results_layer.queue_free()
 			_results_layer = null
 		_pull(10 if results.size() >= 10 else 1)
 	)
-	footer.add_child(again)
-	var close := UIFactory.button("Continue", true)
-	close.custom_minimum_size = Vector2(140, 40)
+	var close := footer.get_node("ContinueButton") as Button
 	close.pressed.connect(func() -> void:
 		if _results_layer != null:
 			_results_layer.queue_free()
 			_results_layer = null
 	)
-	footer.add_child(close)
-	box.add_child(footer)
+
 
 
 func _result_card(roll: Dictionary) -> PanelContainer:

@@ -1,0 +1,98 @@
+[gd_scene load_steps=2 format=3]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_results"]
+bg_color = Color(0.043, 0.067, 0.125, 1)
+border_color = Color(0.9, 0.7, 0.3, 0.45)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+
+[node name="SummonResultsOverlay" type="Control"]
+mouse_filter = 0
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.01, 0.02, 0.05, 0.82)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(1120, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_results")
+
+[node name="Content" type="VBoxContainer" parent="Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Center/Panel/Content"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Center/Panel/Content/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.96, 0.82, 0.49, 1)
+text = "Summon Results"
+
+[node name="HeaderSpacer" type="Control" parent="Center/Panel/Content/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="BestChipSlot" type="HBoxContainer" parent="Center/Panel/Content/Header"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Separator" type="HSeparator" parent="Center/Panel/Content"]
+layout_mode = 2
+
+[node name="ResultGrid" type="GridContainer" parent="Center/Panel/Content"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 5
+
+[node name="Footer" type="HBoxContainer" parent="Center/Panel/Content"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Message" type="Label" parent="Center/Panel/Content/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.68, 0.72, 0.8, 1)
+text = "Duplicates raise Awakening. This result is already saved locally."
+autowrap_mode = 3
+
+[node name="SummonAgainButton" type="Button" parent="Center/Panel/Content/Footer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Summon Again"
+
+[node name="ContinueButton" type="Button" parent="Center/Panel/Content/Footer"]
+custom_minimum_size = Vector2(140, 40)
+layout_mode = 2
+text = "Continue"
