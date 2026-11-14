@@ -404,8 +404,7 @@ func _build_roster(units: Array) -> void:
 	UIFactory.clear(_roster_box)
 	_roster_rows.clear()
 	for unit in units:
-		var row := UIFactory.hbox(5)
-		row.mouse_filter = Control.MOUSE_FILTER_STOP
+		var row := preload("res://scenes/ui/combat/components/party_roster_entry.tscn").instantiate() as HBoxContainer
 		var portrait := PortraitView.new()
 		portrait.custom_minimum_size = Vector2(30, 38)
 		var definition := ContentDB.get_character(unit.def_id)
@@ -413,20 +412,18 @@ func _build_roster(units: Array) -> void:
 			portrait.setup_character(definition)
 		else:
 			portrait.setup(unit.palette, "Human", unit.element, unit.rarity, unit.def_id.hash())
-		row.add_child(portrait)
-		var column := UIFactory.vbox(1)
-		column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		row.add_child(column)
-		var name_label := UIFactory.label(unit.display_name, 10, UITheme.TEXT)
-		name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		column.add_child(name_label)
-		var hp_bar := UIFactory.bar(UITheme.GREEN, 6)
-		hp_bar.custom_minimum_size = Vector2(0, 7)
+		row.get_node("PortraitSlot").add_child(portrait)
+		var name_label := row.get_node("Info/Name") as Label
+		name_label.text = unit.display_name
+		name_label.add_theme_font_size_override("font_size", 10)
+		name_label.add_theme_color_override("font_color", UITheme.TEXT)
+		var hp_bar := row.get_node("Info/HPBar") as ProgressBar
+		hp_bar.add_theme_stylebox_override("fill", UIFactory.bar(UITheme.GREEN, 6).get_theme_stylebox("fill").duplicate())
 		hp_bar.max_value = maxf(1.0, unit.max_hp)
 		hp_bar.value = clampf(unit.hp, 0.0, unit.max_hp)
-		column.add_child(hp_bar)
-		var hp_label := UIFactory.label("", 8, UITheme.TEXT_DIM)
-		column.add_child(hp_label)
+		var hp_label := row.get_node("Info/HPLabel") as Label
+		hp_label.add_theme_font_size_override("font_size", 8)
+		hp_label.add_theme_color_override("font_color", UITheme.TEXT_DIM)
 		_roster_rows[unit.uid] = { "bar": hp_bar, "label": hp_label, "row": row }
 		row.gui_input.connect(func(event: InputEvent) -> void:
 			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
