@@ -43,7 +43,7 @@ func _build_ground() -> void:
 	if ground == null:
 		return
 
-	# Cohesive base terrain (replaces diamond checkerboard)
+	# Cohesive base terrain with natural variation (layered, intentional)
 	var grass_tex := load("res://assets/environment/castle_gardens/grass_ground.png") as Texture2D
 	if grass_tex != null:
 		var base := TextureRect.new()
@@ -54,7 +54,22 @@ func _build_ground() -> void:
 		base.size = Vector2(1120, 640)
 		base.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		base.z_index = -2
+		base.modulate = Color(0.97, 1.0, 0.95, 1.0)
 		ground.add_child(base)
+		# Broad variation patches to break repetition
+		for patch in [
+			{"rect": Rect2(120, 320, 260, 320), "color": Color(0.36, 0.5, 0.34, 0.10)},
+			{"rect": Rect2(900, 300, 260, 340), "color": Color(0.42, 0.56, 0.38, 0.08)},
+			{"rect": Rect2(360, 520, 560, 160), "color": Color(0.34, 0.46, 0.32, 0.07)},
+			{"rect": Rect2(300, 220, 680, 90), "color": Color(0.44, 0.58, 0.4, 0.06)},
+		]:
+			var overlay := ColorRect.new()
+			overlay.position = patch.rect.position
+			overlay.size = patch.rect.size
+			overlay.color = patch.color
+			overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			overlay.z_index = -2
+			ground.add_child(overlay)
 
 	# Castle forecourt / plaza stone flooring
 	var stone_tex := load("res://assets/environment/castle_gardens/stone_floor.png") as Texture2D
@@ -68,39 +83,48 @@ func _build_ground() -> void:
 		plaza.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		plaza.z_index = -1
 		ground.add_child(plaza)
-		# soften edges
+		# soften edges and add subtle wear bands
 		if transitions != null:
 			for rect_data in [
-				Rect2(Vector2(420, 292), Vector2(440, 10)),
-				Rect2(Vector2(412, 180), Vector2(10, 120)),
-				Rect2(Vector2(858, 180), Vector2(10, 120)),
+				Rect2(Vector2(420, 292), Vector2(440, 12)),
+				Rect2(Vector2(410, 180), Vector2(12, 120)),
+				Rect2(Vector2(858, 180), Vector2(12, 120)),
+				Rect2(Vector2(420, 170), Vector2(440, 12)),
 			]:
 				var edge := ColorRect.new()
 				edge.position = rect_data.position
 				edge.size = rect_data.size
-				edge.color = Color(0.33, 0.42, 0.30, 0.35)
+				edge.color = Color(0.30, 0.38, 0.28, 0.28)
 				edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 				transitions.add_child(edge)
+			for band in [Rect2(450, 232, 380, 8), Rect2(480, 248, 320, 6)]:
+				var wear := ColorRect.new()
+				wear.position = band.position
+				wear.size = band.size
+				wear.color = Color(0.62, 0.58, 0.52, 0.10)
+				wear.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				transitions.add_child(wear)
 
-	# Subtle grass/ground detail accents (non-randomized, intentional)
+	# Grass/ground detail accents (intentional, varied)
 	if grass_details != null:
 		var flower_tex := load("res://assets/environment/castle_gardens/flower_bed_lush.png") as Texture2D
-		var accent_color := Color(0.42, 0.58, 0.36, 0.22)
-		for p in [Vector2(240, 260), Vector2(1040, 260), Vector2(240, 620), Vector2(1040, 620), Vector2(640, 700)]:
+		var accent_colors := [Color(0.38, 0.54, 0.34, 0.20), Color(0.46, 0.62, 0.4, 0.16), Color(0.32, 0.48, 0.30, 0.18)]
+		var idx := 0
+		for p in [Vector2(220, 250), Vector2(1060, 250), Vector2(220, 620), Vector2(1060, 620), Vector2(640, 690), Vector2(320, 560), Vector2(960, 560), Vector2(180, 430), Vector2(1100, 430)]:
 			var tuft := ColorRect.new()
-			tuft.position = p - Vector2(18, 8)
-			tuft.size = Vector2(36, 16)
-			tuft.color = accent_color
+			tuft.position = p - Vector2(22, 10)
+			tuft.size = Vector2(44, 20)
+			tuft.color = accent_colors[idx % accent_colors.size()]
 			tuft.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			grass_details.add_child(tuft)
+			idx += 1
 		if flower_tex != null:
-			# edge garden accents
-			for p in [Vector2(260, 360), Vector2(1020, 360), Vector2(260, 520), Vector2(1020, 520)]:
+			for p in [Vector2(260, 360), Vector2(1020, 360), Vector2(260, 520), Vector2(1020, 520), Vector2(300, 440), Vector2(980, 440)]:
 				var s := Sprite2D.new()
 				s.texture = flower_tex
 				s.position = p
 				s.centered = true
-				s.scale = Vector2(0.85, 0.85)
+				s.scale = Vector2(0.8 + 0.08 * float(int(p.x) % 2), 0.82)
 				s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 				grass_details.add_child(s)
 
@@ -230,27 +254,33 @@ func _configure_paths() -> void:
 		return
 
 	var points: Array[Vector2] = []
-	# Main central promenade
-	for y in range(240, 641, 28):
-		for w in [-24, 0, 24]:
+	# Main central promenade (wider, detailed)
+	for y in range(240, 646, 26):
+		for w in [-30, -10, 10, 30]:
 			points.append(Vector2(640 + w, y))
 	# Cross promenades / garden axes
-	for x in range(420, 861, 28):
-		for w in [-14, 14]:
+	for x in range(410, 871, 26):
+		for w in [-18, 0, 18]:
 			points.append(Vector2(x, 410 + w))
 			points.append(Vector2(x, 500 + w))
-	# Plaza to fountain connectors
-	for y in range(320, 420, 24):
-		points.append(Vector2(600, y))
-		points.append(Vector2(680, y))
+	# Plaza to fountain connectors and ring-like approach
+	for y in range(320, 430, 22):
+		points.append(Vector2(596, y))
+		points.append(Vector2(684, y))
+	for a in range(0, 360, 20):
+		var rad := deg_to_rad(float(a))
+		var px := 640.0 + cos(rad) * 42.0
+		var py := 360.0 + sin(rad) * 22.0
+		points.append(Vector2(px, py))
 	# Side approaches
-	for i in range(0, 7):
-		points.append(Vector2(420 - i * 18, 430 + i * 10))
-		points.append(Vector2(860 + i * 18, 430 + i * 10))
-		points.append(Vector2(420 - i * 18, 520 - i * 6))
-		points.append(Vector2(860 + i * 18, 520 - i * 6))
+	for i in range(0, 8):
+		points.append(Vector2(420 - i * 16, 430 + i * 9))
+		points.append(Vector2(860 + i * 16, 430 + i * 9))
+		points.append(Vector2(420 - i * 16, 520 - i * 5))
+		points.append(Vector2(860 + i * 16, 520 - i * 5))
 
 	var seen := {}
+	var n := 0
 	for p in points:
 		var key := "%d_%d" % [int(round(p.x / 10.0)), int(round(p.y / 10.0))]
 		if seen.has(key):
@@ -261,8 +291,19 @@ func _configure_paths() -> void:
 		s.position = p
 		s.centered = true
 		s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		s.scale = Vector2(0.5, 0.5) if path_tex.get_width() >= 64 else Vector2(1, 1)
+		var base_scale := 0.5 if path_tex.get_width() >= 64 else 1.0
+		var jitter := 0.96 + 0.08 * float(n % 3)
+		s.scale = Vector2(base_scale * jitter, base_scale * (1.92 - jitter))
+		s.modulate = Color(0.97 + 0.02 * float(n % 2), 0.98, 0.95, 1.0)
 		paths.add_child(s)
+		n += 1
+
+	# Subtle edge darkening for stone pathway definition
+	var edge_line := Line2D.new()
+	edge_line.width = 2.0
+	edge_line.default_color = Color(0.35, 0.32, 0.28, 0.18)
+	edge_line.points = PackedVector2Array([Vector2(610, 240), Vector2(610, 640), Vector2(670, 640), Vector2(670, 240)])
+	paths.add_child(edge_line)
 
 
 func _configure_hedges() -> void:
@@ -377,15 +418,30 @@ func _configure_lighting_and_effects() -> void:
 	if lighting != null:
 		for child in lighting.get_children():
 			child.queue_free()
-		# Warm lantern glows
-		for pos in [Vector2(600, 560), Vector2(680, 560), Vector2(600, 400), Vector2(680, 400), Vector2(600, 270), Vector2(680, 270), Vector2(640, 360)]:
+		# Warm lantern glows and focal highlights
+		for pos in [Vector2(600, 560), Vector2(680, 560), Vector2(600, 480), Vector2(680, 480), Vector2(600, 400), Vector2(680, 400), Vector2(600, 320), Vector2(680, 320), Vector2(600, 250), Vector2(680, 250)]:
 			var light := PointLight2D.new()
 			light.position = pos + Vector2(0, -18)
-			light.color = Color(1.0, 0.88, 0.62, 0.8)
-			light.energy = 0.55
-			light.texture_scale = 0.9
+			light.color = Color(1.0, 0.88, 0.62, 0.75)
+			light.energy = 0.45
+			light.texture_scale = 0.85
 			light.texture = _make_radial_light_texture()
 			lighting.add_child(light)
+		# Prominent fountain landmark glow
+		var fountain_glow := PointLight2D.new()
+		fountain_glow.position = Vector2(640, 338)
+		fountain_glow.color = Color(0.75, 0.92, 1.0, 0.8)
+		fountain_glow.energy = 0.7
+		fountain_glow.texture_scale = 1.4
+		fountain_glow.texture = _make_radial_light_texture()
+		lighting.add_child(fountain_glow)
+		# Soft castle-face shadowing/depth cue
+		var castle_shadow := ColorRect.new()
+		castle_shadow.position = Vector2(430, 120)
+		castle_shadow.size = Vector2(420, 20)
+		castle_shadow.color = Color(0.05, 0.05, 0.08, 0.10)
+		castle_shadow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		lighting.add_child(castle_shadow)
 
 	if effects != null:
 		for child in effects.get_children():
@@ -393,18 +449,33 @@ func _configure_lighting_and_effects() -> void:
 		# Subtle ambient particles (performant)
 		var particles := CPUParticles2D.new()
 		particles.position = Vector2(640, 360)
-		particles.amount = 18
-		particles.lifetime = 4.0
+		particles.amount = 24
+		particles.lifetime = 4.5
 		particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
 		particles.emission_rect_extents = Vector2(420, 220)
 		particles.direction = Vector2(0, -1)
-		particles.gravity = Vector2(0, -4)
-		particles.initial_velocity_min = 4.0
-		particles.initial_velocity_max = 12.0
-		particles.scale_amount_min = 0.6
-		particles.scale_amount_max = 1.2
-		particles.color = Color(1.0, 0.97, 0.85, 0.22)
+		particles.gravity = Vector2(0, -3)
+		particles.initial_velocity_min = 3.0
+		particles.initial_velocity_max = 10.0
+		particles.scale_amount_min = 0.5
+		particles.scale_amount_max = 1.1
+		particles.color = Color(1.0, 0.97, 0.88, 0.18)
 		effects.add_child(particles)
+		# Fountain sparkle accent to make it a prominent landmark
+		var sparkles := CPUParticles2D.new()
+		sparkles.position = Vector2(640, 340)
+		sparkles.amount = 10
+		sparkles.lifetime = 1.6
+		sparkles.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+		sparkles.emission_sphere_radius = 14.0
+		sparkles.direction = Vector2(0, -1)
+		sparkles.gravity = Vector2(0, 8)
+		sparkles.initial_velocity_min = 6.0
+		sparkles.initial_velocity_max = 16.0
+		sparkles.scale_amount_min = 0.4
+		sparkles.scale_amount_max = 0.9
+		sparkles.color = Color(0.82, 0.95, 1.0, 0.55)
+		effects.add_child(sparkles)
 
 
 func _make_radial_light_texture() -> Texture2D:

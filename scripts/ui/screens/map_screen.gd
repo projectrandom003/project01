@@ -10,6 +10,8 @@ var _tracked_box: VBoxContainer
 var _map_canvas: Control
 var _region_label: Label
 var _player_position_label: Label
+var _selected_poi_id: String = ""
+var _selected_detail_label: Label
 
 
 func _init() -> void:
@@ -34,6 +36,8 @@ func _build_content() -> void:
 	var region_name := "Unknown"
 	if not region.is_empty():
 		region_name = str(region.get("name", GameState.player_region))
+	elif not str(GameState.player_region).is_empty():
+		region_name = str(GameState.player_region).replace("_", " ").capitalize()
 	_region_label.text = region_name
 	_region_label.add_theme_color_override("font_color", UITheme.TEXT)
 
@@ -47,7 +51,12 @@ func _build_content() -> void:
 	_player_position_label.text = "Player: (%.0f, %.0f)" % [player_grid.x, player_grid.y]
 	_player_position_label.add_theme_color_override("font_color", UITheme.TEXT)
 
+	_selected_detail_label = UIFactory.label("Select a point of interest to inspect it.", 11, UITheme.TEXT_DIM)
+	_info_box.add_child(_selected_detail_label)
+	_info_box.add_child(HSeparator.new())
+
 	var pois: Array = region.get("pois", [])
+	var first := true
 	for poi in pois:
 		if typeof(poi) != TYPE_DICTIONARY:
 			continue
@@ -55,16 +64,48 @@ func _build_content() -> void:
 		if typeof(grid) != TYPE_ARRAY or (grid as Array).size() != 2:
 			continue
 		var g: Array = grid
+		var poi_id := str(poi.get("id", poi.get("name", "poi")))
 		var poi_name := str(poi.get("name", poi.get("id", "POI")))
+		var poi_type := str(poi.get("type", "landmark"))
 		var poi_pos := IsoMath.grid_to_world(float(g[0]), float(g[1]))
 		var dist_to := player_world.distance_to(poi_pos)
-		var label := "%s  (%.0f, %.0f)  — %.0f tiles" % [poi_name, float(g[0]), float(g[1]), dist_to / 16.0]
-		_info_box.add_child(UIFactory.label(label, 11, UITheme.TEXT_DIM))
+		var label := "%s  (%s)  - %.0f tiles" % [poi_name, poi_type.capitalize(), dist_to / 16.0]
+		var button := Button.new()
+		button.text = label
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.custom_minimum_size = Vector2(0, 30)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.add_theme_font_size_override("font_size", 11)
+		button.add_theme_color_override("font_color", UITheme.TEXT_DIM)
+		button.pressed.connect(func() -> void: _select_poi(poi_id, poi, player_world))
+		_info_box.add_child(button)
+		if first:
+			_select_poi(poi_id, poi, player_world, false)
+			first = false
 
 	if pois.is_empty():
 		_info_box.add_child(UIFactory.label("No points of interest.", 11, UITheme.TEXT_DIM))
 
 	_populate_tracked_quest(region, player_world)
+
+
+func _select_poi(poi_id: String, poi: Dictionary, player_world: Vector2 = GameState.player_position, refresh: bool = true) -> void:
+	_selected_poi_id = poi_id
+	var grid: Array = poi.get("grid", [0, 0])
+	var g := Vector2(float(grid[0]), float(grid[1])) if grid.size() == 2 else Vector2.ZERO
+	var poi_pos := IsoMath.grid_to_world(g.x, g.y)
+	var dist_to := player_world.distance_to(poi_pos)
+	if _selected_detail_label != null:
+		_selected_detail_label.text = "Selected: %s  (%.0f, %.0f)  - %.0f tiles" % [
+			str(poi.get("name", poi_id)),
+			g.x, g.y,
+			dist_to / 16.0
+		]
+		_selected_detail_label.add_theme_color_override("font_color", UITheme.GOLD_BRIGHT)
+	if _map_canvas != null and _map_canvas.has_method("set_selected_poi"):
+		_map_canvas.call("set_selected_poi", poi)
+	elif refresh and _map_canvas != null and _map_canvas.has_method("refresh_map"):
+		_map_canvas.refresh_map()
 
 
 func _populate_tracked_quest(region: Dictionary, player_world: Vector2) -> void:

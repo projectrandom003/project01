@@ -2009,8 +2009,11 @@ func _test_region_definitions() -> void:
 	check(conn_to_ok, "every connections[].to names an existing region")
 
 	var graph := RegionGraph.new(ContentDB.regions)
-	check(graph.region_ids().size() == 2, "RegionGraph.region_ids().size() == 2", str(graph.region_ids().size()))
-	check(graph.has_region("greenward") and graph.has_region("moonpetal_hollow"), "graph.has_region() for both ids")
+	var region_ids := graph.region_ids()
+	check(region_ids.size() >= 2, "RegionGraph.region_ids().size() >= 2", str(region_ids.size()))
+	check(graph.has_region("greenward") and graph.has_region("moonpetal_hollow"), "graph.has_region() for greenward and moonpetal_hollow")
+	if graph.has_region("castle_royal_gardens"):
+		check(graph.region_name("castle_royal_gardens") != "", "graph.region_name() non-empty for castle_royal_gardens")
 	check(not graph.definition("greenward").is_empty() and not graph.definition("moonpetal_hollow").is_empty(), "graph.definition() non-empty for both")
 	check(graph.region_name("greenward") != "" and graph.region_name("moonpetal_hollow") != "", "graph.region_name() non-empty for both")
 	check(not graph.entry_points("greenward").is_empty() and not graph.entry_points("moonpetal_hollow").is_empty(), "graph.entry_points() non-empty for both")

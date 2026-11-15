@@ -14,7 +14,7 @@ func _enter_tree() -> void:
 	_add_key_action("switch_avatar", [KEY_TAB])
 	_add_key_action("open_collection", [KEY_C])
 	_add_key_action("open_gacha", [KEY_G])
-	_add_key_action("open_inventory", [KEY_I])
+	_add_key_action("open_inventory", [KEY_J])
 	_add_key_action("open_quests", [KEY_Q])
 	_add_key_action("open_menu", [KEY_ESCAPE])
 	_add_key_action("zoom_in", [KEY_EQUAL, KEY_KP_ADD])

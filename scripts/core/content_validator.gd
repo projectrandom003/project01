@@ -1,4 +1,4 @@
-class_name ContentValidator
+﻿class_name ContentValidator
 extends RefCounted
 ## Strict, data-only validation for every JSON content file.
 ##
@@ -8,7 +8,7 @@ extends RefCounted
 ##   - tests with synthetic documents.
 ##
 ## Errors are formatted as:
-##   characters.json → characters.lyra_vey.base.hp: expected number, got string
+##   characters.json â†’ characters.lyra_vey.base.hp: expected number, got string
 
 const DATA_DIR := "res://resources/data/"
 const DATA_FILES := [
@@ -77,7 +77,7 @@ static func validate_all(data_dir: String = DATA_DIR) -> Dictionary:
 		var json := JSON.new()
 		var parse_error := json.parse(text)
 		if parse_error != OK:
-			errors.append("%s: invalid JSON — %s (line %d)" % [
+			errors.append("%s: invalid JSON â€” %s (line %d)" % [
 				file_name, json.get_error_message(), json.get_error_line()
 			])
 			continue
@@ -100,7 +100,7 @@ static func validate_text(file_name: String, text: String, context: Dictionary =
 	var json := JSON.new()
 	var parse_error := json.parse(text)
 	if parse_error != OK:
-		errors.append("%s: invalid JSON — %s (line %d)" % [
+		errors.append("%s: invalid JSON â€” %s (line %d)" % [
 			file_name, json.get_error_message(), json.get_error_line()
 		])
 		return errors
@@ -1134,10 +1134,10 @@ static func validate_region_graph(regions: Dictionary) -> Array[String]:
 	for raw_id in regions.keys():
 		var rid := str(raw_id)
 		if seen_ids.has(rid):
-			errors.append("regions → %s: duplicate region id" % rid)
+			errors.append("regions â†’ %s: duplicate region id" % rid)
 		seen_ids[rid] = true
 		if typeof(regions[raw_id]) != TYPE_DICTIONARY:
-			errors.append("regions → %s: region definition must be an object" % rid)
+			errors.append("regions â†’ %s: region definition must be an object" % rid)
 
 	# Build adjacency from valid edges and collect per-edge problems.
 	var graph: Dictionary = {}
@@ -1153,26 +1153,26 @@ static func validate_region_graph(regions: Dictionary) -> Array[String]:
 				for index in conns.size():
 					var conn: Variant = conns[index]
 					if typeof(conn) != TYPE_DICTIONARY:
-						errors.append("regions → %s.connections[%d]: expected an object" % [rid, index])
+						errors.append("regions â†’ %s.connections[%d]: expected an object" % [rid, index])
 						continue
 					var c: Dictionary = conn
 					var to := str(c.get("to", ""))
 					var via := str(c.get("via", ""))
 					var entry := str(c.get("entry", ""))
 					if to.is_empty():
-						errors.append("regions → %s.connections[%d]: missing 'to'" % [rid, index])
+						errors.append("regions â†’ %s.connections[%d]: missing 'to'" % [rid, index])
 						continue
 					if to == rid:
-						errors.append("regions → %s.connections[%d]: region connection cannot target itself" % [rid, index])
+						errors.append("regions â†’ %s.connections[%d]: region connection cannot target itself" % [rid, index])
 						continue
 					if not regions.has(to):
-						errors.append("regions → %s.connections[%d]: references missing region '%s'" % [rid, index, to])
+						errors.append("regions â†’ %s.connections[%d]: references missing region '%s'" % [rid, index, to])
 						continue
 					if via.is_empty() or not eps.has(via):
-						errors.append("regions → %s.connections[%d]: dangling 'via' entry point '%s'" % [rid, index, via])
+						errors.append("regions â†’ %s.connections[%d]: dangling 'via' entry point '%s'" % [rid, index, via])
 					var dest_eps := _entry_point_ids(regions.get(to, null))
 					if entry.is_empty() or not dest_eps.has(entry):
-						errors.append("regions → %s.connections[%d]: dangling 'entry' point '%s' in region '%s'" % [rid, index, entry, to])
+						errors.append("regions â†’ %s.connections[%d]: dangling 'entry' point '%s' in region '%s'" % [rid, index, entry, to])
 					targets.append(to)
 		graph[rid] = targets
 
@@ -1191,7 +1191,10 @@ static func validate_region_graph(regions: Dictionary) -> Array[String]:
 	for raw_id in regions.keys():
 		var rid := str(raw_id)
 		if not reachable.has(rid):
-			errors.append("regions → %s: region is unreachable from '%s'" % [rid, ROOT])
+			var def: Variant = regions.get(raw_id, {})
+			if typeof(def) == TYPE_DICTIONARY and bool((def as Dictionary).get("standalone", false)):
+				continue
+			errors.append("regions â†’ %s: region is unreachable from '%s'" % [rid, ROOT])
 	return errors
 
 
@@ -1445,7 +1448,7 @@ static func _type_name(value: Variant) -> String:
 
 
 static func _err(errors: Array[String], file: String, path: String, message: String) -> void:
-	errors.append("%s → %s: %s" % [file, path, message])
+	errors.append("%s â†’ %s: %s" % [file, path, message])
 
 
 static func _valid_id(id: String) -> bool:

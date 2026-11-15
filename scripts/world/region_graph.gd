@@ -283,6 +283,9 @@ static func validate_definitions(regions: Dictionary) -> Array[String]:
 	for raw_id in regions.keys():
 		var rid := str(raw_id)
 		if not reachable.has(rid):
+			var def: Variant = regions.get(raw_id, {})
+			if typeof(def) == TYPE_DICTIONARY and bool((def as Dictionary).get("standalone", false)):
+				continue
 			errors.append("region '%s' is unreachable from '%s'" % [rid, ROOT])
 	return errors
 

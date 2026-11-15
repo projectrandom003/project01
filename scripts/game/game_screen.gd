@@ -104,6 +104,18 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	# Toggle inventory even while it is the active overlay (same controller/interface).
+	if event.is_action_pressed("open_inventory"):
+		if active_combat != null or (dialogue != null and dialogue.visible):
+			return
+		if active_overlay != null:
+			if is_instance_valid(active_overlay) and active_overlay is InventoryScreen:
+				active_overlay.close_screen()
+			return
+		open_screen("inventory")
+		get_viewport().set_input_as_handled()
+		return
+
 	if _is_busy():
 		return
 	if event.is_action_pressed("interact"):
@@ -117,9 +129,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("open_collection"):
 		open_screen("collection")
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("open_inventory"):
-		open_screen("inventory")
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("open_quests"):
 		open_screen("quests")
@@ -334,6 +343,12 @@ func open_screen(screen_id: String) -> void:
 			screen_scene = QUEST_SCREEN_SCENE
 		"map":
 			screen_scene = MAP_SCREEN_SCENE
+		"settings":
+			if ResourceLoader.exists("res://scenes/ui/settings_screen.tscn"):
+				screen_scene = load("res://scenes/ui/settings_screen.tscn") as PackedScene
+			else:
+				push_warning("[GameScreen] Settings screen not available.")
+				return
 		_:
 			push_warning("[GameScreen] Unknown screen: " + screen_id)
 			return

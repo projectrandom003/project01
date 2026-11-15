@@ -1,4 +1,4 @@
-{
+﻿{
     "greenward":  {
                       "name":  "Greenward",
                       "subtitle":  "Enchanted forests and forgotten temples",
@@ -443,5 +443,153 @@
                                                      "label":  "Return to Greenward"
                                                  }
                                              ]
-                         }
+                         },
+    "castle_royal_gardens":  {
+                                 "name":  "Castle \u0026 Royal Gardens",
+                                 "subtitle":  "A gothic castle forecourt and symmetrical royal gardens",
+                                 "chunk_size":  16,
+                                 "tile_width":  64,
+                                 "tile_height":  32,
+                                 "load_radius":  1,
+                                 "noise_seed":  9001,
+                                 "spawn_grid":  [
+                                                    29.38,
+                                                    9.38
+                                                ],
+                                 "biome":  {
+                                               "deep_water_level":  -0.5,
+                                               "water_shallow":  "#4f8fb0",
+                                               "water_deep":  "#2e6284",
+                                               "water_level":  -0.4,
+                                               "grass_colors":  [
+                                                                    "#5f8a57",
+                                                                    "#6b955f",
+                                                                    "#577f50"
+                                                                ],
+                                               "path_color":  "#a79678"
+                                           },
+                                 "props":  [
+                                               {
+                                                   "weight":  1,
+                                                   "type":  "flower",
+                                                   "min_elevation":  -0.1
+                                               }
+                                           ],
+                                 "pois":  [
+                                              {
+                                                  "grid":  [
+                                                               29.38,
+                                                               9.38
+                                                           ],
+                                                  "name":  "Garden Arrival",
+                                                  "id":  "castle_arrival",
+                                                  "type":  "landmark"
+                                              },
+                                              {
+                                                  "grid":  [
+                                                               26.25,
+                                                               6.25
+                                                           ],
+                                                  "name":  "Royal Promenade",
+                                                  "id":  "royal_promenade",
+                                                  "type":  "landmark"
+                                              },
+                                              {
+                                                  "grid":  [
+                                                               21.25,
+                                                               1.25
+                                                           ],
+                                                  "name":  "Central Fountain",
+                                                  "id":  "central_fountain",
+                                                  "type":  "landmark"
+                                              },
+                                              {
+                                                  "grid":  [
+                                                               16.56,
+                                                               -3.44
+                                                           ],
+                                                  "name":  "Castle Entrance",
+                                                  "id":  "castle_entrance",
+                                                  "type":  "landmark"
+                                              },
+                                              {
+                                                  "grid":  [
+                                                               20,
+                                                               6.88
+                                                           ],
+                                                  "name":  "West Garden",
+                                                  "id":  "left_garden",
+                                                  "type":  "landmark"
+                                              },
+                                              {
+                                                  "grid":  [
+                                                               26.88,
+                                                               0
+                                                           ],
+                                                  "name":  "East Garden",
+                                                  "id":  "right_garden",
+                                                  "type":  "landmark"
+                                              },
+                                              {
+                                                  "grid":  [
+                                                               23.75,
+                                                               10.31
+                                                           ],
+                                                  "name":  "West Reflecting Pond",
+                                                  "id":  "left_pond",
+                                                  "type":  "landmark"
+                                              },
+                                              {
+                                                  "grid":  [
+                                                               30.31,
+                                                               3.75
+                                                           ],
+                                                  "name":  "East Reflecting Pond",
+                                                  "id":  "right_pond",
+                                                  "type":  "landmark"
+                                              }
+                                          ],
+                                 "spawns":  [
+
+                                            ],
+                                 "world_origin":  [
+                                                      0,
+                                                      0
+                                                  ],
+                                 "environment":  {
+                                                     "weather_bias":  [
+                                                                          "clear"
+                                                                      ],
+                                                     "fog_density":  0.08,
+                                                     "ambient_music":  "",
+                                                     "zone":  "castle_gardens",
+                                                     "ambient_tint":  "#f6f0e0"
+                                                 },
+                                 "entry_points":  {
+                                                      "player_spawn":  [
+                                                                           29.38,
+                                                                           9.38
+                                                                       ],
+                                                      "garden_entry":  [
+                                                                           26.25,
+                                                                           6.25
+                                                                       ]
+                                                  },
+                                 "connections":  [
+
+                                                 ],
+                                 "map_style": "authored", "standalone": true,
+                                 "map_bounds":  {
+                                                    "min":  [
+                                                                80,
+                                                                80
+                                                            ],
+                                                    "max":  [
+                                                                1200,
+                                                                720
+                                                            ]
+                                                },
+                                 "clearing_radius":  8
+                             }
 }
+
