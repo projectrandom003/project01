@@ -71,6 +71,7 @@ func setup(p_group_id: String, p_home: Vector2, p_enemy_def: Dictionary, p_boss:
 
 func _ready() -> void:
 	super._ready()
+	add_to_group("world_minimap_monsters")
 	_roam_target = position
 	_resolve_modular_components()
 	_sync_components_from_setup()

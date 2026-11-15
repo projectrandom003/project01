@@ -37,6 +37,7 @@ func setup(p_id: String, p_name: String, p_dialogue: String, p_palette: Dictiona
 
 func _ready() -> void:
 	super._ready()  # adds to the "interactables" group
+	add_to_group("world_minimap_npcs")
 	interaction_radius = 92.0
 	if role.is_empty():
 		role = _derive_role()

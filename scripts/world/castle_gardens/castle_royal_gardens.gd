@@ -13,7 +13,6 @@ const NPC_SCENE: PackedScene = preload("res://scenes/world/world_npc.tscn")
 var region_id: String = "castle_royal_gardens"
 var player: Player
 var npcs: Array = []
-var monsters: Array = []
 
 
 func _ready() -> void:
