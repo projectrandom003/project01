@@ -1,0 +1,65 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/castle_royal_gardens.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_exterior.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_entrance.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/royal_garden.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/garden_fountain.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/garden_hedges.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/stone_pathways.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/water_features.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/decorative_props.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/npc_placement.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/map_spawn_points.tscn" id="11"]
+
+[node name="CastleRoyalGardens" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Terrain" type="Node2D" parent="."]
+z_index = -10
+
+[node name="Ground" type="Node2D" parent="Terrain"]
+
+[node name="StonePathways" parent="." instance=ExtResource("7")]
+z_index = -5
+
+[node name="WaterFeatures" parent="." instance=ExtResource("8")]
+z_index = -4
+
+[node name="CastleExterior" parent="." instance=ExtResource("2")]
+position = Vector2(640, 170)
+
+[node name="CastleEntrance" parent="." instance=ExtResource("3")]
+position = Vector2(640, 170)
+
+[node name="RoyalGarden" parent="." instance=ExtResource("4")]
+position = Vector2(640, 320)
+
+[node name="GardenFountain" parent="." instance=ExtResource("5")]
+position = Vector2(640, 360)
+
+[node name="GardenHedges" parent="." instance=ExtResource("6")]
+position = Vector2(0, 0)
+
+[node name="DecorativeProps" parent="." instance=ExtResource("9")]
+
+[node name="Entities" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="NPCPlacement" parent="." instance=ExtResource("10")]
+
+[node name="MapSpawnPoints" parent="." instance=ExtResource("11")]
+
+[node name="Bounds" type="StaticBody2D" parent="."]
+
+[node name="Top" type="CollisionPolygon2D" parent="Bounds"]
+polygon = PackedVector2Array(80, 80, 1200, 80, 1200, 110, 80, 110)
+
+[node name="Bottom" type="CollisionPolygon2D" parent="Bounds"]
+polygon = PackedVector2Array(80, 690, 1200, 690, 1200, 720, 80, 720)
+
+[node name="Left" type="CollisionPolygon2D" parent="Bounds"]
+polygon = PackedVector2Array(80, 80, 110, 80, 110, 720, 80, 720)
+
+[node name="Right" type="CollisionPolygon2D" parent="Bounds"]
+polygon = PackedVector2Array(1170, 80, 1200, 80, 1200, 720, 1170, 720)
