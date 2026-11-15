@@ -147,10 +147,10 @@ func _notification(what: int) -> void:
 func _build_world(region_id: String = "", entry_point: String = "") -> void:
 	var rid := region_id
 	if rid.is_empty():
-		rid = GameState.player_region
+		rid = GameState.active_world_id if not str(GameState.active_world_id).is_empty() else GameState.player_region
 	# Normal new journeys start in Castle & Royal Gardens through the real gameplay
 	# flow, while preserving existing save-region behavior and Greenward as a
-	# separate independently loadable world.
+	# separate independently loadable world. Do not override an actual saved world.
 	if not GameState.loaded_from_save and rid == "greenward" and entry_point.is_empty():
 		rid = DEFAULT_START_REGION
 	rid = _resolve_region_id(rid)
@@ -164,16 +164,21 @@ func _build_world(region_id: String = "", entry_point: String = "") -> void:
 		world.entry_point = entry_point
 	world.name = "World_" + rid
 	add_child(world)
+	# Persist the resolved active world as soon as it is instantiated so Continue
+	# can restore it even if the player exits before the next autosave tick.
+	GameState.queue_save()
 
 
 func _resolve_region_id(region_id: String) -> String:
-	var rid := region_id
+	var rid := str(region_id)
 	if rid.is_empty():
-		rid = "greenward"
+		# Legacy/empty saves default to Greenward; never guess Castle.
+		return "greenward" if WORLD_SCENES.has("greenward") else DEFAULT_START_REGION
 	if WORLD_SCENES.has(rid):
 		return rid
+	# Unknown but data-defined regions fall back to Greenward for compatibility.
 	if ContentDB.regions.has(rid):
-		return "greenward"
+		return "greenward" if WORLD_SCENES.has("greenward") else DEFAULT_START_REGION
 	return "greenward" if WORLD_SCENES.has("greenward") else DEFAULT_START_REGION
 
 
@@ -238,11 +243,13 @@ func _on_region_change_requested(target_region_id: String, entry_point: String) 
 	# Remember where the player stood in the CURRENT region, then switch.
 	GameState.set_region_position(current_region_id, player.position)
 	GameState.set_player_region(rid)
+	GameState.save_now()
 	var old_world := world
 	world = null
 	old_world.queue_free()
 	_build_world(rid, entry_point)
 	_set_world_active(true)
+	GameState.save_now()
 	EventBus.toast_requested.emit("Arrived in " + destination_name)
 	_changing_region = false
 
@@ -395,6 +402,8 @@ func _return_to_title() -> void:
 		if player != null:
 			GameState.set_region_position(current_region_id, player.position)
 			GameState.set_player_position(player.position)
+			if player.has_method("get") and "facing_direction" in player:
+				GameState.set_player_facing(player.facing_direction)
 	GameState.save_now()
 	TouchInput.release()
 	exit_to_menu.emit()

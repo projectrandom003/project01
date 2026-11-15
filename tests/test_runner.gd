@@ -2235,9 +2235,15 @@ func _test_region_save_state() -> void:
 	var old: Dictionary = original.duplicate(true)
 	old.erase("region")
 	old.erase("region_positions")
+	old.erase("active_world_id")
+	old.erase("player_facing")
 	GameState._load_from_dict(old)
 	check(GameState.player_region == "greenward", "old save (no region key) defaults player_region to greenward")
-	check(GameState.region_positions.is_empty(), "old save (no region_positions) yields empty region_positions")
+	if bool(old.get("has_position", false)):
+		check(GameState.has_region_position("greenward"), "legacy save migrates stored position into active greenward region slot")
+		check(near(GameState.region_position("greenward").x, GameState.player_position.x), "migrated legacy region position preserves x")
+	else:
+		check(GameState.region_positions.is_empty(), "old save without position leaves region_positions empty")
 	check(not GameState.profile.is_empty(), "old save loads fully without crashing")
 
 	GameState._load_from_dict(original.duplicate(true))

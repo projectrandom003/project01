@@ -27,13 +27,16 @@ var flags: Dictionary = {}
 var gear_levels: Dictionary = {}
 var player_position: Vector2 = Vector2.ZERO
 var has_player_position: bool = false
+var player_facing: Vector2 = Vector2(0.0, 1.0)
 var loaded_from_save: bool = false
 
-# Per-region position support. `player_position` / `has_player_position` are
-# KEPT unchanged (legacy single-slot save keys). The new fields layer on top:
-# `player_region` records the active region and `region_positions` remembers a
-# saved position per region id. Values are stored as JSON-safe {x, y} dicts.
+# Persistent world/session state. `player_region` is the canonical active world/
+# region identifier used for save/load and scene resolution. `player_position` /
+# `has_player_position` are KEPT unchanged (legacy single-slot save keys). The
+# layered fields add per-region positions and explicit facing while remaining
+# backward compatible with older saves.
 var player_region: String = "greenward"
+var active_world_id: String = "greenward"
 var region_positions: Dictionary = {}
 
 var _save_timer: Timer
@@ -90,7 +93,9 @@ func new_game(player_name: String = "Wanderer") -> void:
 	flags = {}
 	player_position = Vector2.ZERO
 	has_player_position = false
+	player_facing = Vector2(0.0, 1.0)
 	player_region = "greenward"
+	active_world_id = "greenward"
 	region_positions = {}
 	_uid_counter = 0
 	for character_id in STARTING_CHARACTERS:
@@ -132,7 +137,9 @@ func _to_dict() -> Dictionary:
 		"gear_levels": gear_levels.duplicate(true),
 		"position": { "x": player_position.x, "y": player_position.y },
 		"has_position": has_player_position,
+		"player_facing": { "x": player_facing.x, "y": player_facing.y },
 		"region": player_region,
+		"active_world_id": active_world_id,
 		"region_positions": region_positions.duplicate(true),
 	}
 
@@ -188,10 +195,30 @@ func _load_from_dict(data: Dictionary) -> void:
 	var pos: Dictionary = data.get("position", {})
 	player_position = Vector2(float(pos.get("x", 0.0)), float(pos.get("y", 0.0)))
 	has_player_position = bool(data.get("has_position", false))
-	# Per-region fields are OPTIONAL so old saves (which lack them) still load.
-	player_region = str(data.get("region", "greenward"))
+	var facing: Variant = data.get("player_facing", null)
+	if typeof(facing) == TYPE_DICTIONARY:
+		var fd: Dictionary = facing
+		player_facing = Vector2(float(fd.get("x", 0.0)), float(fd.get("y", 1.0)))
+		if player_facing.length_squared() < 0.0001:
+			player_facing = Vector2(0.0, 1.0)
+	elif facing is Vector2:
+		player_facing = (facing as Vector2).normalized() if (facing as Vector2).length_squared() > 0.0001 else Vector2(0.0, 1.0)
+	else:
+		player_facing = Vector2(0.0, 1.0)
+	# Per-region/world fields are OPTIONAL so old saves (which lack them) still load.
+	# Legacy Greenward saves are migrated by defaulting to greenward; never assume Castle.
+	player_region = str(data.get("region", data.get("active_world_id", "greenward")))
+	if player_region.is_empty():
+		player_region = "greenward"
+	active_world_id = str(data.get("active_world_id", player_region))
+	if active_world_id.is_empty():
+		active_world_id = player_region
+	player_region = active_world_id
 	var rp: Variant = data.get("region_positions", {})
 	region_positions = rp.duplicate(true) if typeof(rp) == TYPE_DICTIONARY else {}
+	# Migrate legacy single-slot Greenward position into region storage when safe.
+	if has_player_position and not region_positions.has(player_region):
+		region_positions[player_region] = { "x": player_position.x, "y": player_position.y }
 
 
 func set_player_position(position: Vector2) -> void:
@@ -205,6 +232,15 @@ func set_player_position(position: Vector2) -> void:
 
 func set_player_region(region_id: String) -> void:
 	player_region = region_id
+	active_world_id = region_id
+
+func set_active_world(world_id: String) -> void:
+	set_player_region(world_id)
+
+func set_player_facing(facing: Vector2) -> void:
+	if facing.length_squared() < 0.0001:
+		return
+	player_facing = facing.normalized()
 
 
 func set_region_position(region_id: String, p: Vector2) -> void:

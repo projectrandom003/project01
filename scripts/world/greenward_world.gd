@@ -340,7 +340,11 @@ func _spawn_player() -> void:
 	entities.add_child(player)
 	player.global_position = entities.to_global(resolved_spawn)
 	player.reset_physics_interpolation()
+	if player.has_method("restore_facing"):
+		player.restore_facing(GameState.player_facing)
+	GameState.set_player_region(region_id)
 	GameState.set_player_position(player.position)
+	GameState.set_region_position(region_id, player.position)
 
 
 # --------------------------------------------------------------- streaming

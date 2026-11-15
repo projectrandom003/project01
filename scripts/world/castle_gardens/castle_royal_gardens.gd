@@ -11,9 +11,12 @@ const NPC_SCENE: PackedScene = preload("res://scenes/world/world_npc.tscn")
 @onready var npc_placement: Node2D = $NPCPlacement
 
 var region_id: String = "castle_royal_gardens"
+var entry_point: String = ""
 var player: Player
 var npcs: Array = []
 var monsters: Array = []
+const SAVE_POSITION_INTERVAL := 1.0
+var _save_accumulator: float = 0.0
 
 
 func _ready() -> void:
@@ -501,21 +504,52 @@ func _add_static_circle(parent: Node2D, pos: Vector2, radius: float) -> void:
 	parent.add_child(body)
 
 
-func _process(_delta: float) -> void:
-	if player != null and is_instance_valid(player):
-		GameState.set_player_position(player.global_position)
+func _process(delta: float) -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	GameState.set_player_position(player.position)
+	GameState.set_region_position(region_id, player.position)
+	_save_accumulator += delta
+	if _save_accumulator >= SAVE_POSITION_INTERVAL:
+		_save_accumulator = 0.0
+		GameState.save_now()
 
 
 func _spawn_player() -> void:
 	player = PLAYER_SCENE.instantiate() as Player
 	player.name = "Player"
-	var spawn := _get_spawn_position("PlayerSpawn")
-	player.position = spawn
+	var placed := false
+	# 1) Explicit entry point for region/world transitions.
+	if not entry_point.is_empty():
+		var eps: Variant = ContentDB.get_region(region_id).get("entry_points", {})
+		if typeof(eps) == TYPE_DICTIONARY and (eps as Dictionary).has(entry_point):
+			var g: Variant = (eps as Dictionary)[entry_point]
+			if typeof(g) == TYPE_ARRAY and (g as Array).size() == 2:
+				var ga: Array = g
+				player.position = IsoMath.grid_to_world(float(ga[0]), float(ga[1]))
+				placed = true
+	# 2) Resume this world's saved position.
+	if not placed and GameState.player_region == region_id and GameState.has_region_position(region_id):
+		var saved_position := GameState.region_position(region_id)
+		if saved_position.length_squared() > 1.0:
+			player.position = saved_position
+			placed = true
+	# 3) Legacy single-slot position fallback for this active world.
+	if not placed and GameState.has_player_position and GameState.player_region == region_id:
+		player.position = GameState.player_position
+		placed = true
+	if not placed:
+		player.position = _get_spawn_position("PlayerSpawn")
+	var resolved_spawn := player.position
 	entities.add_child(player)
-	player.global_position = to_global(spawn)
+	player.global_position = entities.to_global(resolved_spawn)
 	if player.has_method("reset_physics_interpolation"):
 		player.reset_physics_interpolation()
+	if player.has_method("restore_facing"):
+		player.restore_facing(GameState.player_facing)
+	GameState.set_player_region(region_id)
 	GameState.set_player_position(player.position)
+	GameState.set_region_position(region_id, player.position)
 
 
 func _get_spawn_position(marker_name: String) -> Vector2:

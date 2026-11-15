@@ -77,6 +77,7 @@ var _in_water: bool = false
 var _water_surface: Sprite2D = null
 var _name_label: Label
 var _glow: PointLight2D
+var facing_direction: Vector2 = Vector2(0.0, 1.0)
 
 
 func _ready() -> void:
@@ -172,6 +173,7 @@ func _physics_process(delta: float) -> void:
 		if visual != null:
 			visual.set_move_direction(Vector2.ZERO)
 			visual.play(ANIM_IDLE)
+		GameState.set_player_facing(facing_direction)
 		return
 
 	var input_vector := Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -216,10 +218,13 @@ func _physics_process(delta: float) -> void:
 		velocity = velocity.move_toward(input_vector * _speed_target, accel * delta)
 		if absf(input_vector.x) > 0.08:
 			visual.facing = 1.0 if input_vector.x > 0.0 else -1.0
+		facing_direction = input_vector.normalized()
+		GameState.set_player_facing(facing_direction)
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta)
 		if velocity.length() < STOP_SNAP_SPEED:
 			velocity = Vector2.ZERO
+		# Preserve last facing when idle.
 
 	move_and_slide()
 
@@ -230,11 +235,15 @@ func _physics_process(delta: float) -> void:
 	# or accelerating instead of pedalling at full pace.
 	var movement_ratio := clampf(velocity.length() / maxf(1.0, nominal_speed), 0.0, 1.0)
 	var moving := velocity.length() > STOP_SNAP_SPEED
-	visual.set_move_direction(velocity.normalized() if moving else input_vector)
+	var dir_vec := velocity.normalized() if moving else (input_vector if input_vector.length_squared() > 0.001 else facing_direction)
+	visual.set_move_direction(dir_vec)
 	visual.walking = moving  # backward-compatible assignment
 	if moving:
 		var locomotion_speed := (1.40 if sprinting else 1.36) * lerpf(0.55, 1.0, movement_ratio)
 		visual.play(ANIM_RUN if sprinting else ANIM_WALK, -1, locomotion_speed)
+		if velocity.length_squared() > 1.0:
+			facing_direction = velocity.normalized()
+			GameState.set_player_facing(facing_direction)
 	else:
 		visual.play(ANIM_IDLE, -1, 1.0)
 	_update_camera_lookahead(delta, velocity, movement_ratio)
@@ -399,6 +408,18 @@ func current_prompt() -> String:
 	if nearby_interactable == null:
 		return ""
 	return nearby_interactable.prompt
+
+
+func restore_facing(facing: Vector2) -> void:
+	if facing.length_squared() < 0.0001:
+		facing = Vector2(0.0, 1.0)
+	facing_direction = facing.normalized()
+	if visual != null:
+		if absf(facing_direction.x) > 0.1:
+			visual.facing = 1.0 if facing_direction.x > 0.0 else -1.0
+		visual.set_move_direction(facing_direction)
+		visual.play(ANIM_IDLE)
+	GameState.set_player_facing(facing_direction)
 
 
 # ------------------------------------------------- cosmetic animation hooks
