@@ -9,6 +9,7 @@ extends Node
 signal exit_to_menu
 
 const GREENWARD_WORLD_SCENE: PackedScene = preload("res://scenes/world/greenward_world.tscn")
+const CASTLE_ROYAL_GARDENS_SCENE: PackedScene = preload("res://scenes/world/castle_royal_gardens.tscn")
 const GAME_UI_SCENE: PackedScene = preload("res://scenes/ui/game_ui.tscn")
 const COMBAT_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/combat_screen.tscn")
 const GACHA_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/gacha_screen.tscn")
@@ -18,7 +19,14 @@ const QUEST_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/quest_screen.ts
 const MAP_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/map_screen.tscn")
 const PAUSE_MENU_SCENE: PackedScene = preload("res://scenes/ui/pause_menu.tscn")
 
-var world: GreenwardWorld
+const WORLD_SCENES := {
+	"greenward": preload("res://scenes/world/greenward_world.tscn"),
+	"moonpetal_hollow": preload("res://scenes/world/greenward_world.tscn"),
+	"castle_royal_gardens": preload("res://scenes/world/castle_royal_gardens.tscn"),
+}
+const DEFAULT_START_REGION := "castle_royal_gardens"
+
+var world: Node2D
 var ui_layer: CanvasLayer
 var hud: HUD
 var dialogue: DialogueBox
@@ -60,9 +68,11 @@ func _exit_tree() -> void:
 	# is rebuilt lazily by _detail_material_cached() on the next build.
 	ChunkBuilder._detail_material = null
 	ChunkBuilder._valid_kind_set = {}
-	if world != null and is_instance_valid(world) and world.player != null:
-		GameState.set_region_position(current_region_id, world.player.position)
-		GameState.set_player_position(world.player.position)
+	if world != null and is_instance_valid(world):
+		var player = world.get("player") if "player" in world else null
+		if player != null:
+			GameState.set_region_position(current_region_id, player.position)
+			GameState.set_player_position(player.position)
 		GameState.save_now()
 	TouchInput.release()
 	if EventBus.encounter_requested.is_connected(_on_encounter_requested):
@@ -81,7 +91,9 @@ func _process(delta: float) -> void:
 	if world == null or not is_instance_valid(world):
 		return
 	if hud != null:
-		hud.set_world_info(world.current_area_name(), world.day_phase())
+		var area_name := str(world.call("current_area_name")) if world.has_method("current_area_name") else current_region_id.capitalize()
+		var phase := str(world.call("day_phase")) if world.has_method("day_phase") else "day"
+		hud.set_world_info(area_name, phase)
 	# Safety net: recover from any stuck suspended state.
 	if active_combat != null and not is_instance_valid(active_combat):
 		active_combat = null
@@ -123,17 +135,37 @@ func _notification(what: int) -> void:
 
 # --------------------------------------------------------------------- setup
 
-func _build_world(region_id: String = "greenward", entry_point: String = "") -> void:
-	# Defensive fallback for an unknown / empty saved region id.
+func _build_world(region_id: String = "", entry_point: String = "") -> void:
 	var rid := region_id
-	if rid.is_empty() or not ContentDB.regions.has(rid):
-		rid = "greenward"
+	if rid.is_empty():
+		rid = GameState.player_region
+	# Normal new journeys start in Castle & Royal Gardens through the real gameplay
+	# flow, while preserving existing save-region behavior and Greenward as a
+	# separate independently loadable world.
+	if not GameState.loaded_from_save and rid == "greenward" and entry_point.is_empty():
+		rid = DEFAULT_START_REGION
+	rid = _resolve_region_id(rid)
 	current_region_id = rid
-	world = GREENWARD_WORLD_SCENE.instantiate() as GreenwardWorld
-	world.region_id = rid
-	world.entry_point = entry_point
+	GameState.set_player_region(rid)
+	var scene: PackedScene = WORLD_SCENES.get(rid, GREENWARD_WORLD_SCENE)
+	world = scene.instantiate() as Node2D
+	if "region_id" in world:
+		world.region_id = rid
+	if "entry_point" in world:
+		world.entry_point = entry_point
 	world.name = "World_" + rid
 	add_child(world)
+
+
+func _resolve_region_id(region_id: String) -> String:
+	var rid := region_id
+	if rid.is_empty():
+		rid = "greenward"
+	if WORLD_SCENES.has(rid):
+		return rid
+	if ContentDB.regions.has(rid):
+		return "greenward"
+	return "greenward" if WORLD_SCENES.has("greenward") else DEFAULT_START_REGION
 
 
 func _build_ui() -> void:
@@ -167,37 +199,42 @@ func _connect_signals() -> void:
 func _on_region_change_requested(target_region_id: String, entry_point: String) -> void:
 	if _changing_region:
 		return
-	if world == null or not is_instance_valid(world) or world.player == null:
+	if world == null or not is_instance_valid(world):
+		return
+	var player = world.get("player") if "player" in world else null
+	if player == null or not is_instance_valid(player):
 		return
 
-	# Validate with a pure RegionGraph built from the shipped content.
+	var rid := _resolve_region_id(target_region_id)
+	var can_transition := WORLD_SCENES.has(rid)
+	var destination_name := rid
+
+	# Validate graph-based routes when region data/connections exist; allow direct
+	# node-based scene transitions for registered worlds without graph edges.
 	var graph := RegionGraph.new(ContentDB.regions)
-	if not graph.has_region(target_region_id):
-		EventBus.toast_requested.emit("Unknown destination: " + target_region_id)
-		return
-	var conn_id := ""
-	for entry in graph.connections_from(current_region_id):
-		if typeof(entry) == TYPE_DICTIONARY and str(entry.get("to", "")) == target_region_id:
-			conn_id = str(entry.get("id", ""))
-			break
-	if conn_id.is_empty():
-		EventBus.toast_requested.emit("No route to " + graph.region_name(target_region_id))
-		return
-	var resolved := graph.resolve_transition(current_region_id, conn_id)
-	if not bool(resolved.get("valid", false)):
-		EventBus.toast_requested.emit("Route unavailable: " + str(resolved.get("error", "")))
+	if graph.has_region(current_region_id) and graph.has_region(rid):
+		destination_name = graph.region_name(rid)
+		for entry in graph.connections_from(current_region_id):
+			if typeof(entry) == TYPE_DICTIONARY and str(entry.get("to", "")) == rid:
+				can_transition = true
+				break
+	elif graph.has_region(rid):
+		destination_name = graph.region_name(rid)
+
+	if not can_transition:
+		EventBus.toast_requested.emit("No route to " + destination_name)
 		return
 
 	_changing_region = true
 	# Remember where the player stood in the CURRENT region, then switch.
-	GameState.set_region_position(current_region_id, world.player.position)
-	GameState.set_player_region(target_region_id)
+	GameState.set_region_position(current_region_id, player.position)
+	GameState.set_player_region(rid)
 	var old_world := world
 	world = null
 	old_world.queue_free()
-	_build_world(target_region_id, entry_point)
+	_build_world(rid, entry_point)
 	_set_world_active(true)
-	EventBus.toast_requested.emit("Arrived in " + graph.region_name(target_region_id))
+	EventBus.toast_requested.emit("Arrived in " + destination_name)
 	_changing_region = false
 
 
@@ -215,25 +252,29 @@ func _set_world_active(active: bool) -> void:
 	if world == null or not is_instance_valid(world):
 		return
 	world.process_mode = Node.PROCESS_MODE_INHERIT if active else Node.PROCESS_MODE_DISABLED
-	if world.player != null and is_instance_valid(world.player):
-		world.player.input_enabled = active
+	var player = world.get("player") if "player" in world else null
+	if player != null and is_instance_valid(player):
+		player.input_enabled = active
 	TouchInput.release()
 
 
 func _interact() -> void:
-	if world == null or world.player == null:
+	if world == null:
 		return
-	if not world.player.input_enabled:
+	var player = world.get("player") if "player" in world else null
+	if player == null or not player.input_enabled:
 		return
-	world.player.try_interact()
+	player.try_interact()
 
 
 func _switch_avatar() -> void:
-	if world == null or world.player == null:
+	if world == null:
 		return
-	if not world.player.input_enabled:
+	var player = world.get("player") if "player" in world else null
+	if player == null or not player.input_enabled:
 		return
-	world.player.cycle_avatar()
+	if player.has_method("cycle_avatar"):
+		player.cycle_avatar()
 
 
 # ------------------------------------------------------------------ dialogue
@@ -334,9 +375,11 @@ func _on_pause_navigation(screen_id: String) -> void:
 
 
 func _return_to_title() -> void:
-	if world != null and is_instance_valid(world) and world.player != null:
-		GameState.set_region_position(current_region_id, world.player.position)
-		GameState.set_player_position(world.player.position)
+	if world != null and is_instance_valid(world):
+		var player = world.get("player") if "player" in world else null
+		if player != null:
+			GameState.set_region_position(current_region_id, player.position)
+			GameState.set_player_position(player.position)
 	GameState.save_now()
 	TouchInput.release()
 	exit_to_menu.emit()

@@ -78,7 +78,12 @@ func _update_markers() -> void:
 	if _world == null:
 		return
 
-	for npc in _world.npcs:
+	var world_npcs: Array = []
+	if "npcs" in _world:
+		var raw_npcs = _world.npcs
+		if typeof(raw_npcs) == TYPE_ARRAY:
+			world_npcs = raw_npcs
+	for npc in world_npcs:
 		if is_instance_valid(npc):
 			var grid := IsoMath.world_to_grid(npc.global_position)
 			var quest_status := GameState.quest_marker_for_npc(str(npc.npc_id))
@@ -89,7 +94,12 @@ func _update_markers() -> void:
 				marker_color = Color("#83e39b")
 			_npc_markers.append({"pos": grid, "color": marker_color, "quest": quest_status})
 
-	for mon in _world.monsters:
+	var world_monsters: Array = []
+	if "monsters" in _world:
+		var raw_monsters = _world.monsters
+		if typeof(raw_monsters) == TYPE_ARRAY:
+			world_monsters = raw_monsters
+	for mon in world_monsters:
 		if is_instance_valid(mon) and mon.enabled and not mon.defeated:
 			var grid := IsoMath.world_to_grid(mon.global_position)
 			var is_boss := false
