@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EnemyAggroConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_aggro_config.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+auto_aggro = false
+require_interaction = true
+aggro_duration = 0.0
+remember_target = false
+aggro_cooldown = 0.0

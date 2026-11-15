@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="BossConfig" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/boss/boss_config.gd" id="1_script"]
+[ext_resource type="Resource" path="res://resources/combat/presentation/elder_hollow.tres" id="2_profile"]
+[ext_resource type="Script" path="res://scripts/enemies/boss/boss_phase_config.gd" id="3_phase"]
+
+[sub_resource type="Resource" id="BossPhaseConfig_1"]
+script = ExtResource("3_phase")
+phase_id = &"awakening"
+display_name = "Awakening"
+hp_threshold_ratio = 0.6
+attack_pattern_ids = ["root_crush", "hollow_wail"]
+skill_ids = ["hollow_verdict"]
+movement_profile = "roots"
+transition_message = "The roots awaken."
+presentation_profile = ExtResource("2_profile")
+metadata = {}
+
+[sub_resource type="Resource" id="BossPhaseConfig_2"]
+script = ExtResource("3_phase")
+phase_id = &"fury"
+display_name = "Fury"
+hp_threshold_ratio = 0.25
+attack_pattern_ids = ["root_crush", "hollow_wail", "bark_ward"]
+skill_ids = ["hollow_verdict"]
+movement_profile = "roots_fury"
+transition_message = "The Elder Hollow rages."
+presentation_profile = ExtResource("2_profile")
+metadata = {}
+
+[resource]
+script = ExtResource("1_script")
+boss_id = "elder_hollow"
+display_name = "The Elder Hollow"
+phases = [SubResource("BossPhaseConfig_1"), SubResource("BossPhaseConfig_2")]
+presentation_profile = ExtResource("2_profile")
+health_display_enabled = true
+transition_effects_enabled = true
+metadata = {}

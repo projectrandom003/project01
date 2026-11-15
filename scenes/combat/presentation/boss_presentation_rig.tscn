@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/combat/presentation/boss_presentation_rig.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/combat/presentation/boss_telegraph.tscn" id="2"]
@@ -7,6 +7,15 @@
 [ext_resource type="Resource" path="res://resources/combat/presentation/default_boss.tres" id="5"]
 [ext_resource type="Resource" path="res://resources/combat/presentation/elder_hollow.tres" id="6"]
 [ext_resource type="Resource" path="res://resources/combat/presentation/fallen_matron.tres" id="7"]
+[ext_resource type="Script" path="res://scripts/enemies/boss/boss_controller.gd" id="8"]
+[ext_resource type="Script" path="res://scripts/enemies/boss/boss_phase_controller.gd" id="9"]
+[ext_resource type="Script" path="res://scripts/enemies/boss/boss_state_machine.gd" id="10"]
+[ext_resource type="Script" path="res://scripts/enemies/boss/boss_attack_controller.gd" id="11"]
+[ext_resource type="Script" path="res://scripts/enemies/boss/boss_skill_controller.gd" id="12"]
+[ext_resource type="Script" path="res://scripts/enemies/boss/boss_animation_controller.gd" id="13"]
+[ext_resource type="Script" path="res://scripts/enemies/boss/boss_health_display.gd" id="14"]
+[ext_resource type="Script" path="res://scripts/enemies/boss/boss_presentation_controller.gd" id="15"]
+[ext_resource type="Script" path="res://scripts/enemies/boss/boss_transition_effects.gd" id="16"]
 
 [node name="BossPresentationRig" type="Control"]
 anchors_preset = 15
@@ -31,3 +40,40 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 z_index = 80
+
+[node name="BossController" type="Node" parent="."]
+script = ExtResource("8")
+phase_controller_path = NodePath("../BossPhaseController")
+state_machine_path = NodePath("../BossStateMachine")
+attack_controller_path = NodePath("../BossAttackController")
+skill_controller_path = NodePath("../BossSkillController")
+animation_controller_path = NodePath("../BossAnimationController")
+health_display_path = NodePath("../BossHealthDisplay")
+presentation_path = NodePath("../BossPresentationController")
+transition_effects_path = NodePath("../BossTransitionEffects")
+
+[node name="BossPhaseController" type="Node" parent="."]
+script = ExtResource("9")
+
+[node name="BossStateMachine" type="Node" parent="."]
+script = ExtResource("10")
+initial_state = &"idle"
+
+[node name="BossAttackController" type="Node" parent="."]
+script = ExtResource("11")
+
+[node name="BossSkillController" type="Node" parent="."]
+script = ExtResource("12")
+
+[node name="BossAnimationController" type="Node" parent="."]
+script = ExtResource("13")
+
+[node name="BossHealthDisplay" type="Node" parent="."]
+script = ExtResource("14")
+
+[node name="BossPresentationController" type="Node" parent="."]
+script = ExtResource("15")
+
+[node name="BossTransitionEffects" type="Node" parent="."]
+script = ExtResource("16")
+

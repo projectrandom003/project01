@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyDetectionConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_detection_config.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+detection_enabled = false
+detection_radius = 96.0
+aggro_radius = 96.0
+lose_aggro_radius = 140.0
+line_of_sight_required = false
+engage_on_detection = false
+return_home_on_aggro_loss = true

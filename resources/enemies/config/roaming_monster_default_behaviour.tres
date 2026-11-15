@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyBehaviourConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_behaviour_config.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+initial_state = &"patrol"
+can_investigate = false
+can_retreat = false
+can_chase = false
+can_cast = false
+return_to_origin_after_combat = true
+despawn_on_death = false
+respawn_seconds = 75.0
+metadata = {}

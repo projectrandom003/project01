@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyStatsConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_stats_config.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+enemy_id = "mossling"
+display_name = "Mossling"
+level = 1
+max_hp = 30.0
+attack = 5.0
+defense = 3.0
+speed = 12.0
+is_boss = false
+metadata = {"element":"earth","role":"Minion"}

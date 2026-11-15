@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyStatsConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_stats_config.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+enemy_id = "fallen_matron"
+display_name = "The Fallen Matron"
+level = 8
+max_hp = 1200.0
+attack = 30.0
+defense = 18.0
+speed = 15.0
+is_boss = true
+metadata = {"element":"dark","role":"Boss"}
