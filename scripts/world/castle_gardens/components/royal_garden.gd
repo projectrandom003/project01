@@ -3,7 +3,9 @@ extends Node2D
 ## Symmetrical royal garden layout component (flower beds, greenery accents).
 
 func build_symmetrical(origin: Vector2) -> void:
-	var flower_tex := load("res://assets/environment/castle_gardens/flower_bed.png") as Texture2D
+	var flower_tex := load("res://assets/environment/castle_gardens/flower_bed_lush.png") as Texture2D
+	if flower_tex == null:
+		flower_tex = load("res://assets/environment/castle_gardens/flower_bed.png") as Texture2D
 	var urn_tex := load("res://assets/environment/castle_gardens/urn_planter.png") as Texture2D
 	if flower_tex == null:
 		return
@@ -36,3 +38,4 @@ func _add_collision_circle(pos: Vector2, radius: float) -> void:
 	col.shape = shape
 	body.add_child(col)
 	add_child(body)
+
