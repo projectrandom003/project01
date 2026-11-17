@@ -506,7 +506,7 @@ func _test_application_scene_composition() -> void:
 		var main_nodes: Array[String] = []
 		for index in main_state.get_node_count():
 			main_nodes.append(str(main_state.get_node_name(index)))
-		check(main_nodes.has("MainMenu"), "Main scene authors its menu instead of building it at runtime")
+		check(main_nodes.has("StartupFlow") and main_nodes.has("GameplayFlow"), "Main scene authors its startup and gameplay flow components")
 
 
 func _test_content() -> void:
@@ -1116,25 +1116,25 @@ func _test_ui() -> void:
 			GameState.profile = profile_before_crafting
 		screen.queue_free()
 		await get_tree().process_frame
-	var menu_scene := load("res://scenes/ui/main_menu.tscn") as PackedScene
-	check(menu_scene != null, "Authored title menu scene loads")
-	var menu := menu_scene.instantiate() as MainMenu if menu_scene != null else null
-	if menu == null:
+	var title_scene := load("res://scenes/ui/title_screen.tscn") as PackedScene
+	check(title_scene != null, "Authored title screen scene loads")
+	var title := title_scene.instantiate() as TitleScreen if title_scene != null else null
+	if title == null:
 		return
-	add_child(menu)
+	add_child(title)
 	await get_tree().process_frame
-	check(menu.get_child_count() > 0, "Title menu builds")
-	var menu_bounds := Rect2(Vector2.ZERO, menu.size)
-	var menu_controls := ["ContinueButton", "NewJourneyButton", "LoadGameButton", "SettingsButton", "ExtrasButton", "QuitGameButton"]
-	var menu_controls_fit := true
-	for control_name in menu_controls:
-		var menu_button := menu.get_node_or_null(control_name) as Control
-		if menu_button == null or not menu_bounds.encloses(menu_button.get_rect()):
-			menu_controls_fit = false
-	check(menu_controls_fit, "All six title-menu controls fit inside the active viewport")
-	var menu_backdrop := menu.get_node_or_null("MenuButtonBackdrop") as Control
-	check(menu_backdrop != null and menu_bounds.encloses(menu_backdrop.get_rect()), "Title-menu glass backdrop stays inside the active viewport")
-	menu.queue_free()
+	check(title.get_child_count() > 0, "Title screen builds")
+	var title_bounds := Rect2(Vector2.ZERO, title.size)
+	var title_controls := ["ContinueButton", "NewJourneyButton", "LoadGameButton", "SettingsButton", "ExtrasButton", "QuitGameButton"]
+	var title_controls_fit := true
+	for control_name in title_controls:
+		var title_button := title.get_node_or_null(control_name) as Control
+		if title_button == null or not title_bounds.encloses(title_button.get_rect()):
+			title_controls_fit = false
+	check(title_controls_fit, "All six title-screen controls fit inside the active viewport")
+	var title_backdrop := title.get_node_or_null("TitleArtwork") as Control
+	check(title_backdrop != null and title_bounds.encloses(title_backdrop.get_rect()), "Title-screen artwork stays inside the active viewport")
+	title.queue_free()
 	await get_tree().process_frame
 
 	var combat_scene := load("res://scenes/ui/combat_screen.tscn") as PackedScene
@@ -3433,21 +3433,22 @@ func _test_region_save_state() -> void:
 
 
 ## Reproduce New Journey -> Castle -> return to title -> Continue using the real
-## GameState, world resolver, SaveService JSON file, and MainMenu handler.
+## GameState, world resolver, SaveService JSON file, and startup-flow component.
 func _test_new_journey_castle_continue() -> void:
-	var menu_scene: PackedScene = load("res://scenes/ui/main_menu.tscn")
+	var startup_script := load("res://scripts/game/components/main_startup_flow_component.gd")
 	var game_scene: PackedScene = load("res://scenes/game.tscn")
-	if menu_scene == null or game_scene == null:
-		check(false, "Continue regression scenes load")
+	check(startup_script != null and game_scene != null, "Continue regression scenes load")
+	if startup_script == null or game_scene == null:
 		return
 
-	var menu := menu_scene.instantiate() as MainMenu
-	add_child(menu)
-	await get_tree().process_frame
-	# The first click arms the existing-save confirmation; the second starts the
-	# fresh journey through the same MainMenu handler used by the UI.
-	menu._on_new_journey()
-	menu._on_new_journey()
+	var test_host := Control.new()
+	add_child(test_host)
+	var startup := startup_script.new() as MainStartupFlowComponent
+	test_host.add_child(startup)
+	startup.bind(test_host)
+	# Exercise the current startup flow's new-journey setup instead of the removed
+	# MainMenu handler; the title screen owns this action in the current UI.
+	startup._prepare_new_journey()
 	check(not GameState.loaded_from_save, "New Journey enters unsaved journey state")
 
 	var first_game := game_scene.instantiate() as GameScreen
@@ -3537,7 +3538,7 @@ func _test_new_journey_castle_continue() -> void:
 
 	# Continue is the actual title-screen handler and must reload from disk rather
 	# than relying on the state left in memory by the outgoing world.
-	menu._continue_journey()
+	startup._on_title_action("continue")
 	check(GameState.loaded_from_save, "Continue marks state as loaded from save")
 	check(GameState.active_world_id == "castle_royal_gardens", "Continue restores Castle world ID from disk", GameState.active_world_id)
 	check(GameState.player_region == "castle_royal_gardens", "Continue restores Castle region from disk", GameState.player_region)
@@ -3565,7 +3566,7 @@ func _test_new_journey_castle_continue() -> void:
 	if continued_player != null:
 		check(continued_player.position.distance_to(expected_position) < 0.01, "Continued Castle player returns to saved position", str(continued_player.position))
 	continued_game.queue_free()
-	menu.queue_free()
+	test_host.queue_free()
 	await get_tree().process_frame
 
 
