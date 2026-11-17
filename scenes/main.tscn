@@ -1,8 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://canxx8wtavcgd"]
 
-[ext_resource type="Script" path="res://scripts/game/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://bxrv8fef1bn27" path="res://scripts/game/main.gd" id="1_main"]
 
-[node name="Main" type="Control"]
+[ext_resource type="Script" path="res://scripts/game/components/main_startup_flow_component.gd" id="2_startup"]
+[ext_resource type="Script" path="res://scripts/game/components/main_gameplay_flow_component.gd" id="3_gameplay"]
+
+[node name="Main" type="Control" unique_id=274897856]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,3 +13,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_main")
+
+[node name="StartupFlow" type="Node" parent="."]
+script = ExtResource("2_startup")
+
+[node name="GameplayFlow" type="Node" parent="."]
+script = ExtResource("3_gameplay")

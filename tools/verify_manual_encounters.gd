@@ -8,7 +8,7 @@ func _ready() -> void:
 	player_stub.name = "TestPlayer"
 	player_stub.add_to_group("player")
 	add_child(player_stub)
-	var monster := RoamingMonster.new()
+	var monster := preload("res://scenes/world/roaming_monster.tscn").instantiate() as RoamingMonster
 	monster.setup("manual_interaction_test", Vector2.ZERO, ContentDB.get_enemy("moonpetal_sprite"), false)
 	add_child(monster)
 	await get_tree().create_timer(3.25).timeout

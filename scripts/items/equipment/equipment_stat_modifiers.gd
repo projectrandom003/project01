@@ -8,7 +8,7 @@ static func for_character(uid: String) -> Dictionary:
 static func _compute(uid: String) -> Dictionary:
 	var total := {"hp": 0.0, "atk": 0.0, "def": 0.0, "spd": 0.0, "crit": 0.0, "crit_dmg": 0.0}
 	var instance: CharacterInstance = null
-	for candidate in GameState.roster:
+	for candidate in GameState.roster_domain.roster:
 		if candidate.uid == uid:
 			instance = candidate
 			break
@@ -20,7 +20,7 @@ static func _compute(uid: String) -> Dictionary:
 			continue
 		var item := ContentDB.get_item(item_id)
 		var stats: Dictionary = item.get("stats", {})
-		var enhancement_mult := 1.0 + 0.08 * float(GameState.gear_level(uid, slot))
+		var enhancement_mult := 1.0 + 0.08 * float(GameState.roster_domain.gear_level(uid, slot))
 		for k in stats.keys():
 			var key := str(k)
 			if not total.has(key):

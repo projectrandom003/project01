@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[node name="CastlePerimeterPier" type="Node2D"]
+
+[node name="Shadow" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-19, -67, 19, -67, 19, 61, -19, 61)
+color = Color(0.149, 0.208, 0.298, 1)
+
+[node name="Body" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-13, -62, 13, -62, 13, 48, -13, 48)
+color = Color(0.537, 0.596, 0.678, 1)
+
+[node name="Highlight" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-8, -56, -4, -56, -4, 43, -8, 43)
+color = Color(0.663, 0.706, 0.765, 0.8)
+
+[node name="Capital" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-23, -69, 23, -69, 23, -60, -23, -60)
+color = Color(0.647, 0.694, 0.757, 1)
+
+[node name="Foot" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-22, 49, 22, 49, 22, 61, -22, 61)
+color = Color(0.537, 0.596, 0.678, 1)

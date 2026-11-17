@@ -1,12 +1,12 @@
 extends Node
 
-const MainScript = preload("res://scripts/game/main.gd")
+const MAIN_SCENE: PackedScene = preload("res://scenes/main.tscn")
 
 func _ready() -> void:
 	# Verifies the current launch flow (approved Reverie title/prologue/loading art
 	# direction) without requiring obsolete LaunchForestBackdrop node names.
-	GameState.loaded_from_save = false
-	var app = MainScript.new()
+	GameState.session_domain.loaded_from_save = false
+	var app = MAIN_SCENE.instantiate() as Control
 	add_child(app)
 	await get_tree().process_frame
 	if app.menu == null:
@@ -56,8 +56,8 @@ func _ready() -> void:
 		return
 	loading.set_process(false)
 	var party_layer: Node = loading.get_node_or_null("PartyLayer")
-	if party_layer == null or party_layer.get_child_count() != 3:
-		push_error("[launch-transition] Loading screen should show exactly one copy of each party member.")
+	if party_layer == null or party_layer.visible or party_layer.get_child_count() != 0:
+		push_error("[launch-transition] Loading screen should keep the removed party-character illustrations hidden and empty.")
 		get_tree().quit(1)
 		return
 	var has_loading_art := loading.get_node_or_null("ReverieLoadingArtwork") != null \

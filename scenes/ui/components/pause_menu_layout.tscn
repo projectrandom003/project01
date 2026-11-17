@@ -70,27 +70,33 @@ text = "DESTINATIONS"
 [node name="RosterButton" type="Button" parent="NavigationPanel/Navigation"]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
-text = "Character Roster   ›"
+text = "Character Roster  >"
 
 [node name="InventoryButton" type="Button" parent="NavigationPanel/Navigation"]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
-text = "Inventory   ›"
+text = "Inventory  >"
 
 [node name="SummonButton" type="Button" parent="NavigationPanel/Navigation"]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
-text = "Summon   ›"
+text = "Summon  >"
 
 [node name="QuestsButton" type="Button" parent="NavigationPanel/Navigation"]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
-text = "Quest Log   ›"
+text = "Quest Log  >"
 
 [node name="MapButton" type="Button" parent="NavigationPanel/Navigation"]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
-text = "World Map   ›"
+text = "World Map  >"
+
+
+[node name="SettingsButton" type="Button" parent="NavigationPanel/Navigation"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "Settings"
 
 [node name="NavigationSpacer" type="Control" parent="NavigationPanel/Navigation"]
 layout_mode = 2
@@ -287,3 +293,4 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 9
 theme_override_colors/font_color = Color(0.68, 0.72, 0.8, 1)
 text = "Progress saves locally. Reset permanently erases this device's save."
+

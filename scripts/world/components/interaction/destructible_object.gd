@@ -17,7 +17,7 @@ signal destroyed
 func _ready() -> void:
 	current_health = clampf(current_health, 0.0, max_health)
 	var key := _key()
-	if not key.is_empty() and bool(GameState.flags.get(key, false)):
+	if not key.is_empty() and bool(GameState.quest_domain.flags.get(key, false)):
 		_apply_destroyed_state(false)
 
 
@@ -35,7 +35,7 @@ func destroy() -> void:
 		current_health = 0.0
 	var key := _key()
 	if not key.is_empty():
-		GameState.flags[key] = true
+		GameState.quest_domain.flags[key] = true
 		GameState.queue_save()
 	_apply_destroyed_state(true)
 	destroyed.emit()

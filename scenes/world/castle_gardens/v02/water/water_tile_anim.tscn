@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/v2/water_tile_anim.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/castle_pack_v02/environment/water/water_tile_anim.png" id="2_texture"]
+
+[node name="CastleWaterTile" type="Sprite2D"]
+texture_filter = 1
+texture = ExtResource("2_texture")
+hframes = 4
+script = ExtResource("1_script")

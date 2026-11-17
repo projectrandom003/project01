@@ -8,6 +8,7 @@ extends Control
 
 signal screen_requested(screen_id: String)
 signal menu_requested
+signal return_to_title_requested
 signal interact_requested
 signal switch_avatar_requested
 
@@ -28,6 +29,10 @@ var _touch_interact: Button
 var _touch_switch: Button
 var _hint_label: Label
 var _minimap: Minimap
+var _currency_component: HUDCurrencyComponent
+var _party_component: HUDPartyComponent
+var _quest_component: HUDQuestComponent
+var _toast_component: HUDToastComponent
 
 ## Shared quest navigation resolver injected by the owner (GameScreen).
 ## A single instance must be reused across consumers; HUD must not create its own.
@@ -43,7 +48,10 @@ func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	theme = UITheme.build()
-	_bind_authored_ui()
+	if not _bind_authored_ui():
+		return
+	if not _bind_components():
+		return
 
 	EventBus.currency_changed.connect(refresh_currency)
 	EventBus.party_changed.connect(refresh_party)
@@ -54,6 +62,54 @@ func _ready() -> void:
 	refresh_currency()
 	refresh_party()
 	refresh_quest()
+	get_viewport().size_changed.connect(_apply_responsive_layout)
+	_apply_responsive_layout()
+
+
+func _bind_components() -> bool:
+	_currency_component = get_node_or_null("Currency") as HUDCurrencyComponent
+	_party_component = get_node_or_null("Party") as HUDPartyComponent
+	_quest_component = get_node_or_null("Quest") as HUDQuestComponent
+	_toast_component = get_node_or_null("Toast") as HUDToastComponent
+	if _currency_component == null or _party_component == null or _quest_component == null or _toast_component == null:
+		push_error("HUD requires authored Currency, Party, Quest and Toast component children.")
+		return false
+	_currency_component.bind(self)
+	_party_component.bind(self)
+	_quest_component.bind(self)
+	_toast_component.bind(self)
+	return true
+
+func _apply_responsive_layout(viewport_size: Vector2 = Vector2.ZERO) -> void:
+	if not is_inside_tree():
+		return
+	if viewport_size == Vector2.ZERO:
+		viewport_size = get_viewport_rect().size
+	var compact_portrait := viewport_size.x < 540.0 and viewport_size.y > viewport_size.x
+	var party_panel := get_node_or_null("PartyPanel") as Control
+	if party_panel != null:
+		party_panel.visible = not compact_portrait
+	if _hint_label != null:
+		_hint_label.visible = not compact_portrait
+	if _minimap != null:
+		if compact_portrait:
+			_minimap.offset_left = -188.0
+			_minimap.offset_top = 90.0
+			_minimap.offset_right = -18.0
+			_minimap.offset_bottom = 260.0
+		else:
+			_minimap.offset_left = -244.0
+			_minimap.offset_top = 90.0
+			_minimap.offset_right = -20.0
+			_minimap.offset_bottom = 314.0
+	var prompt_center := get_node_or_null("PromptCenter") as Control
+	if prompt_center != null:
+		if compact_portrait:
+			prompt_center.offset_top = -viewport_size.y * 0.62
+			prompt_center.offset_bottom = -viewport_size.y * 0.54
+		else:
+			prompt_center.offset_top = -104.0
+			prompt_center.offset_bottom = -34.0
 
 
 func set_quest_resolver(resolver: QuestNavigationResolver) -> void:
@@ -97,152 +153,66 @@ func set_world_info(area_name: String, phase_name: String) -> void:
 
 
 func refresh_currency() -> void:
-	if _currency_box == null:
-		return
-	UIFactory.clear(_currency_box)
-	_add_currency_chip("Gold  " + UIFactory.number(GameState.currency("gold")), UITheme.GOLD)
-	_add_currency_chip("Crystals  " + UIFactory.number(GameState.currency("crystals")), UITheme.TEAL)
-	if GameState.currency("gems") > 0:
-		_add_currency_chip("Gems  " + UIFactory.number(GameState.currency("gems")), UITheme.VIOLET)
-
+	if _currency_component != null:
+		_currency_component.refresh_currency()
 
 func _add_currency_chip(value_text: String, tint: Color) -> void:
-	var chip := CURRENCY_CHIP_SCENE.instantiate() as PanelContainer
-	(chip.get_node("Content/Dot") as ColorRect).color = tint
-	var value_label := chip.get_node("Content/ValueLabel") as Label
-	value_label.text = value_text
-	value_label.add_theme_color_override("font_color", tint)
-	var style := chip.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
-	style.bg_color = Color(tint.r, tint.g, tint.b, 0.10)
-	style.border_color = Color(tint.r, tint.g, tint.b, 0.45)
-	chip.add_theme_stylebox_override("panel", style)
-	_currency_box.add_child(chip)
-
+	if _currency_component != null:
+		_currency_component.add_currency_chip(value_text, tint)
 
 func refresh_party() -> void:
-	if _party_box == null:
-		return
-	for child in _party_box.get_children():
-		if child != _party_empty_label:
-			child.queue_free()
-	var instances := GameState.party_instances()
-	_party_empty_label.visible = instances.is_empty()
-	if instances.is_empty():
-		return
-	for instance in instances:
-		var definition: CharacterDef = ContentDB.get_character(instance.char_id)
-		if definition == null:
-			continue
-		var row := PARTY_ENTRY_SCENE.instantiate() as HBoxContainer
-		var portrait := row.get_node("Portrait") as PortraitView
-		portrait.setup_character(definition)
-		(row.get_node("Details/CharacterName") as Label).text = definition.display_name
-		(row.get_node("Details/CharacterMeta") as Label).text = "Lv %d  ·  %s" % [instance.level, definition.role]
-		(row.get_node("ElementDot") as ColorRect).color = UITheme.element_color(definition.element)
-		_party_box.add_child(row)
-
+	if _party_component != null:
+		_party_component.refresh_party()
 
 func refresh_quest() -> void:
-	if _quest_label == null:
-		return
-	var tracked := GameState.tracked_quest()
-	if tracked.is_empty():
-		_quest_label.visible = false
-		return
-	var definition: Dictionary = ContentDB.get_quest(tracked)
-	if definition.is_empty():
-		_quest_label.visible = false
-		return
-	var state := GameState.quest_state(tracked)
-	var step: Dictionary = GameState.quest_step(tracked)
-	if state == "complete":
-		_quest_label.text = "◆  %s — Complete" % str(definition.get("name", tracked))
-		_quest_label.visible = true
-		return
-	if state == "not_started":
-		var available_text := "Available · " + str(step.get("text", "Quest available"))
-		_quest_label.text = "◆  %s — %s" % [str(definition.get("name", tracked)), available_text]
-		_quest_label.visible = true
-		return
-
-	var resolver: QuestNavigationResolver = quest_resolver if quest_resolver != null else QuestNavigationResolver.shared()
-	var resolved: Dictionary = resolver.get_resolved_target()
-	var step_text := str(resolved.get("step_text", step.get("text", "")))
-	var suffix := ""
-	if str(resolved.get("status", "")) == QuestNavigationResolver.STATUS_UNREACHABLE:
-		suffix = "  · Unreachable"
-	elif not bool(resolved.get("same_frame", false)):
-		# Cross-region: travel guidance to next connection only (no fake distance/arrow).
-		var next_hop: Dictionary = resolved.get("next_hop", {})
-		var route: Array = resolved.get("route", [])
-		if not route.is_empty() and not next_hop.is_empty():
-			var hop_to := str(next_hop.get("to", str(resolved.get("target_region_id", ""))))
-			var hop_label := str(next_hop.get("label", ""))
-			var travel := hop_label if not hop_label.is_empty() else ("Travel to %s" % hop_to)
-			suffix = "  · %s" % travel
-		else:
-			suffix = "  · Travel to %s" % str(resolved.get("target_region_id", "destination"))
-	else:
-		# Same-region objective: meaningful local distance and direction.
-		var dist_val: Variant = resolved.get("distance", null)
-		if dist_val != null:
-			var dist := float(dist_val)
-			if dist > 1.0:
-				var dir_val: Variant = resolved.get("direction", Vector2.ZERO)
-				var arrow := _quest_arrow(dir_val if typeof(dir_val) == TYPE_VECTOR2 else Vector2.ZERO)
-				suffix = "  (%s %.0f tiles)" % [arrow, dist / IsoMath.TILE_W]
-	_quest_label.text = "◆  %s — %s%s" % [str(definition.get("name", tracked)), step_text, suffix]
-	_quest_label.visible = true
-
+	if _quest_component != null:
+		_quest_component.refresh_quest()
 
 func _quest_arrow(dir: Variant = null) -> String:
-	# Returns a coarse 8-direction arrow toward the given/resolved direction.
-	if dir == null or typeof(dir) != TYPE_VECTOR2:
-		dir = Vector2.ZERO
-	if (dir as Vector2).length_squared() < 0.0001:
-		return "•"
-	var angle := (dir as Vector2).angle()
-	if angle < 0.0:
-		angle += TAU
-	var sector := int(round(angle / (PI * 0.25))) % 8
-	var arrows := ["→", "↘", "↓", "↙", "←", "↖", "↑", "↗"]
-	return arrows[sector]
-
+	return _quest_component.quest_arrow(dir) if _quest_component != null else "•"
 
 func show_toast(message: String) -> void:
-	if _toast_box == null:
-		return
-	while _toasts.size() >= 3:
-		var oldest: Control = _toasts.pop_front()
-		if is_instance_valid(oldest):
-			oldest.queue_free()
-	var panel := UIFactory.panel(Color("#141c30"), Color(UITheme.GOLD.r, UITheme.GOLD.g, UITheme.GOLD.b, 0.55), 10, 1, 10, true)
-	panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	var text := UIFactory.wrapped(message, 13, UITheme.TEXT)
-	text.custom_minimum_size = Vector2(320, 0)
-	text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	panel.add_child(text)
-	_toast_box.add_child(panel)
-	_toasts.append(panel)
-	panel.modulate = Color(1, 1, 1, 0)
-	var tween := create_tween()
-	tween.tween_property(panel, "modulate:a", 1.0, 0.18)
-	tween.tween_interval(3.0)
-	tween.tween_property(panel, "modulate:a", 0.0, 0.35)
-	tween.tween_callback(func() -> void:
-		if is_instance_valid(panel):
-			_toasts.erase(panel)
-			panel.queue_free()
-	)
-
+	if _toast_component != null:
+		_toast_component.show_toast(message)
 
 func _on_quest_updated(_quest_id: String) -> void:
 	refresh_quest()
 
 
+func _confirm_return_to_title() -> void:
+	var confirmation := ConfirmationDialog.new()
+	confirmation.title = "Return to Main Menu?"
+	confirmation.dialog_text = "Your current journey will be saved before returning to the title screen."
+	confirmation.ok_button_text = "Save & Return"
+	confirmation.cancel_button_text = "Stay in World"
+	confirmation.confirmed.connect(func() -> void:
+		return_to_title_requested.emit()
+		confirmation.queue_free()
+	)
+	confirmation.canceled.connect(confirmation.queue_free)
+	add_child(confirmation)
+	confirmation.popup_centered()
+
+
+func _style_navigation_button(button: Button, accent: Color, primary: bool = false) -> void:
+	button.custom_minimum_size = Vector2(138.0, 40.0)
+	button.add_theme_font_size_override("font_size", 11)
+	button.add_theme_color_override("font_color", Color("#e9e5f0"))
+	button.add_theme_color_override("font_hover_color", Color.WHITE)
+	button.add_theme_color_override("font_pressed_color", accent.lightened(0.22))
+	button.add_theme_color_override("font_disabled_color", UITheme.TEXT_FAINT)
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.add_theme_stylebox_override("normal", UITheme.style(Color("#090d19").lerp(accent, 0.055 if primary else 0.025), Color(accent.r, accent.g, accent.b, 0.68), 9, 1, 12, true))
+	button.add_theme_stylebox_override("hover", UITheme.style(Color("#1a2034").lerp(accent, 0.12), accent.lightened(0.16), 9, 2, 12, true))
+	button.add_theme_stylebox_override("pressed", UITheme.style(Color("#080b15").lerp(accent, 0.16), accent, 9, 2, 12))
+	button.add_theme_stylebox_override("disabled", UITheme.style(Color("#0b0e18"), UITheme.BORDER_SOFT, 9, 1, 12))
+	button.add_theme_stylebox_override("focus", UITheme.style(Color("#171b2b"), UITheme.GOLD_BRIGHT, 9, 2, 12, true))
+	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+
+
 # ----------------------------------------------------------- authored bindings
 
-func _bind_authored_ui() -> void:
+func _bind_authored_ui() -> bool:
 	_area_label = get_node_or_null("TopBar/TopRow/LocationInfo/AreaLabel") as Label
 	_phase_label = get_node_or_null("TopBar/TopRow/LocationInfo/PhaseLabel") as Label
 	_quest_label = get_node_or_null("TopBar/TopRow/LocationInfo/QuestLabel") as Label
@@ -258,27 +228,48 @@ func _bind_authored_ui() -> void:
 	_touch_switch = get_node_or_null("TouchSwitchButton") as Button
 	_hint_label = get_node_or_null("HintLabel") as Label
 
-	# Fallback for script-only/headless test instantiation without authored HUD scene.
 	if _quest_label == null:
-		_quest_label = Label.new()
-		_quest_label.name = "QuestLabel"
-		_quest_label.visible = false
-		add_child(_quest_label)
+		push_error("HUD requires its authored QuestLabel.")
+		return false
 
 	if _minimap != null:
 		_minimap.quest_resolver = quest_resolver
 	var summon_btn := get_node_or_null("ActionStack/SummonButton") as Button
-	if summon_btn: summon_btn.pressed.connect(func() -> void: screen_requested.emit("gacha"))
+	if summon_btn:
+		summon_btn.text = "✦  SUMMON"
+		_style_navigation_button(summon_btn, UITheme.GOLD_BRIGHT, true)
+		summon_btn.pressed.connect(func() -> void: screen_requested.emit("gacha"))
 	var roster_btn := get_node_or_null("ActionStack/RosterButton") as Button
-	if roster_btn: roster_btn.pressed.connect(func() -> void: screen_requested.emit("collection"))
+	if roster_btn:
+		roster_btn.text = "♜  ROSTER"
+		_style_navigation_button(roster_btn, UITheme.VIOLET)
+		roster_btn.pressed.connect(func() -> void: screen_requested.emit("collection"))
 	var inv_btn := get_node_or_null("ActionStack/InventoryButton") as Button
-	if inv_btn: inv_btn.pressed.connect(func() -> void: screen_requested.emit("inventory"))
+	if inv_btn:
+		inv_btn.text = "▤  INVENTORY"
+		_style_navigation_button(inv_btn, UITheme.TEAL)
+		inv_btn.pressed.connect(func() -> void: screen_requested.emit("inventory"))
 	var quests_btn := get_node_or_null("ActionStack/QuestsButton") as Button
-	if quests_btn: quests_btn.pressed.connect(func() -> void: screen_requested.emit("quests"))
+	if quests_btn:
+		quests_btn.text = "✧  QUESTS"
+		_style_navigation_button(quests_btn, UITheme.GOLD)
+		quests_btn.pressed.connect(func() -> void: screen_requested.emit("quests"))
 	var map_btn := get_node_or_null("ActionStack/MapButton") as Button
-	if map_btn: map_btn.pressed.connect(func() -> void: screen_requested.emit("map"))
+	if map_btn:
+		map_btn.text = "⌖  WORLD MAP"
+		_style_navigation_button(map_btn, UITheme.TEAL_DIM)
+		map_btn.pressed.connect(func() -> void: screen_requested.emit("map"))
 	var menu_btn := get_node_or_null("ActionStack/MenuButton") as Button
-	if menu_btn: menu_btn.pressed.connect(func() -> void: menu_requested.emit())
+	if menu_btn:
+		menu_btn.text = "☰  MENU"
+		_style_navigation_button(menu_btn, UITheme.DANGER)
+		menu_btn.pressed.connect(func() -> void: menu_requested.emit())
+	var main_menu_btn := get_node_or_null("TopBar/TopRow/MainMenuButton") as Button
+	if main_menu_btn:
+		_style_navigation_button(main_menu_btn, UITheme.GOLD_BRIGHT, true)
+		main_menu_btn.custom_minimum_size = Vector2(132, 42)
+		main_menu_btn.tooltip_text = "Save your journey and return to the title screen"
+		main_menu_btn.pressed.connect(_confirm_return_to_title)
 	if _touch_interact:
 		_touch_interact.pressed.connect(func() -> void: interact_requested.emit())
 	if _touch_switch:
@@ -290,3 +281,4 @@ func _bind_authored_ui() -> void:
 		_touch_switch.visible = TouchInput.using_touch
 	if _touch_interact:
 		_touch_interact.visible = false
+	return true

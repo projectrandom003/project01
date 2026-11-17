@@ -1,0 +1,154 @@
+{
+  "character": "kael",
+  "state": "run",
+  "source": "Pixelorama .pxo",
+  "source_frames": 17,
+  "source_fps": 6.0,
+  "cell_size": [
+    96,
+    128
+  ],
+  "game_frames": 16,
+  "game_fps": 16.0,
+  "game_loop": true,
+  "game_sample_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "direction_order": [
+    "south",
+    "south-east",
+    "east",
+    "north-east",
+    "north",
+    "north-west",
+    "west",
+    "south-west"
+  ],
+  "directions": [
+    {
+      "direction": "south",
+      "source_file": "C:\\Users\\quoth\\Downloads\\southrun.pxo",
+      "source_sha256_unchanged": "30429a3a3cbf3e68b20bacae33206787623dea3dcf2f39a54a487eb9c7a2075e",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "png": "source_run_png/south.png",
+      "png_size": [
+        1632,
+        128
+      ],
+      "anchor": "bottom-centre in each 96x128 cell"
+    },
+    {
+      "direction": "south-east",
+      "source_file": "C:\\Users\\quoth\\Downloads\\south-eastrun.pxo",
+      "source_sha256_unchanged": "9ce345ec8bf24c60b22d13f2a4181de9a3b0c25ab21d93a0f1317ae915a13130",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "png": "source_run_png/south-east.png",
+      "png_size": [
+        1632,
+        128
+      ],
+      "anchor": "bottom-centre in each 96x128 cell"
+    },
+    {
+      "direction": "east",
+      "source_file": "C:\\Users\\quoth\\Downloads\\eastrun.pxo",
+      "source_sha256_unchanged": "75717f19d9e40235e5484a1f3c0acffd8721ffbe562ed8a460421ef7513d706f",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "png": "source_run_png/east.png",
+      "png_size": [
+        1632,
+        128
+      ],
+      "anchor": "bottom-centre in each 96x128 cell"
+    },
+    {
+      "direction": "north-east",
+      "source_file": "C:\\Users\\quoth\\Downloads\\north-eastrun.pxo",
+      "source_sha256_unchanged": "3b41886ef4f4616b0da8fa2d8f1fbe63fa2ae8c77087c28246d3a90b4643d491",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "png": "source_run_png/north-east.png",
+      "png_size": [
+        1632,
+        128
+      ],
+      "anchor": "bottom-centre in each 96x128 cell"
+    },
+    {
+      "direction": "north",
+      "source_file": "C:\\Users\\quoth\\Downloads\\northrun.pxo",
+      "source_sha256_unchanged": "c9a1d495940876914df59031a8844f2349e3064e8f76d1b0dcf5f3414fa13056",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "png": "source_run_png/north.png",
+      "png_size": [
+        1632,
+        128
+      ],
+      "anchor": "bottom-centre in each 96x128 cell"
+    },
+    {
+      "direction": "north-west",
+      "source_file": "C:\\Users\\quoth\\Downloads\\north-west (run).pxo",
+      "source_sha256_unchanged": "a922c71cdb9d36b2c59bcbad651e564d49dc305324f42cc78a06477c2c64c2c5",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "png": "source_run_png/north-west.png",
+      "png_size": [
+        1632,
+        128
+      ],
+      "anchor": "bottom-centre in each 96x128 cell"
+    },
+    {
+      "direction": "west",
+      "source_file": "C:\\Users\\quoth\\Downloads\\westrun.pxo",
+      "source_sha256_unchanged": "e99b66b6ef41bdd52e391cdcfe7a8e1cf1331bad9edd20566012860bcfd0f370",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "png": "source_run_png/west.png",
+      "png_size": [
+        1632,
+        128
+      ],
+      "anchor": "bottom-centre in each 96x128 cell"
+    },
+    {
+      "direction": "south-west",
+      "source_file": "C:\\Users\\quoth\\Downloads\\south-westrun.pxo",
+      "source_sha256_unchanged": "542288d30132dc6cf4e86e75ae1d9abba38747c562041dae5ec25bb3f1377097",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "png": "source_run_png/south-west.png",
+      "png_size": [
+        1632,
+        128
+      ],
+      "anchor": "bottom-centre in each 96x128 cell"
+    }
+  ],
+  "game_atlas": "run_sheet.png",
+  "game_atlas_size": [
+    1536,
+    1024
+  ],
+  "all_cells_bottom_anchored": true
+}

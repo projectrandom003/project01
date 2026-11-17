@@ -25,7 +25,7 @@ static func build_comparison_box(item_data: Dictionary, uid: String) -> VBoxCont
 	box.name = "EquipmentComparison"
 	box.add_child(UIFactory.label("COMPARISON — CURRENTLY EQUIPPED", 9, UITheme.TEXT_FAINT))
 	var instance: CharacterInstance = null
-	for candidate in GameState.roster:
+	for candidate in GameState.roster_domain.roster:
 		if candidate.uid == uid:
 			instance = candidate
 			break

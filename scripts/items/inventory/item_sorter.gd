@@ -12,7 +12,7 @@ static func sort_ids(ids: Array[String], mode: String = "category_name") -> Arra
 			"rarity":
 				return str(da.get("rarity", "")) < str(db.get("rarity", ""))
 			"quantity":
-				return GameState.item_count(a) > GameState.item_count(b)
+				return GameState.inventory_domain.item_count(a) > GameState.inventory_domain.item_count(b)
 			_:
 				var ca := str(da.get("category", ""))
 				var cb := str(db.get("category", ""))

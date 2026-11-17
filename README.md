@@ -1,10 +1,10 @@
 # REVERIE
 
-An original anime-fantasy MMORPG vertical slice built with **Godot 4.7** and **GDScript**.
+An original offline single-player anime-fantasy RPG built with **Godot 4.7** and **GDScript**.
 
-The playable milestone is **Greenward**, a streamed isometric forest region (Phase 4 adds a small second region, **Moonpetal Hollow**): walk a village hub, talk to NPCs, accept quests, fight roaming monsters in turn-based battles, summon new characters, manage a party, and save your journey locally.
+The current playable build includes the Castle & Royal Gardens opening area, the connected Greenward and Moonpetal Hollow regions, NPC dialogue, quests, optional roaming encounters, turn-based battles, character collection, crafting, a local merchant and offline saves.
 
-> **Status: offline vertical slice + final playable protagonist art integration.** This is a real, runnable game slice, not a mock-up. **Phase 2** added strict JSON validation, mechanical character passives, equipment resonance, enforced quest prerequisites and a CI/export pipeline; **Phase 3** added a single-source art direction (`GreenwardStyle` + `VISUAL_STYLE.md`), 47 prop kinds, richer terrain/river/bridges/waterfalls, 5 visually distinct locations, fog/lighting/weather architecture, animated props, inspectable lore objects, persistent gathering nodes and an 8-state × 8-direction animation architecture; **Phase 4** added exactly TWO regions with a `RegionGraph`, validated transitions and per-region saves, a REAL art asset pipeline (`AssetManifest` + `SpriteFramesActorSource`) with an honest placeholder-only status, an ADDITIVE 9th `CAST` animation state with sprite-sheet support and ONE TEMPORARY procedural demonstration character, 6 new prop kinds (53 at that checkpoint) and bounded frame-sliced background chunk preparation (NO threads). **Phase 5** re-scoped to **character art and visual production**: a 10-kind production art pipeline (`CharacterArtPipeline`), 12 complete authored character specs (`CharacterArtSpec` + `assets/characters/<id>/SPEC.md` + generation prompts), premium Legendary/Mythic rarity presentation, a real-portrait seam with procedural fallback, 9 states × 8 directions sprite-sheet registration (72 animations), `WorldVisualStandards` (6 categories) and 4 new prop kinds (**57 total**) — on top of a **`1374 passed, 0 failed`** suite (all 954 prior tests preserved). **The latest art integration** produced the FIRST final playable character art, now covering all three protagonists: **Gerald**, **Lilith** and **Kael** each have a complete set (8 directions × 9 states = 72 animations, 256×384 portrait, combat sprite, full-body illustration) extracted from their supplied Project Fantasy concept sheets by `tools/extract_character_sheet.py` / `tools/build_character_sheet.py` / `tools/build_character_static.py` and imported through the existing `SpriteFramesActorSource` / `PortraitAssetSource` seams. **The 12 collectible characters remain procedural placeholder art** and their specs + prompts are PREPARATION for future external art. Multiplayer, accounts, trading, PvP and server-authoritative progression are **not implemented** yet. **Most generic world and roster art remains procedural**; exceptions are the three protagonists' final playable sets and the Fallen Matron's three boss-phase cutouts (no audio). **NO visual testing** was performed (all verification is `--headless` with Godot's dummy renderer). See [Limitations](#limitations).
+> **Status: offline vertical slice + final playable protagonist art integration.** This is a real, runnable game slice, not a mock-up. **Phase 2** added strict JSON validation, mechanical character passives, equipment resonance, enforced quest prerequisites and a CI/export pipeline; **Phase 3** added a single-source art direction (`GreenwardStyle` + `VISUAL_STYLE.md`), 47 prop kinds, richer terrain/river/bridges/waterfalls, 5 visually distinct locations, fog/lighting/weather architecture, animated props, inspectable lore objects, persistent gathering nodes and an 8-state × 8-direction animation architecture; **Phase 4** added exactly TWO regions with a `RegionGraph`, validated transitions and per-region saves, a REAL art asset pipeline (`AssetManifest` + `SpriteFramesActorSource`) with an honest placeholder-only status, an ADDITIVE 9th `CAST` animation state with sprite-sheet support and ONE TEMPORARY procedural demonstration character, 6 new prop kinds (53 at that checkpoint) and bounded frame-sliced background chunk preparation (NO threads). **Phase 5** re-scoped to **character art and visual production**: a 10-kind production art pipeline (`CharacterArtPipeline`), 12 complete authored character specs (`CharacterArtSpec` + `assets/characters/<id>/SPEC.md` + generation prompts), premium Legendary/Mythic rarity presentation, a real-portrait seam with procedural fallback, 9 states × 8 directions sprite-sheet registration (72 animations), `WorldVisualStandards` (6 categories) and 4 new prop kinds (**57 total**) — on top of a **`1374 passed, 0 failed`** suite (all 954 prior tests preserved). **The latest art integration** produced the FIRST final playable character art, now covering all three protagonists: **Gerald**, **Lilith** and **Kael** each have a complete set (8 directions × 9 states = 72 animations, 256×384 portrait, combat sprite, full-body illustration) extracted from their supplied Project Fantasy concept sheets by `tools/extract_character_sheet.py` / `tools/build_character_sheet.py` / `tools/build_character_static.py` and imported through the existing `SpriteFramesActorSource` / `PortraitAssetSource` seams. **The 12 collectible characters remain procedural placeholder art** and their specs + prompts are PREPARATION for future external art. Multiplayer, accounts, trading, PvP and server-authoritative progression are **not implemented** yet. **Most generic world and roster art remains procedural**; exceptions are the three protagonists' final playable sets and the Fallen Matron's three boss-phase cutouts (no audio). **Partial live visual QA** now confirms player movement/camera-follow, avatar cycling, NPC dialogue open/close, inventory layout, Quest Journal and summon-banner presentation. Full combat choreography, complete quest/gacha interactions and device performance profiling remain open. Headless verification still uses Godot's dummy renderer. See [Limitations](#limitations).
 
 ---
 
@@ -52,7 +52,7 @@ Export pack smoke build (after a one-time editor import; see CI):
 godot --headless --path . --export-pack "Linux/X11" build/project-fantasy.pck
 ```
 
-Expected test output: `0 failed` and exit code `0`; the current total is **1478 passed, 0 failed**. `1374` is the Phase 5 checkpoint, not the current total. The current suite also covers playable protagonist art, persistent gathering rewards, monster bonus drops and reward preview/claim consistency. See [Testing](documentation/TESTING.md) for the current total and focused scene-verification commands.
+Expected test output: 0 failed and exit code 0; the latest isolated verbose run on 2026-11-17 is **2238 passed, 0 failed**. See `artifacts/qa/chunk_region_layout_regression_2026-11-17.log` and `documentation/NODE_ARCHITECTURE_MIGRATION.md`. 1374 is the Phase 5 checkpoint, not the current total. The current suite also covers playable protagonist art, persistent gathering rewards, monster bonus drops, crafting, merchant purchases, shop-overlay routing, settings rebinding and save-replacement recovery and malformed-save validation and corruption backups. See documentation/TESTING.md for focused scene-verification commands.
 
 The runner snapshots and restores the local save, so tests do not destroy a real journey.
 
@@ -95,8 +95,10 @@ All input actions are registered at runtime in `scripts/core/input_setup.gd`, so
 ### Narrative and quests
 
 - Data-driven dialogue for Elder Maelin, Sera Quill and Pip.
-- Two chained story quests: *The Glade's Whisper* and *What Sleeps Beneath*.
+- Greenward story chain: *The Glade's Whisper*, *What Sleeps Beneath*, *The First Tree Remembers* and *A Garden Without a Keeper*.
 - Talk, kill and turn-in steps; quest rewards include currency, materials and equipment.
+- Moonpetal Hollow adds *Echoes Beneath the Silver Pool*, a post-Matron quest with Moonkeeper Liora, a dedicated encounter group and its own rewards.
+- Sera Quill unlocks a local merchant shop after *A Merchant's Bad Luck*; eight stock items can be purchased with Gold and are added to the saved inventory.
 - Quest state, step and progress persist in the save.
 
 ### Turn-based combat
@@ -117,14 +119,14 @@ All input actions are registered at runtime in `scripts/core/input_setup.gd`, so
 - Duplicate characters convert into awakening progress.
 - Party of up to 4; collection bonus from unique ownership.
 - Levels, XP, ascension, awakening, bond, equipment slots and stat scaling.
-- Inventory with currencies, materials and equipment.
+- Inventory with currencies, materials and equipment, plus three data-driven crafting recipes that consume gathered materials and gold.
 - Local JSON save with atomic replacement, autosave, backup-on-corruption and version field.
 
 ### UI
 
 - Responsive 16:9 layout built from code via `UITheme` and `UIFactory`.
 - Title screen, HUD, dialogue box, pause menu.
-- Summon, collection, inventory and quest screens.
+- Summon, collection, inventory/crafting, quest, map and local merchant shop screens.
 - Combat overlay with unit cards, turn order, skill list, targeting, log, auto mode, speed toggle, victory/defeat panel and retreat confirmation.
 - Touch joystick and touch action buttons.
 
@@ -132,7 +134,7 @@ All input actions are registered at runtime in `scripts/core/input_setup.gd`, so
 
 - Data-driven content: characters, skills, enemies, enemy groups, items, banners, quests, dialogue and regions are JSON.
 - Pure gameplay classes (`GachaService`, `CombatEngine`, `CombatAI`, `CombatFactory`, `ChunkStreamer`, `IsoMath`) suitable for headless tests and future server reuse.
-- 236 headless assertions (Phase 1 baseline) covering content integrity, math, gacha, combat, state, save and UI/scene instantiation — the Phase 1 baseline is preserved and Phases 2–5 add coverage on top (8 Phase 3 + 11 Phase 4 + 9 Phase 5 test groups). **236 is the Phase 1 baseline, not the current total**; see [Testing](documentation/TESTING.md) for the exact current total (**1374 passed, 0 failed**) and the 236 + 111 + 203 + 404 + 420 breakdown.
+- 236 headless assertions (Phase 1 baseline) covering content integrity, math, gacha, combat, state, save and UI/scene instantiation — the Phase 1 baseline is preserved and Phases 2–5 add coverage on top (8 Phase 3 + 11 Phase 4 + 9 Phase 5 test groups). **236 is the Phase 1 baseline, not the current total**; see [Testing](documentation/TESTING.md) for the exact current total (**2238 passed, 0 failed**) and the 236 + 111 + 203 + 404 + 420 breakdown.
 - No copyrighted assets, names, music or characters.
 
 ---
@@ -204,7 +206,7 @@ Still one `MultiMesh` draw call per terrain/water/detail layer per chunk; no per
 
 ### Testing
 
-8 new Phase 3 test groups (visual style, character animator, actor frame source, procedural variety, chunk visual quality, weather director, animated/interactive props, world visual integration) add 203 checks. Suite at the Phase 3 checkpoint: **550 passed, 0 failed** = 236 Phase 1 + 111 Phase 2 + 203 Phase 3 (a past checkpoint; the current total is **1374 passed, 0 failed** — see the Phase 5 section / [Testing](documentation/TESTING.md)).
+8 new Phase 3 test groups (visual style, character animator, actor frame source, procedural variety, chunk visual quality, weather director, animated/interactive props, world visual integration) add 203 checks. Suite at the Phase 3 checkpoint: **550 passed, 0 failed** = 236 Phase 1 + 111 Phase 2 + 203 Phase 3 (a past checkpoint; the current total is **2238 passed, 0 failed** — see the Phase 5 section / [Testing](documentation/TESTING.md)).
 
 > **Asset status: THREE final playable characters (Gerald, Lilith, Kael); the rest are placeholders.** Their world sheets, portraits, combat sprites and full-body illustrations are final imported art under `assets/characters/<id>/` (see each character's SPEC). Everything else shipped in Phase 3-5 is **procedural placeholder art** generated in code at runtime — no final painted sprites, sprite sheets, textures, portraits or VFX for the 12 collectible characters — and **no audio** of any kind exists. `ProceduralActorFrames` / `ProceduralArt.character_frame()` are explicitly TEMPORARY; real art plugs in via `ActorVisual.set_frame_source()` / an `ActorFrameSource` subclass. See [Art pipeline](documentation/ART_PIPELINE.md).
 
@@ -293,21 +295,22 @@ this phase built the *pipeline* and honest status, not finished artwork.
   main-thread **FRAME-SLICED** background preparation of at most ONE chunk per
   frame plus a bounded prefetch ring, feeding `_load_chunk` with a synchronous
   fallback. **NO THREADS** (Godot 4 `MultiMesh`/`Image`/`ShaderMaterial` and
-  scene-tree operations are not thread-safe); `ChunkStreamer` unchanged. A
-  shutdown-leak fix brings headless smoke tests to **ZERO leaked RIDs**.
+  scene-tree operations are not thread-safe); `ChunkStreamer` unchanged. The combat skill resolver now stores a weak reference to its engine, preventing a RefCounted ownership cycle; the latest isolated verbose regression reports zero ObjectDB/RID/resource cleanup diagnostics. See the latest verification record.
 
 ### Testing and verification
 
 - **11 new Phase 4 test groups (404 checks)** brought the suite to
   **954 passed, 0 failed** = 236 Phase 1 + 111 Phase 2 + 203 Phase 3 + 404
   Phase 4; all 550 prior tests preserved. **954 is the Phase 4 checkpoint, not
-  the current total** — Phase 5 brings it to **1374 passed, 0 failed**. See
+  the current total** — later integration and architecture regression work brings the current suite to **2238 passed, 0 failed**. See
   [Testing](documentation/TESTING.md).
 - All 6 verification commands exit `0` (editor import, content validator →
   `[validate] OK — 9 content files parsed and validated.`, test suite, title
   smoke `--quit-after 180`, game smoke `--quit-after 240`, and
-  `--export-pack "Linux/X11"` → a non-empty `.pck` smoke build), with ZERO
-  errors/warnings/leaked RIDs. No exact byte size is documented here; the smoke
+  `--export-pack "Linux/X11"` → a non-empty `.pck` smoke build). The latest
+  isolated verbose regression reports **2238 passed, 0 failed**, with no
+  ObjectDB/RID/resource cleanup diagnostics; only the intentional malformed-save
+  recovery warning remains. No exact byte size is documented here; the smoke
   build is verified by the non-empty `.pck` it produces.
 
 > **Asset status: ZERO assets are final.** Everything shipped in Phase 4 is
@@ -424,12 +427,8 @@ PREPARATION, not finished artwork.
 
 > **Asset status: THREE final playable characters (Gerald, Lilith, Kael); the rest are still placeholders.** Each protagonist's final art (72 world animations, portrait, combat sprite, full-body illustration) lives in `assets/characters/lilith/`. Everything else shipped in Phase 5 is
 > **procedural placeholder art** — no final painted sprites, sprite sheets,
-> textures, portraits or VFX for the 12 collectible characters — and **no audio** exists. **NO visual testing** was
-> performed (all verification is `--headless` with Godot's dummy renderer;
-> `_draw()` output, auras, borders, tints, silhouettes and tween pops were NOT
-> visually inspected on screen); there is no device profiling, no threads, only
-> TWO regions, and no multiplayer/backend. CI is configured but not run on
-> GitHub Actions.
+> textures, portraits or VFX for the 12 collectible characters — and no audio — remain placeholder-only. **Partial live visual QA** covers Royal Gardens movement/camera-follow, avatar cycling, NPC dialogue, inventory layout, Quest Journal and summon banners.
+> Full validation of every _draw() effect, premium aura/border/tint, combat sequence and device performance remains outstanding. Headless verification still uses the Godot dummy renderer; no threads, only TWO regions, and no multiplayer/backend. CI is configured but not run on GitHub Actions.
 
 ---
 
@@ -548,13 +547,13 @@ Honest list of what is **not** in this build:
 - **No audio.** No music, ambience, SFX or voice.
 - **Three final playable characters; the rest is placeholder art.** Gerald, Lilith and Kael have final imported playable art (`assets/characters/<id>/`), but the other collectible characters, terrain, props and UI still use procedural shapes, not final painted assets.
 - **The other collectibles are placeholder; no audio.** `AssetManifest.status_report()` is **FINAL 0 / TEMPORARY 8 / MISSING 8** and `CharacterAssetRegistry.report()` is **FINAL 0 / TEMPORARY 120 / MISSING 120** (12 × 10); both are disk-computed and FINAL is NEVER hardcoded. The protagonists' final art is intentionally tracked outside those 12-character registries (see each character's SPEC); every other asset is **procedural placeholder** — no final painted sprites, sprite sheets, PNG textures, portraits or VFX on disk — and **no audio** of any kind exists. The 12 `CharacterArtSpec` specs + generation prompts are **PREPARATION for future external art, not finished artwork**. The ONE demonstration character is a TEMPORARY in-memory procedural `SpriteFrames` (`DemoCharacterFrames`, NOT final art); real art plugs in via `SpriteFramesActorSource.from_disk()` / `register_character()` → `ActorVisual.configure_character()`. See [Art pipeline](documentation/ART_PIPELINE.md) §15 and `assets/ASSET_PRODUCTION_MANIFEST.md`.
-- **NO visual testing was performed.** All verification is `--headless` with Godot's dummy renderer; `_draw()` output, auras, borders, tints, silhouettes and tween pops are compile/build-safe and structurally asserted but were **NOT visually inspected on screen** — no shader compilation / appearance verification, no device profiling. The Phase 5 premium rarity glows, borders, tints and reveal pops are code-driven and were never viewed on a real display.
+- **Partial live visual QA.** Hands-on checks confirm Royal Gardens movement/camera-follow, avatar cycling, NPC dialogue open/close, inventory layout, Quest Journal and all three summon banners at 1280×720. The inventory split and shared overlay shell were corrected and visually rechecked. Full combat choreography, complete quest/gacha actions, premium effect rendering and device profiling remain unverified.
 - **Weather is an architecture, not a simulation.** `WeatherDirector` drives moods; rain is one lightweight capped CPU emitter (disabled on mobile) with no precipitation physics, splashes, accumulation or snow.
 - **No device profiling.** `GreenwardStyle.performance_tier()` is a coarse `OS.get_name()` hint only; mobile budgets are guidance, not measured frame times. Headless CI uses a dummy renderer, so full shader compilation is not exercised.
 - **No threads.** `ChunkPreparer` is main-thread FRAME-SLICED background preparation (at most one chunk per frame) with a synchronous fallback — NOT threaded, and no pre-baked cache. Fog/river/beach bands are procedural approximations and there is no occlusion culling beyond the chunk ring.
 - **Only TWO regions.** `greenward` + `moonpetal_hollow` (a small silver-birch moonlit vale); no six empty continents, no seamless zone streaming, no elevation/cliffs/water traversal rules, no fast-travel / map / fog-of-war, no mounts, no spawn directors/respawn timers and no world audio ambience. Region transitions are validated and wired but **cannot be interactively playtested headlessly**.
 - **Greenward's layout is partly hardcoded.** Its village/NPC/landmark composition is hardcoded; `moonpetal_hollow` is fully data-driven. Adding more regions still needs content and tests (see [Content guide](documentation/CONTENT_GUIDE.md) §12).
-- **No live events, seasons, mail, battle pass or shop.**
+- **No live events, seasons, mail or battle pass. A local offline merchant shop is implemented; there is no online marketplace.**
 - **No localization or accessibility settings** beyond responsive layout and large touch targets.
 - **No analytics, crash reporting or telemetry.**
 - **No performance profiling on target mobile hardware** yet. Budgets and guidance exist in `documentation/ART_PIPELINE.md`.
@@ -583,3 +582,4 @@ Honest list of what is **not** in this build:
 All characters, names, locations, factions, dialogue, UI text and procedural art in this repository are original work created for PROJECT FANTASY. No third-party copyrighted characters, music, textures, fonts or game data are included.
 
 Godot Engine is used under the MIT license. Any future third-party asset must be recorded with its license and source before being committed.
+

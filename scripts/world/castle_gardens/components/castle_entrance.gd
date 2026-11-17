@@ -1,6 +1,9 @@
 class_name CastleEntrance
 extends Node2D
-## Gothic castle entrance centerpiece.
+## Castle entrance assembly. Visual and collision pieces are reusable authored scenes.
+
+const PROP_SCENE: PackedScene = preload("res://scenes/world/castle_gardens/components/garden_sprite_prop.tscn")
+const BOX_SCENE: PackedScene = preload("res://scenes/world/castle_gardens/components/garden_collision_box.tscn")
 
 func build_default(center: Vector2) -> void:
 	var gate_tex := load("res://assets/environment/castle_gardens/castle_gate_detailed.png") as Texture2D
@@ -8,34 +11,21 @@ func build_default(center: Vector2) -> void:
 		gate_tex = load("res://assets/environment/castle_gardens/castle_gate.png") as Texture2D
 	if gate_tex == null:
 		return
-	var gate := Sprite2D.new()
-	gate.texture = gate_tex
-	gate.centered = true
-	gate.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	var gate := PROP_SCENE.instantiate() as Node2D
 	gate.position = center
-	gate.offset = Vector2(0, -44)
-	gate.scale = Vector2(1.05, 1.05)
-	add_child(gate)
+	var sprite := gate.get_node("Sprite") as Sprite2D
+	sprite.texture = gate_tex
+	sprite.offset = Vector2(0, -44)
+	sprite.scale = Vector2(1.05, 1.05)
+	gate.get_node("Body").queue_free()
+	gate.get_node("LanternGlow").queue_free()
+	$Visuals.add_child(gate)
+	_add_box(center + Vector2(-58, 22), Vector2(46, 28))
+	_add_box(center + Vector2(58, 22), Vector2(46, 28))
 
-	# Decorative stairs/platform hint (visual, no collision blocking entry)
-	var step := ColorRect.new()
-	step.position = center + Vector2(-34, 18)
-	step.size = Vector2(68, 8)
-	step.color = Color(0.52, 0.48, 0.44, 0.55)
-	step.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(step)
-
-	# Side collision blocks (leave opening in center)
-	_add_collision_box(center + Vector2(-58, 22), Vector2(46, 28))
-	_add_collision_box(center + Vector2(58, 22), Vector2(46, 28))
-
-func _add_collision_box(pos: Vector2, size: Vector2) -> void:
-	var body := StaticBody2D.new()
+func _add_box(pos: Vector2, size: Vector2) -> void:
+	var body := BOX_SCENE.instantiate() as StaticBody2D
 	body.position = pos
-	var col := CollisionShape2D.new()
-	var shape := RectangleShape2D.new()
-	shape.size = size
-	col.shape = shape
-	body.add_child(col)
-	add_child(body)
-
+	(body.get_node("CollisionShape2D") as CollisionShape2D).shape = RectangleShape2D.new()
+	(body.get_node("CollisionShape2D").shape as RectangleShape2D).size = size
+	$Collisions.add_child(body)

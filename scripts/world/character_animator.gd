@@ -55,178 +55,42 @@ enum Direction {
 	DOWN_LEFT = 7,
 }
 
-# Phase-3 core states, FROZEN for compatibility. The 550 headless tests and the
-# GreenwardStyle.SPRITE_SPECS timing arrays assert exactly these 8 values in
-# this order. Phase-4 CAST is an ADDITIVE 9th state exposed only via the
-# EXTENDED_* constants and *_for() helpers below -- do NOT add 8 here.
-const ALL_STATES: Array = [
-	State.IDLE, State.WALK, State.RUN, State.INTERACT,
-	State.ATTACK, State.DAMAGE, State.VICTORY, State.DEFEAT,
-]
+# Animation data is a separate immutable catalog; the state machine keeps its enum contract.
+const ALL_STATES = CharacterAnimationSpecCatalog.ALL_STATES
+const ALL_DIRECTIONS = CharacterAnimationSpecCatalog.ALL_DIRECTIONS
+const STATE_NAMES = CharacterAnimationSpecCatalog.STATE_NAMES
+const DIRECTION_NAMES = CharacterAnimationSpecCatalog.DIRECTION_NAMES
+const STATE_FPS = CharacterAnimationSpecCatalog.STATE_FPS
+const STATE_FRAMES = CharacterAnimationSpecCatalog.STATE_FRAMES
+const STATE_LOOPING = CharacterAnimationSpecCatalog.STATE_LOOPING
+const STATE_PRIORITY = CharacterAnimationSpecCatalog.STATE_PRIORITY
+const CAST_STATE = CharacterAnimationSpecCatalog.CAST_STATE
+const CAST_FRAMES = CharacterAnimationSpecCatalog.CAST_FRAMES
+const CAST_FPS = CharacterAnimationSpecCatalog.CAST_FPS
+const CAST_LOOPING = CharacterAnimationSpecCatalog.CAST_LOOPING
+const CAST_PRIORITY = CharacterAnimationSpecCatalog.CAST_PRIORITY
+const EXTENDED_STATES = CharacterAnimationSpecCatalog.EXTENDED_STATES
+const EXTENDED_STATE_NAMES = CharacterAnimationSpecCatalog.EXTENDED_STATE_NAMES
+const LOCOMOTION_STATES = CharacterAnimationSpecCatalog.LOCOMOTION_STATES
+const RETURN_STATES = CharacterAnimationSpecCatalog.RETURN_STATES
+const _DIR_BY_ANGLE = CharacterAnimationSpecCatalog._DIR_BY_ANGLE
 
-const ALL_DIRECTIONS: Array = [
-	Direction.DOWN, Direction.DOWN_RIGHT, Direction.RIGHT, Direction.UP_RIGHT,
-	Direction.UP, Direction.UP_LEFT, Direction.LEFT, Direction.DOWN_LEFT,
-]
-
-const STATE_NAMES: Dictionary = {
-	State.IDLE: "idle",
-	State.WALK: "walk",
-	State.RUN: "run",
-	State.INTERACT: "interact",
-	State.ATTACK: "attack",
-	State.DAMAGE: "damage",
-	State.VICTORY: "victory",
-	State.DEFEAT: "defeat",
-}
-
-const DIRECTION_NAMES: Dictionary = {
-	Direction.DOWN: "down",
-	Direction.DOWN_RIGHT: "down_right",
-	Direction.RIGHT: "right",
-	Direction.UP_RIGHT: "up_right",
-	Direction.UP: "up",
-	Direction.UP_LEFT: "up_left",
-	Direction.LEFT: "left",
-	Direction.DOWN_LEFT: "down_left",
-}
-
-# Playback timing. Targets come from documentation/ART_PIPELINE.md section 3:
-#   Idle     4-6 frames @ 8-10 fps
-#   Walk/Run 6-8 frames @ 12 / 14 fps
-#   Attack   5-8 frames @ 15 fps, Cast 6-8 @ 12 fps, Hurt 2 @ 12 fps,
-#   Death    5-8 frames, non-looping.
-# The five non-movement states are ONE-SHOTS. The counts/fps below are the
-# single source of truth shared with ActorFrameSource and the sprite sheets.
-const STATE_FPS: Dictionary = {
-	State.IDLE: 9.0,
-	State.WALK: 12.0,
-	State.RUN: 16.0,
-	State.INTERACT: 12.0,
-	State.ATTACK: 15.0,
-	State.DAMAGE: 12.0,
-	State.VICTORY: 12.0,
-	State.DEFEAT: 10.0,
-}
-
-const STATE_FRAMES: Dictionary = {
-	State.IDLE: 5,
-	State.WALK: 16,
-	State.RUN: 16,
-	State.INTERACT: 6,
-	State.ATTACK: 6,
-	State.DAMAGE: 2,
-	State.VICTORY: 8,
-	State.DEFEAT: 6,
-}
-
-# Looping states wrap forever; the other five are one-shots that clamp on the
-# last frame, stop, and emit one_shot_finished exactly once.
-const STATE_LOOPING: Dictionary = {
-	State.IDLE: true,
-	State.WALK: true,
-	State.RUN: true,
-	State.INTERACT: false,
-	State.ATTACK: false,
-	State.DAMAGE: false,
-	State.VICTORY: false,
-	State.DEFEAT: false,
-}
-
-# Higher number == higher priority. Required order:
-#   DEFEAT > VICTORY > DAMAGE > ATTACK > INTERACT > RUN > WALK > IDLE
-# A lower-priority play() cannot interrupt a higher-priority UNFINISHED
-# one-shot. Looping states never lock, so movement stays responsive.
-const STATE_PRIORITY: Dictionary = {
-	State.DEFEAT: 8,
-	State.VICTORY: 7,
-	State.DAMAGE: 6,
-	State.ATTACK: 5,
-	State.INTERACT: 4,
-	State.RUN: 3,
-	State.WALK: 2,
-	State.IDLE: 1,
-}
-
-# ---------------------------------------------------------------------------
-# Phase-4 ADDITIVE CAST state (9th state). Deliberately kept OUT of the frozen
-# 8-element arrays/dicts above so every Phase-3 test and the
-# GreenwardStyle.SPRITE_SPECS timing arrays stay byte-for-byte unchanged. All
-# new timing/lookup flows through the static *_for() helpers.
-# ---------------------------------------------------------------------------
-
-const CAST_STATE := 8
-const CAST_FRAMES := 7
-const CAST_FPS := 12.0
-const CAST_LOOPING := false
-# CAST sits at the ATTACK tier (5): a lower-priority request cannot interrupt an
-# unfinished cast, while DAMAGE(6)/VICTORY(7)/DEFEAT(8) still can. Integer tiers
-# keep priority_for() consistent with the integer-keyed STATE_PRIORITY dict.
-const CAST_PRIORITY := 5
-
-# All 9 animatable states (8 core + CAST). is_valid_state() consults THIS list.
-const EXTENDED_STATES := [0, 1, 2, 3, 4, 5, 6, 7, 8]
-const EXTENDED_STATE_NAMES := {
-	0: "idle", 1: "walk", 2: "run", 3: "interact",
-	4: "attack", 5: "damage", 6: "victory", 7: "defeat", 8: "cast",
-}
-# Looping / locomotion states that never lock on priority.
-const LOCOMOTION_STATES := [0, 1, 2]
-# One-shot -> state to return to when it finishes. DEFEAT holds (7 -> 7).
-const RETURN_STATES := {3: 0, 4: 0, 5: 0, 6: 0, 7: 7, 8: 0}
-
-# Order of directions by increasing screen angle (atan2(y, x) in [0, TAU)).
-# Index 0 == angle 0 (RIGHT), stepping clockwise in 45-degree sectors.
-const _DIR_BY_ANGLE: Array = [
-	Direction.RIGHT, Direction.DOWN_RIGHT, Direction.DOWN, Direction.DOWN_LEFT,
-	Direction.LEFT, Direction.UP_LEFT, Direction.UP, Direction.UP_RIGHT,
-]
-
-# ---------------------------------------------------------------------------
-# Signals
-# ---------------------------------------------------------------------------
-
-## Emitted whenever the (state, direction) PAIR changes. Direction-only changes
-## are reported too (the signal carries both values), so a sprite renderer can
-## always stay in sync. A state change additionally implies frame was reset to
-## 0 (read `frame` directly on this signal).
+# Runtime observation signals and mutable playback state stay with the state machine.
 signal state_changed(state: int, direction: int)
-## Emitted whenever `frame` changes value (tick advance / wrap).
 signal frame_changed(frame: int)
-## Emitted ONCE when a one-shot reaches its final frame and stops.
 signal one_shot_finished(state: int)
-## Phase-4: emitted by transition_to() on a real state change, carrying the
-## state we left, the state we entered, and the (possibly updated) direction.
 signal transitioned(from_state: int, to_state: int, direction: int)
 
-# ---------------------------------------------------------------------------
-# Public state (all plain data; safe to snapshot)
-# ---------------------------------------------------------------------------
-
-var state: int = State.IDLE
-var direction: int = Direction.DOWN
+var state: int = 0
+var direction: int = 0
 var frame: int = 0
 var speed_scale: float = 1.0
 var playing: bool = true
 var elapsed: float = 0.0
-## Phase-4: the state we were in before the last transition_to() call.
-var previous_state: int = State.IDLE
-
-# Internal: latches one-shot completion so one_shot_finished can never be
-# emitted twice, even if external code fiddles with `playing`.
+var previous_state: int = 0
 var _one_shot_done: bool = false
 
-# ---------------------------------------------------------------------------
-# Playback control
-# ---------------------------------------------------------------------------
 
-## Request a new animation state. Returns TRUE only if `state` actually
-## changed. A lower-priority request is rejected (returns false, changes
-## nothing) while a higher-priority unfinished one-shot is playing; use
-## play_forced() to bypass priority. On an accepted state change the frame and
-## elapsed time reset to 0 and playing becomes true. `p_speed_scale` scales the
-## effective fps (STATE_FPS[state] * speed_scale). A negative new_direction
-## means "keep the current direction".
 func play(new_state: int, new_direction: int = -1, p_speed_scale: float = 1.0) -> bool:
 	if _locked_by_priority(_clamp_state(new_state)):
 		return false

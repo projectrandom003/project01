@@ -24,6 +24,10 @@ var home_position: Vector2 = Vector2.ZERO
 var roam_radius: float = 70.0
 var move_speed: float = 26.0
 var is_boss: bool = false
+## Optional quest lock for arena bosses. The gate opens only after the required
+## quest reaches the authored objective step (or later).
+var required_quest: String = ""
+var required_quest_step: int = 0
 var engaged: bool = false
 var defeated: bool = false
 var respawn_seconds: float = 75.0
@@ -34,13 +38,11 @@ var _spawn_grace: float = 3.0
 
 var visual: ActorVisual
 var visual_definition: Dictionary = {}
-var _accent_sprite: Sprite2D
 var _roam_target: Vector2
-var _roam_timer: float = 0.0
 var _player: Node2D
-var _name_label: Label
 
 # --- modular components/state (reusable, behavior-preserving integration) ---
+var roaming_behavior: EnemyRoamingBehavior = null
 var enemy_controller: Node = null
 var enemy_visual_component: Node = null
 var movement_component: Node = null
@@ -75,92 +77,36 @@ func _ready() -> void:
 	_roam_target = position
 	_resolve_modular_components()
 	_sync_components_from_setup()
-
-	# ---- deterministic per-spawn variety (group_id + spawn_index) ----
 	var vseed := absi(("%s|%d" % [group_id, spawn_index]).hash())
-	var tints: Array = [
-		GreenwardStyle.MAGIC.teal, GreenwardStyle.MAGIC.violet,
-		GreenwardStyle.ACCENTS.berry, GreenwardStyle.CANOPY.bright,
-		GreenwardStyle.MAGIC.gold,
-	]
-	var tint: Color = tints[vseed % tints.size()]
-	var tinted := _tint_palette(visual_definition.get("palette", {}), tint, 0.12 + float(vseed % 10) * 0.01)
-	var scale_variance := 0.85 + float(vseed % 30) * 0.01  # 0.85 .. 1.14
-
-	var enemy_name := str(visual_definition.get("name", "Monster"))
-	var def_id := str(visual_definition.get("id", ""))
-	var kind := ActorVisual.Kind.MONSTER
-	if def_id == "glade_wisp":
-		kind = ActorVisual.Kind.SPIRIT
-
-	visual = get_node_or_null("ActorVisual") as ActorVisual
-	if visual == null:
-		visual = ActorVisual.new() # compatibility for direct test instantiation
-		visual.name = "ActorVisual"
-		add_child(visual)
-	visual.setup(tinted, kind, def_id, "Monster", str(visual_definition.get("element", "neutral")))
-	visual.is_boss = is_boss
-	visual.visual_scale = (1.35 if is_boss else 1.0) * scale_variance
-	# Vary silhouette where feasible via existing ActorVisual.Kind / def_id /
-	# race values. Bosses keep their true def_id so the treant boss still draws.
-	if not is_boss and def_id != "moonpetal_sprite":
-		var silhouettes := ["mossling", "thornhound", "fae_marauder", "glade_wisp", "corrupted_treant"]
-		visual.def_id = str(silhouettes[(vseed >> 3) % silhouettes.size()])
-	# PART 4: exercise the SpriteFramesActorSource registration seam for this
-	# enemy definition id. No disk sheets exist, so the procedural fallback stays.
-	visual.configure_character(def_id)
-	_add_accent(vseed)
-
-	_name_label = get_node_or_null("NameLabel") as Label
-	if _name_label == null:
-		_name_label = Label.new()
-		_name_label.name = "NameLabel"
-		_name_label.position = Vector2(-80, -100 if is_boss else -68)
-		_name_label.size = Vector2(160, 22)
-		add_child(_name_label)
-	_name_label.text = enemy_name
-	_name_label.position.y = -100 if is_boss else -68
-	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_name_label.add_theme_font_size_override("font_size", 12 if not is_boss else 15)
-	_name_label.add_theme_color_override("font_color", GreenwardStyle.MAGIC.ember if not is_boss else GreenwardStyle.UI.gold)
-	_name_label.add_theme_color_override("font_outline_color", GreenwardStyle.INK)
-	_name_label.add_theme_constant_override("outline_size", 4)
-	_name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-	_accent_sprite = get_node_or_null("Accent") as Sprite2D
-	if _accent_sprite == null:
-		_accent_sprite = Sprite2D.new()
-		_accent_sprite.name = "Accent"
-		_accent_sprite.centered = false
-		add_child(_accent_sprite)
-
+	if enemy_visual_component != null:
+		visual = enemy_visual_component.configure_enemy(self, visual_definition, is_boss, vseed)
 	if not EventBus.battle_finished.is_connected(_on_battle_finished):
 		EventBus.battle_finished.connect(_on_battle_finished)
 	_sync_components_after_visual_setup()
 	_set_enemy_state(&"patrol" if not defeated else &"dead")
 
-
 func _resolve_modular_components() -> void:
+	roaming_behavior = get_node_or_null("Components/EnemyRoamingBehavior") as EnemyRoamingBehavior
 	enemy_controller = get_node_or_null("Components/EnemyController")
-	enemy_visual_component = get_node_or_null("Components/EnemyVisual")
-	movement_component = get_node_or_null("Components/EnemyMovement")
-	detection_component = get_node_or_null("Components/EnemyDetection")
-	targeting_component = get_node_or_null("Components/EnemyTargeting")
-	combat_component = get_node_or_null("Components/EnemyCombat")
-	health_component = get_node_or_null("Components/EnemyHealth")
-	status_component = get_node_or_null("Components/EnemyStatusEffects")
-	animation_component = get_node_or_null("Components/EnemyAnimation")
-	interaction_component = get_node_or_null("Components/EnemyInteraction")
-	audio_component = get_node_or_null("Components/EnemyAudio")
-	vfx_component = get_node_or_null("Components/EnemyVFX")
-	state_machine = get_node_or_null("StateMachine")
-	if enemy_controller != null and "owner_enemy" in enemy_controller:
-		enemy_controller.owner_enemy = self
+	if enemy_controller == null:
+		push_error("RoamingMonster requires its authored EnemyController child")
+		return
+	enemy_visual_component = enemy_controller.visual
+	movement_component = enemy_controller.movement
+	detection_component = enemy_controller.detection
+	targeting_component = enemy_controller.targeting
+	combat_component = enemy_controller.combat
+	health_component = enemy_controller.health
+	status_component = enemy_controller.status_effects
+	animation_component = enemy_controller.animation
+	interaction_component = enemy_controller.interaction
+	audio_component = enemy_controller.audio
+	vfx_component = enemy_controller.vfx
+	state_machine = enemy_controller.state_machine
 	if animation_component != null and "visual" in animation_component and visual != null:
 		animation_component.visual = visual
 	if enemy_visual_component != null and enemy_visual_component.has_method("resolve_nodes"):
 		enemy_visual_component.call("resolve_nodes", self)
-
 
 func _sync_components_from_setup() -> void:
 	if movement_component != null:
@@ -185,39 +131,6 @@ func _sync_components_after_visual_setup() -> void:
 		enemy_visual_component.call("emit_setup_completed")
 
 
-static func _to_color(v: Variant) -> Color:
-	if v is Color:
-		return v
-	if v is String and str(v).begins_with("#"):
-		return Color(str(v))
-	return Color("#4f6b3a")
-
-
-func _tint_palette(p: Dictionary, tint: Color, amount: float) -> Dictionary:
-	var out := {}
-	for key in p.keys():
-		out[key] = _to_color(p[key]).lerp(tint, amount)
-	return out
-
-
-## A tiny deterministic decorative prop accent near the monster's feet.
-func _add_accent(vseed: int) -> void:
-	if is_boss or (vseed % 3 == 0):
-		return
-	var kinds := ["crystal", "glow_mushroom", "rune_stone", "spirit_bloom", "mushroom", "pebble"]
-	var kind := str(kinds[vseed % kinds.size()])
-	var tex := ProceduralArt.prop_texture(kind, vseed % 2)
-	if tex == null:
-		return
-	if _accent_sprite == null:
-		return
-	_accent_sprite.texture = tex
-	_accent_sprite.offset = Vector2(-float(tex.get_width()) * 0.5, -float(tex.get_height()) + 6.0)
-	_accent_sprite.scale = Vector2.ONE * 0.4
-	_accent_sprite.position = Vector2(14.0 * (1.0 if vseed % 2 == 0 else -1.0), 0.0)
-	_accent_sprite.visible = true
-
-
 func _process(delta: float) -> void:
 	if defeated:
 		_set_enemy_state(&"dead")
@@ -227,71 +140,41 @@ func _process(delta: float) -> void:
 		_engagement_cooldown -= delta
 		if _engagement_cooldown < 0.0:
 			_engagement_cooldown = 0.0
-		if visual != null:
-			visual.walking = false
-			visual.play(ANIM_IDLE)
 		_play_anim_state(&"idle")
 		_set_enemy_state(&"idle")
 		return
 	if engaged:
 		_set_enemy_state(&"attack")
 		return
+	# Boss encounters are authored arena fixtures, not roaming wildlife. Keep
+	# their world position fixed; the player must approach the arena encounter
+	# and explicitly interact with it to begin battle.
+	if is_boss:
+		_roam_target = home_position
+		if position.distance_to(home_position) > 0.5:
+			position = home_position
+		_play_anim_state(&"idle")
+		_set_enemy_state(&"idle")
+		return
 	if _player == null or not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player")
 	if _player == null:
 		return
 
-	# Preserve existing passive-roam behavior: no auto aggro/chase, interact-only encounter.
-	# Detection/targeting components are updated/evaluated for modular architecture integration.
-	if detection_component != null and detection_component.has_method("evaluate"):
-		detection_component.call("evaluate", self, _player as Node2D)
-	if targeting_component != null and targeting_component.has_method("clear_target"):
-		targeting_component.call("clear_target")
-	if status_component != null and status_component.has_method("tick"):
-		status_component.call("tick", delta)
-	if combat_component != null and "attack_cooldown_remaining" in combat_component:
-		# combat component has its own cooldown timer via _process; keep state idle while roaming
-		pass
+	# Passive roaming is composed by its scene-owned behavior node; encounter
+	# initiation remains exclusively behind explicit Interactable.interact().
+	if roaming_behavior != null:
+		roaming_behavior.process_roaming(self, _player, delta)
+	elif enemy_controller != null and enemy_controller.has_method("process_ai"):
+		enemy_controller.call("process_ai", delta, {})
 
-	# Monsters never initiate combat from proximity or chase the player.
-	# They roam inside their home radius and remain passive until the player
-	# approaches and explicitly presses E / the Interact button.
-	_roam_timer -= delta
-	if _roam_timer <= 0.0:
-		_roam_timer = randf_range(2.0, 5.0)
-		if movement_component != null and movement_component.has_method("reset_roam_timer"):
-			# keep component in sync (component timer unused for authoritative movement below)
-			pass
-		var found := false
-		for _attempt in 8:
-			var offset := Vector2(randf_range(-roam_radius, roam_radius), randf_range(-roam_radius, roam_radius))
-			var candidate := home_position + offset
-			if _target_walkable(candidate):
-				_roam_target = candidate
-				found = true
-				break
-		if not found:
-			_roam_target = position
-		if movement_component != null and "current_target_position" in movement_component:
-			movement_component.current_target_position = _roam_target
-	if position.distance_to(_roam_target) > 4.0 and _target_walkable(_roam_target):
-		var to_target := _roam_target - position
-		position = position.move_toward(_roam_target, move_speed * delta)
-		if visual != null:
-			visual.walking = true
-			visual.set_move_direction(to_target)
-			visual.play(ANIM_WALK)
-		_play_anim_state(&"patrol")
-		_set_enemy_state(&"patrol")
-	else:
-		if visual != null:
-			visual.walking = false
-			visual.play(ANIM_IDLE)
-		_play_anim_state(&"idle")
-		_set_enemy_state(&"idle")
 
-	if state_machine != null and state_machine.has_method("process_state"):
-		state_machine.call("process_state", delta, {})
+func can_interact() -> bool:
+	if not super.can_interact() or defeated or engaged or _engagement_cooldown > 0.0:
+		return false
+	if required_quest.is_empty():
+		return true
+	return GameState.quest_domain.quest_state(required_quest) == "active" and GameState.quest_domain.quest_step_index(required_quest) >= required_quest_step
 
 
 func interact() -> void:
@@ -310,8 +193,6 @@ func _begin_encounter() -> void:
 	if engaged or defeated or _engagement_cooldown > 0.0:
 		return
 	engaged = true
-	if visual != null:
-		visual.walking = false
 	if animation_component != null and animation_component.has_method("play_state"):
 		animation_component.call("play_state", &"attack")
 	_set_enemy_state(&"attack")
@@ -386,7 +267,11 @@ func _target_walkable(pos: Vector2) -> bool:
 
 
 func _set_enemy_state(state_name: StringName) -> void:
-	if state_machine != null and state_machine.has_method("set_state"):
+	if enemy_controller != null and enemy_controller.has_method("request_state"):
+		var current = state_machine.get("current_state_name") if state_machine != null and "current_state_name" in state_machine else null
+		if current != state_name:
+			enemy_controller.call("request_state", state_name, {})
+	elif state_machine != null and state_machine.has_method("set_state"):
 		var current = state_machine.get("current_state_name") if "current_state_name" in state_machine else null
 		if current != state_name:
 			state_machine.call("set_state", state_name, {})

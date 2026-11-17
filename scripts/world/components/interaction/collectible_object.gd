@@ -15,7 +15,7 @@ func _ready() -> void:
 	super._ready()
 	prompt = collect_prompt
 	var key := _key()
-	if not key.is_empty() and bool(GameState.flags.get(key, false)):
+	if not key.is_empty() and bool(GameState.quest_domain.flags.get(key, false)):
 		enabled = false
 		visible = false
 
@@ -25,9 +25,9 @@ func interact() -> void:
 		return
 	var key := _key()
 	if not key.is_empty():
-		GameState.flags[key] = true
+		GameState.quest_domain.flags[key] = true
 	if not rewards.is_empty():
-		GameState.grant_reward_items(rewards)
+		GameState.inventory_domain.grant_reward_items(rewards)
 	GameState.queue_save()
 	collected.emit(collectible_id, rewards.duplicate(true))
 	EventBus.toast_requested.emit(collect_message)

@@ -1,0 +1,368 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/castle_pack_v02/environment/terrain/path_cobble_01.png" id="1_path"]
+
+[node name="OuterRoad" type="Node2D"]
+z_index = -8
+
+[node name="RoadTile0" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile1" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile2" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile3" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile4" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile5" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile6" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile7" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile8" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile9" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile10" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile11" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile12" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile13" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile14" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile15" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile16" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile17" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile18" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile19" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile20" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile21" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile22" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile23" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile24" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile25" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile26" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile27" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile28" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile29" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile30" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile31" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile32" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile33" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile34" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile35" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile36" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile37" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile38" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile39" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile40" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile41" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile42" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile43" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile44" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile45" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile46" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile47" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile48" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile49" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile50" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile51" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile52" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile53" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile54" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile55" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile56" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile57" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile58" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile59" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile60" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile61" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile62" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile63" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile64" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile65" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile66" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile67" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile68" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile69" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile70" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile71" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile72" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile73" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile74" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile75" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile76" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile77" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile78" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile79" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile80" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile81" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile82" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile83" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile84" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile85" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile86" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile87" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile88" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+[node name="RoadTile89" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_path")
+
+

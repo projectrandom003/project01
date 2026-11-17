@@ -1,6 +1,10 @@
-[gd_scene format=3]
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/components/player_camera_rig.gd" id="1_rig"]
 
 [node name="Camera2D" type="Camera2D"]
 position = Vector2(0, -30)
+zoom = Vector2(1.1, 1.1)
 position_smoothing_enabled = true
 position_smoothing_speed = 12.0
+script = ExtResource("1_rig")

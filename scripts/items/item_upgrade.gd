@@ -14,7 +14,7 @@ static func get_config_for_slot(slot: String) -> Dictionary:
 
 
 static func upgrade_info(uid: String, slot: String) -> Dictionary:
-	return GameState.gear_upgrade_info(uid, slot)
+	return GameState.roster_domain.gear_upgrade_info(uid, slot)
 
 
 static func can_upgrade(uid: String, slot: String) -> bool:
@@ -22,7 +22,7 @@ static func can_upgrade(uid: String, slot: String) -> bool:
 
 
 static func apply_upgrade(uid: String, slot: String) -> bool:
-	return GameState.enhance_gear(uid, slot)
+	return GameState.roster_domain.enhance_gear(uid, slot)
 
 
 static func validation_errors(uid: String, slot: String) -> Array[String]:

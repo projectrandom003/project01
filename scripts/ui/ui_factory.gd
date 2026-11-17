@@ -103,6 +103,40 @@ static func small_button(text_value: String, color: Color = UITheme.TEXT_DIM) ->
 	return node
 
 
+## Returns the same themed button style without constructing a temporary Control.
+## Use this when styling an authored Button from another scene/component.
+static func button_stylebox(primary: bool = false, danger: bool = false, state: String = "normal") -> StyleBoxFlat:
+	if danger:
+		if state == "hover":
+			return UITheme.style(Color("#3a1a2a"), UITheme.DANGER, 8, 1, 10)
+		if state == "pressed":
+			return UITheme.style(Color("#170b12"), Color("#ff8298"), 8, 2, 10)
+		if state == "focus":
+			return UITheme.style(Color("#3a1a2a"), Color("#ffc2cc"), 8, 2, 10)
+		return UITheme.style(Color("#2a1420"), Color("#6b2a3c"), 8, 1, 10)
+	if primary:
+		if state == "hover":
+			return UITheme.style(Color("#3a321d"), UITheme.GOLD_BRIGHT, 8, 1, 10)
+		if state == "pressed":
+			return UITheme.style(Color("#1a1710"), UITheme.GOLD_BRIGHT, 8, 2, 10)
+		if state == "focus":
+			return UITheme.style(Color("#3a321d"), Color("#fff0bd"), 8, 2, 10)
+		return UITheme.style(Color("#2a2415"), UITheme.GOLD, 8, 1, 10)
+	if state == "hover":
+		return UITheme.style(Color("#243252"), UITheme.GOLD, 8, 1, 10)
+	if state == "pressed":
+		return UITheme.style(Color("#0e1628"), UITheme.GOLD, 8, 1, 10)
+	if state == "focus":
+		return UITheme.style(Color(0, 0, 0, 0), UITheme.GOLD, 8, 2, 10)
+	if state == "disabled":
+		return UITheme.style(Color("#111827"), Color("#1d2740"), 8, 1, 10)
+	return UITheme.style(UITheme.PANEL_LIGHT, UITheme.BORDER, 8, 1, 10)
+
+
+static func bar_fill_style(color: Color) -> StyleBoxFlat:
+	return UITheme.style(color, color, 4, 0, 0)
+
+
 static func bar(color: Color, height: int = 10) -> ProgressBar:
 	var node := ProgressBar.new()
 	node.show_percentage = false

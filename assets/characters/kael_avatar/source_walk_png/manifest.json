@@ -1,0 +1,282 @@
+{
+  "character": "kael",
+  "source": "Pixelorama .pxo",
+  "source_frames": 17,
+  "source_fps": 6.0,
+  "export_cell": [
+    96,
+    128
+  ],
+  "game_state": "walk",
+  "game_frames": 16,
+  "game_fps": 12.0,
+  "directions": [
+    {
+      "direction": "south",
+      "source_file": "C:\\Users\\quoth\\Downloads\\south.pxo",
+      "source_sha256_unchanged": "19a6a00bdcc06cb441d61348263490d0da4457ba2ab1650be4a3d1b860f81da8",
+      "source_canvas": "per-frame PXO canvas",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "export": "source_walk_png/south.png",
+      "export_size": [
+        1632,
+        128
+      ],
+      "game_sample_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "foot_anchor": "bottom-centre in each 96x128 transparent cell"
+    },
+    {
+      "direction": "south-east",
+      "source_file": "C:\\Users\\quoth\\Downloads\\south-east.pxo",
+      "source_sha256_unchanged": "11dec93b7227790e898886c6b53745ba74d3973eb716195b1b716c92c1791d08",
+      "source_canvas": "per-frame PXO canvas",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "export": "source_walk_png/south-east.png",
+      "export_size": [
+        1632,
+        128
+      ],
+      "game_sample_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "foot_anchor": "bottom-centre in each 96x128 transparent cell"
+    },
+    {
+      "direction": "east",
+      "source_file": "C:\\Users\\quoth\\Downloads\\east.pxo",
+      "source_sha256_unchanged": "7fe488d9ae6e806dcdf7e27007954b12773a368d6fd4726b6fa3170b17b4839c",
+      "source_canvas": "per-frame PXO canvas",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "export": "source_walk_png/east.png",
+      "export_size": [
+        1632,
+        128
+      ],
+      "game_sample_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "foot_anchor": "bottom-centre in each 96x128 transparent cell"
+    },
+    {
+      "direction": "north-east",
+      "source_file": "C:\\Users\\quoth\\Downloads\\north-east.pxo",
+      "source_sha256_unchanged": "99f2ddafda932a96f72bd8acf8423a3b8f9ffed6da76ba9f4d2eff116ddda283",
+      "source_canvas": "per-frame PXO canvas",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "export": "source_walk_png/north-east.png",
+      "export_size": [
+        1632,
+        128
+      ],
+      "game_sample_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "foot_anchor": "bottom-centre in each 96x128 transparent cell"
+    },
+    {
+      "direction": "north",
+      "source_file": "C:\\Users\\quoth\\Downloads\\north.pxo",
+      "source_sha256_unchanged": "c36873abf9dca4dd233d543e712b3117fd078dd6dc1dd1a94c32cf998b1e32a3",
+      "source_canvas": "per-frame PXO canvas",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "export": "source_walk_png/north.png",
+      "export_size": [
+        1632,
+        128
+      ],
+      "game_sample_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "foot_anchor": "bottom-centre in each 96x128 transparent cell"
+    },
+    {
+      "direction": "north-west",
+      "source_file": "C:\\Users\\quoth\\Downloads\\north-west.pxo",
+      "source_sha256_unchanged": "273be2d98689eeea46dbfd417e2a5a9918807f320878a7ef7b9c44c3d6210517",
+      "source_canvas": "per-frame PXO canvas",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "export": "source_walk_png/north-west.png",
+      "export_size": [
+        1632,
+        128
+      ],
+      "game_sample_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "foot_anchor": "bottom-centre in each 96x128 transparent cell"
+    },
+    {
+      "direction": "west",
+      "source_file": "C:\\Users\\quoth\\Downloads\\west.pxo",
+      "source_sha256_unchanged": "3bb6f7a381c6b5775200cbd023aa5dc8df490a11ce4967d89ab3547077b61bc5",
+      "source_canvas": "per-frame PXO canvas",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "export": "source_walk_png/west.png",
+      "export_size": [
+        1632,
+        128
+      ],
+      "game_sample_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "foot_anchor": "bottom-centre in each 96x128 transparent cell"
+    },
+    {
+      "direction": "south-west",
+      "source_file": "C:\\Users\\quoth\\Downloads\\south-west.pxo",
+      "source_sha256_unchanged": "4378426a944d67b2d856c44cfdb23e82e33067d5e927d0d2812dd71147039098",
+      "source_canvas": "per-frame PXO canvas",
+      "source_frames": 17,
+      "source_fps": 6.0,
+      "export": "source_walk_png/south-west.png",
+      "export_size": [
+        1632,
+        128
+      ],
+      "game_sample_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "foot_anchor": "bottom-centre in each 96x128 transparent cell"
+    }
+  ],
+  "game_atlas": "walk_sheet.png",
+  "game_atlas_size": [
+    1536,
+    1024
+  ],
+  "game_atlas_alpha_bbox": [
+    2,
+    9,
+    1535,
+    1024
+  ]
+}

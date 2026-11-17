@@ -19,6 +19,7 @@ layout_config = ExtResource("6_layout")
 groups = ["village_district"]
 district_id = &"entrance"
 display_name = "Village Entrance"
+metadata/district_id = "entrance"
 [node name="NavigationAnchor" parent="PathNetwork/EntranceDistrict" index="0"]
 position = Vector2(230, 256)
 metadata/district_id = "entrance"
@@ -27,6 +28,7 @@ metadata/district_id = "entrance"
 groups = ["village_district"]
 district_id = &"central_square"
 display_name = "Central Square"
+metadata/district_id = "central_square"
 [node name="NavigationAnchor" parent="PathNetwork/CentralSquareDistrict" index="0"]
 position = Vector2(0, 256)
 metadata/district_id = "central_square"
@@ -35,6 +37,7 @@ metadata/district_id = "central_square"
 groups = ["village_district"]
 district_id = &"civic"
 display_name = "Elder's Quarter"
+metadata/district_id = "civic"
 [node name="NavigationAnchor" parent="PathNetwork/CivicDistrict" index="0"]
 position = Vector2(-70, 218)
 metadata/district_id = "civic"
@@ -43,6 +46,7 @@ metadata/district_id = "civic"
 groups = ["village_district"]
 district_id = &"market"
 display_name = "Market"
+metadata/district_id = "market"
 [node name="NavigationAnchor" parent="PathNetwork/MarketDistrict" index="0"]
 position = Vector2(150, 350)
 metadata/district_id = "market"
@@ -51,6 +55,7 @@ metadata/district_id = "market"
 groups = ["village_district"]
 district_id = &"residential"
 display_name = "Residential Quarter"
+metadata/district_id = "residential"
 [node name="NavigationAnchor" parent="PathNetwork/ResidentialDistrict" index="0"]
 position = Vector2(40, 188)
 metadata/district_id = "residential"
@@ -59,6 +64,7 @@ metadata/district_id = "residential"
 groups = ["village_district"]
 district_id = &"shrine_riverside"
 display_name = "Shrine & Riverside"
+metadata/district_id = "shrine_riverside"
 [node name="NavigationAnchor" parent="PathNetwork/ShrineRiversideDistrict" index="0"]
 position = Vector2(-145, 270)
 metadata/district_id = "shrine_riverside"
@@ -585,3 +591,61 @@ metadata/npc_id = "wanderer_pip"
 [node name="Edgar" parent="DepthSort" index="41" instance=ExtResource("9_edgar")]
 position = Vector2(150, 300)
 metadata/village_sort_category = "npc"
+
+[node name="EntranceBannerWest" parent="DepthSort" index="42" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(14, 12)
+collision_offset = Vector2(0, -6)
+position = Vector2(370, 214)
+prop_kind = "banner_post"
+variant = 0
+prop_scale = 0.78
+
+[node name="EntranceBannerEast" parent="DepthSort" index="43" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(14, 12)
+collision_offset = Vector2(0, -6)
+position = Vector2(370, 298)
+prop_kind = "banner_post"
+variant = 1
+prop_scale = 0.78
+flip_h = true
+
+[node name="MarketCrateB" parent="DepthSort" index="44" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(26, 20)
+collision_offset = Vector2(0, -6)
+position = Vector2(96, 400)
+prop_kind = "crate"
+variant = 0
+prop_scale = 0.8
+
+[node name="MarketBarrelB" parent="DepthSort" index="45" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(22, 20)
+collision_offset = Vector2(0, -6)
+position = Vector2(208, 392)
+prop_kind = "barrel"
+variant = 1
+prop_scale = 0.78
+
+[node name="ResidentialWoodpile" parent="DepthSort" index="46" instance=ExtResource("7_prop")]
+blocks_movement = true
+collision_size = Vector2(26, 20)
+collision_offset = Vector2(0, -6)
+position = Vector2(-188, 238)
+prop_kind = "crate"
+variant = 1
+prop_scale = 0.72
+
+[node name="ResidentialBerryBush" parent="DepthSort" index="47" instance=ExtResource("7_prop")]
+position = Vector2(245, 176)
+prop_kind = "berry_bush"
+variant = 0
+prop_scale = 0.7
+
+[node name="ShrineRuneStone" parent="DepthSort" index="48" instance=ExtResource("7_prop")]
+position = Vector2(-262, 258)
+prop_kind = "rune_stone"
+variant = 0
+prop_scale = 0.68

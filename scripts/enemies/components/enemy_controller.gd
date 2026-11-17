@@ -45,7 +45,8 @@ var state_machine: Node = null
 
 
 func _ready() -> void:
-	owner_enemy = get_parent()
+	var parent := get_parent()
+	owner_enemy = parent.get_parent() if parent != null and parent.name == "Components" else parent
 	_resolve_components()
 	initialized.emit()
 

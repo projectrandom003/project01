@@ -9,8 +9,8 @@ const PLAYER_HP_SCALE := 1.0
 
 static func player_units() -> Array:
 	var units: Array = []
-	var bonus := GameState.collection_bonus()
-	for instance in GameState.party_instances():
+	var bonus := GameState.roster_domain.collection_bonus()
+	for instance in GameState.roster_domain.party_instances():
 		var unit := build_from_character(instance, bonus)
 		if unit != null:
 			units.append(unit)
@@ -38,7 +38,7 @@ static func build_from_character(instance: CharacterInstance, collection_bonus: 
 	unit.crit_chance = definition.effective_stat("crit", instance.level, instance.ascension)
 	unit.crit_mult = definition.effective_stat("crit_dmg", instance.level, instance.ascension)
 	# Bond bonus: small ATK increase per bond level.
-	unit.atk *= (1.0 + GameState.bond_bonus_atk(instance.uid))
+	unit.atk *= (1.0 + GameState.roster_domain.bond_bonus_atk(instance.uid))
 	unit.skills = definition.skills.duplicate()
 	unit.ultimate = definition.ultimate
 	unit.passive_id = definition.passive_id
@@ -55,7 +55,7 @@ static func _apply_equipment(unit: Combatant, instance: CharacterInstance) -> vo
 			continue
 		var item: Dictionary = ContentDB.get_item(item_id)
 		var stats: Dictionary = item.get("stats", {})
-		var enhancement := GameState.gear_level(instance.uid, slot)
+		var enhancement := GameState.roster_domain.gear_level(instance.uid, slot)
 		var enhancement_mult := 1.0 + 0.08 * float(enhancement)
 		unit.max_hp += float(stats.get("hp", 0)) * enhancement_mult
 		unit.atk += float(stats.get("atk", 0)) * enhancement_mult

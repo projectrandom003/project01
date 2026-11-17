@@ -56,7 +56,9 @@ static func pull(banner: Dictionary, rng: RandomNumberGenerator, pity: Dictionar
 			"index": index,
 		})
 
-	# Ten-pull floor: at least one Epic or better.
+	# Ten-pull floor: at least one Epic or better. The replacement is a real
+	# pull for pity accounting too: if it lands on the featured unit, reset the
+	# featured counter exactly as for an ordinary roll.
 	if count >= 10 and bool(banner.get("ten_pull_epic_guarantee", false)) and best_rank < RARITY_RANK["epic"]:
 		var guaranteed := _pick_character(banner, "epic", featured, featured_rate, state, featured_pity, rng)
 		results[results.size() - 1] = {
@@ -67,6 +69,8 @@ static func pull(banner: Dictionary, rng: RandomNumberGenerator, pity: Dictionar
 			"guaranteed": true,
 		}
 		state.epic_streak = 0
+		if bool(guaranteed.featured):
+			state.featured = 0
 
 	return { "results": results, "pity": state }
 
@@ -98,22 +102,32 @@ static func _pick_character(
 		return { "character_id": "", "featured": false }
 
 	# Featured rate-up only applies to characters of the rolled rarity.
+	# Featured units must be removed from the off-banner pool; otherwise they
+	# could be selected twice (once by rate-up and again as an ordinary pool
+	# entry), making the displayed featured rate mathematically false.
 	var matching_featured: Array = []
 	for character_id in featured:
 		var character: CharacterDef = ContentDB.get_character(character_id)
-		if character != null and character.rarity == rarity:
+		if character != null and character.rarity == rarity and candidates.has(character_id):
 			matching_featured.append(character_id)
+
+	var off_banner_candidates: Array = []
+	for character_id in candidates:
+		if not matching_featured.has(character_id):
+			off_banner_candidates.append(character_id)
 
 	if not matching_featured.is_empty():
 		var force_featured: bool = int(state.featured) >= featured_pity
-		if force_featured or rng.randf() < featured_rate:
+		if force_featured or rng.randf() < featured_rate or off_banner_candidates.is_empty():
 			return {
 				"character_id": str(matching_featured[rng.randi_range(0, matching_featured.size() - 1)]),
 				"featured": true,
 			}
 
+	if off_banner_candidates.is_empty():
+		off_banner_candidates = candidates
 	return {
-		"character_id": str(candidates[rng.randi_range(0, candidates.size() - 1)]),
+		"character_id": str(off_banner_candidates[rng.randi_range(0, off_banner_candidates.size() - 1)]),
 		"featured": false,
 	}
 

@@ -19,6 +19,7 @@ extends Node
 
 const CHARACTERS := ["gerald", "lilith", "kael"]
 const EXPECTED_ANIMATIONS := 72
+const PLAYER_SCENE: PackedScene = preload("res://scenes/characters/player.tscn")
 
 
 var _failures: int = 0
@@ -99,7 +100,7 @@ func _check_sheet_contract(character_id: String) -> void:
 
 
 func _check_avatar_switching() -> void:
-	_player = Player.new()
+	_player = PLAYER_SCENE.instantiate() as Player
 	add_child(_player)
 	await get_tree().process_frame
 	await get_tree().process_frame
@@ -168,9 +169,9 @@ func _send_switch_avatar() -> void:
 	event.keycode = KEY_TAB
 	event.physical_keycode = KEY_TAB
 	event.pressed = true
-	_player._unhandled_input(event)
+	_player.avatar_component._unhandled_input(event)
 	var release := InputEventKey.new()
 	release.keycode = KEY_TAB
 	release.physical_keycode = KEY_TAB
 	release.pressed = false
-	_player._unhandled_input(release)
+	_player.avatar_component._unhandled_input(release)

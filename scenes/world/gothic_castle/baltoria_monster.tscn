@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/roaming_monster.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scripts/world/gothic_castle/baltoria_monster.gd" id="2_script"]
+
+[node name="RoamingMonster" instance=ExtResource("1_base")]
+script = ExtResource("2_script")

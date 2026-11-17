@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[node name="LightingAnchors" type="Node2D"]
+
+[node name="Light01" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(21.25, 1.25)
+metadata/light_offset = Vector2(0, -20)
+
+[node name="Light02" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(23.75, 10.31)
+metadata/light_offset = Vector2(0, -20)
+
+[node name="Light03" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(30.31, 3.75)
+metadata/light_offset = Vector2(0, -20)
+
+[node name="Light04" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(16.56, -3)
+metadata/light_offset = Vector2(0, -20)
+
+[node name="Light05" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(26.25, 6.25)
+metadata/light_offset = Vector2(0, -20)
+
+[node name="Shadow" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(16.56, -3.44)
+metadata/presentation_offset = Vector2(-120, -10)
+
+[node name="AmbientParticles" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(23, 4)
+metadata/presentation_offset = Vector2(0, 0)

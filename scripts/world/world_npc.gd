@@ -43,10 +43,13 @@ func _ready() -> void:
 		role = _derive_role()
 
 	visual = get_node_or_null("ActorVisual") as ActorVisual
-	if visual == null:
-		visual = ActorVisual.new() # compatibility for direct test instantiation
-		visual.name = "ActorVisual"
-		add_child(visual)
+	_name_label = get_node_or_null("NameLabel") as Label
+	_subtitle_label = get_node_or_null("SubtitleLabel") as Label
+	_interaction_ring = get_node_or_null("InteractionRing") as Node2D
+	_quest_marker = get_node_or_null("QuestMarker") as Node2D
+	if visual == null or _name_label == null or _subtitle_label == null or _interaction_ring == null or _quest_marker == null:
+		push_error("WorldNPC requires its authored ActorVisual, NameLabel, SubtitleLabel, InteractionRing and QuestMarker children.")
+		return
 	_interaction_ring = get_node_or_null("InteractionRing") as Node2D
 	_quest_marker = get_node_or_null("QuestMarker") as Node2D
 	if _quest_marker != null:
@@ -64,13 +67,6 @@ func _ready() -> void:
 		visual.animator.speed_scale = 0.85
 
 	# Name label (warm gold from GreenwardStyle).
-	_name_label = get_node_or_null("NameLabel") as Label
-	if _name_label == null:
-		_name_label = Label.new()
-		_name_label.name = "NameLabel"
-		_name_label.position = Vector2(-70, -82)
-		_name_label.size = Vector2(140, 22)
-		add_child(_name_label)
 	_name_label.text = display_name
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_name_label.add_theme_font_size_override("font_size", 12)
@@ -80,13 +76,6 @@ func _ready() -> void:
 	_name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	# Subtle role / title subtitle beneath the name.
-	_subtitle_label = get_node_or_null("SubtitleLabel") as Label
-	if _subtitle_label == null:
-		_subtitle_label = Label.new()
-		_subtitle_label.name = "SubtitleLabel"
-		_subtitle_label.position = Vector2(-80, -62)
-		_subtitle_label.size = Vector2(160, 16)
-		add_child(_subtitle_label)
 	_subtitle_label.text = role
 	_subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_subtitle_label.add_theme_font_size_override("font_size", 9)
@@ -108,7 +97,7 @@ func _exit_tree() -> void:
 
 
 func _refresh_quest_marker(_quest_id: String = "") -> void:
-	_quest_marker_state = GameState.quest_marker_for_npc(npc_id)
+	_quest_marker_state = GameState.quest_domain.quest_marker_for_npc(npc_id)
 	if _quest_marker == null:
 		return
 	_quest_marker.visible = not _quest_marker_state.is_empty()

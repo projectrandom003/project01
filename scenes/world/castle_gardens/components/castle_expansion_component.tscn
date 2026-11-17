@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/components/castle_expansion_component.gd" id="1_root"]
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/components/castle_expansion_approach_component.gd" id="2_approach"]
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/components/castle_expansion_cache_component.gd" id="3_cache"]
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/components/castle_expansion_portal_component.gd" id="4_portal"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_expansion_approach_placements.tscn" id="5_placements"]
+
+[node name="CastleExpansion" type="Node2D"]
+script = ExtResource("1_root")
+
+[node name="ApproachBuilder" type="Node" parent="."]
+script = ExtResource("2_approach")
+
+[node name="CacheSpawner" type="Node" parent="."]
+script = ExtResource("3_cache")
+
+[node name="ExpansionGround" type="Node2D" parent="."]
+
+[node name="ExpansionFlora" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="ExpansionProps" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="ApproachPlacements" parent="." instance=ExtResource("5_placements")]
+
+[node name="PortalConnector" type="Node" parent="."]
+script = ExtResource("4_portal")

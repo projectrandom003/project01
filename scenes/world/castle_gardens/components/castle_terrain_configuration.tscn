@@ -1,0 +1,27 @@
+[gd_scene format=3]
+
+[node name="TerrainConfiguration" type="Node2D"]
+metadata/ground_min = Vector2i(-14, -35)
+metadata/ground_max = Vector2i(65, 45)
+metadata/tile_width = 64.0
+metadata/tile_height = 32.0
+metadata/random_seed = 9001
+metadata/grass_texture_paths = PackedStringArray("res://assets/castle_pack_v02/environment/terrain/grass_01.png", "res://assets/castle_pack_v02/environment/terrain/grass_02.png", "res://assets/castle_pack_v02/environment/terrain/grass_03.png")
+
+[node name="GrassDetail01" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(18, 6)
+
+[node name="GrassDetail02" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(28, 6)
+
+[node name="GrassDetail03" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(20, 12)
+
+[node name="GrassDetail04" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(32, 2)
+
+[node name="GrassDetail05" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(24, 14)
+
+[node name="GrassDetail06" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(16, 10)

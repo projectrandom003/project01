@@ -1,0 +1,32 @@
+[gd_scene format=3]
+
+[node name="CraftingPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(520, 380)
+visible = false
+
+[node name="Body" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Body"]
+layout_mode = 2
+text = "Recipes"
+theme_override_font_sizes/font_size = 22
+
+[node name="Intro" type="Label" parent="Body"]
+layout_mode = 2
+text = "Turn gathered materials and gold into useful equipment."
+autowrap_mode = 2
+
+[node name="Scroll" type="ScrollContainer" parent="Body"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RecipeList" type="VBoxContainer" parent="Body/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="CloseButton" type="Button" parent="Body"]
+layout_mode = 2
+text = "Close"

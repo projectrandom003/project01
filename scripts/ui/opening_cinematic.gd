@@ -27,64 +27,24 @@ func _ready() -> void:
 	theme = UITheme.build()
 	# Composition and layout are authored in opening_cinematic.tscn. Runtime
 	# code only binds story data, animation and the skip action to those nodes.
-	_ensure_runtime_nodes()
-	_skip_button.pressed.connect(_finish)
+	if not _bind_authored_nodes():
+		return
 	_build_protagonists()
 	_update_caption()
 	resized.connect(_layout_protagonists)
 	_layout_protagonists()
 
-func _ensure_runtime_nodes() -> void:
+func _bind_authored_nodes() -> bool:
 	_character_layer = get_node_or_null("CharacterLayer") as Node2D
-	if _character_layer == null:
-		_character_layer = Node2D.new()
-		_character_layer.name = "CharacterLayer"
-		add_child(_character_layer)
 	_caption = get_node_or_null("Caption") as Label
-	if _caption == null:
-		_caption = Label.new()
-		_caption.name = "Caption"
-		_caption.anchor_left = 0.08
-		_caption.anchor_top = 0.79
-		_caption.anchor_right = 0.92
-		_caption.anchor_bottom = 0.91
-		_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		_caption.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		add_child(_caption)
 	_skip_button = get_node_or_null("SkipButton") as Button
-	if _skip_button == null:
-		_skip_button = Button.new()
-		_skip_button.name = "SkipButton"
-		_skip_button.text = "Skip"
-		_skip_button.anchor_left = 0.86
-		_skip_button.anchor_top = 0.035
-		_skip_button.anchor_right = 0.97
-		_skip_button.anchor_bottom = 0.1
-		add_child(_skip_button)
 	_timeline_progress = get_node_or_null("TimelineTrack/TimelineProgress") as ColorRect
-	if _timeline_progress == null:
-		var track := ColorRect.new()
-		track.name = "TimelineTrack"
-		track.anchor_left = 0.12
-		track.anchor_top = 0.965
-		track.anchor_right = 0.88
-		track.anchor_bottom = 0.968
-		track.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(track)
-		_timeline_progress = ColorRect.new()
-		_timeline_progress.name = "TimelineProgress"
-		_timeline_progress.anchor_right = 0.0
-		_timeline_progress.anchor_bottom = 1.0
-		_timeline_progress.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		track.add_child(_timeline_progress)
 	_fade_overlay = get_node_or_null("CinematicFade") as ColorRect
-	if _fade_overlay == null:
-		_fade_overlay = ColorRect.new()
-		_fade_overlay.name = "CinematicFade"
-		_fade_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-		_fade_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_fade_overlay.color = Color(0.01, 0.015, 0.03, 0.0)
-		add_child(_fade_overlay)
+	if _character_layer == null or _caption == null or _skip_button == null or _timeline_progress == null or _fade_overlay == null:
+		push_error("OpeningCinematic is missing a required authored presentation node.")
+		return false
+	_skip_button.pressed.connect(_finish)
+	return true
 
 func _build_protagonists() -> void:
 	# Gerald and Lilith are pre-authored ActorVisual nodes. Their definitions

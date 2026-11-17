@@ -53,10 +53,15 @@ func get_current() -> Interactable:
 
 
 func try_interact() -> bool:
-	if _current == null or not is_instance_valid(_current):
+	if _owner_node == null or not is_instance_valid(_owner_node) or _current == null or not is_instance_valid(_current):
+		_set_current(null)
 		return false
-	interaction_requested.emit(_current)
-	_current.interact()
+	if not _current.can_interact() or _owner_node.global_position.distance_to(_current.global_position) > _current.interaction_radius:
+		_set_current(null)
+		return false
+	var target := _current
+	interaction_requested.emit(target)
+	target.interact()
 	return true
 
 

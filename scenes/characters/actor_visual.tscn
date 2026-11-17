@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/actor_visual.gd" id="1_actor_visual"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/directional_equipment/directional_equipment_layers.tscn" id="2_directional"]
@@ -9,6 +9,10 @@
 [ext_resource type="PackedScene" path="res://scenes/characters/components/vfx_attachment_points.tscn" id="7_vfx_points"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/character_status_anchor.tscn" id="8_status_anchor"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/character_health_display_anchor.tscn" id="9_health_anchor"]
+[ext_resource type="Script" path="res://scripts/world/components/actor_procedural_renderer_component.gd" id="10_procedural_renderer"]
+[ext_resource type="Script" path="res://scripts/world/components/actor_pose_component.gd" id="11_pose"]
+[ext_resource type="Script" path="res://scripts/world/components/actor_sprite_component.gd" id="12_sprite"]
+[ext_resource type="Script" path="res://scripts/world/components/actor_character_effects_component.gd" id="13_character_fx"]
 
 [node name="ActorVisual" type="Node2D"]
 script = ExtResource("1_actor_visual")
@@ -38,3 +42,15 @@ animation_player_path = NodePath("../AnimationPlayer")
 [node name="HealthDisplayAnchor" parent="." instance=ExtResource("9_health_anchor")]
 
 [node name="Audio" type="Node2D" parent="."]
+
+[node name="ProceduralRenderer" type="Node2D" parent="."]
+script = ExtResource("10_procedural_renderer")
+
+[node name="Pose" type="Node" parent="."]
+script = ExtResource("11_pose")
+
+[node name="SpritePresentation" type="Node" parent="."]
+script = ExtResource("12_sprite")
+
+[node name="CharacterEffects" type="Node2D" parent="."]
+script = ExtResource("13_character_fx")

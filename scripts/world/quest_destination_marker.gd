@@ -40,12 +40,12 @@ func _resolve_nodes() -> void:
 
 func _process(delta: float) -> void:
 	_time += delta
-	var quest_id := GameState.tracked_quest()
+	var quest_id := GameState.quest_domain.tracked_quest()
 	if quest_id.is_empty():
 		visible = false
 		return
 	var definition := ContentDB.get_quest(quest_id)
-	if definition.is_empty() or GameState.quest_state(quest_id) == "complete":
+	if definition.is_empty() or GameState.quest_domain.quest_state(quest_id) == "complete":
 		visible = false
 		return
 	var world := get_parent().get_parent()
@@ -53,13 +53,13 @@ func _process(delta: float) -> void:
 		if str(definition.get("region", "greenward")) != (world as GreenwardWorld).region_id:
 			visible = false
 			return
-	var target_position := GameState.quest_target_position(quest_id)
+	var target_position := GameState.quest_domain.quest_target_position(quest_id)
 	var game_screen := get_tree().get_first_node_in_group("game_screen")
 	if game_screen != null and game_screen.get("quest_resolver") is QuestNavigationResolver:
 		var resolver := game_screen.get("quest_resolver") as QuestNavigationResolver
 		var player_node := get_tree().get_first_node_in_group("player")
-		var resolver_player_position: Vector2 = player_node.global_position if player_node is Node2D else GameState._find_player_position()
-		var resolved := resolver.get_resolved_target((world as GreenwardWorld).region_id if world is GreenwardWorld else GameState.player_region, resolver_player_position)
+		var resolver_player_position: Vector2 = player_node.global_position if player_node is Node2D else GameState.quest_domain._find_player_position()
+		var resolved := resolver.get_resolved_target((world as GreenwardWorld).region_id if world is GreenwardWorld else GameState.session_domain.player_region, resolver_player_position)
 		if not bool(resolved.get("valid", false)) or not bool(resolved.get("same_frame", false)):
 			visible = false
 			return
@@ -68,7 +68,7 @@ func _process(delta: float) -> void:
 			target_position = resolved_position as Vector2
 	global_position = target_position
 	var marker_player := get_tree().get_first_node_in_group("player")
-	var marker_player_position: Vector2 = marker_player.global_position if marker_player is Node2D else GameState._find_player_position()
+	var marker_player_position: Vector2 = marker_player.global_position if marker_player is Node2D else GameState.quest_domain._find_player_position()
 	_distance = marker_player_position.distance_to(global_position)
 	visible = true
 	_animate_nodes()

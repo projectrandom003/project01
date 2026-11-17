@@ -1,0 +1,48 @@
+{
+  "character": "kael",
+  "asset": "idle_sheet.png",
+  "asset_size": [
+    480,
+    1024
+  ],
+  "frame_size": [
+    96,
+    128
+  ],
+  "directions": [
+    "down",
+    "down_right",
+    "right",
+    "up_right",
+    "up",
+    "up_left",
+    "left",
+    "down_left"
+  ],
+  "idle_frames": 5,
+  "idle_fps": 9,
+  "looping": true,
+  "pose_source": "eight still direction views",
+  "animation_strip_usage": "retained for reference only; not used because it reads as walking",
+  "repeated_pose_frames": "each directional idle pose repeated 5x",
+  "anchor": "bottom-centre, alpha bounds end at each cell's bottom edge",
+  "source_files": {
+    "directions": {
+      "file": "source_idle_png/pixellab_directions.png",
+      "size": [
+        1024,
+        128
+      ],
+      "sha256": "b38912a19d07f96ec4d4b174eea0c45d448f289ced87bc042a11cd8b50a9a9a3"
+    },
+    "idle_strip": {
+      "file": "source_idle_png/pixellab_idle_17.png",
+      "size": [
+        2788,
+        164
+      ],
+      "frames": 17,
+      "sha256": "60a8c7ed76a68b1706e38f0cf407df8517bb0aad8f95a998b1decfe44637bfa0"
+    }
+  }
+}

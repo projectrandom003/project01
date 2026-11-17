@@ -1,0 +1,66 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/title_screen.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/backgrounds/reverie_title_screen.jpg" id="2_art"]
+[ext_resource type="Script" path="res://scripts/ui/components/title_screen_layout_component.gd" id="3_layout"]
+[ext_resource type="Script" path="res://scripts/ui/components/title_screen_actions_component.gd" id="4_actions"]
+
+
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("1_script")
+
+[node name="TitleArtwork" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_art")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="ContinueButton" type="Button" parent="."]
+mouse_filter = 0
+focus_mode = 2
+text = ""
+
+[node name="NewJourneyButton" type="Button" parent="."]
+mouse_filter = 0
+focus_mode = 2
+text = ""
+
+[node name="LoadGameButton" type="Button" parent="."]
+mouse_filter = 0
+focus_mode = 2
+text = ""
+
+[node name="SettingsButton" type="Button" parent="."]
+mouse_filter = 0
+focus_mode = 2
+text = ""
+
+[node name="ExtrasButton" type="Button" parent="."]
+mouse_filter = 0
+focus_mode = 2
+text = ""
+
+[node name="QuitGameButton" type="Button" parent="."]
+mouse_filter = 0
+focus_mode = 2
+text = ""
+
+[node name="Layout" type="Node" parent="."]
+script = ExtResource("3_layout")
+
+[node name="Actions" type="Node" parent="."]
+script = ExtResource("4_actions")

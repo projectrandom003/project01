@@ -49,7 +49,7 @@ func show_item(item_id: String) -> void:
 		chips.add_child(UIFactory.element_chip(str(item.get("element", "neutral"))))
 	add_child(chips)
 
-	var amount := GameState.currency(item_id) if category == "currency" else GameState.item_count(item_id)
+	var amount := GameState.inventory_domain.currency(item_id) if category == "currency" else GameState.inventory_domain.item_count(item_id)
 	add_child(UIFactory.label("Owned: %s" % UIFactory.number(amount), 12, UITheme.TEXT_DIM))
 	add_child(UIFactory.wrapped(str(item.get("description", "")), 12, UITheme.TEXT_DIM))
 	add_child(UIFactory.separator())
@@ -85,7 +85,7 @@ func _build_equipment_actions(item: Dictionary, amount: int) -> void:
 	var equipped_by := _equipped_by(_item_id)
 	if not equipped_by.is_empty():
 		add_child(UIFactory.label("Equipped by: " + ", ".join(equipped_by), 11, UITheme.TEAL))
-		for instance in GameState.roster:
+		for instance in GameState.roster_domain.roster:
 			var definition: CharacterDef = ContentDB.get_character(instance.char_id)
 			if definition == null:
 				continue
@@ -100,7 +100,7 @@ func _build_equipment_actions(item: Dictionary, amount: int) -> void:
 	target_row.add_child(UIFactory.label("Equip to", 11, UITheme.TEXT_FAINT))
 	var picker := EQUIPMENT_TARGET_PICKER_SCENE.instantiate() as OptionButton
 	var index := 0
-	for instance in GameState.roster:
+	for instance in GameState.roster_domain.roster:
 		var definition: CharacterDef = ContentDB.get_character(instance.char_id)
 		if definition == null:
 			continue
@@ -134,15 +134,15 @@ func _build_equipment_actions(item: Dictionary, amount: int) -> void:
 
 func _maybe_add_enhancement(uid: String, slot_id: String) -> void:
 	var target_instance: CharacterInstance = null
-	for candidate in GameState.roster:
+	for candidate in GameState.roster_domain.roster:
 		if candidate.uid == uid:
 			target_instance = candidate
 			break
 	if target_instance == null or target_instance.equipped_item(slot_id) != _item_id:
 		return
-	var enhancement := GameState.gear_level(uid, slot_id)
+	var enhancement := GameState.roster_domain.gear_level(uid, slot_id)
 	add_child(UIFactory.label("ENHANCEMENT  +%d%% stats" % (enhancement * 8), 10, UITheme.GOLD))
-	var upgrade_info := GameState.gear_upgrade_info(uid, slot_id)
+	var upgrade_info := GameState.roster_domain.gear_upgrade_info(uid, slot_id)
 	var upgrade_button := UIFactory.button("Enhance to +%d  ·  %d Gold  ·  %d Glade Sap" % [enhancement + 1, int(upgrade_info.get("gold", 0)), int(upgrade_info.get("sap", 0))], true)
 	upgrade_button.disabled = not bool(upgrade_info.get("ok", false))
 	upgrade_button.tooltip_text = str(upgrade_info.get("reason", "Raises this gear's stats by 8% per level."))
@@ -152,7 +152,7 @@ func _maybe_add_enhancement(uid: String, slot_id: String) -> void:
 
 func _equipped_by(item_id: String) -> Array:
 	var result: Array = []
-	for instance in GameState.roster:
+	for instance in GameState.roster_domain.roster:
 		var definition: CharacterDef = ContentDB.get_character(instance.char_id)
 		if definition == null:
 			continue
@@ -168,7 +168,7 @@ func _build_comparison(item: Dictionary, uid: String) -> VBoxContainer:
 	box.name = "EquipmentComparison"
 	box.add_child(UIFactory.label("COMPARISON · CURRENTLY EQUIPPED", 9, UITheme.TEXT_FAINT))
 	var instance: CharacterInstance = null
-	for candidate in GameState.roster:
+	for candidate in GameState.roster_domain.roster:
 		if candidate.uid == uid:
 			instance = candidate
 			break

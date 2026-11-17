@@ -20,7 +20,7 @@ func _ready() -> void:
 	super._ready()
 	prompt = "Open"
 	var key := _flag_key()
-	if not key.is_empty() and bool(GameState.flags.get(key, false)):
+	if not key.is_empty() and bool(GameState.quest_domain.flags.get(key, false)):
 		_is_open = true
 		enabled = not one_time
 		if animation_player and animation_player.has_animation("opened"):
@@ -37,11 +37,11 @@ func interact() -> void:
 		animation_player.play("open")
 	opened.emit()
 	if not rewards.is_empty():
-		GameState.grant_reward_items(rewards)
+		GameState.inventory_domain.grant_reward_items(rewards)
 		loot_granted.emit(rewards.duplicate(true))
 	var key := _flag_key()
 	if not key.is_empty():
-		GameState.flags[key] = true
+		GameState.quest_domain.flags[key] = true
 		GameState.queue_save()
 	if one_time:
 		enabled = false

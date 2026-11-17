@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/reverie_pack/reverie_piece.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/reverie_pack_v01/Corrupted_Environment/Effects/corruption_veins_tile.png" id="2_tex"]
+
+[node name="CorruptionVeinsTile" type="Node2D"]
+y_sort_enabled = false
+script = ExtResource("1_script")
+asset_id = "corruption_veins_tile"
+footprint_cells = Vector2i(1, 1)
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture_filter = 1
+centered = false
+offset = Vector2(32, 16)
+texture = ExtResource("2_tex")
+

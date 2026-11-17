@@ -5,3 +5,6 @@
 [node name="GardenHedges" type="Node2D"]
 script = ExtResource("1")
 y_sort_enabled = true
+
+[node name="HedgeInstances" type="Node2D" parent="."]
+y_sort_enabled = true

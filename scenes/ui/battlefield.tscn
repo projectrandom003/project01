@@ -1,9 +1,15 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/combat/battlefield.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/ui/greenward_field_backdrop.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/greenward_boss_backdrop.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/withered_estate_backdrop.tscn" id="4"]
+[ext_resource type="Script" path="res://scripts/ui/combat/battlefield_layout_component.gd" id="5_layout"]
+[ext_resource type="Script" path="res://scripts/ui/combat/battlefield_effects_component.gd" id="6_effects"]
+[ext_resource type="Script" path="res://scripts/ui/combat/kael_attack_presentation_component.gd" id="7_kael"]
+[ext_resource type="Script" path="res://scripts/ui/combat/matron_attack_presentation_component.gd" id="8_matron"]
+[ext_resource type="Script" path="res://scripts/ui/combat/generic_attack_presentation_component.gd" id="9_generic"]
+[ext_resource type="Script" path="res://scripts/ui/combat/battlefield_impact_effects_component.gd" id="10_impact"]
 
 [node name="Battlefield" type="Control"]
 clip_contents = true
@@ -51,3 +57,21 @@ color = Color(0.62, 0.9, 0.48, 0.2)
 z_index = 1
 
 [node name="Actors" type="Node2D" parent="."]
+
+[node name="Layout" type="Node" parent="."]
+script = ExtResource("5_layout")
+
+[node name="Effects" type="Control" parent="."]
+script = ExtResource("6_effects")
+
+[node name="KaelAttackPresentation" type="Control" parent="."]
+script = ExtResource("7_kael")
+
+[node name="MatronAttackPresentation" type="Control" parent="."]
+script = ExtResource("8_matron")
+
+[node name="GenericAttackPresentation" type="Control" parent="."]
+script = ExtResource("9_generic")
+
+[node name="ImpactEffects" type="Control" parent="."]
+script = ExtResource("10_impact")

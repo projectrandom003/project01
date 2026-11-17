@@ -1,0 +1,216 @@
+[gd_scene format=3]
+
+[node name="ApproachPlacements" type="Node2D"]
+
+[node name="Path_1" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionGround"
+metadata/category = "Pathways"
+metadata/subfolder = "Ground"
+metadata/asset_id = "path_cobble_01"
+metadata/grid_position = Vector2(29, 11)
+
+[node name="Blossom_1" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "tree_blossom_01"
+metadata/grid_position = Vector2(27, 11)
+
+[node name="Oak_1" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "tree_oak_01"
+metadata/grid_position = Vector2(31, 11)
+
+[node name="Path_2" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionGround"
+metadata/category = "Pathways"
+metadata/subfolder = "Ground"
+metadata/asset_id = "path_cobble_01"
+metadata/grid_position = Vector2(29, 12)
+
+[node name="Lamp_2" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionProps"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Decorations"
+metadata/asset_id = "lamp_post_gold"
+metadata/grid_position = Vector2(28, 12)
+
+[node name="Rose_2" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "rose_bush_01"
+metadata/grid_position = Vector2(30, 12)
+
+[node name="Path_3" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionGround"
+metadata/category = "Pathways"
+metadata/subfolder = "Ground"
+metadata/asset_id = "path_cobble_01"
+metadata/grid_position = Vector2(30, 13)
+
+[node name="Blossom_3" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "tree_blossom_01"
+metadata/grid_position = Vector2(28, 13)
+
+[node name="Oak_3" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "tree_oak_01"
+metadata/grid_position = Vector2(32, 13)
+
+[node name="Path_4" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionGround"
+metadata/category = "Pathways"
+metadata/subfolder = "Ground"
+metadata/asset_id = "path_cobble_01"
+metadata/grid_position = Vector2(30, 14)
+
+[node name="Lamp_4" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionProps"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Decorations"
+metadata/asset_id = "lamp_post_gold"
+metadata/grid_position = Vector2(29, 14)
+
+[node name="Rose_4" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "rose_bush_01"
+metadata/grid_position = Vector2(31, 14)
+
+[node name="Path_5" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionGround"
+metadata/category = "Pathways"
+metadata/subfolder = "Ground"
+metadata/asset_id = "path_cobble_01"
+metadata/grid_position = Vector2(31, 15)
+
+[node name="Blossom_5" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "tree_blossom_01"
+metadata/grid_position = Vector2(29, 15)
+
+[node name="Oak_5" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "tree_oak_01"
+metadata/grid_position = Vector2(33, 15)
+
+[node name="Path_6" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionGround"
+metadata/category = "Pathways"
+metadata/subfolder = "Ground"
+metadata/asset_id = "path_cobble_01"
+metadata/grid_position = Vector2(31, 16)
+
+[node name="Lamp_6" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionProps"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Decorations"
+metadata/asset_id = "lamp_post_gold"
+metadata/grid_position = Vector2(30, 16)
+
+[node name="Rose_6" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "rose_bush_01"
+metadata/grid_position = Vector2(32, 16)
+
+[node name="Path_7" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionGround"
+metadata/category = "Pathways"
+metadata/subfolder = "Ground"
+metadata/asset_id = "path_cobble_01"
+metadata/grid_position = Vector2(32, 17)
+
+[node name="Blossom_7" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "tree_blossom_01"
+metadata/grid_position = Vector2(30, 17)
+
+[node name="Oak_7" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "tree_oak_01"
+metadata/grid_position = Vector2(34, 17)
+
+[node name="Hedge_1" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "hedge_x_2x1"
+metadata/grid_position = Vector2(27, 12)
+
+[node name="Hedge_2" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "hedge_x_2x1"
+metadata/grid_position = Vector2(31, 13)
+
+[node name="Hedge_3" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "hedge_x_2x1"
+metadata/grid_position = Vector2(33, 15)
+
+[node name="Hedge_4" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionFlora"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Vegetation"
+metadata/asset_id = "hedge_x_2x1"
+metadata/grid_position = Vector2(30, 17)
+
+[node name="RoyalStatue" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionProps"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Decorations"
+metadata/asset_id = "statue_royal"
+metadata/grid_position = Vector2(29, 13)
+
+[node name="SmallFountain" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionProps"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Decorations"
+metadata/asset_id = "fountain_small_1x1"
+metadata/grid_position = Vector2(30, 12)
+
+[node name="RoyalBanner" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionProps"
+metadata/category = "Royal_Gardens"
+metadata/subfolder = "Decorations"
+metadata/asset_id = "banner_royal_01"
+metadata/grid_position = Vector2(31, 14)
+
+[node name="BorderPost" type="Marker2D" parent="."]
+metadata/target_layer = "ExpansionProps"
+metadata/category = "Pathways"
+metadata/subfolder = "Borders"
+metadata/asset_id = "border_post_01"
+metadata/grid_position = Vector2(32, 15)
+
+[node name="GardenerSealCache" type="Marker2D" parent="."]
+metadata/placement_type = "collectible"
+metadata/grid_position = Vector2(27, 13)
+metadata/item_id = "rune_stone"
+metadata/display_name = "Gardener's Seal Cache"
+metadata/description = "Left by the royal gardeners before the road was abandoned."
+metadata/quantity = 1
+metadata/collectible_id = "castle_royal_seal_cache"
+metadata/rewards = {"royal_seal": 1, "glade_sap": 2}

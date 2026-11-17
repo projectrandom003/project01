@@ -1,0 +1,7013 @@
+{
+ "pack": "REVERIE — Royal Gardens & Gothic Castle Asset Pack",
+ "version": "1.0",
+ "project": "Reverie (Godot 4.7.2)",
+ "tile": [
+  64,
+  32
+ ],
+ "projection": "2:1 isometric (dimetric), diamond-down",
+ "assets": [
+  {
+   "id": "altar_skull_01",
+   "file": "Boss_Arena/Decorations/altar_skull_01.png",
+   "category": "Boss_Arena",
+   "subfolder": "Decorations",
+   "size": [
+    66,
+    54
+   ],
+   "frame_size": [
+    66,
+    54
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    52
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -52
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -25.0
+   ],
+   "intended_use": "Skull altar / sacrificial stone",
+   "godot": "Footprint collision; purple PointLight2D optional",
+   "sha1": "8dcfb534897dd4d6eb0cb0032530943a1dafab4d",
+   "tags": []
+  },
+  {
+   "id": "arena_arch_large_3x1",
+   "file": "Boss_Arena/Architecture/arena_arch_large_3x1.png",
+   "category": "Boss_Arena",
+   "subfolder": "Architecture",
+   "size": [
+    132,
+    268
+   ],
+   "frame_size": [
+    132,
+    268
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    66,
+    234
+   ],
+   "footprint_cells": "3x1",
+   "sprite2d_offset_if_centered_false": [
+    -66,
+    -234
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -100.0
+   ],
+   "intended_use": "Large dark boss arena archway",
+   "godot": "Split collision: piers solid, opening walkable",
+   "sha1": "912fd3e5a63722dff5071a406cfb492a515bbd92",
+   "tags": []
+  },
+  {
+   "id": "arena_edge_tile",
+   "file": "Boss_Arena/Flooring/arena_edge_tile.png",
+   "category": "Boss_Arena",
+   "subfolder": "Flooring",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Arena boundary / rim floor tile",
+   "godot": "Atlas tile 64x32; forms arena edge ring",
+   "sha1": "0dc18dc21e62bfac550fd24afcaa7b51bd1657a9",
+   "tags": []
+  },
+  {
+   "id": "arena_floor_cracked_glow",
+   "file": "Boss_Arena/Flooring/arena_floor_cracked_glow.png",
+   "category": "Boss_Arena",
+   "subfolder": "Flooring",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Cracked arena stone with glowing purple fissures",
+   "godot": "Atlas tile 64x32",
+   "sha1": "e03857de3a95aed62bd8838ce7434a56ab932654",
+   "tags": []
+  },
+  {
+   "id": "arena_floor_dark_01",
+   "file": "Boss_Arena/Flooring/arena_floor_dark_01.png",
+   "category": "Boss_Arena",
+   "subfolder": "Flooring",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Dark boss arena floor tile",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off",
+   "sha1": "07b357a05ac177a2a044980a6c66532ac750a64a",
+   "tags": []
+  },
+  {
+   "id": "arena_floor_dark_02",
+   "file": "Boss_Arena/Flooring/arena_floor_dark_02.png",
+   "category": "Boss_Arena",
+   "subfolder": "Flooring",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Dark boss arena floor tile",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off",
+   "sha1": "10bdc943407676fbf9632102a67bbf9de25a163a",
+   "tags": []
+  },
+  {
+   "id": "arena_floor_rune_01",
+   "file": "Boss_Arena/Flooring/arena_floor_rune_01.png",
+   "category": "Boss_Arena",
+   "subfolder": "Flooring",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Arena floor with cyan rune",
+   "godot": "Atlas tile 64x32; pulse with PointLight2D",
+   "sha1": "9540d484c92308499f45a1b20e68709b00d79e9d",
+   "tags": []
+  },
+  {
+   "id": "arena_floor_rune_02",
+   "file": "Boss_Arena/Flooring/arena_floor_rune_02.png",
+   "category": "Boss_Arena",
+   "subfolder": "Flooring",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Arena floor with violet rune",
+   "godot": "Atlas tile 64x32; pulse with PointLight2D",
+   "sha1": "044c658a3fa22465d4cf51e8c98f9be32a0a6278",
+   "tags": []
+  },
+  {
+   "id": "arena_floor_sigil_2x2",
+   "file": "Boss_Arena/Flooring/arena_floor_sigil_2x2.png",
+   "category": "Boss_Arena",
+   "subfolder": "Flooring",
+   "size": [
+    128,
+    64
+   ],
+   "frame_size": [
+    128,
+    64
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    64,
+    32
+   ],
+   "footprint_cells": "2x2",
+   "sprite2d_offset_if_centered_false": [
+    -64,
+    -32
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "2x2 summoned boss seal / concentric rune circle",
+   "godot": "Ground decal 128x64; z_index=-19; purple pulse light",
+   "sha1": "d2522a0f30bc557dafdc963acb1fd6e0d9fd07bc",
+   "tags": []
+  },
+  {
+   "id": "arena_gate_3x1",
+   "file": "Boss_Arena/Architecture/arena_gate_3x1.png",
+   "category": "Boss_Arena",
+   "subfolder": "Architecture",
+   "size": [
+    130,
+    242
+   ],
+   "frame_size": [
+    130,
+    242
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    209
+   ],
+   "footprint_cells": "3x1",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -209
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -88.0
+   ],
+   "intended_use": "Boss arena entrance gate",
+   "godot": "Split collision; place braziers either side",
+   "sha1": "b32c15959d3051d008e1a82af225048c5d064fc4",
+   "tags": []
+  },
+  {
+   "id": "arena_pillar_broken",
+   "file": "Boss_Arena/Architecture/arena_pillar_broken.png",
+   "category": "Boss_Arena",
+   "subfolder": "Architecture",
+   "size": [
+    68,
+    180
+   ],
+   "frame_size": [
+    68,
+    180
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    34,
+    162
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -34,
+    -162
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -72.0
+   ],
+   "intended_use": "Brozen broken arena pillar",
+   "godot": "Convex footprint collision",
+   "sha1": "abdf5c70d624060edab1a121ddfbbd5af06a3c66",
+   "tags": []
+  },
+  {
+   "id": "arena_pillar_skull",
+   "file": "Boss_Arena/Architecture/arena_pillar_skull.png",
+   "category": "Boss_Arena",
+   "subfolder": "Architecture",
+   "size": [
+    68,
+    188
+   ],
+   "frame_size": [
+    68,
+    188
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    34,
+    170
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -34,
+    -170
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -76.0
+   ],
+   "intended_use": "Arena pillar crowned with a skull ornament",
+   "godot": "Convex footprint collision",
+   "sha1": "a682ae86ef183042e2694636eae2d689d4eb8398",
+   "tags": []
+  },
+  {
+   "id": "arena_pillar_tall",
+   "file": "Boss_Arena/Architecture/arena_pillar_tall.png",
+   "category": "Boss_Arena",
+   "subfolder": "Architecture",
+   "size": [
+    66,
+    210
+   ],
+   "frame_size": [
+    66,
+    210
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    193
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -193
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -88.0
+   ],
+   "intended_use": "Tall dark arena pillar",
+   "godot": "Convex footprint collision",
+   "sha1": "3f3021f92062f565fa3f5c62a3a7ff0859ca04a7",
+   "tags": []
+  },
+  {
+   "id": "arena_throne_dais_2x2",
+   "file": "Boss_Arena/Architecture/arena_throne_dais_2x2.png",
+   "category": "Boss_Arena",
+   "subfolder": "Architecture",
+   "size": [
+    132,
+    86
+   ],
+   "frame_size": [
+    132,
+    86
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    66,
+    52
+   ],
+   "footprint_cells": "2x2",
+   "sprite2d_offset_if_centered_false": [
+    -66,
+    -52
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -9.0
+   ],
+   "intended_use": "Boss throne dais with dark throne back",
+   "godot": "Convex footprint collision; boss spawn anchor",
+   "sha1": "6906c83efabae96d4390128fb8749ff13bed91bd",
+   "tags": []
+  },
+  {
+   "id": "arena_tower_2x2",
+   "file": "Boss_Arena/Architecture/arena_tower_2x2.png",
+   "category": "Boss_Arena",
+   "subfolder": "Architecture",
+   "size": [
+    130,
+    266
+   ],
+   "frame_size": [
+    130,
+    266
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    233
+   ],
+   "footprint_cells": "2x2",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -233
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -100.0
+   ],
+   "intended_use": "Obsidian boss-zone tower shaft",
+   "godot": "Convex footprint collision; stack tower_roof_corrupt_1x1",
+   "sha1": "e5e90bb75dc72df73c6c0486c5351a5858bdc7a6",
+   "tags": []
+  },
+  {
+   "id": "arena_wall_x_2x1",
+   "file": "Boss_Arena/Architecture/arena_wall_x_2x1.png",
+   "category": "Boss_Arena",
+   "subfolder": "Architecture",
+   "size": [
+    98,
+    210
+   ],
+   "frame_size": [
+    98,
+    210
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    185
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -185
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -80.0
+   ],
+   "intended_use": "Dark boss arena wall with corruption veins",
+   "godot": "Convex footprint collision",
+   "sha1": "774deba8203bd15b367ce0e9d84368db51226085",
+   "tags": []
+  },
+  {
+   "id": "arena_wall_y_1x2",
+   "file": "Boss_Arena/Architecture/arena_wall_y_1x2.png",
+   "category": "Boss_Arena",
+   "subfolder": "Architecture",
+   "size": [
+    98,
+    210
+   ],
+   "frame_size": [
+    98,
+    210
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    48,
+    185
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -48,
+    -185
+   ],
+   "sprite2d_offset_if_centered_true": [
+    1.0,
+    -80.0
+   ],
+   "intended_use": "Dark boss arena wall with corruption veins",
+   "godot": "Convex footprint collision",
+   "sha1": "78bee30ddd7ba71b60411f7bd046e8e565699fff",
+   "tags": []
+  },
+  {
+   "id": "banner_boss_a",
+   "file": "Boss_Arena/Decorations/banner_boss_a.png",
+   "category": "Boss_Arena",
+   "subfolder": "Decorations",
+   "size": [
+    58,
+    134
+   ],
+   "frame_size": [
+    58,
+    134
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    29,
+    131
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -29,
+    -131
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Large boss-zone banner",
+   "godot": "Transparent cloth; hang from arena wall/pillar",
+   "sha1": "49e6ffd75befc99884dedfa99fb5fcf65cacb804",
+   "tags": []
+  },
+  {
+   "id": "banner_boss_b",
+   "file": "Boss_Arena/Decorations/banner_boss_b.png",
+   "category": "Boss_Arena",
+   "subfolder": "Decorations",
+   "size": [
+    58,
+    134
+   ],
+   "frame_size": [
+    58,
+    134
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    29,
+    131
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -29,
+    -131
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Large boss-zone banner",
+   "godot": "Transparent cloth; hang from arena wall/pillar",
+   "sha1": "7e6267a75004e73fcd2f64d104e37980bbddc75a",
+   "tags": []
+  },
+  {
+   "id": "banner_gothic_large_01",
+   "file": "Gothic_Castle/Banners/banner_gothic_large_01.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Banners",
+   "size": [
+    58,
+    134
+   ],
+   "frame_size": [
+    58,
+    134
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    29,
+    131
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -29,
+    -131
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Large Gothic hanging banner",
+   "godot": "Transparent cloth; hang from wall/pole anchor; no collision",
+   "sha1": "9739cea4aa998b838de4a82cb9d2001f07820e5f",
+   "tags": []
+  },
+  {
+   "id": "banner_gothic_large_02",
+   "file": "Gothic_Castle/Banners/banner_gothic_large_02.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Banners",
+   "size": [
+    58,
+    134
+   ],
+   "frame_size": [
+    58,
+    134
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    29,
+    131
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -29,
+    -131
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Large Gothic hanging banner",
+   "godot": "Transparent cloth; hang from wall/pole anchor; no collision",
+   "sha1": "f7b39166a4a4aa561b7615f8bd7ac0515d3cb61d",
+   "tags": []
+  },
+  {
+   "id": "banner_hanging_short_01",
+   "file": "Gothic_Castle/Banners/banner_hanging_short_01.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Banners",
+   "size": [
+    50,
+    70
+   ],
+   "frame_size": [
+    50,
+    70
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    67
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -67
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -32.0
+   ],
+   "intended_use": "Large Gothic hanging banner",
+   "godot": "Transparent cloth; hang from wall/pole anchor; no collision",
+   "sha1": "d44232807ee88df7e64b8665c7499a8bf48ab17a",
+   "tags": []
+  },
+  {
+   "id": "banner_hanging_short_02",
+   "file": "Gothic_Castle/Banners/banner_hanging_short_02.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Banners",
+   "size": [
+    50,
+    70
+   ],
+   "frame_size": [
+    50,
+    70
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    67
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -67
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -32.0
+   ],
+   "intended_use": "Large Gothic hanging banner",
+   "godot": "Transparent cloth; hang from wall/pole anchor; no collision",
+   "sha1": "bdb54e2223a2b329443f1794e93d192a12e7bb70",
+   "tags": []
+  },
+  {
+   "id": "banner_royal_01",
+   "file": "Royal_Gardens/Decorations/banner_royal_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    50,
+    98
+   ],
+   "frame_size": [
+    50,
+    98
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    95
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -95
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -46.0
+   ],
+   "intended_use": "Large royal hanging banner (violet + gold fleur)",
+   "godot": "Hang from wall anchor; transparent cloth, no collision",
+   "sha1": "cc1ce3583a73f559ff1c4dd49c899e7e50904c76",
+   "tags": []
+  },
+  {
+   "id": "banner_royal_02",
+   "file": "Royal_Gardens/Decorations/banner_royal_02.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    50,
+    98
+   ],
+   "frame_size": [
+    50,
+    98
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    95
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -95
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -46.0
+   ],
+   "intended_use": "Large royal hanging banner (silver + gold cross)",
+   "godot": "Hang from wall anchor; transparent cloth, no collision",
+   "sha1": "f748faf52bba558d6696c8e75309ba00c9e3684c",
+   "tags": []
+  },
+  {
+   "id": "bench_iron_x",
+   "file": "Royal_Gardens/Decorations/bench_iron_x.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    98,
+    72
+   ],
+   "frame_size": [
+    98,
+    72
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    47
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -47
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -11.0
+   ],
+   "intended_use": "Ornate iron garden bench / seat",
+   "godot": "Footprint collision",
+   "sha1": "846fd51dd0cb9f7699ad430afec28daeaa421c9f",
+   "tags": []
+  },
+  {
+   "id": "bench_stone_x",
+   "file": "Royal_Gardens/Decorations/bench_stone_x.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    98,
+    66
+   ],
+   "frame_size": [
+    98,
+    66
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    41
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -41
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -8.0
+   ],
+   "intended_use": "Carved stone bench",
+   "godot": "Footprint collision; contact shadow",
+   "sha1": "fcfca2cdc6bfc9975b93608c95db9a54881a829d",
+   "tags": []
+  },
+  {
+   "id": "border_chain_post",
+   "file": "Pathways/Borders/border_chain_post.png",
+   "category": "Pathways",
+   "subfolder": "Borders",
+   "size": [
+    24,
+    58
+   ],
+   "frame_size": [
+    24,
+    58
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    12,
+    56
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -12,
+    -56
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -27.0
+   ],
+   "intended_use": "Chain post marker for ceremonial routes",
+   "godot": "Decorative post; no collision",
+   "sha1": "b7524094b75732b56db9e620ff3c4df1dfa7b52e",
+   "tags": []
+  },
+  {
+   "id": "border_edge_rock_01",
+   "file": "Pathways/Borders/border_edge_rock_01.png",
+   "category": "Pathways",
+   "subfolder": "Borders",
+   "size": [
+    42,
+    28
+   ],
+   "frame_size": [
+    42,
+    28
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    21,
+    24
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -21,
+    -24
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -10.0
+   ],
+   "intended_use": "Small rock cluster for natural path edges",
+   "godot": "Decorative; small collision",
+   "sha1": "e77e678aba3f7c0f5a2169412ef1d80f29b64efb",
+   "tags": []
+  },
+  {
+   "id": "border_post_01",
+   "file": "Pathways/Borders/border_post_01.png",
+   "category": "Pathways",
+   "subfolder": "Borders",
+   "size": [
+    66,
+    70
+   ],
+   "frame_size": [
+    66,
+    70
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    53
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -53
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -18.0
+   ],
+   "intended_use": "Decorative path border post",
+   "godot": "Small collision; y_sort",
+   "sha1": "1c316e9bb91273e774759014ee268ba65ef8edd8",
+   "tags": []
+  },
+  {
+   "id": "brazier_01",
+   "file": "Gothic_Castle/Decorations/brazier_01.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Decorations",
+   "size": [
+    42,
+    58
+   ],
+   "frame_size": [
+    42,
+    58
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    21,
+    56
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -21,
+    -56
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -27.0
+   ],
+   "intended_use": "Stone fire brazier",
+   "godot": "Warm point light; small footprint collision",
+   "sha1": "1adaf401443ce475ac7cbf06a2e568e65ed6a558",
+   "tags": []
+  },
+  {
+   "id": "brazier_boss_large",
+   "file": "Boss_Arena/Decorations/brazier_boss_large.png",
+   "category": "Boss_Arena",
+   "subfolder": "Decorations",
+   "size": [
+    52,
+    72
+   ],
+   "frame_size": [
+    52,
+    72
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    26,
+    70
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -26,
+    -70
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -34.0
+   ],
+   "intended_use": "Oversized violet boss brazier",
+   "godot": "Purple PointLight2D; footprint collision",
+   "sha1": "2914fa9c7a245859ea155947c0c59497f8d78140",
+   "tags": []
+  },
+  {
+   "id": "brazier_boss_purple",
+   "file": "Boss_Arena/Decorations/brazier_boss_purple.png",
+   "category": "Boss_Arena",
+   "subfolder": "Decorations",
+   "size": [
+    42,
+    58
+   ],
+   "frame_size": [
+    42,
+    58
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    21,
+    56
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -21,
+    -56
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -27.0
+   ],
+   "intended_use": "Violet flame brazier (standard size)",
+   "godot": "Purple PointLight2D; small collision",
+   "sha1": "f33aca3ee6cd619c066607660041dc3f4b8ffd37",
+   "tags": []
+  },
+  {
+   "id": "bridge_railing_x_2x1",
+   "file": "Pathways/Bridges/bridge_railing_x_2x1.png",
+   "category": "Pathways",
+   "subfolder": "Bridges",
+   "size": [
+    98,
+    72
+   ],
+   "frame_size": [
+    98,
+    72
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    47
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -47
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -11.0
+   ],
+   "intended_use": "Low stone railing for bridge sides",
+   "godot": "Place along bridge edge; footprint collision",
+   "sha1": "60790168d17fa72ce91ac25de81cb4923aa207ad",
+   "tags": []
+  },
+  {
+   "id": "bridge_small_1x2",
+   "file": "Pathways/Bridges/bridge_small_1x2.png",
+   "category": "Pathways",
+   "subfolder": "Bridges",
+   "size": [
+    98,
+    60
+   ],
+   "frame_size": [
+    98,
+    60
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    35
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -35
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -5.0
+   ],
+   "intended_use": "Small footbridge over a narrow water channel",
+   "godot": "Walkable deck; no collision",
+   "sha1": "3bf012c304a365232dac083aa626d02abbd89537",
+   "tags": []
+  },
+  {
+   "id": "bridge_stone_x_2x3",
+   "file": "Pathways/Bridges/bridge_stone_x_2x3.png",
+   "category": "Pathways",
+   "subfolder": "Bridges",
+   "size": [
+    162,
+    92
+   ],
+   "frame_size": [
+    162,
+    92
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    81,
+    51
+   ],
+   "footprint_cells": "2x3",
+   "sprite2d_offset_if_centered_false": [
+    -81,
+    -51
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -5.0
+   ],
+   "intended_use": "Stone bridge deck, X direction (2x3 cells)",
+   "godot": "Walkable deck: no collision above; place over water",
+   "sha1": "7ac57637d78618b0d5fddf604c4b58f85e69da8a",
+   "tags": []
+  },
+  {
+   "id": "bridge_stone_y_3x2",
+   "file": "Pathways/Bridges/bridge_stone_y_3x2.png",
+   "category": "Pathways",
+   "subfolder": "Bridges",
+   "size": [
+    162,
+    92
+   ],
+   "frame_size": [
+    162,
+    92
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    81,
+    51
+   ],
+   "footprint_cells": "3x2",
+   "sprite2d_offset_if_centered_false": [
+    -81,
+    -51
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -5.0
+   ],
+   "intended_use": "Stone bridge deck, Y direction (3x2 cells)",
+   "godot": "Walkable deck; place over water",
+   "sha1": "2956915ae46049b5758b1779365606d2cc40f0fe",
+   "tags": []
+  },
+  {
+   "id": "broken_statue_01",
+   "file": "Corrupted_Environment/Structures/broken_statue_01.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Structures",
+   "size": [
+    68,
+    116
+   ],
+   "frame_size": [
+    68,
+    116
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    34,
+    102
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -34,
+    -102
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -44.0
+   ],
+   "intended_use": "Broken / beheaded statue",
+   "godot": "Footprint collision; add rubble_pile nearby",
+   "sha1": "19bde40a1dacd58cb2c94293e83535aaf1ef9c91",
+   "tags": []
+  },
+  {
+   "id": "broken_statue_02",
+   "file": "Corrupted_Environment/Structures/broken_statue_02.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Structures",
+   "size": [
+    68,
+    116
+   ],
+   "frame_size": [
+    68,
+    116
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    34,
+    102
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -34,
+    -102
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -44.0
+   ],
+   "intended_use": "Broken / beheaded statue",
+   "godot": "Footprint collision; add rubble_pile nearby",
+   "sha1": "e0210d87c2799707886539e18d51694ed887fe80",
+   "tags": []
+  },
+  {
+   "id": "bush_corrupted_01",
+   "file": "Corrupted_Environment/Vegetation/bush_corrupted_01.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    50,
+    38
+   ],
+   "frame_size": [
+    50,
+    38
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    34
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -34
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -15.0
+   ],
+   "intended_use": "Corrupted flowering bush with violet blooms",
+   "godot": "Sprite2D centered=false, offset=-pivot",
+   "sha1": "fb6eee446c652f8551c4e5f45a32a5be28b5a380",
+   "tags": []
+  },
+  {
+   "id": "bush_dead_01",
+   "file": "Corrupted_Environment/Vegetation/bush_dead_01.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    50,
+    38
+   ],
+   "frame_size": [
+    50,
+    38
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    34
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -34
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -15.0
+   ],
+   "intended_use": "Withered bush (corruption stage 1)",
+   "godot": "Sprite2D centered=false, offset=-pivot",
+   "sha1": "6d8babaf2898278b52d43b96cc89aa173e2a22fa",
+   "tags": []
+  },
+  {
+   "id": "bush_flowering_01",
+   "file": "Royal_Gardens/Vegetation/bush_flowering_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    50,
+    38
+   ],
+   "frame_size": [
+    50,
+    38
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    34
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -34
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -15.0
+   ],
+   "intended_use": "Dense flowering shrub (white + pink)",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "44246a319cdf59fb5469a6263b981ca3631b8911",
+   "tags": []
+  },
+  {
+   "id": "bush_round_01",
+   "file": "Royal_Gardens/Vegetation/bush_round_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    50,
+    38
+   ],
+   "frame_size": [
+    50,
+    38
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    34
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -34
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -15.0
+   ],
+   "intended_use": "Round flowering bush",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "8698984d67d29f8d13247f978bed47f5d2ba6fdc",
+   "tags": []
+  },
+  {
+   "id": "buttress_x_1x1",
+   "file": "Gothic_Castle/Architecture/buttress_x_1x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    66,
+    210
+   ],
+   "frame_size": [
+    66,
+    210
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    193
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -193
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -88.0
+   ],
+   "intended_use": "Gothic buttress / flying pier support",
+   "godot": "Convex footprint collision; place against wall segments",
+   "sha1": "c7ed8add0822381477fb5b8b9060ba66c0f42c36",
+   "tags": []
+  },
+  {
+   "id": "buttress_y_1x1",
+   "file": "Gothic_Castle/Architecture/buttress_y_1x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    66,
+    210
+   ],
+   "frame_size": [
+    66,
+    210
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    193
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -193
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -88.0
+   ],
+   "intended_use": "Gothic buttress / flying pier support",
+   "godot": "Convex footprint collision; place against wall segments",
+   "sha1": "60b7976fed80719c3369b3685a748f981f5ad63e",
+   "tags": []
+  },
+  {
+   "id": "candle_stand_01",
+   "file": "Gothic_Castle/Decorations/candle_stand_01.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Decorations",
+   "size": [
+    38,
+    54
+   ],
+   "frame_size": [
+    38,
+    54
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    19,
+    52
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -19,
+    -52
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -25.0
+   ],
+   "intended_use": "Three-armed candle stand",
+   "godot": "Warm point light; no collision",
+   "sha1": "5ffe58ea66cd83b7a2822a24fd12b3a6afbdda3e",
+   "tags": []
+  },
+  {
+   "id": "candle_stand_dark",
+   "file": "Boss_Arena/Decorations/candle_stand_dark.png",
+   "category": "Boss_Arena",
+   "subfolder": "Decorations",
+   "size": [
+    38,
+    54
+   ],
+   "frame_size": [
+    38,
+    54
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    19,
+    52
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -19,
+    -52
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -25.0
+   ],
+   "intended_use": "Dark iron candle stand for boss arena",
+   "godot": "Warm point light; no collision",
+   "sha1": "83b6e09956f86fdddd9e9fdf880e6e55a657a047",
+   "tags": []
+  },
+  {
+   "id": "chain_hanging_large",
+   "file": "Boss_Arena/Decorations/chain_hanging_large.png",
+   "category": "Boss_Arena",
+   "subfolder": "Decorations",
+   "size": [
+    33,
+    81
+   ],
+   "frame_size": [
+    33,
+    81
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    16,
+    78
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -16,
+    -78
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.5,
+    -37.5
+   ],
+   "intended_use": "Large hanging chain ornament with gem",
+   "godot": "Attach to ceiling / arch; no collision",
+   "sha1": "ce5eeaa10cf2eca0fbfbda63fb69153b2d970bff",
+   "tags": []
+  },
+  {
+   "id": "corrupted_brazier",
+   "file": "Corrupted_Environment/Structures/corrupted_brazier.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Structures",
+   "size": [
+    42,
+    58
+   ],
+   "frame_size": [
+    42,
+    58
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    21,
+    56
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -21,
+    -56
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -27.0
+   ],
+   "intended_use": "Violet-flame corrupted brazier",
+   "godot": "Purple PointLight2D; small footprint collision",
+   "sha1": "f227f0dbffe4b03d5ab604ee910626d303761f81",
+   "tags": []
+  },
+  {
+   "id": "corrupted_flower_01",
+   "file": "Corrupted_Environment/Vegetation/corrupted_flower_01.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    50,
+    24
+   ],
+   "frame_size": [
+    50,
+    24
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    22
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -22
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -10.0
+   ],
+   "intended_use": "Corrupted flower patch with violet blooms",
+   "godot": "Sprite2D centered=false, offset=-pivot",
+   "sha1": "e43021331850826801672c771a8ac5231d4588e6",
+   "tags": []
+  },
+  {
+   "id": "corrupted_flower_02",
+   "file": "Corrupted_Environment/Vegetation/corrupted_flower_02.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    50,
+    24
+   ],
+   "frame_size": [
+    50,
+    24
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    22
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -22
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -10.0
+   ],
+   "intended_use": "Corrupted flower patch with violet blooms",
+   "godot": "Sprite2D centered=false, offset=-pivot",
+   "sha1": "1a7547986a0e354f811644afd9282869248e435f",
+   "tags": []
+  },
+  {
+   "id": "corrupted_fountain_2x2",
+   "file": "Corrupted_Environment/Structures/corrupted_fountain_2x2.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Structures",
+   "size": [
+    130,
+    122
+   ],
+   "frame_size": [
+    130,
+    122
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    90
+   ],
+   "footprint_cells": "2x2",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -90
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -29.0
+   ],
+   "intended_use": "Broken fountain with corrupted violet water",
+   "godot": "Footprint collision; purple glow",
+   "sha1": "0b28b3e89a234d0963c18e19acfdbeb2d7ee7015",
+   "tags": []
+  },
+  {
+   "id": "corrupted_wall_x_2x1",
+   "file": "Corrupted_Environment/Structures/corrupted_wall_x_2x1.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Structures",
+   "size": [
+    98,
+    178
+   ],
+   "frame_size": [
+    98,
+    178
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    153
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -153
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Corrupted Gothic wall with violet veins",
+   "godot": "Convex footprint collision; progressive corruption",
+   "sha1": "8bbb535465f86cad1f5c5d8290126b56326d6486",
+   "tags": []
+  },
+  {
+   "id": "corrupted_wall_y_1x2",
+   "file": "Corrupted_Environment/Structures/corrupted_wall_y_1x2.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Structures",
+   "size": [
+    98,
+    178
+   ],
+   "frame_size": [
+    98,
+    178
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    48,
+    153
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -48,
+    -153
+   ],
+   "sprite2d_offset_if_centered_true": [
+    1.0,
+    -64.0
+   ],
+   "intended_use": "Corrupted Gothic wall with violet veins",
+   "godot": "Convex footprint collision; progressive corruption",
+   "sha1": "942db1a3e3bd2523227712a3447c08c11f4535a0",
+   "tags": []
+  },
+  {
+   "id": "corruption_growth_01",
+   "file": "Corrupted_Environment/Vegetation/corruption_growth_01.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    38,
+    32
+   ],
+   "frame_size": [
+    38,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    19,
+    28
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -19,
+    -28
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -12.0
+   ],
+   "intended_use": "Purple corruption crystal growth, size 01",
+   "godot": "Ground decal/prop; transparent PNG; purple PointLight2D optional",
+   "sha1": "0b3a62f6e57a9bd93d6b69a3470d703c9e3393c7",
+   "tags": []
+  },
+  {
+   "id": "corruption_growth_02",
+   "file": "Corrupted_Environment/Vegetation/corruption_growth_02.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    54,
+    46
+   ],
+   "frame_size": [
+    54,
+    46
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    27,
+    42
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -27,
+    -42
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -19.0
+   ],
+   "intended_use": "Purple corruption crystal growth, size 02",
+   "godot": "Ground decal/prop; transparent PNG; purple PointLight2D optional",
+   "sha1": "7a3066abfdeb2c6e22339c8fca763be5c9780d4c",
+   "tags": []
+  },
+  {
+   "id": "corruption_growth_03",
+   "file": "Corrupted_Environment/Vegetation/corruption_growth_03.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    74,
+    62
+   ],
+   "frame_size": [
+    74,
+    62
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    37,
+    58
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -37,
+    -58
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -27.0
+   ],
+   "intended_use": "Purple corruption crystal growth, size 03",
+   "godot": "Ground decal/prop; transparent PNG; purple PointLight2D optional",
+   "sha1": "555a207fc0d035f8fd6104730023b1006c8e9170",
+   "tags": []
+  },
+  {
+   "id": "corruption_motes_anim",
+   "file": "Corrupted_Environment/Effects/corruption_motes_anim.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Effects",
+   "size": [
+    128,
+    16
+   ],
+   "frame_size": [
+    16,
+    16
+   ],
+   "frames": [
+    8,
+    1
+   ],
+   "pivot_px": [
+    8,
+    8
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -8,
+    -8
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "8-frame violet motes animation strip",
+   "godot": "Sprite2D hframes=8, frame anim 12fps",
+   "sha1": "74b9bb58523e7fd8862b332f9248c790da9164c6",
+   "tags": [],
+   "animation_fps": 12
+  },
+  {
+   "id": "corruption_pool_tile_01",
+   "file": "Corrupted_Environment/Effects/corruption_pool_tile_01.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Effects",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Corruption pool ground decal tile (1x1)",
+   "godot": "Ground overlay 64x32, z_index=-19, filter=Nearest",
+   "sha1": "44472b60c4865280a23beda3c895b4b0c62f56fe",
+   "tags": []
+  },
+  {
+   "id": "corruption_pool_tile_02",
+   "file": "Corrupted_Environment/Effects/corruption_pool_tile_02.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Effects",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Corruption pool ground decal tile (1x1)",
+   "godot": "Ground overlay 64x32, z_index=-19, filter=Nearest",
+   "sha1": "d4ef81b818ab12c2d8af292207b744e251d34219",
+   "tags": []
+  },
+  {
+   "id": "corruption_veins_tile",
+   "file": "Corrupted_Environment/Effects/corruption_veins_tile.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Effects",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Twisted root / corruption vein ground tile",
+   "godot": "Ground overlay 64x32, z_index=-19",
+   "sha1": "c9420b5e5cf03da0d48979619654705677c53355",
+   "tags": []
+  },
+  {
+   "id": "cracked_stone_01",
+   "file": "Royal_Gardens/Terrain/cracked_stone_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Terrain",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Cracked stone path / plaza tile (early corruption stage)",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off, z_index=-20",
+   "sha1": "85bdcd02fc5ab3b9e7808861ea4bc0762722be81",
+   "tags": []
+  },
+  {
+   "id": "dark_crystal_01",
+   "file": "Boss_Arena/Decorations/dark_crystal_01.png",
+   "category": "Boss_Arena",
+   "subfolder": "Decorations",
+   "size": [
+    38,
+    46
+   ],
+   "frame_size": [
+    38,
+    46
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    19,
+    42
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -19,
+    -42
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -19.0
+   ],
+   "intended_use": "Dark violet crystal cluster",
+   "godot": "Footprint collision; optional purple glow",
+   "sha1": "056c1f534eadc9056f78d951a377fb50a6f52aaf",
+   "tags": []
+  },
+  {
+   "id": "dark_crystal_02",
+   "file": "Boss_Arena/Decorations/dark_crystal_02.png",
+   "category": "Boss_Arena",
+   "subfolder": "Decorations",
+   "size": [
+    58,
+    66
+   ],
+   "frame_size": [
+    58,
+    66
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    29,
+    62
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -29,
+    -62
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -29.0
+   ],
+   "intended_use": "Dark violet crystal cluster",
+   "godot": "Footprint collision; optional purple glow",
+   "sha1": "09b1e55736e4b5d0c4d7e48d5bd46b81118c7eea",
+   "tags": []
+  },
+  {
+   "id": "dark_fog_low",
+   "file": "Corrupted_Environment/Effects/dark_fog_low.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Effects",
+   "size": [
+    160,
+    64
+   ],
+   "frame_size": [
+    160,
+    64
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    80,
+    32
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -80,
+    -32
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Low dark fog bank effect",
+   "godot": "Effect sprite with soft alpha; no collision",
+   "sha1": "747b46525d50e7b1c2408f09f5fc8beccddc5548",
+   "tags": []
+  },
+  {
+   "id": "dark_grass_tuft_01",
+   "file": "Corrupted_Environment/Vegetation/dark_grass_tuft_01.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    22,
+    18
+   ],
+   "frame_size": [
+    22,
+    18
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    11,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -11,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -7.0
+   ],
+   "intended_use": "Dark withered grass tuft",
+   "godot": "Decorative, no collision",
+   "sha1": "e9d9000491b1a663c5df17f85bd5d3a9d8c4a3c7",
+   "tags": []
+  },
+  {
+   "id": "decorative_floor_01",
+   "file": "Royal_Gardens/Terrain/decorative_floor_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Terrain",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Formal royal paving with gold hairline inlay",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off, z_index=-20",
+   "sha1": "8b8879de46b02471c6c28a69d671319616d16904",
+   "tags": []
+  },
+  {
+   "id": "flag_heraldic_01",
+   "file": "Gothic_Castle/Banners/flag_heraldic_01.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Banners",
+   "size": [
+    50,
+    82
+   ],
+   "frame_size": [
+    50,
+    82
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    5,
+    79
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -5,
+    -79
+   ],
+   "sprite2d_offset_if_centered_true": [
+    20.0,
+    -38.0
+   ],
+   "intended_use": "Heraldic pennant flag on pole",
+   "godot": "Transparent cloth; hang from wall/pole anchor; no collision",
+   "sha1": "377827d9fb830138a59370adf0f78cc78e921082",
+   "tags": []
+  },
+  {
+   "id": "flag_heraldic_02",
+   "file": "Gothic_Castle/Banners/flag_heraldic_02.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Banners",
+   "size": [
+    50,
+    82
+   ],
+   "frame_size": [
+    50,
+    82
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    5,
+    79
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -5,
+    -79
+   ],
+   "sprite2d_offset_if_centered_true": [
+    20.0,
+    -38.0
+   ],
+   "intended_use": "Heraldic pennant flag on pole",
+   "godot": "Transparent cloth; hang from wall/pole anchor; no collision",
+   "sha1": "d1b66f24b215957bbf9f8077063d656c53668233",
+   "tags": []
+  },
+  {
+   "id": "flower_patch_01",
+   "file": "Royal_Gardens/Vegetation/flower_patch_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    50,
+    24
+   ],
+   "frame_size": [
+    50,
+    24
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    22
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -22
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -10.0
+   ],
+   "intended_use": "Ground-level wildflower patch",
+   "godot": "Sprite2D centered=false, offset=-pivot, no collision",
+   "sha1": "1f58385b1905d57f6d963120161fe95b191c5e31",
+   "tags": []
+  },
+  {
+   "id": "flower_pot_01",
+   "file": "Royal_Gardens/Decorations/flower_pot_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    34,
+    40
+   ],
+   "frame_size": [
+    34,
+    40
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    17,
+    38
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -17,
+    -38
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -18.0
+   ],
+   "intended_use": "Terracotta flower pot with blooms",
+   "godot": "Small footprint collision; y_sort",
+   "sha1": "03c199e7dc6cbf46d6d465afce55a80d97e29ad4",
+   "tags": []
+  },
+  {
+   "id": "flower_pot_02",
+   "file": "Royal_Gardens/Decorations/flower_pot_02.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    34,
+    40
+   ],
+   "frame_size": [
+    34,
+    40
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    17,
+    38
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -17,
+    -38
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -18.0
+   ],
+   "intended_use": "Terracotta flower pot with blooms",
+   "godot": "Small footprint collision; y_sort",
+   "sha1": "05d7dffb197c9cdde34d17342ba94919dea48625",
+   "tags": []
+  },
+  {
+   "id": "fountain_small_1x1",
+   "file": "Royal_Gardens/Decorations/fountain_small_1x1.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    64,
+    60
+   ],
+   "frame_size": [
+    64,
+    60
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    44
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -44
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -14.0
+   ],
+   "intended_use": "Small single-basin fountain for courtyards",
+   "godot": "1x1 footprint collision; optional water overlay",
+   "sha1": "1470f42bf38b94919b03b59eeb7b392ac0860174",
+   "tags": []
+  },
+  {
+   "id": "fountain_tiered_2x2",
+   "file": "Royal_Gardens/Decorations/fountain_tiered_2x2.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    130,
+    122
+   ],
+   "frame_size": [
+    130,
+    122
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    90
+   ],
+   "footprint_cells": "2x2",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -90
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -29.0
+   ],
+   "intended_use": "Two-tier royal fountain (water animation overlay supported)",
+   "godot": "Footprint collision; water_tile_anim / fountain_spray_anim overlay",
+   "sha1": "2c9269ef82fea74440ec8fb28d97af66dd356f0a",
+   "tags": []
+  },
+  {
+   "id": "garden_stairs_x_4step",
+   "file": "Royal_Gardens/Architecture/garden_stairs_x_4step.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    194,
+    138
+   ],
+   "frame_size": [
+    194,
+    138
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    97,
+    89
+   ],
+   "footprint_cells": "4x2",
+   "sprite2d_offset_if_centered_false": [
+    -97,
+    -89
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "Four-step garden staircase",
+   "godot": "Walkable: no collision; align footprint 4x2",
+   "sha1": "183041ba03ada45c35422c8e31f0ec7cf8473fc9",
+   "tags": []
+  },
+  {
+   "id": "gargoyle_01",
+   "file": "Gothic_Castle/Decorations/gargoyle_01.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Decorations",
+   "size": [
+    42,
+    58
+   ],
+   "frame_size": [
+    42,
+    58
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    21,
+    54
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -21,
+    -54
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -25.0
+   ],
+   "intended_use": "Winged stone gargoyle with cyan eyes",
+   "godot": "Place on cornice / buttress top; no collision",
+   "sha1": "af8db0fe82793e5b1209b8a74c8e23cbdd7bf423",
+   "tags": []
+  },
+  {
+   "id": "gargoyle_02",
+   "file": "Gothic_Castle/Decorations/gargoyle_02.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Decorations",
+   "size": [
+    42,
+    58
+   ],
+   "frame_size": [
+    42,
+    58
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    21,
+    54
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -21,
+    -54
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -25.0
+   ],
+   "intended_use": "Crouching stone gargoyle",
+   "godot": "Place on cornice / buttress top",
+   "sha1": "e9e5200d0499d6e4e685183b87e2922cc200504f",
+   "tags": []
+  },
+  {
+   "id": "gate_door_left",
+   "file": "Royal_Gardens/Architecture/gate_door_left.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    34,
+    82
+   ],
+   "frame_size": [
+    34,
+    82
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    1,
+    64
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -1,
+    -64
+   ],
+   "sprite2d_offset_if_centered_true": [
+    16.0,
+    -23.0
+   ],
+   "intended_use": "Left pointed-arch door leaf",
+   "godot": "Sprite2D centered=false, offset=-pivot; overlay on royal_gate_x_3x1",
+   "sha1": "a58696d05685c79aaa856adcfdd0441f7e00d4f7",
+   "tags": []
+  },
+  {
+   "id": "gate_door_right",
+   "file": "Royal_Gardens/Architecture/gate_door_right.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    34,
+    82
+   ],
+   "frame_size": [
+    34,
+    82
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    64
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -64
+   ],
+   "sprite2d_offset_if_centered_true": [
+    -15.0,
+    -23.0
+   ],
+   "intended_use": "Right pointed-arch door leaf",
+   "godot": "Mirror of gate_door_left",
+   "sha1": "53588777469f6ef8bc7c95e0deb92680f816aa5d",
+   "tags": []
+  },
+  {
+   "id": "gothic_arch_grand_3x1",
+   "file": "Gothic_Castle/Architecture/gothic_arch_grand_3x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    130,
+    258
+   ],
+   "frame_size": [
+    130,
+    258
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    225
+   ],
+   "footprint_cells": "3x1",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -225
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -96.0
+   ],
+   "intended_use": "Grand pointed Gothic archway with through-opening",
+   "godot": "Split collision: piers solid, arch cell walkable",
+   "sha1": "715e5a29cb263e2e27a35cc3fb3f20b3a6293482",
+   "tags": []
+  },
+  {
+   "id": "gothic_battlement_x_2x1",
+   "file": "Gothic_Castle/Walls/gothic_battlement_x_2x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Walls",
+   "size": [
+    98,
+    82
+   ],
+   "frame_size": [
+    98,
+    82
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    57
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -57
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -16.0
+   ],
+   "intended_use": "Low crenellated battlement / rampart cap",
+   "godot": "Stack on gothic_wall_x_2x1; convex collision",
+   "sha1": "bc3e284ded7141943a98d89bd59aaf6979262527",
+   "tags": []
+  },
+  {
+   "id": "gothic_battlement_y_1x2",
+   "file": "Gothic_Castle/Walls/gothic_battlement_y_1x2.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Walls",
+   "size": [
+    98,
+    82
+   ],
+   "frame_size": [
+    98,
+    82
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    48,
+    57
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -48,
+    -57
+   ],
+   "sprite2d_offset_if_centered_true": [
+    1.0,
+    -16.0
+   ],
+   "intended_use": "Low crenellated battlement, Y direction",
+   "godot": "Stack on gothic_wall_y_1x2",
+   "sha1": "3fc935da78b576b1f7967423f7a19d2ca0102829",
+   "tags": []
+  },
+  {
+   "id": "gothic_column_short",
+   "file": "Gothic_Castle/Architecture/gothic_column_short.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    66,
+    122
+   ],
+   "frame_size": [
+    66,
+    122
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    105
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -105
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -44.0
+   ],
+   "intended_use": "Short dark Gothic column",
+   "godot": "Small circular collision; y_sort",
+   "sha1": "0292a15d3be0bd8ecf7bf68a09c737214d351ac5",
+   "tags": []
+  },
+  {
+   "id": "gothic_column_tall",
+   "file": "Gothic_Castle/Architecture/gothic_column_tall.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    66,
+    194
+   ],
+   "frame_size": [
+    66,
+    194
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    177
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -177
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -80.0
+   ],
+   "intended_use": "Tall dark Gothic column",
+   "godot": "Small circular collision; y_sort",
+   "sha1": "1b111deaac0cc6f15b0554025e1ae2898e7857ca",
+   "tags": []
+  },
+  {
+   "id": "gothic_courtyard_floor_01",
+   "file": "Pathways/Ground/gothic_courtyard_floor_01.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Dark Gothic courtyard paving",
+   "godot": "Atlas tile 64x32, filter=Nearest",
+   "sha1": "96222e9e421b040278bf087782b75573dd14aad4",
+   "tags": []
+  },
+  {
+   "id": "gothic_courtyard_floor_02",
+   "file": "Pathways/Ground/gothic_courtyard_floor_02.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Dark Gothic flagstone variant",
+   "godot": "Atlas tile 64x32, filter=Nearest",
+   "sha1": "a24b4db0445586a968934cbfdd3ef99ab85785d6",
+   "tags": []
+  },
+  {
+   "id": "gothic_facade_4x1",
+   "file": "Gothic_Castle/Architecture/gothic_facade_4x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    162,
+    290
+   ],
+   "frame_size": [
+    162,
+    290
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    81,
+    249
+   ],
+   "footprint_cells": "4x1",
+   "sprite2d_offset_if_centered_false": [
+    -81,
+    -249
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -104.0
+   ],
+   "intended_use": "Massive 4x1 Gothic facade with rose window, arch and lancets",
+   "godot": "Convex footprint collision; castle centrepiece",
+   "sha1": "8074d85c0066ddfa40b9c708cf93c6f1ed3cfe64",
+   "tags": []
+  },
+  {
+   "id": "gothic_foundation_x_2x1",
+   "file": "Gothic_Castle/Walls/gothic_foundation_x_2x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Walls",
+   "size": [
+    98,
+    90
+   ],
+   "frame_size": [
+    98,
+    90
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    65
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -65
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "Heavy stone foundation course (stack below walls)",
+   "godot": "Place beneath wall segments; convex collision",
+   "sha1": "57b52db87650b4973db39fe56abaf6016fa65fab",
+   "tags": []
+  },
+  {
+   "id": "gothic_foundation_y_1x2",
+   "file": "Gothic_Castle/Walls/gothic_foundation_y_1x2.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Walls",
+   "size": [
+    98,
+    90
+   ],
+   "frame_size": [
+    98,
+    90
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    48,
+    65
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -48,
+    -65
+   ],
+   "sprite2d_offset_if_centered_true": [
+    1.0,
+    -20.0
+   ],
+   "intended_use": "Heavy stone foundation course, Y direction",
+   "godot": "Place beneath wall segments",
+   "sha1": "c154d1a1fc4f00cd4fd274a5a7b2d4d0d458ba16",
+   "tags": []
+  },
+  {
+   "id": "gothic_gatehouse_3x1",
+   "file": "Gothic_Castle/Architecture/gothic_gatehouse_3x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    130,
+    258
+   ],
+   "frame_size": [
+    130,
+    258
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    225
+   ],
+   "footprint_cells": "3x1",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -225
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -96.0
+   ],
+   "intended_use": "Gothic gatehouse arch with lit interior haze",
+   "godot": "Split collision; overlay iron_gate_door_left/right",
+   "sha1": "e039a968ae3376e726fde3b432b1d7a218d14389",
+   "tags": []
+  },
+  {
+   "id": "gothic_stairs_x_6step",
+   "file": "Gothic_Castle/Architecture/gothic_stairs_x_6step.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    194,
+    138
+   ],
+   "frame_size": [
+    194,
+    138
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    97,
+    89
+   ],
+   "footprint_cells": "6x2",
+   "sprite2d_offset_if_centered_false": [
+    -97,
+    -89
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "Six-step dark Gothic ceremonial staircase",
+   "godot": "Walkable; no collision; align 6x2",
+   "sha1": "eec5f9143c0f229b9b6f503eff5a3691033c946e",
+   "tags": []
+  },
+  {
+   "id": "gothic_statue_knight",
+   "file": "Gothic_Castle/Decorations/gothic_statue_knight.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Decorations",
+   "size": [
+    66,
+    114
+   ],
+   "frame_size": [
+    66,
+    114
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    101
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -101
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -44.0
+   ],
+   "intended_use": "Dark armoured Gothic statue",
+   "godot": "Footprint collision",
+   "sha1": "656cccc569c4d9d11cbf6e32125fe7c46f642e08",
+   "tags": []
+  },
+  {
+   "id": "gothic_statue_saint",
+   "file": "Gothic_Castle/Decorations/gothic_statue_saint.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Decorations",
+   "size": [
+    66,
+    114
+   ],
+   "frame_size": [
+    66,
+    114
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    101
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -101
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -44.0
+   ],
+   "intended_use": "Dark winged saint statue",
+   "godot": "Footprint collision",
+   "sha1": "4c78514104578ea777503d3ab84606d404f1a34c",
+   "tags": []
+  },
+  {
+   "id": "gothic_wall_corner_1x1",
+   "file": "Gothic_Castle/Walls/gothic_wall_corner_1x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Walls",
+   "size": [
+    66,
+    186
+   ],
+   "frame_size": [
+    66,
+    186
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    169
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -169
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -76.0
+   ],
+   "intended_use": "Fortified wall corner / bastion pier",
+   "godot": "StaticBody2D convex footprint",
+   "sha1": "17124eb054d2eac633dea8ba928623a1669447b4",
+   "tags": []
+  },
+  {
+   "id": "gothic_wall_tall_x_2x1",
+   "file": "Gothic_Castle/Walls/gothic_wall_tall_x_2x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Walls",
+   "size": [
+    98,
+    226
+   ],
+   "frame_size": [
+    98,
+    226
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    201
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -201
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -88.0
+   ],
+   "intended_use": "Tall 176px Gothic wall with two lancet tiers",
+   "godot": "StaticBody2D convex footprint",
+   "sha1": "15a4f47b63e888bdfed64fd7d2136fb894d097a8",
+   "tags": []
+  },
+  {
+   "id": "gothic_wall_tall_y_1x2",
+   "file": "Gothic_Castle/Walls/gothic_wall_tall_y_1x2.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Walls",
+   "size": [
+    98,
+    226
+   ],
+   "frame_size": [
+    98,
+    226
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    48,
+    201
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -48,
+    -201
+   ],
+   "sprite2d_offset_if_centered_true": [
+    1.0,
+    -88.0
+   ],
+   "intended_use": "Tall Gothic wall, Y direction",
+   "godot": "Mirror of gothic_wall_tall_x_2x1",
+   "sha1": "5683064b41b5920649e99a5addc5cdabbba365bc",
+   "tags": []
+  },
+  {
+   "id": "gothic_wall_x_2x1",
+   "file": "Gothic_Castle/Walls/gothic_wall_x_2x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Walls",
+   "size": [
+    98,
+    178
+   ],
+   "frame_size": [
+    98,
+    178
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    153
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -153
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Gothic curtain wall, X direction, 128px high",
+   "godot": "StaticBody2D convex footprint; machicolation / cornice on top",
+   "sha1": "e15fcef8521fbee1233a20d98bdd2c07a082ad8c",
+   "tags": []
+  },
+  {
+   "id": "gothic_wall_x_damaged_2x1",
+   "file": "Gothic_Castle/Walls/gothic_wall_x_damaged_2x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Walls",
+   "size": [
+    98,
+    178
+   ],
+   "frame_size": [
+    98,
+    178
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    153
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -153
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Damaged Gothic wall (chipped cornice, holes)",
+   "godot": "StaticBody2D convex footprint; progressive corruption stage 2",
+   "sha1": "9de1f9bd6e2fccd00551edc2abc411077d2459c7",
+   "tags": []
+  },
+  {
+   "id": "gothic_wall_y_1x2",
+   "file": "Gothic_Castle/Walls/gothic_wall_y_1x2.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Walls",
+   "size": [
+    98,
+    178
+   ],
+   "frame_size": [
+    98,
+    178
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    48,
+    153
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -48,
+    -153
+   ],
+   "sprite2d_offset_if_centered_true": [
+    1.0,
+    -64.0
+   ],
+   "intended_use": "Gothic curtain wall, Y direction",
+   "godot": "Mirror of gothic_wall_x_2x1",
+   "sha1": "4b7e12192424d40c184e4d0a0bac6451adcdd48f",
+   "tags": []
+  },
+  {
+   "id": "gothic_wall_y_damaged_1x2",
+   "file": "Gothic_Castle/Walls/gothic_wall_y_damaged_1x2.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Walls",
+   "size": [
+    98,
+    178
+   ],
+   "frame_size": [
+    98,
+    178
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    48,
+    153
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -48,
+    -153
+   ],
+   "sprite2d_offset_if_centered_true": [
+    1.0,
+    -64.0
+   ],
+   "intended_use": "Damaged Gothic wall, Y direction",
+   "godot": "Mirror of gothic_wall_x_damaged_2x1",
+   "sha1": "6db1ea53e2b633c55cdf54bd31851070efc61b75",
+   "tags": []
+  },
+  {
+   "id": "grass_01",
+   "file": "Royal_Gardens/Terrain/grass_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Terrain",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Seamless isometric grass base tile",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off, z_index=-20",
+   "sha1": "732eebd5a6214a705b6e76f0afb6fef41d7a6c82",
+   "tags": []
+  },
+  {
+   "id": "grass_02",
+   "file": "Royal_Gardens/Terrain/grass_02.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Terrain",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Seamless isometric grass base tile",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off, z_index=-20",
+   "sha1": "cd94a3021cae361e98979e64dabceec9cee5d784",
+   "tags": []
+  },
+  {
+   "id": "grass_03",
+   "file": "Royal_Gardens/Terrain/grass_03.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Terrain",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Seamless isometric grass base tile",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off, z_index=-20",
+   "sha1": "e0e8198c42c40462dae64d28e9864199d2101ffa",
+   "tags": []
+  },
+  {
+   "id": "grass_04_tufts",
+   "file": "Royal_Gardens/Terrain/grass_04_tufts.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Terrain",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Grass variant with heavier tufts / ground detail",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off, z_index=-20",
+   "sha1": "7181ee98a0fe886f1df72d4bfc1bc6e3b64d5f8e",
+   "tags": []
+  },
+  {
+   "id": "grass_dark_01",
+   "file": "Royal_Gardens/Terrain/grass_dark_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Terrain",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Shadowed / corrupted-adjacent dark grass variant",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off, z_index=-20",
+   "sha1": "f940a6e4748921ee20f83bcda3b334cc0cc7f1e1",
+   "tags": []
+  },
+  {
+   "id": "grass_path_edge_ne",
+   "file": "Royal_Gardens/Terrain/grass_path_edge_ne.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Terrain",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Grass-to-royal-path transition, path on NE edge",
+   "godot": "Atlas transition tile, must tile with path_cobble_01 / royal path",
+   "sha1": "7c672dafab951fdea89a3f5c5e75c93ab2e38816",
+   "tags": []
+  },
+  {
+   "id": "grass_path_edge_nw",
+   "file": "Royal_Gardens/Terrain/grass_path_edge_nw.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Terrain",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Grass-to-royal-path transition, path on NW edge",
+   "godot": "Atlas transition tile, must tile with path_cobble_01 / royal path",
+   "sha1": "a961007c11c51faa88225d1ed537bf9a932205dc",
+   "tags": []
+  },
+  {
+   "id": "grass_path_edge_se",
+   "file": "Royal_Gardens/Terrain/grass_path_edge_se.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Terrain",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Grass-to-royal-path transition, path on SE edge",
+   "godot": "Atlas transition tile, must tile with path_cobble_01 / royal path",
+   "sha1": "e0143c51b9b2aab82f44966e98285e071785c8af",
+   "tags": []
+  },
+  {
+   "id": "grass_path_edge_sw",
+   "file": "Royal_Gardens/Terrain/grass_path_edge_sw.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Terrain",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Grass-to-royal-path transition, path on SW edge",
+   "godot": "Atlas transition tile, must tile with path_cobble_01 / royal path",
+   "sha1": "d9c593e710381af7fba27b5624fc44fda94d0236",
+   "tags": []
+  },
+  {
+   "id": "grass_tuft_01",
+   "file": "Royal_Gardens/Vegetation/grass_tuft_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    22,
+    18
+   ],
+   "frame_size": [
+    22,
+    18
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    11,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -11,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -7.0
+   ],
+   "intended_use": "Decorative grass tuft prop",
+   "godot": "Sprite2D centered=false, offset=-pivot, no collision",
+   "sha1": "6086fbcd72e1334ef7d6a4a5d75e4ac02cf7d256",
+   "tags": []
+  },
+  {
+   "id": "hanging_ornament_01",
+   "file": "Gothic_Castle/Decorations/hanging_ornament_01.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Decorations",
+   "size": [
+    24,
+    58
+   ],
+   "frame_size": [
+    24,
+    58
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    12,
+    56
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -12,
+    -56
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -27.0
+   ],
+   "intended_use": "Hanging iron ornament with cyan gem",
+   "godot": "Attach to ceiling/arch; no collision",
+   "sha1": "a53a781c8d8ca89f5e732f55a3507f825cac0639",
+   "tags": []
+  },
+  {
+   "id": "hedge_corner_1x1",
+   "file": "Royal_Gardens/Vegetation/hedge_corner_1x1.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    66,
+    74
+   ],
+   "frame_size": [
+    66,
+    74
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    57
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -57
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "Compact hedge / topiary corner fill",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "dd0c24c2d10e8a65eed18e997b486a8d66f6688a",
+   "tags": []
+  },
+  {
+   "id": "hedge_x_2x1",
+   "file": "Royal_Gardens/Vegetation/hedge_x_2x1.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    98,
+    90
+   ],
+   "frame_size": [
+    98,
+    90
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    65
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -65
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "2x1 garden hedge (X direction)",
+   "godot": "Sprite2D centered=false, offset=-pivot; convex collision over footprint",
+   "sha1": "80ee8e58a02d24387627a7a031e136d45560a354",
+   "tags": []
+  },
+  {
+   "id": "hedge_y_1x2",
+   "file": "Royal_Gardens/Vegetation/hedge_y_1x2.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    98,
+    90
+   ],
+   "frame_size": [
+    98,
+    90
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    65
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -65
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "1x2 garden hedge (Y direction)",
+   "godot": "Sprite2D centered=false, offset=-pivot; convex collision over footprint",
+   "sha1": "adaec6a56a577bfea1adf17fd2be572da86ad619",
+   "tags": []
+  },
+  {
+   "id": "iron_fence_x_2x1",
+   "file": "Gothic_Castle/Decorations/iron_fence_x_2x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Decorations",
+   "size": [
+    98,
+    98
+   ],
+   "frame_size": [
+    98,
+    98
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    73
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -73
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -24.0
+   ],
+   "intended_use": "Spear-tipped iron fence",
+   "godot": "Footprint collision",
+   "sha1": "5c815c04fa4401605335016e65e806b8a14643f7",
+   "tags": []
+  },
+  {
+   "id": "iron_fence_y_1x2",
+   "file": "Gothic_Castle/Decorations/iron_fence_y_1x2.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Decorations",
+   "size": [
+    98,
+    98
+   ],
+   "frame_size": [
+    98,
+    98
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    73
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -73
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -24.0
+   ],
+   "intended_use": "Spear-tipped iron fence",
+   "godot": "Footprint collision",
+   "sha1": "903200d17e64edee09b34443790053c683b100d9",
+   "tags": []
+  },
+  {
+   "id": "iron_gate_door_left",
+   "file": "Gothic_Castle/Architecture/iron_gate_door_left.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    34,
+    82
+   ],
+   "frame_size": [
+    34,
+    82
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    1,
+    64
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -1,
+    -64
+   ],
+   "sprite2d_offset_if_centered_true": [
+    16.0,
+    -23.0
+   ],
+   "intended_use": "Left iron-bound Gothic gate leaf (darkened)",
+   "godot": "Overlay on gothic_gatehouse_3x1",
+   "sha1": "8524d573783edc409eeaa94826b19d46d061f8e5",
+   "tags": []
+  },
+  {
+   "id": "iron_gate_door_right",
+   "file": "Gothic_Castle/Architecture/iron_gate_door_right.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    34,
+    82
+   ],
+   "frame_size": [
+    34,
+    82
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    64
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -64
+   ],
+   "sprite2d_offset_if_centered_true": [
+    -15.0,
+    -23.0
+   ],
+   "intended_use": "Right iron-bound Gothic gate leaf",
+   "godot": "Overlay on gothic_gatehouse_3x1",
+   "sha1": "288144ca06d8ad81942b5ae56c0fe7e1f2b72263",
+   "tags": []
+  },
+  {
+   "id": "ivy_wall_01",
+   "file": "Royal_Gardens/Vegetation/ivy_wall_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    34,
+    58
+   ],
+   "frame_size": [
+    34,
+    58
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    17,
+    55
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -17,
+    -55
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -26.0
+   ],
+   "intended_use": "Climbing ivy wall decal (green)",
+   "godot": "Place on wall face with y_sort; transparent PNG, no collision",
+   "sha1": "295d2da24bbf94981c28e55497495fff92115e4e",
+   "tags": []
+  },
+  {
+   "id": "ivy_wall_02",
+   "file": "Royal_Gardens/Vegetation/ivy_wall_02.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    34,
+    58
+   ],
+   "frame_size": [
+    34,
+    58
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    17,
+    55
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -17,
+    -55
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -26.0
+   ],
+   "intended_use": "Climbing ivy wall decal (dark / aged)",
+   "godot": "Place on wall face with y_sort; transparent PNG, no collision",
+   "sha1": "bdc98f2f7f53ed323790af6a205d626bf1dd4d3e",
+   "tags": []
+  },
+  {
+   "id": "lamp_post_arcane",
+   "file": "Royal_Gardens/Decorations/lamp_post_arcane.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    18,
+    66
+   ],
+   "frame_size": [
+    18,
+    66
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    9,
+    64
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -9,
+    -64
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -31.0
+   ],
+   "intended_use": "Royal lamppost (cyan flame)",
+   "godot": "Add PointLight2D with glow_warm / glow_cyan; pole base at pivot",
+   "sha1": "e361a6e0414f17d90132bfd0f2cdb2377677b37e",
+   "tags": []
+  },
+  {
+   "id": "lamp_post_gold",
+   "file": "Royal_Gardens/Decorations/lamp_post_gold.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    18,
+    66
+   ],
+   "frame_size": [
+    18,
+    66
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    9,
+    64
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -9,
+    -64
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -31.0
+   ],
+   "intended_use": "Royal lamppost (warm flame)",
+   "godot": "Add PointLight2D with glow_warm / glow_cyan; pole base at pivot",
+   "sha1": "d26da25897fd8fbf34a00fe6d3fa71494a788005",
+   "tags": []
+  },
+  {
+   "id": "lantern_gothic_post",
+   "file": "Gothic_Castle/Decorations/lantern_gothic_post.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Decorations",
+   "size": [
+    18,
+    66
+   ],
+   "frame_size": [
+    18,
+    66
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    9,
+    64
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -9,
+    -64
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -31.0
+   ],
+   "intended_use": "Ornate Gothic post lantern",
+   "godot": "PointLight2D with glow_warm at lantern head",
+   "sha1": "383419ec2a5c32b0a04e00e4a35650721019b134",
+   "tags": []
+  },
+  {
+   "id": "light_shaft_purple",
+   "file": "Corrupted_Environment/Effects/light_shaft_purple.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Effects",
+   "size": [
+    72,
+    160
+   ],
+   "frame_size": [
+    72,
+    160
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    36,
+    159
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -36,
+    -159
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -79.0
+   ],
+   "intended_use": "Purple volumetric light shaft effect",
+   "godot": "Effect sprite with soft alpha; place from above",
+   "sha1": "ce40e7afd468e417ac51c4c709e60e752d3e9aed",
+   "tags": []
+  },
+  {
+   "id": "mossy_stone_01",
+   "file": "Royal_Gardens/Terrain/mossy_stone_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Terrain",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Moss-covered garden stone",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off, z_index=-20",
+   "sha1": "5b57b42bf935a3dea97492d9677d640b5e04115f",
+   "tags": []
+  },
+  {
+   "id": "path_border_stone_x",
+   "file": "Pathways/Borders/path_border_stone_x.png",
+   "category": "Pathways",
+   "subfolder": "Borders",
+   "size": [
+    98,
+    60
+   ],
+   "frame_size": [
+    98,
+    60
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    35
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -35
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -5.0
+   ],
+   "intended_use": "Low stone kerb edging for paths",
+   "godot": "Footprint collision; align along path edge",
+   "sha1": "90f4bd4e445c7e41842b97d44fe49f715a994741",
+   "tags": []
+  },
+  {
+   "id": "path_border_stone_y",
+   "file": "Pathways/Borders/path_border_stone_y.png",
+   "category": "Pathways",
+   "subfolder": "Borders",
+   "size": [
+    98,
+    60
+   ],
+   "frame_size": [
+    98,
+    60
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    48,
+    35
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -48,
+    -35
+   ],
+   "sprite2d_offset_if_centered_true": [
+    1.0,
+    -5.0
+   ],
+   "intended_use": "Low stone kerb edging for paths",
+   "godot": "Footprint collision; align along path edge",
+   "sha1": "321eb90377eb941a1fac1883aa6a4431677fc059",
+   "tags": []
+  },
+  {
+   "id": "path_cobble_01",
+   "file": "Pathways/Ground/path_cobble_01.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Royal cobblestone path, base variant",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off; tile seamlessly with grass_path_edge_*",
+   "sha1": "3621a630392b547b346f52e4c27e843f232e74d3",
+   "tags": []
+  },
+  {
+   "id": "path_cobble_02",
+   "file": "Pathways/Ground/path_cobble_02.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Cobblestone path variant 2",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off; ",
+   "sha1": "d3c51f18b5059c69d8525bde2d0cbf55f3211e46",
+   "tags": []
+  },
+  {
+   "id": "path_corrupted_stone",
+   "file": "Pathways/Ground/path_corrupted_stone.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Stone path overtaken by corruption",
+   "godot": "Atlas tile 64x32; aligns with corruption_pool_tile_*",
+   "sha1": "fb1a16bedfaa51814599082ab6d975bfe689a32a",
+   "tags": []
+  },
+  {
+   "id": "path_curved_ne",
+   "file": "Pathways/Ground/path_curved_ne.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Path bend joining the NE edges of the diamond",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off; align with path_cobble_01",
+   "sha1": "0c86dc4ce46b0efcf5819bf379351db2b38cb155",
+   "tags": []
+  },
+  {
+   "id": "path_curved_nw",
+   "file": "Pathways/Ground/path_curved_nw.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Path bend joining the NW edges of the diamond",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off; align with path_cobble_01",
+   "sha1": "17b4ea0c68ddab3dfae803dc30d3e3a66d08203e",
+   "tags": []
+  },
+  {
+   "id": "path_curved_se",
+   "file": "Pathways/Ground/path_curved_se.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Path bend joining the SE edges of the diamond",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off; align with path_cobble_01",
+   "sha1": "ec3939b8ac055c5952bb9acdcc5e94e27b360c50",
+   "tags": []
+  },
+  {
+   "id": "path_curved_sw",
+   "file": "Pathways/Ground/path_curved_sw.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Path bend joining the SW edges of the diamond",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off; align with path_cobble_01",
+   "sha1": "2a78e0b99c9d9ad62353f76975378da95bde15d2",
+   "tags": []
+  },
+  {
+   "id": "path_intersection",
+   "file": "Pathways/Ground/path_intersection.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Formal crossroads / intersection tile",
+   "godot": "Atlas tile 64x32, filter=Nearest",
+   "sha1": "579634b370f9b29a2762b9a24e85abf04ead9cc9",
+   "tags": []
+  },
+  {
+   "id": "path_ruined_01",
+   "file": "Pathways/Ground/path_ruined_01.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Ruined cracked path with missing stones (stage 1)",
+   "godot": "Atlas tile 64x32",
+   "sha1": "183da28caa449935e30b86f3fe6d8a0388b476b3",
+   "tags": []
+  },
+  {
+   "id": "path_ruined_02",
+   "file": "Pathways/Ground/path_ruined_02.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Heavily ruined path (stage 2)",
+   "godot": "Atlas tile 64x32",
+   "sha1": "479cb5f71097543b2abcc8850eecf80c74ae3e8e",
+   "tags": []
+  },
+  {
+   "id": "path_rune_tile_01",
+   "file": "Pathways/Ground/path_rune_tile_01.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Path tile with glowing cyan arcane rune",
+   "godot": "Atlas tile 64x32; optional animated overlay",
+   "sha1": "211af54cd4d1fbadf57e82929b085fa8cab9f3fa",
+   "tags": []
+  },
+  {
+   "id": "path_rune_tile_02",
+   "file": "Pathways/Ground/path_rune_tile_02.png",
+   "category": "Pathways",
+   "subfolder": "Ground",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Path tile with glowing violet rune",
+   "godot": "Atlas tile 64x32; optional animated overlay",
+   "sha1": "382ae58ec763b35b809bbb00455d46a6058133b1",
+   "tags": []
+  },
+  {
+   "id": "platform_2x2",
+   "file": "Royal_Gardens/Architecture/platform_2x2.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    130,
+    86
+   ],
+   "frame_size": [
+    130,
+    86
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    53
+   ],
+   "footprint_cells": "2x2",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -53
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -10.0
+   ],
+   "intended_use": "Raised 2x2 stone platform / dais",
+   "godot": "Footprint collision; align to 2x2 cells",
+   "sha1": "7e6a4c16cee5b8a0381bb2abeef17d0a834d32e3",
+   "tags": []
+  },
+  {
+   "id": "purple_glow_soft",
+   "file": "Corrupted_Environment/Effects/purple_glow_soft.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Effects",
+   "size": [
+    96,
+    96
+   ],
+   "frame_size": [
+    96,
+    96
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    48,
+    48
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -48,
+    -48
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Soft violet ambient glow (effect only)",
+   "godot": "Add as Light2D texture / effect sprite; soft alpha allowed",
+   "sha1": "7214c588b60fdda5d05a0b383ea77bcf14bc21e8",
+   "tags": []
+  },
+  {
+   "id": "rose_bush_01",
+   "file": "Royal_Gardens/Vegetation/rose_bush_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    50,
+    38
+   ],
+   "frame_size": [
+    50,
+    38
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    34
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -34
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -15.0
+   ],
+   "intended_use": "Rose bush with deep rose blooms",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "639c561eca066aef78bb46520b8887af5732295a",
+   "tags": []
+  },
+  {
+   "id": "rose_bush_02",
+   "file": "Royal_Gardens/Vegetation/rose_bush_02.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    50,
+    38
+   ],
+   "frame_size": [
+    50,
+    38
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    34
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -34
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -15.0
+   ],
+   "intended_use": "Crimson rose bush variant",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "d0f21377b0bffaeeb8779cf6724dc53990051c2b",
+   "tags": []
+  },
+  {
+   "id": "royal_arch_open_3x1",
+   "file": "Royal_Gardens/Architecture/royal_arch_open_3x1.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    130,
+    194
+   ],
+   "frame_size": [
+    130,
+    194
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    161
+   ],
+   "footprint_cells": "3x1",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -161
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Freestanding pointed royal archway with through-opening",
+   "godot": "Split collision: outer cells solid, middle cell walkable",
+   "sha1": "65f1103a38ff609b536040f2df06e8c86ce8da0b",
+   "tags": []
+  },
+  {
+   "id": "royal_balustrade_x_2x1",
+   "file": "Royal_Gardens/Architecture/royal_balustrade_x_2x1.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    98,
+    78
+   ],
+   "frame_size": [
+    98,
+    78
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    53
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -53
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -14.0
+   ],
+   "intended_use": "Low stone balustrade for terraces and fountain plaza",
+   "godot": "Footprint collision",
+   "sha1": "52bac4ed927bec4b04e13303f92ba7790de5048b",
+   "tags": []
+  },
+  {
+   "id": "royal_fence_x_2x1",
+   "file": "Royal_Gardens/Architecture/royal_fence_x_2x1.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    98,
+    90
+   ],
+   "frame_size": [
+    98,
+    90
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    65
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -65
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "Decorative stone fence, X direction",
+   "godot": "Footprint collision; place along garden edges",
+   "sha1": "0def14782b200db9d257b97fd1109c66a5ddbbc3",
+   "tags": []
+  },
+  {
+   "id": "royal_fence_y_1x2",
+   "file": "Royal_Gardens/Architecture/royal_fence_y_1x2.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    98,
+    90
+   ],
+   "frame_size": [
+    98,
+    90
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    65
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -65
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "Decorative stone fence, Y direction",
+   "godot": "Footprint collision; place along garden edges",
+   "sha1": "15ca68cb21ef786338aa91a97862b86435139833",
+   "tags": []
+  },
+  {
+   "id": "royal_gate_x_3x1",
+   "file": "Royal_Gardens/Architecture/royal_gate_x_3x1.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    130,
+    226
+   ],
+   "frame_size": [
+    130,
+    226
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    193
+   ],
+   "footprint_cells": "3x1",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -193
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -80.0
+   ],
+   "intended_use": "Royal gatehouse arch with lit interior haze (doors overlay)",
+   "godot": "Split collision; layer gate_door_left/right over the arch",
+   "sha1": "6cc08f1ba07ecd8b9f817a63b934f3421980cd84",
+   "tags": []
+  },
+  {
+   "id": "royal_pillar_short",
+   "file": "Royal_Gardens/Architecture/royal_pillar_short.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    66,
+    106
+   ],
+   "frame_size": [
+    66,
+    106
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    89
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -89
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -36.0
+   ],
+   "intended_use": "Short fluted royal column (porch / balustrade)",
+   "godot": "Sprite2D centered=false, offset=-pivot",
+   "sha1": "21df979eb7a41a5968b87cd3f7d7406d2014e2e5",
+   "tags": []
+  },
+  {
+   "id": "royal_pillar_tall",
+   "file": "Royal_Gardens/Architecture/royal_pillar_tall.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    66,
+    162
+   ],
+   "frame_size": [
+    66,
+    162
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    145
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -145
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Tall fluted royal column (arch / gate support)",
+   "godot": "Sprite2D centered=false, offset=-pivot; small circular collision",
+   "sha1": "87a125dcb9ba540102be7e747acc59956051c9dd",
+   "tags": []
+  },
+  {
+   "id": "royal_wall_corner_1x1",
+   "file": "Royal_Gardens/Architecture/royal_wall_corner_1x1.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    66,
+    162
+   ],
+   "frame_size": [
+    66,
+    162
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    145
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -145
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Wall corner / pier with two finished faces",
+   "godot": "StaticBody2D convex footprint",
+   "sha1": "90c44677712e988e8348be79e27bc8ca15975d7b",
+   "tags": []
+  },
+  {
+   "id": "royal_wall_x_2x1",
+   "file": "Royal_Gardens/Architecture/royal_wall_x_2x1.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    98,
+    178
+   ],
+   "frame_size": [
+    98,
+    178
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    153
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -153
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Decorative royal stone wall (X direction, visible L/R faces)",
+   "godot": "StaticBody2D convex footprint; wall height 128px",
+   "sha1": "e207099bb43c4f49c78b411d0b2bddccad87b882",
+   "tags": []
+  },
+  {
+   "id": "royal_wall_y_1x2",
+   "file": "Royal_Gardens/Architecture/royal_wall_y_1x2.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Architecture",
+   "size": [
+    98,
+    178
+   ],
+   "frame_size": [
+    98,
+    178
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    48,
+    153
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -48,
+    -153
+   ],
+   "sprite2d_offset_if_centered_true": [
+    1.0,
+    -64.0
+   ],
+   "intended_use": "Decorative royal stone wall (Y direction)",
+   "godot": "Mirror of royal_wall_x_2x1; same footprint rule",
+   "sha1": "72b0bd0241626dfed8c7221146841c1fc11ea6ff",
+   "tags": []
+  },
+  {
+   "id": "rubble_pile_01",
+   "file": "Corrupted_Environment/Structures/rubble_pile_01.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Structures",
+   "size": [
+    50,
+    34
+   ],
+   "frame_size": [
+    50,
+    34
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    30
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -30
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -13.0
+   ],
+   "intended_use": "Scattered stone rubble pile",
+   "godot": "Decorative prop; small collision",
+   "sha1": "e29d73d42bbb767d254fd5991ee5c485cf088047",
+   "tags": []
+  },
+  {
+   "id": "rubble_pile_02",
+   "file": "Corrupted_Environment/Structures/rubble_pile_02.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Structures",
+   "size": [
+    66,
+    42
+   ],
+   "frame_size": [
+    66,
+    42
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    38
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -38
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -17.0
+   ],
+   "intended_use": "Scattered stone rubble pile",
+   "godot": "Decorative prop; small collision",
+   "sha1": "56a7e584591be07b8efebdd6c5266b0acf4abf64",
+   "tags": []
+  },
+  {
+   "id": "ruined_arch_x_3x1",
+   "file": "Corrupted_Environment/Structures/ruined_arch_x_3x1.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Structures",
+   "size": [
+    132,
+    228
+   ],
+   "frame_size": [
+    132,
+    228
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    66,
+    194
+   ],
+   "footprint_cells": "3x1",
+   "sprite2d_offset_if_centered_false": [
+    -66,
+    -194
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -80.0
+   ],
+   "intended_use": "Collapsed Gothic archway",
+   "godot": "Split footprint collision; middle cell walkable",
+   "sha1": "fb95b0628edb78fea0a858573e92d6c31a2494fc",
+   "tags": []
+  },
+  {
+   "id": "ruined_pillar_01",
+   "file": "Corrupted_Environment/Structures/ruined_pillar_01.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Structures",
+   "size": [
+    68,
+    164
+   ],
+   "frame_size": [
+    68,
+    164
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    34,
+    146
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -34,
+    -146
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Ruined Gothic column / broken pillar",
+   "godot": "Footprint collision",
+   "sha1": "ec9e59cd02e25322f778bc971c1a9823df2b971f",
+   "tags": []
+  },
+  {
+   "id": "ruined_pillar_02",
+   "file": "Corrupted_Environment/Structures/ruined_pillar_02.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Structures",
+   "size": [
+    68,
+    164
+   ],
+   "frame_size": [
+    68,
+    164
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    34,
+    146
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -34,
+    -146
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Ruined Gothic column / broken pillar",
+   "godot": "Footprint collision",
+   "sha1": "e7997107e0bc6c7e9e08624da265e2ebc3bd5e1a",
+   "tags": []
+  },
+  {
+   "id": "soil_garden_01",
+   "file": "Royal_Gardens/Terrain/soil_garden_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Terrain",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Tilled garden soil under flower beds and hedges",
+   "godot": "Atlas tile 64x32, filter=Nearest, mipmaps=off, z_index=-20",
+   "sha1": "ca8fc33865a63ebf60f718fb85c88c477e7b70b8",
+   "tags": []
+  },
+  {
+   "id": "spire_tall_1x1",
+   "file": "Gothic_Castle/Towers/spire_tall_1x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Towers",
+   "size": [
+    50,
+    126
+   ],
+   "frame_size": [
+    50,
+    126
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    117
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -117
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -54.0
+   ],
+   "intended_use": "Tall pointed spire / finial for towers and buttresses",
+   "godot": "Sprite2D at spire anchor; no collision",
+   "sha1": "50a84d42643a85c37717e57cc6c49328148a64ed",
+   "tags": []
+  },
+  {
+   "id": "stairs_broken_x",
+   "file": "Pathways/Stairs/stairs_broken_x.png",
+   "category": "Pathways",
+   "subfolder": "Stairs",
+   "size": [
+    196,
+    140
+   ],
+   "frame_size": [
+    196,
+    140
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    98,
+    90
+   ],
+   "footprint_cells": "4x2",
+   "sprite2d_offset_if_centered_false": [
+    -98,
+    -90
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "Broken staircase with missing treads",
+   "godot": "Walkable with care; no collision",
+   "sha1": "ce29a6951e17f4cdfcd11c3e15401cf2b74472f1",
+   "tags": []
+  },
+  {
+   "id": "stairs_gothic_large",
+   "file": "Pathways/Stairs/stairs_gothic_large.png",
+   "category": "Pathways",
+   "subfolder": "Stairs",
+   "size": [
+    194,
+    138
+   ],
+   "frame_size": [
+    194,
+    138
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    97,
+    89
+   ],
+   "footprint_cells": "8x2",
+   "sprite2d_offset_if_centered_false": [
+    -97,
+    -89
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "Monumental Gothic staircase (8 steps)",
+   "godot": "Walkable; no collision; align to 8x2 cells",
+   "sha1": "b54582f3081d16a9c00665a7e9c9a42d77e06b5f",
+   "tags": []
+  },
+  {
+   "id": "stairs_stone_x_4step",
+   "file": "Pathways/Stairs/stairs_stone_x_4step.png",
+   "category": "Pathways",
+   "subfolder": "Stairs",
+   "size": [
+    194,
+    138
+   ],
+   "frame_size": [
+    194,
+    138
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    97,
+    89
+   ],
+   "footprint_cells": "4x2",
+   "sprite2d_offset_if_centered_false": [
+    -97,
+    -89
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "Standard stone staircase, X direction",
+   "godot": "Walkable; no collision",
+   "sha1": "c3eb238b3f17d77daa801605b5781978de34e9dd",
+   "tags": []
+  },
+  {
+   "id": "stairs_stone_y_4step",
+   "file": "Pathways/Stairs/stairs_stone_y_4step.png",
+   "category": "Pathways",
+   "subfolder": "Stairs",
+   "size": [
+    194,
+    138
+   ],
+   "frame_size": [
+    194,
+    138
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    96,
+    89
+   ],
+   "footprint_cells": "2x4",
+   "sprite2d_offset_if_centered_false": [
+    -96,
+    -89
+   ],
+   "sprite2d_offset_if_centered_true": [
+    1.0,
+    -20.0
+   ],
+   "intended_use": "Standard stone staircase, Y direction",
+   "godot": "Walkable; no collision",
+   "sha1": "dff1313a7f4c0ed55a69ef4bd7202f0eb8ef5724",
+   "tags": []
+  },
+  {
+   "id": "statue_angel",
+   "file": "Royal_Gardens/Decorations/statue_angel.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    66,
+    114
+   ],
+   "frame_size": [
+    66,
+    114
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    101
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -101
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -44.0
+   ],
+   "intended_use": "Royal garden statue (angel)",
+   "godot": "Footprint collision; contact shadow below",
+   "sha1": "317586624b804aa4888fe0a39098e42e221cecbc",
+   "tags": []
+  },
+  {
+   "id": "statue_baltoria_guardian",
+   "file": "Boss_Arena/Decorations/statue_baltoria_guardian.png",
+   "category": "Boss_Arena",
+   "subfolder": "Decorations",
+   "size": [
+    66,
+    114
+   ],
+   "frame_size": [
+    66,
+    114
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    101
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -101
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -44.0
+   ],
+   "intended_use": "Dark horned guardian statue for boss arena",
+   "godot": "Footprint collision",
+   "sha1": "12b3823fb3b478fa1acfba2ea27239aa8e6d12ca",
+   "tags": []
+  },
+  {
+   "id": "statue_baltoria_winged",
+   "file": "Boss_Arena/Decorations/statue_baltoria_winged.png",
+   "category": "Boss_Arena",
+   "subfolder": "Decorations",
+   "size": [
+    66,
+    114
+   ],
+   "frame_size": [
+    66,
+    114
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    101
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -101
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -44.0
+   ],
+   "intended_use": "Dark winged boss arena statue with corruption veins",
+   "godot": "Footprint collision",
+   "sha1": "848ab540c9f51908d702b466b598e7f7c38b1969",
+   "tags": []
+  },
+  {
+   "id": "statue_guardian",
+   "file": "Royal_Gardens/Decorations/statue_guardian.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    66,
+    116
+   ],
+   "frame_size": [
+    66,
+    116
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    99
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -99
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -41.0
+   ],
+   "intended_use": "Generic armoured guardian statue (not a named character)",
+   "godot": "Footprint collision; contact shadow below",
+   "sha1": "3def60f195fdbc39ba3b2c97cc185d8e6eed7d7b",
+   "tags": []
+  },
+  {
+   "id": "statue_royal",
+   "file": "Royal_Gardens/Decorations/statue_royal.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    66,
+    114
+   ],
+   "frame_size": [
+    66,
+    114
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    101
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -101
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -44.0
+   ],
+   "intended_use": "Royal garden statue (royal)",
+   "godot": "Footprint collision; contact shadow below",
+   "sha1": "ac49a04b88303aa3cc3c37aa32d252eb79c288ce",
+   "tags": []
+  },
+  {
+   "id": "stone_ornament_01",
+   "file": "Gothic_Castle/Decorations/stone_ornament_01.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Decorations",
+   "size": [
+    34,
+    38
+   ],
+   "frame_size": [
+    34,
+    38
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    17,
+    34
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -17,
+    -34
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -15.0
+   ],
+   "intended_use": "Carved stone finial / ornament cluster",
+   "godot": "Decorative only",
+   "sha1": "4d93e026b648dd8374ab58e50a1aa05af3d97a78",
+   "tags": []
+  },
+  {
+   "id": "stone_planter_2x1",
+   "file": "Royal_Gardens/Decorations/stone_planter_2x1.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    98,
+    64
+   ],
+   "frame_size": [
+    98,
+    64
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    39
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -39
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -7.0
+   ],
+   "intended_use": "Stone planter box with soil",
+   "godot": "Footprint collision; place soil/flower sprites on top",
+   "sha1": "14a48a2a0c5db82483c80744c402cea6f0e45cc7",
+   "tags": []
+  },
+  {
+   "id": "stone_railing_x_2x1",
+   "file": "Gothic_Castle/Architecture/stone_railing_x_2x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    98,
+    84
+   ],
+   "frame_size": [
+    98,
+    84
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    59
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -59
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -17.0
+   ],
+   "intended_use": "Carved stone railing, X direction",
+   "godot": "Footprint collision",
+   "sha1": "9cde2b6eed3df3375ea5a0d592ad202bef35b4a7",
+   "tags": []
+  },
+  {
+   "id": "stone_railing_y_1x2",
+   "file": "Gothic_Castle/Architecture/stone_railing_y_1x2.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    98,
+    84
+   ],
+   "frame_size": [
+    98,
+    84
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    48,
+    59
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -48,
+    -59
+   ],
+   "sprite2d_offset_if_centered_true": [
+    1.0,
+    -17.0
+   ],
+   "intended_use": "Carved stone railing, Y direction",
+   "godot": "Footprint collision",
+   "sha1": "ad30a36b1fccf187e90a7c6f517141c6832abf2e",
+   "tags": []
+  },
+  {
+   "id": "torch_wall_cold",
+   "file": "Gothic_Castle/Decorations/torch_wall_cold.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Decorations",
+   "size": [
+    20,
+    42
+   ],
+   "frame_size": [
+    20,
+    42
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    10,
+    40
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -10,
+    -40
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -19.0
+   ],
+   "intended_use": "Cold cyan wall torch (arcane)",
+   "godot": "Attach to wall; add cyan PointLight2D",
+   "sha1": "c6aa319cfe0853d8b10e08f1a54d65722e4491f9",
+   "tags": []
+  },
+  {
+   "id": "torch_wall_warm",
+   "file": "Gothic_Castle/Decorations/torch_wall_warm.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Decorations",
+   "size": [
+    20,
+    42
+   ],
+   "frame_size": [
+    20,
+    42
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    10,
+    40
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -10,
+    -40
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -19.0
+   ],
+   "intended_use": "Warm wall torch with iron bracket",
+   "godot": "Attach to wall; add warm PointLight2D",
+   "sha1": "20e5d167d1036424aca45089900805680d995778",
+   "tags": []
+  },
+  {
+   "id": "tower_body_2x2",
+   "file": "Gothic_Castle/Towers/tower_body_2x2.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Towers",
+   "size": [
+    130,
+    258
+   ],
+   "frame_size": [
+    130,
+    258
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    225
+   ],
+   "footprint_cells": "2x2",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -225
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -96.0
+   ],
+   "intended_use": "Massive 2x2 Gothic tower shaft (192px, 2 lancet tiers)",
+   "godot": "Convex footprint collision; stack tower_roof_2x2 at top",
+   "sha1": "9f96c17ae761a79463f8086efc3fca27fc9c6d71",
+   "tags": []
+  },
+  {
+   "id": "tower_body_ruined_2x2",
+   "file": "Gothic_Castle/Towers/tower_body_ruined_2x2.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Towers",
+   "size": [
+    130,
+    258
+   ],
+   "frame_size": [
+    130,
+    258
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    225
+   ],
+   "footprint_cells": "2x2",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -225
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -96.0
+   ],
+   "intended_use": "Ruined tower shaft with crumbled machicolations",
+   "godot": "Convex footprint collision; boss/corruption zone",
+   "sha1": "9274ed114573d944d8a8a56e3eac15843ab4e5b4",
+   "tags": []
+  },
+  {
+   "id": "tower_body_slim_1x1",
+   "file": "Gothic_Castle/Towers/tower_body_slim_1x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Towers",
+   "size": [
+    66,
+    202
+   ],
+   "frame_size": [
+    66,
+    202
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    185
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -185
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -84.0
+   ],
+   "intended_use": "Slim watch / corner turret shaft",
+   "godot": "Convex footprint collision",
+   "sha1": "611dcc24b70891d1b97a2c93de47e869221c9c4f",
+   "tags": []
+  },
+  {
+   "id": "tower_parapet_top_1x1",
+   "file": "Gothic_Castle/Towers/tower_parapet_top_1x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Towers",
+   "size": [
+    66,
+    66
+   ],
+   "frame_size": [
+    66,
+    66
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    49
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -49
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -16.0
+   ],
+   "intended_use": "Parapet cap / corbel ring for 1x1 turret",
+   "godot": "Stack on tower_body_slim_1x1",
+   "sha1": "eff010b1132d072626fd8a3aeda6e3a577344d95",
+   "tags": []
+  },
+  {
+   "id": "tower_roof_2x2",
+   "file": "Gothic_Castle/Towers/tower_roof_2x2.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Towers",
+   "size": [
+    130,
+    134
+   ],
+   "frame_size": [
+    130,
+    134
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    125
+   ],
+   "footprint_cells": "2x2",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -125
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -58.0
+   ],
+   "intended_use": "Slate conical roof for 2x2 tower body",
+   "godot": "Sprite2D at tower top anchor; centered=false offset=-pivot",
+   "sha1": "e9c20f54bb44b60a74713a47ee2a8a4713a3091e",
+   "tags": []
+  },
+  {
+   "id": "tower_roof_corrupt_1x1",
+   "file": "Gothic_Castle/Towers/tower_roof_corrupt_1x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Towers",
+   "size": [
+    82,
+    86
+   ],
+   "frame_size": [
+    82,
+    86
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    41,
+    77
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -41,
+    -77
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -34.0
+   ],
+   "intended_use": "Corrupted / boss-zone conical roof (violet slate)",
+   "godot": "Sprite2D at turret top anchor; no collision",
+   "sha1": "f6bd064c65fc4febf55aa5d6aa2d2b8204578a4f",
+   "tags": []
+  },
+  {
+   "id": "tower_roof_small_1x1",
+   "file": "Gothic_Castle/Towers/tower_roof_small_1x1.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Towers",
+   "size": [
+    66,
+    82
+   ],
+   "frame_size": [
+    66,
+    82
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    73
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -73
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -32.0
+   ],
+   "intended_use": "Conical roof for 1x1 turret / slim tower",
+   "godot": "Sprite2D at turret top anchor",
+   "sha1": "9291fec0e9ea40925b9746fd0d5b36739de9c467",
+   "tags": []
+  },
+  {
+   "id": "tree_blossom_01",
+   "file": "Royal_Gardens/Vegetation/tree_blossom_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    98,
+    130
+   ],
+   "frame_size": [
+    98,
+    130
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    126
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -126
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -61.0
+   ],
+   "intended_use": "Pink blossom tree, 128px tall",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "aeedaa181757bc735ef55e7889bf57495e671296",
+   "tags": []
+  },
+  {
+   "id": "tree_blossom_02",
+   "file": "Royal_Gardens/Vegetation/tree_blossom_02.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    98,
+    130
+   ],
+   "frame_size": [
+    98,
+    130
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    126
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -126
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -61.0
+   ],
+   "intended_use": "Full pink blossom tree for symmetric arrangements",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "f88c2fb4f95f529150994703d79f80b61054cd2f",
+   "tags": []
+  },
+  {
+   "id": "tree_corrupted_01",
+   "file": "Corrupted_Environment/Vegetation/tree_corrupted_01.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    98,
+    132
+   ],
+   "frame_size": [
+    98,
+    132
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    128
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -128
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -62.0
+   ],
+   "intended_use": "Corrupted tree with violet growths (stage 2-3)",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort; optional violet glow",
+   "sha1": "47339c4079cd01d98de9906ecd026acecf373ada",
+   "tags": []
+  },
+  {
+   "id": "tree_corrupted_02",
+   "file": "Corrupted_Environment/Vegetation/tree_corrupted_02.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    106,
+    144
+   ],
+   "frame_size": [
+    106,
+    144
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    53,
+    140
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -53,
+    -140
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -68.0
+   ],
+   "intended_use": "Corrupted tree with violet growths (stage 2-3)",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort; optional violet glow",
+   "sha1": "eef83dcd03752044ec687b1e15207c8801fc61b1",
+   "tags": []
+  },
+  {
+   "id": "tree_dead_01",
+   "file": "Corrupted_Environment/Vegetation/tree_dead_01.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    98,
+    130
+   ],
+   "frame_size": [
+    98,
+    130
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    126
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -126
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -61.0
+   ],
+   "intended_use": "Bare dead tree (corruption stage 1)",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "8fbf902602dbfc2d79da8f96f27a61ea5aeeb1e5",
+   "tags": []
+  },
+  {
+   "id": "tree_dead_02",
+   "file": "Corrupted_Environment/Vegetation/tree_dead_02.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    98,
+    140
+   ],
+   "frame_size": [
+    98,
+    140
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    136
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -136
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -66.0
+   ],
+   "intended_use": "Bare dead tree (corruption stage 1)",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "71634685c6f43071b0c680db840eb410ff2eda5b",
+   "tags": []
+  },
+  {
+   "id": "tree_dead_03",
+   "file": "Corrupted_Environment/Vegetation/tree_dead_03.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    106,
+    126
+   ],
+   "frame_size": [
+    106,
+    126
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    53,
+    122
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -53,
+    -122
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -59.0
+   ],
+   "intended_use": "Bare dead tree (corruption stage 1)",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "4a05464eb61881898e365ac894e7d7e0a4452dd7",
+   "tags": []
+  },
+  {
+   "id": "tree_oak_01",
+   "file": "Royal_Gardens/Vegetation/tree_oak_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    98,
+    130
+   ],
+   "frame_size": [
+    98,
+    130
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    126
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -126
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -61.0
+   ],
+   "intended_use": "Standard green oak, 128px tall, 1x1 footprint",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort; shadow_blob_64 under it",
+   "sha1": "982403a4b16ce92417d28e260e2231111746e115",
+   "tags": []
+  },
+  {
+   "id": "tree_oak_02",
+   "file": "Royal_Gardens/Vegetation/tree_oak_02.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    98,
+    130
+   ],
+   "frame_size": [
+    98,
+    130
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    126
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -126
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -61.0
+   ],
+   "intended_use": "Broad oak variant for groves / avenue planting",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "52968fd6f7f580a347943aad9e919218051bd838",
+   "tags": []
+  },
+  {
+   "id": "tree_oak_03_tall",
+   "file": "Royal_Gardens/Vegetation/tree_oak_03_tall.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    98,
+    152
+   ],
+   "frame_size": [
+    98,
+    152
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    148
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -148
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -72.0
+   ],
+   "intended_use": "Tall slender oak for vertical rhythm",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "bdaf2c5517b5981424a35458c05f8d90affbeab3",
+   "tags": []
+  },
+  {
+   "id": "tree_topiary_cone",
+   "file": "Royal_Gardens/Vegetation/tree_topiary_cone.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    50,
+    86
+   ],
+   "frame_size": [
+    50,
+    86
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    82
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -82
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -39.0
+   ],
+   "intended_use": "Formal conical topiary for parterres",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "113b6eb3d8cd4b41220b6f06dfe2be39a38ff188",
+   "tags": []
+  },
+  {
+   "id": "tree_topiary_round",
+   "file": "Royal_Gardens/Vegetation/tree_topiary_round.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Vegetation",
+   "size": [
+    50,
+    78
+   ],
+   "frame_size": [
+    50,
+    78
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    74
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -74
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -35.0
+   ],
+   "intended_use": "Formal rounded topiary",
+   "godot": "Sprite2D centered=false, offset=-pivot, y_sort",
+   "sha1": "afcf98ae0be1df7773a179947b60056bf5cf2aa1",
+   "tags": []
+  },
+  {
+   "id": "twisted_roots_01",
+   "file": "Corrupted_Environment/Vegetation/twisted_roots_01.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Twisted corruption roots ground decal (1x1)",
+   "godot": "Ground overlay tile 64x32, z_index=-19, no collision",
+   "sha1": "35e22176aaaf7b789818e087ec8d901ec461e06d",
+   "tags": []
+  },
+  {
+   "id": "twisted_roots_02",
+   "file": "Corrupted_Environment/Vegetation/twisted_roots_02.png",
+   "category": "Corrupted_Environment",
+   "subfolder": "Vegetation",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Twisted corruption roots ground decal (1x1)",
+   "godot": "Ground overlay tile 64x32, z_index=-19, no collision",
+   "sha1": "dd8ff877fdc1ce832eb47c955f6d30b675d340fe",
+   "tags": []
+  },
+  {
+   "id": "urn_stone_01",
+   "file": "Royal_Gardens/Decorations/urn_stone_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    30,
+    40
+   ],
+   "frame_size": [
+    30,
+    40
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    15,
+    36
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -15,
+    -36
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -16.0
+   ],
+   "intended_use": "Carved stone urn / planter",
+   "godot": "Small footprint collision",
+   "sha1": "4eec6649950f7b1076976052008444ada9a48927",
+   "tags": []
+  },
+  {
+   "id": "wall_sconce_01",
+   "file": "Royal_Gardens/Decorations/wall_sconce_01.png",
+   "category": "Royal_Gardens",
+   "subfolder": "Decorations",
+   "size": [
+    20,
+    42
+   ],
+   "frame_size": [
+    20,
+    42
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    10,
+    40
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -10,
+    -40
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -19.0
+   ],
+   "intended_use": "Warm wall-mounted sconce / small lantern",
+   "godot": "Attach to wall face; add warm PointLight2D",
+   "sha1": "bbe40886754336a3faccdf235d38c277342297df",
+   "tags": []
+  },
+  {
+   "id": "window_lancet_frame",
+   "file": "Gothic_Castle/Architecture/window_lancet_frame.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    30,
+    66
+   ],
+   "frame_size": [
+    30,
+    66
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    15,
+    63
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -15,
+    -63
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -30.0
+   ],
+   "intended_use": "Standalone pointed lancet window in stone frame",
+   "godot": "Attach to facade/wall face; transparent outside",
+   "sha1": "30393fe6bd71cad744beae533b8318f313b5cf82",
+   "tags": []
+  },
+  {
+   "id": "window_rose_01",
+   "file": "Gothic_Castle/Architecture/window_rose_01.png",
+   "category": "Gothic_Castle",
+   "subfolder": "Architecture",
+   "size": [
+    66,
+    66
+   ],
+   "frame_size": [
+    66,
+    66
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    63
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -63
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -30.0
+   ],
+   "intended_use": "Round rose window with tracery and cyan core",
+   "godot": "Attach to facade; no collision",
+   "sha1": "ff3d805130a837e1090d6be2b7b50b6b0977eb23",
+   "tags": []
+  }
+ ]
+}

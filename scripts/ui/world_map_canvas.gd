@@ -21,18 +21,18 @@ func set_selected_poi(poi: Dictionary) -> void:
 	queue_redraw()
 
 func refresh_map() -> void:
-	_region = ContentDB.get_region(GameState.player_region)
+	_region = ContentDB.get_region(GameState.session_domain.player_region)
 	var player := get_tree().get_first_node_in_group("player")
-	_has_player = player is Node2D or GameState.has_player_position
+	_has_player = player is Node2D or GameState.session_domain.has_player_position
 	if player is Node2D:
 		_player_grid = IsoMath.world_to_grid((player as Node2D).global_position)
 	elif _has_player:
-		_player_grid = IsoMath.world_to_grid(GameState.player_position)
-	var tracked := GameState.tracked_quest()
-	_has_quest = not tracked.is_empty() and GameState.quest_state(tracked) == "active"
+		_player_grid = IsoMath.world_to_grid(GameState.session_domain.player_position)
+	var tracked := GameState.quest_domain.tracked_quest()
+	_has_quest = not tracked.is_empty() and GameState.quest_domain.quest_state(tracked) == "active"
 	if _has_quest:
 		var definition: Dictionary = ContentDB.get_quest(tracked)
-		_has_quest = str(definition.get("region", "greenward")) == GameState.player_region
+		_has_quest = str(definition.get("region", "greenward")) == GameState.session_domain.player_region
 		if _has_quest:
 			# Resolve through the GameScreen-owned instance so the full map,
 			# minimap, HUD compass and world beacon all point at one live target.
@@ -40,8 +40,8 @@ func refresh_map() -> void:
 			var game_screen := get_tree().get_first_node_in_group("game_screen")
 			if game_screen != null and game_screen.get("quest_resolver") is QuestNavigationResolver:
 				resolver = game_screen.get("quest_resolver") as QuestNavigationResolver
-			var player_position: Vector2 = (player as Node2D).global_position if player is Node2D else GameState.player_position
-			var resolved := resolver.get_resolved_target(GameState.player_region, player_position)
+			var player_position: Vector2 = (player as Node2D).global_position if player is Node2D else GameState.session_domain.player_position
+			var resolved := resolver.get_resolved_target(GameState.session_domain.player_region, player_position)
 			var target_position: Variant = resolved.get("target_local_pos", null)
 			_has_quest = bool(resolved.get("valid", false)) and bool(resolved.get("same_frame", false)) and typeof(target_position) == TYPE_VECTOR2
 			if _has_quest:
@@ -239,15 +239,15 @@ func _draw() -> void:
 
 
 func _draw_authored_background(origin: Vector2, scale_value: float, min_x: float, min_y: float, max_x: float, max_y: float, land_color: Color, path_color: Color, water_color: Color) -> void:
-	# Schematic representation of the actual authored Castle & Royal Gardens layout.
-	# Uses real world positions converted to grid space; does not invent features.
+	# Schematic representation of the Royal Gardens region.
+	# Gothic Castle is a separate region and is intentionally not drawn here.
 	var rect_min := _grid_to_map_point(origin, scale_value, min_x, min_y)
 	var rect_max := _grid_to_map_point(origin, scale_value, max_x, max_y)
 	var map_rect := Rect2(rect_min, rect_max - rect_min)
 	draw_rect(map_rect, land_color.darkened(0.08))
 
 	# Helper to convert world-space feature rects/points into map space
-	# Castle bounds/areas (authored): ground 80..1200 x 80..720
+	# Royal Gardens bounds: ground 80..1200 x 80..720
 	_draw_world_rect(origin, scale_value, Rect2(80, 80, 1120, 640), Color("#5b8452"))
 	# Plaza
 	_draw_world_rect(origin, scale_value, Rect2(420, 180, 440, 120), Color("#9d917d"))
@@ -255,9 +255,6 @@ func _draw_authored_background(origin: Vector2, scale_value: float, min_x: float
 	_draw_world_rect(origin, scale_value, Rect2(616, 240, 48, 400), path_color.lightened(0.05))
 	_draw_world_rect(origin, scale_value, Rect2(420, 396, 440, 28), path_color.lightened(0.03))
 	_draw_world_rect(origin, scale_value, Rect2(420, 486, 440, 28), path_color.lightened(0.03))
-	# Castle mass silhouette
-	_draw_world_rect(origin, scale_value, Rect2(420, 120, 440, 90), Color("#6d6878"))
-	_draw_world_rect(origin, scale_value, Rect2(540, 90, 200, 50), Color("#756f82"))
 	# Garden beds accents
 	for r in [Rect2(410, 350, 60, 20), Rect2(810, 350, 60, 20), Rect2(410, 450, 60, 20), Rect2(810, 450, 60, 20), Rect2(490, 400, 40, 16), Rect2(750, 400, 40, 16)]:
 		_draw_world_rect(origin, scale_value, r, Color("#7c5f72"))

@@ -1,8 +1,12 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/minimap.tscn" id="2_minimap"]
 [ext_resource type="PackedScene" path="res://scenes/ui/virtual_joystick.tscn" id="3_joystick"]
+[ext_resource type="Script" path="res://scripts/ui/components/hud_currency_component.gd" id="4_currency"]
+[ext_resource type="Script" path="res://scripts/ui/components/hud_party_component.gd" id="5_party"]
+[ext_resource type="Script" path="res://scripts/ui/components/hud_quest_component.gd" id="6_quest"]
+[ext_resource type="Script" path="res://scripts/ui/components/hud_toast_component.gd" id="7_toast"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_party"]
 bg_color = Color(0.045, 0.065, 0.115, 0.78)
@@ -85,6 +89,11 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_constants/separation = 8
+
+[node name="MainMenuButton" type="Button" parent="TopBar/TopRow"]
+custom_minimum_size = Vector2(132, 42)
+layout_mode = 2
+text = "MAIN MENU"
 
 [node name="Minimap" parent="." instance=ExtResource("2_minimap")]
 anchors_preset = 2
@@ -258,3 +267,15 @@ grow_horizontal = 0
 grow_vertical = 0
 visible = false
 text = "Switch"
+
+[node name="Currency" type="Node" parent="."]
+script = ExtResource("4_currency")
+
+[node name="Party" type="Node" parent="."]
+script = ExtResource("5_party")
+
+[node name="Quest" type="Node" parent="."]
+script = ExtResource("6_quest")
+
+[node name="Toast" type="Node" parent="."]
+script = ExtResource("7_toast")

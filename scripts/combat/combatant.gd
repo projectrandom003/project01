@@ -34,6 +34,7 @@ var phases: Array = []
 var triggered_phases: Array = []
 
 var statuses: Array = []             # [{id, turns, potency}]
+var skill_cooldowns: Dictionary = {}  # skill_id -> turns remaining (plus active-turn offset)
 
 
 func is_alive() -> bool:
@@ -76,6 +77,35 @@ func effective_speed() -> float:
 
 func ultimate_ready() -> bool:
 	return not ultimate.is_empty() and energy >= max_energy
+
+
+func cooldown_remaining(skill_id: String) -> int:
+	return maxi(0, int(skill_cooldowns.get(skill_id, 0)))
+
+
+func is_skill_on_cooldown(skill_id: String) -> bool:
+	return int(skill_cooldowns.get(skill_id, 0)) > 0
+
+
+func start_skill_cooldown(skill_id: String, turns: int) -> void:
+	if turns <= 0:
+		skill_cooldowns.erase(skill_id)
+		return
+	# The extra tick is consumed at the start of the current actor's next turn,
+	# so a value of 2 blocks two complete future turns.
+	skill_cooldowns[skill_id] = turns + 1
+
+
+func tick_skill_cooldowns() -> Array:
+	var ready: Array = []
+	for skill_id in skill_cooldowns.keys():
+		var remaining := int(skill_cooldowns[skill_id]) - 1
+		if remaining <= 0:
+			skill_cooldowns.erase(skill_id)
+			ready.append(str(skill_id))
+		else:
+			skill_cooldowns[skill_id] = remaining
+	return ready
 
 
 func add_energy(amount: float) -> void:

@@ -15,6 +15,11 @@ var lifesteal: float = 0.0
 var crit_bonus: float = 0.0
 var energy_gain: float = 20.0
 var ultimate: bool = false
+var scaling_stat: String = "atk"
+var animation_key: String = "strike"
+var vfx_key: String = "neutral_damage"
+var cooldown_turns: int = 0
+var ai_tags: Array = []
 
 
 static func from_dict(skill_id: String, data: Dictionary) -> SkillDef:
@@ -32,6 +37,11 @@ static func from_dict(skill_id: String, data: Dictionary) -> SkillDef:
 	def.crit_bonus = float(data.get("crit_bonus", 0.0))
 	def.energy_gain = float(data.get("energy_gain", 20.0))
 	def.ultimate = bool(data.get("ultimate", false))
+	def.scaling_stat = str(data.get("scaling_stat", "atk"))
+	def.animation_key = str(data.get("animation_key", "strike"))
+	def.vfx_key = str(data.get("vfx_key", def.element + "_" + def.kind))
+	def.cooldown_turns = int(data.get("cooldown_turns", 0))
+	def.ai_tags = data.get("ai_tags", [])
 	return def
 
 

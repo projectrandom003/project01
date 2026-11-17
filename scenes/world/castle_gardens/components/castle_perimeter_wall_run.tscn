@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/components/castle_perimeter_wall_run_component.gd" id="1_run"]
+
+[node name="CastlePerimeterWallRun" type="Node2D"]
+y_sort_enabled = false
+script = ExtResource("1_run")
+
+[node name="Facade" type="Polygon2D" parent="."]
+color = Color(0.325, 0.384, 0.478, 1)
+
+[node name="Parapet" type="Polygon2D" parent="."]
+color = Color(0.537, 0.596, 0.678, 1)
+
+[node name="Plinth" type="Polygon2D" parent="."]
+color = Color(0.208, 0.259, 0.345, 1)
+
+[node name="Piers" type="Node2D" parent="."]
+
+[node name="WallCollision" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallCollision"]

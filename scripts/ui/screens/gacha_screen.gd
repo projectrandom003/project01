@@ -20,22 +20,32 @@ var _tabs: HBoxContainer
 var _main: HBoxContainer
 var _selected_banner: String = ""
 var _results_layer: Control
+var _summon_busy: bool = false
 
-# Phase 5 presentation state. ZERO final portraits exist; featured / result
-# PortraitViews here all render the procedural fallback.
+# Summon presentation state. Featured portrait assets are resolved by the
+# banner content component; missing optional portraits retain the safe fallback.
 var _featured_id: String = ""
 var _featured_premium: bool = false
 var _reveal_animations: int = 0
 var _result_cards: int = 0
+var _banner_content: GachaBannerContentComponent
+var _summon_flow: GachaSummonFlowComponent
 
 
 func _ready() -> void:
+	_banner_content = get_node_or_null("BannerContent") as GachaBannerContentComponent
+	_summon_flow = get_node_or_null("SummonFlow") as GachaSummonFlowComponent
+	if _banner_content == null or _summon_flow == null:
+		push_error("GachaScreen requires authored BannerContent and SummonFlow components.")
+		return
+	_banner_content.bind(self)
+	_summon_flow.bind(self)
 	super._ready()
-	var atmosphere := CHAMBER_ATMOSPHERE_SCENE.instantiate() as Control
-	atmosphere.name = "SummoningChamberAtmosphere"
+	var atmosphere := get_node_or_null("SummoningChamberAtmosphere") as Control
+	if atmosphere == null:
+		push_error("GachaScreen requires its authored SummoningChamberAtmosphere scene.")
+		return
 	atmosphere.z_index = -1
-	add_child(atmosphere)
-	move_child(atmosphere, 1)
 	# OverlayScreen normally dims the whole scene and places an opaque glass
 	# panel over it. Summoning is a full-scene destination: soften that dimmer
 	# and turn the shell panel into translucent glass so the chamber is visible.
@@ -70,6 +80,17 @@ func _init() -> void:
 	screen_subtitle = "Call a new bond into the glade"
 
 
+func _input(event: InputEvent) -> void:
+	# The summon overlay owns Escape even while a tab, button or scroll area has focus.
+	if _closing or event.is_echo():
+		return
+	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("open_menu"):
+		close_screen()
+		var viewport := get_viewport()
+		if viewport != null:
+			viewport.set_input_as_handled()
+
+
 func _build_content() -> void:
 	var layout := GACHA_LAYOUT_SCENE.instantiate() as VBoxContainer
 	layout.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -85,10 +106,20 @@ func _refresh() -> void:
 		var keys := ContentDB.banners.keys()
 		_selected_banner = str(keys[0]) if not keys.is_empty() else ""
 	UIFactory.clear(_tabs)
+	# Keep the exit control and both banner tabs adjacent. An expanding spacer
+	# here pushed the tabs beyond the viewport on compact layouts, making the
+	# second summon page appear missing or unresponsive.
+	var return_button := UIFactory.button("RETURN TO GAME  ✕")
+	return_button.name = "ReturnToGameButton"
+	return_button.custom_minimum_size = Vector2(150, 40)
+	return_button.tooltip_text = "Close the summon screen and return to your journey"
+	return_button.pressed.connect(close_screen)
+	_tabs.add_child(return_button)
 	for banner_id in ContentDB.banners.keys():
 		var banner: Dictionary = ContentDB.banners[banner_id]
 		var button := UIFactory.button(str(banner.get("name", banner_id)), str(banner_id) == _selected_banner)
-		button.custom_minimum_size = Vector2(220, 38)
+		button.custom_minimum_size = Vector2(160, 40)
+		button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 		button.pressed.connect(func() -> void: _select_banner(str(banner_id)))
 		_tabs.add_child(button)
 	_rebuild_main()
@@ -100,321 +131,39 @@ func _select_banner(banner_id: String) -> void:
 
 
 func _rebuild_main() -> void:
-	UIFactory.clear(_main)
-	_featured_id = ""
-	_featured_premium = false
-	var banner: Dictionary = ContentDB.get_banner(_selected_banner)
-	if banner.is_empty():
-		_main.add_child(UIFactory.label("No summon banners are configured.", 13, UITheme.DANGER))
-		return
-
-	# ---------------------------------------------------------------- banner art
-	var art_panel := UIFactory.panel(Color("#0a0f1c"), Color(UITheme.GOLD.r, UITheme.GOLD.g, UITheme.GOLD.b, 0.28), 14, 1, 16)
-	art_panel.custom_minimum_size = Vector2(390, 0)
-	_main.add_child(art_panel)
-	var art := UIFactory.vbox(8)
-	art_panel.add_child(art)
-
-	var featured: Array = banner.get("featured", [])
-	var featured_id := str(featured[0]) if not featured.is_empty() else ""
-	var featured_def: CharacterDef = ContentDB.get_character(featured_id)
-	var featured_rarity := featured_def.rarity if featured_def != null else "legendary"
-	_featured_id = featured_id
-	_featured_premium = UITheme.is_premium_rarity(featured_rarity)
-	# Use Nyx's supplied bespoke banner artwork when she is featured; keep
-	# the procedural portrait stage as the fallback for every other banner.
-	var featured_effect := UITheme.rarity_effect(featured_rarity)
-	var featured_glow: Color = featured_effect.get("glow", UITheme.GOLD_BRIGHT)
-	var featured_aura := clampf(float(featured_effect.get("aura", 0.0)), 0.0, 1.0)
-	var nyx_banner_path := "res://assets/characters/nyx/Nyx_Vaelora_Hollow_Moon_Overture.png"
-	var has_nyx_banner_art := featured_id == "nyx" and ResourceLoader.exists(nyx_banner_path)
-	if has_nyx_banner_art:
-		var banner_art := FEATURED_BANNER_ARTWORK_SCENE.instantiate() as TextureRect
-		banner_art.name = "NyxFeaturedBannerArtwork"
-		banner_art.texture = load(nyx_banner_path) as Texture2D
-		art.add_child(banner_art)
-	else:
-		var portrait_backdrop := FEATURED_BANNER_ART_FRAME_SCENE.instantiate() as PanelContainer
-		portrait_backdrop.add_theme_stylebox_override(
-			"panel",
-			UITheme.style(
-				Color("#090d1a").lerp(Color(featured_glow.r, featured_glow.g, featured_glow.b, 1.0), 0.06 + featured_aura * 0.12),
-				Color(featured_glow.r, featured_glow.g, featured_glow.b, 0.42 + featured_aura * 0.38),
-				14,
-				2 if _featured_premium else 1,
-				8
-			)
-		)
-		var stage := portrait_backdrop.get_node("FrameContent/StageLayer/Stage") as FeaturedSummonStage
-		stage.accent = featured_glow
-		var portrait_center := portrait_backdrop.get_node("FrameContent/PortraitCenter") as CenterContainer
-		var portrait := PORTRAIT_VIEW_SCENE.instantiate() as PortraitView
-		portrait.custom_minimum_size = Vector2(252, 292)
-		portrait.show_frame = false
-		if featured_def != null:
-			portrait.setup_character(featured_def)
-			var featured_portrait_path := "res://assets/portraits/summon/%s.png" % featured_def.id
-			if ResourceLoader.exists(featured_portrait_path):
-				var featured_texture := load(featured_portrait_path) as Texture2D
-				if featured_texture != null:
-					portrait.set_portrait_texture(featured_texture)
-		else:
-			portrait.setup({}, "Human", "neutral", "legendary", 0)
-		portrait_center.add_child(portrait)
-		art.add_child(portrait_backdrop)
-
-	if not has_nyx_banner_art:
-		var banner_name := UIFactory.heading(str(banner.get("name", _selected_banner)), 24, UITheme.GOLD_BRIGHT)
-		banner_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		art.add_child(banner_name)
-		var subtitle := UIFactory.label(str(banner.get("subtitle", "")), 12, UITheme.TEXT_DIM)
-		subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		art.add_child(subtitle)
-	var chips := UIFactory.hbox(6)
-	chips.alignment = BoxContainer.ALIGNMENT_CENTER
-	chips.add_child(UIFactory.chip(str(banner.get("type", "standard")).capitalize(), UITheme.VIOLET))
-	if featured_def != null:
-		chips.add_child(UIFactory.rarity_chip(featured_def.rarity))
-	art.add_child(chips)
-	if featured_def != null:
-		var featured_label := UIFactory.label("Featured · " + featured_def.display_name, 13, UITheme.GOLD)
-		featured_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		art.add_child(featured_label)
-
-	# visual_theme line from the art-spec contract (guard null / unknown id).
-	if featured_def != null:
-		var art_spec := CharacterArtSpec.for_id(featured_def.id) as RefCounted
-		if art_spec != null:
-			var theme_text := str(art_spec.get("visual_theme"))
-			if not theme_text.is_empty():
-				var theme_line := UIFactory.wrapped("ART THEME · " + theme_text, 10, UITheme.TEXT_FAINT)
-				theme_line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-				art.add_child(theme_line)
-
-	if featured_def != null:
-		art.add_child(_featured_skill_panel(featured_def))
-
-	# --------------------------------------------------------------- info column
-	var info := UIFactory.vbox(10)
-	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_main.add_child(info)
-
-	var wallet := UIFactory.hbox(8)
-	wallet.add_child(UIFactory.chip("Crystals  " + UIFactory.number(GameState.currency("crystals")), UITheme.TEAL))
-	wallet.add_child(UIFactory.chip("Gold  " + UIFactory.number(GameState.currency("gold")), UITheme.GOLD))
-	info.add_child(wallet)
-
-	var rates_panel := UIFactory.panel(Color("#0e1628"), UITheme.BORDER_SOFT, 10, 1, 12)
-	var rates_box := UIFactory.vbox(5)
-	rates_box.add_child(UIFactory.label("APPEARANCE RATES", 10, UITheme.TEXT_FAINT))
-	var rates: Dictionary = banner.get("rates", {})
-	for rarity in GachaService.RARITY_ORDER:
-		var color := UITheme.rarity_color(rarity)
-		var row := RARITY_RATE_ROW_SCENE.instantiate() as RarityRateRow
-		row.setup(rarity, UIFactory.percent(float(rates.get(rarity, 0.0))), color)
-		rates_box.add_child(row)
-	var guarantee := UIFactory.wrapped(
-		"10-pull guarantees at least one Epic or better. Featured rate-up: %s. "
-		% UIFactory.percent(float(banner.get("featured_rate", 0.5)), 0)
-		+ "Hard pity: %d pulls. Featured guarantee: %d pulls." % [
-			int(banner.get("hard_pity", 70)), int(banner.get("featured_pity", 140))
-		],
-		11,
-		UITheme.TEXT_FAINT
-	)
-	rates_box.add_child(guarantee)
-	rates_panel.add_child(rates_box)
-	info.add_child(rates_panel)
-
-	var pity: Dictionary = GameState.pity.get(_selected_banner, GachaService.empty_pity())
-	var hard_pity := maxi(1, int(banner.get("hard_pity", 70)))
-	var featured_pity := maxi(1, int(banner.get("featured_pity", 140)))
-	var legendary_count := int(pity.get("legendary", 0))
-	var featured_count := int(pity.get("featured", 0))
-	var pity_panel := UIFactory.panel(Color("#0e1628"), UITheme.BORDER_SOFT, 10, 1, 12)
-	var pity_box := UIFactory.vbox(6)
-	pity_box.add_child(UIFactory.label("PITY PROGRESS", 10, UITheme.TEXT_FAINT))
-	pity_box.add_child(_pity_row(
-		"Legendary guarantee",
-		legendary_count,
-		hard_pity,
-		"%d more pulls" % maxi(0, hard_pity - legendary_count),
-		UITheme.GOLD
-	))
-	pity_box.add_child(_pity_row(
-		"Featured guarantee",
-		featured_count,
-		featured_pity,
-		"%d more pulls" % maxi(0, featured_pity - featured_count),
-		UITheme.VIOLET
-	))
-	pity_panel.add_child(pity_box)
-	info.add_child(pity_panel)
-
-	info.add_child(UIFactory.spacer(true))
-	var cost: Dictionary = banner.get("cost", {})
-	var currency_id := str(cost.get("currency", "crystals"))
-	var currency_name := str(ContentDB.get_item(currency_id).get("name", currency_id))
-	var single_cost := int(cost.get("single", 0))
-	var ten_cost := int(cost.get("ten", 0))
-	var buttons := UIFactory.hbox(10)
-	var single := UIFactory.button("Summon ×1 — %s %s" % [UIFactory.number(single_cost), currency_name])
-	single.custom_minimum_size = Vector2(0, 48)
-	single.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	single.disabled = GameState.currency(currency_id) < single_cost
-	single.pressed.connect(func() -> void: _pull(1))
-	buttons.add_child(single)
-	var ten := UIFactory.button("Summon ×10 — %s %s" % [UIFactory.number(ten_cost), currency_name], true)
-	ten.custom_minimum_size = Vector2(0, 48)
-	ten.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	ten.disabled = GameState.currency(currency_id) < ten_cost
-	ten.pressed.connect(func() -> void: _pull(10))
-	buttons.add_child(ten)
-	info.add_child(buttons)
-
+	_banner_content.rebuild_main()
 
 func _featured_skill_panel(definition: CharacterDef) -> Control:
-	var panel := UIFactory.panel(Color("#100d1c"), Color(UITheme.VIOLET.r, UITheme.VIOLET.g, UITheme.VIOLET.b, 0.42), 10, 1, 10)
-	var box := UIFactory.vbox(6)
-	box.add_child(UIFactory.label("SIGNATURE ARTS", 10, UITheme.TEXT_FAINT))
-	var skill_ids: Array = definition.skills.duplicate()
-	skill_ids.append(definition.ultimate)
-	var labels := ["ACTIVE I", "ACTIVE II", "ULTIMATE"]
-	for index in mini(3, skill_ids.size()):
-		var skill_id := str(skill_ids[index])
-		var skill: SkillDef = ContentDB.get_skill(skill_id)
-		if skill == null:
-			continue
-		var entry := UIFactory.vbox(2)
-		var header := UIFactory.hbox(6)
-		var tier_color := UITheme.GOLD_BRIGHT if index == 2 else UITheme.VIOLET
-		header.add_child(UIFactory.label(labels[index], 9, tier_color))
-		header.add_child(UIFactory.spacer())
-		header.add_child(UIFactory.label(skill.display_name, 12, UITheme.TEXT))
-		entry.add_child(header)
-		entry.add_child(UIFactory.wrapped(skill.description, 10, UITheme.TEXT_DIM))
-		box.add_child(entry)
-		if index < mini(3, skill_ids.size()) - 1:
-			box.add_child(UIFactory.separator())
-	panel.add_child(box)
-	return panel
+	return _banner_content.featured_skill_panel(definition)
 
+func _add_scarlet_requiem_banner_template(parent: VBoxContainer, banner: Dictionary, featured_def: CharacterDef, featured_glow: Color) -> void:
+	_banner_content.add_scarlet_requiem_banner_template(parent, banner, featured_def, featured_glow)
 
 func _pity_row(title: String, value: int, maximum: int, caption: String, color: Color) -> VBoxContainer:
-	var box := UIFactory.vbox(3)
-	var header := UIFactory.hbox(8)
-	header.add_child(UIFactory.label(title, 11, UITheme.TEXT_DIM))
-	header.add_child(UIFactory.spacer())
-	header.add_child(UIFactory.label(caption, 10, color))
-	box.add_child(header)
-	var bar := UIFactory.bar(color, 8)
-	bar.max_value = maximum
-	bar.value = clampi(value, 0, maximum)
-	box.add_child(bar)
-	return box
-
+	return _banner_content.pity_row(title, value, maximum, caption, color)
 
 func _pull(count: int) -> void:
-	var result := GameState.pull_banner(_selected_banner, count)
-	if not bool(result.get("ok", false)):
-		EventBus.toast_requested.emit(str(result.get("error", "Summon failed.")))
+	if _summon_busy:
 		return
-	var rolls: Array = result.get("results", [])
-	await _play_summon_reveal(rolls)
-	_show_results(rolls)
+	_summon_busy = true
+	# Lock both pull controls immediately. A second click during the reveal must
+	# never spend another batch or race the result overlay.
+	for button in _main.find_children("*", "Button", true, false):
+		(button as Button).disabled = true
+	await _summon_flow.pull(count)
+	if not is_instance_valid(self) or not is_inside_tree():
+		return
+	_summon_busy = false
 	_refresh()
 
-
 func _play_summon_reveal(results: Array) -> void:
-	if _results_layer != null and is_instance_valid(_results_layer):
-		_results_layer.queue_free()
-	_results_layer = SUMMON_REVEAL_SCENE.instantiate() as Control
-	add_child(_results_layer)
-	var sigil := _results_layer.get_node("SigilCenter/SummonSigil") as SummonSigil
-	var best_rank := 0
-	for roll in results:
-		best_rank = maxi(best_rank, int(GachaService.RARITY_RANK.get(str(roll.get("rarity", "common")), 0)))
-	if best_rank >= int(GachaService.RARITY_RANK.get("legendary", 4)):
-		sigil.glow = Color("#ffd47a")
-	elif best_rank >= int(GachaService.RARITY_RANK.get("epic", 2)):
-		sigil.glow = Color("#c18cff")
-	else:
-		sigil.glow = Color("#78c9e8")
-	await get_tree().create_timer(2.15).timeout
-	if is_instance_valid(_results_layer):
-		_results_layer.queue_free()
-	_results_layer = null
-
+	if _summon_flow != null:
+		await _summon_flow.play_summon_reveal(results)
 
 func _show_results(results: Array) -> void:
-	_reveal_animations = 0
-	_result_cards = results.size()
-	if _results_layer != null and is_instance_valid(_results_layer):
-		_results_layer.queue_free()
-	_results_layer = SUMMON_RESULTS_SCENE.instantiate() as Control
-	add_child(_results_layer)
+	if _summon_flow != null:
+		_summon_flow.show_results(results)
 
-	var panel := _results_layer.get_node("Center/Panel") as PanelContainer
-	panel.custom_minimum_size = Vector2(minf(1120.0, 1180.0), 0.0)
-	panel.add_theme_stylebox_override(
-		"panel",
-		UITheme.style(Color("#0b1120"), Color(UITheme.GOLD.r, UITheme.GOLD.g, UITheme.GOLD.b, 0.45), 16, 1, 20, true)
-	)
-	var header_chip_slot := _results_layer.get_node("Center/Panel/Content/Header/BestChipSlot") as HBoxContainer
-	var best_rank := -1
-	for roll in results:
-		best_rank = maxi(best_rank, int(GachaService.RARITY_RANK.get(str(roll.get("rarity", "common")), 0)))
-	var best_name := "Common"
-	for rarity in GachaService.RARITY_ORDER:
-		if int(GachaService.RARITY_RANK.get(rarity, 0)) == best_rank:
-			best_name = rarity.capitalize()
-	header_chip_slot.add_child(UIFactory.chip("Best: " + best_name, UITheme.rarity_color(best_name.to_lower())))
-	if UITheme.is_premium_rarity(best_name.to_lower()):
-		var best_effect := UITheme.rarity_effect(best_name.to_lower())
-		var best_glow: Color = best_effect.get("glow", UITheme.GOLD_BRIGHT)
-		header_chip_slot.add_child(UIFactory.label("✦ " + UITheme.rarity_tier_label(best_name.to_lower()) + " ✦", 13, best_glow))
-
-	var grid := _results_layer.get_node("Center/Panel/Content/ResultGrid") as GridContainer
-	grid.columns = mini(5, maxi(1, results.size()))
-	for index in results.size():
-		var roll: Dictionary = results[index]
-		var card := SUMMON_RESULT_CARD_SCENE.instantiate() as SummonResultCard
-		card.setup(roll)
-		grid.add_child(card)
-		card.modulate = Color(1, 1, 1, 0)
-		var is_premium := card.premium
-		var tween := create_tween()
-		if is_premium:
-			tween.tween_interval(index * 0.09)
-			tween.tween_property(card, "modulate:a", 1.0, 0.16)
-			card.pivot_offset = card.custom_minimum_size * 0.5
-			card.scale = Vector2(0.9, 0.9)
-			tween.tween_property(card, "scale", Vector2.ONE, 0.24).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-			_reveal_animations += 1
-		else:
-			tween.tween_interval(index * 0.055)
-			tween.tween_property(card, "modulate:a", 1.0, 0.16)
-
-	var footer := _results_layer.get_node("Center/Panel/Content/Footer") as HBoxContainer
-	var again := footer.get_node("SummonAgainButton") as Button
-	again.pressed.connect(func() -> void:
-		if _results_layer != null:
-			_results_layer.queue_free()
-			_results_layer = null
-		_pull(10 if results.size() >= 10 else 1)
-	)
-	var close := footer.get_node("ContinueButton") as Button
-	close.pressed.connect(func() -> void:
-		if _results_layer != null:
-			_results_layer.queue_free()
-			_results_layer = null
-	)
-
-
-
-## Additive presentation report (Phase 5). ZERO final portraits exist; featured
-## and result PortraitViews all render the procedural fallback.
 func presentation_report() -> Dictionary:
 	return {
 		"screen": "summon",

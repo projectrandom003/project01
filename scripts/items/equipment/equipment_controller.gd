@@ -11,7 +11,7 @@ signal stat_modifiers_changed(uid: String)
 
 func get_equipped(uid: String, slot: String) -> String:
 	var instance: CharacterInstance = null
-	for candidate in GameState.roster:
+	for candidate in GameState.roster_domain.roster:
 		if candidate.uid == uid:
 			instance = candidate
 			break
@@ -27,7 +27,7 @@ func can_equip(uid: String, item_id: String) -> Dictionary:
 	var slot := str(data.get("slot", ""))
 	if not CharacterInstance.SLOTS.has(slot):
 		return {"ok": false, "reason": "Invalid equipment slot."}
-	if GameState.item_count(item_id) <= 0:
+	if GameState.inventory_domain.item_count(item_id) <= 0:
 		return {"ok": false, "reason": "Item not in inventory."}
 	return {"ok": true, "slot": slot}
 
@@ -38,7 +38,7 @@ func equip(uid: String, item_id: String) -> bool:
 		equipment_failed.emit(uid, str(check.get("slot", "")), str(check.get("reason", "Cannot equip item.")))
 		return false
 	var slot := str(check.get("slot", ""))
-	if GameState.equip_item(uid, item_id):
+	if GameState.roster_domain.equip_item(uid, item_id):
 		equipment_changed.emit(uid, slot, item_id)
 		stat_modifiers_changed.emit(uid)
 		return true
@@ -47,7 +47,7 @@ func equip(uid: String, item_id: String) -> bool:
 
 
 func unequip(uid: String, slot: String) -> bool:
-	if GameState.unequip_item(uid, slot):
+	if GameState.roster_domain.unequip_item(uid, slot):
 		equipment_changed.emit(uid, slot, "")
 		stat_modifiers_changed.emit(uid)
 		return true
@@ -58,7 +58,7 @@ func unequip(uid: String, slot: String) -> bool:
 func get_stat_modifiers(uid: String) -> Dictionary:
 	var total := {"hp": 0.0, "atk": 0.0, "def": 0.0, "spd": 0.0, "crit": 0.0, "crit_dmg": 0.0}
 	var instance: CharacterInstance = null
-	for candidate in GameState.roster:
+	for candidate in GameState.roster_domain.roster:
 		if candidate.uid == uid:
 			instance = candidate
 			break
@@ -70,7 +70,7 @@ func get_stat_modifiers(uid: String) -> Dictionary:
 			continue
 		var item := ContentDB.get_item(item_id)
 		var stats: Dictionary = item.get("stats", {})
-		var enhancement_mult := 1.0 + 0.08 * float(GameState.gear_level(uid, slot))
+		var enhancement_mult := 1.0 + 0.08 * float(GameState.roster_domain.gear_level(uid, slot))
 		for k in stats.keys():
 			var key := str(k)
 			if not total.has(key):
@@ -80,12 +80,12 @@ func get_stat_modifiers(uid: String) -> Dictionary:
 
 
 func upgrade_info(uid: String, slot: String) -> Dictionary:
-	return GameState.gear_upgrade_info(uid, slot)
+	return GameState.roster_domain.gear_upgrade_info(uid, slot)
 
 
 func enhance(uid: String, slot: String) -> bool:
-	if GameState.enhance_gear(uid, slot):
-		equipment_upgraded.emit(uid, slot, GameState.gear_level(uid, slot))
+	if GameState.roster_domain.enhance_gear(uid, slot):
+		equipment_upgraded.emit(uid, slot, GameState.roster_domain.gear_level(uid, slot))
 		stat_modifiers_changed.emit(uid)
 		return true
 	return false

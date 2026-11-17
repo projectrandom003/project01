@@ -1,0 +1,193 @@
+[gd_scene load_steps=7 format=3]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/flora/tree_oak_01.tscn" id="1_oak"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/flora/tree_blossom_01.tscn" id="2_blossom"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/flora/hedge_x.tscn" id="3_hedge_x"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/flora/hedge_y.tscn" id="4_hedge_y"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/flora/bush_round.tscn" id="5_bush"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/flora/flower_bed.tscn" id="6_flower_bed"]
+
+[node name="Flora" type="Node2D"]
+y_sort_enabled = true
+
+[node name="TreeAvenue" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="OakWestA" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(340, 181)
+
+[node name="OakWestB" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(1073, 263)
+
+[node name="OakWestC" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(491, 447)
+
+[node name="OakWestD" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(748, 449)
+
+[node name="OakEastA" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(1029, 280)
+
+[node name="OakEastB" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(763, 681)
+
+[node name="OakNorthA" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(956, 319)
+
+[node name="OakEastD" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(483, 684)
+
+[node name="BlossomWestA" parent="TreeAvenue" instance=ExtResource("2_blossom")]
+position = Vector2(489, 302)
+
+[node name="BlossomWestB" parent="TreeAvenue" instance=ExtResource("2_blossom")]
+position = Vector2(488, 496)
+
+[node name="BlossomEastA" parent="TreeAvenue" instance=ExtResource("2_blossom")]
+position = Vector2(760, 511)
+
+[node name="BlossomEastB" parent="TreeAvenue" instance=ExtResource("2_blossom")]
+position = Vector2(744, 403)
+
+[node name="OakWestE" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(293, 157)
+
+[node name="OakWestF" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(489, 346)
+
+[node name="OakWestG" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(484, 555)
+
+[node name="OakEastE" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(752, 562)
+
+[node name="OakEastF" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(235, 128)
+
+[node name="OakEastG" parent="TreeAvenue" instance=ExtResource("1_oak")]
+position = Vector2(777, 801)
+
+[node name="BlossomWestC" parent="TreeAvenue" instance=ExtResource("2_blossom")]
+position = Vector2(490, 401)
+
+[node name="BlossomWestD" parent="TreeAvenue" instance=ExtResource("2_blossom")]
+position = Vector2(482, 619)
+
+[node name="BlossomEastC" parent="TreeAvenue" instance=ExtResource("2_blossom")]
+position = Vector2(756, 620)
+
+[node name="BlossomEastD" parent="TreeAvenue" instance=ExtResource("2_blossom")]
+position = Vector2(769, 740)
+
+[node name="FlowerBorders" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="BedWestA" parent="FlowerBorders" instance=ExtResource("6_flower_bed")]
+position = Vector2(226, 488)
+
+[node name="BedWestB" parent="FlowerBorders" instance=ExtResource("6_flower_bed")]
+position = Vector2(344, 419)
+
+[node name="BedEastA" parent="FlowerBorders" instance=ExtResource("6_flower_bed")]
+position = Vector2(393, 386)
+
+[node name="BedEastB" parent="FlowerBorders" instance=ExtResource("6_flower_bed")]
+position = Vector2(287, 454)
+
+[node name="HedgesAndShrubs" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="HedgeWestA" parent="HedgesAndShrubs" instance=ExtResource("3_hedge_x")]
+position = Vector2(401, 206)
+
+[node name="HedgeWestB" parent="HedgesAndShrubs" instance=ExtResource("3_hedge_x")]
+position = Vector2(724, 372)
+
+[node name="HedgeEastA" parent="HedgesAndShrubs" instance=ExtResource("3_hedge_x")]
+position = Vector2(525, 271)
+
+[node name="HedgeEastB" parent="HedgesAndShrubs" instance=ExtResource("3_hedge_x")]
+position = Vector2(1046, 179)
+
+[node name="HedgeWestC" parent="HedgesAndShrubs" instance=ExtResource("4_hedge_y")]
+position = Vector2(939, 298)
+
+[node name="HedgeEastC" parent="HedgesAndShrubs" instance=ExtResource("4_hedge_y")]
+position = Vector2(791, 362)
+
+[node name="HedgeEastD" parent="HedgesAndShrubs" instance=ExtResource("4_hedge_y")]
+position = Vector2(860, 331)
+
+[node name="BushWestA" parent="HedgesAndShrubs" instance=ExtResource("5_bush")]
+position = Vector2(950, 569)
+
+[node name="BushWestB" parent="HedgesAndShrubs" instance=ExtResource("5_bush")]
+position = Vector2(312, 435)
+
+[node name="BushEastA" parent="HedgesAndShrubs" instance=ExtResource("5_bush")]
+position = Vector2(362, 401)
+
+[node name="BushEastB" parent="HedgesAndShrubs" instance=ExtResource("5_bush")]
+position = Vector2(257, 470)
+
+[node name="WorldPerimeter" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="NorthCanopy0" parent="WorldPerimeter" instance=ExtResource("1_oak")]
+position = Vector2(-69, -162)
+
+[node name="NorthCanopy1" parent="WorldPerimeter" instance=ExtResource("2_blossom")]
+position = Vector2(400, -176)
+
+[node name="NorthCanopy2" parent="WorldPerimeter" instance=ExtResource("1_oak")]
+position = Vector2(540, -178)
+
+[node name="NorthCanopy3" parent="WorldPerimeter" instance=ExtResource("2_blossom")]
+position = Vector2(74, -176)
+
+[node name="NorthCanopy4" parent="WorldPerimeter" instance=ExtResource("1_oak")]
+position = Vector2(237, -178)
+
+[node name="WestCanopy0" parent="WorldPerimeter" instance=ExtResource("2_blossom")]
+position = Vector2(-70, -51)
+
+[node name="EastCanopy0" parent="WorldPerimeter" instance=ExtResource("1_oak")]
+position = Vector2(1222, -110)
+
+[node name="WestCanopy1" parent="WorldPerimeter" instance=ExtResource("1_oak")]
+position = Vector2(-61, 87)
+
+[node name="EastCanopy1" parent="WorldPerimeter" instance=ExtResource("2_blossom")]
+position = Vector2(1231, 42)
+
+[node name="WestCanopy2" parent="WorldPerimeter" instance=ExtResource("2_blossom")]
+position = Vector2(-59, 220)
+
+[node name="EastCanopy2" parent="WorldPerimeter" instance=ExtResource("1_oak")]
+position = Vector2(1232, 228)
+
+[node name="WestCanopy3" parent="WorldPerimeter" instance=ExtResource("1_oak")]
+position = Vector2(-57, 334)
+
+[node name="EastCanopy3" parent="WorldPerimeter" instance=ExtResource("2_blossom")]
+position = Vector2(1241, 434)
+
+[node name="WestCanopy4" parent="WorldPerimeter" instance=ExtResource("2_blossom")]
+position = Vector2(-52, 455)
+
+[node name="EastCanopy4" parent="WorldPerimeter" instance=ExtResource("1_oak")]
+position = Vector2(1241, 628)
+
+[node name="SouthCanopy0" parent="WorldPerimeter" instance=ExtResource("1_oak")]
+position = Vector2(-51, 611)
+
+[node name="SouthCanopy1" parent="WorldPerimeter" instance=ExtResource("2_blossom")]
+position = Vector2(485, 760)
+
+[node name="SouthCanopy2" parent="WorldPerimeter" instance=ExtResource("1_oak")]
+position = Vector2(486, 819)
+
+[node name="SouthCanopy3" parent="WorldPerimeter" instance=ExtResource("2_blossom")]
+position = Vector2(786, 864)
+
+[node name="SouthCanopy4" parent="WorldPerimeter" instance=ExtResource("1_oak")]
+position = Vector2(871, 365)

@@ -1,4 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/components/inventory_grid_component.gd" id="2_grid"]
+[ext_resource type="Script" path="res://scripts/ui/components/inventory_crafting_component.gd" id="3_crafting"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_detail"]
 bg_color = Color(0.039, 0.063, 0.114, 1)
@@ -66,12 +69,13 @@ text = "Equipment changes combat stats immediately"
 [node name="Split" type="HBoxContainer" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
+alignment = 1
 theme_override_constants/separation = 14
 
 [node name="Left" type="VBoxContainer" parent="Split"]
 custom_minimum_size = Vector2(560, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 1
 theme_override_constants/separation = 10
 
 [node name="GridScroll" type="ScrollContainer" parent="Split/Left"]
@@ -90,6 +94,7 @@ columns = 4
 [node name="DetailPanel" type="PanelContainer" parent="Split"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
+size_flags_horizontal = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_detail")
 
 [node name="DetailScroll" type="ScrollContainer" parent="Split/DetailPanel"]
@@ -102,3 +107,9 @@ horizontal_scroll_mode = 0
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
+
+[node name="GridComponent" type="Node" parent="."]
+script = ExtResource("2_grid")
+
+[node name="CraftingComponent" type="Node" parent="."]
+script = ExtResource("3_crafting")

@@ -1,0 +1,60 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/props/stone_bench.tscn" id="1_bench"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/props/lantern_post_gold.tscn" id="2_lantern_gold"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/props/lantern_post_arcane.tscn" id="3_lantern_arcane"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/props/guardian_statue.tscn" id="4_statue"]
+
+[node name="Props" type="Node2D"]
+y_sort_enabled = true
+
+[node name="Furniture" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Lighting" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Statues" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="BenchWestA" parent="Furniture" instance=ExtResource("1_bench")]
+position = Vector2(173, 449)
+
+[node name="BenchWestB" parent="Furniture" instance=ExtResource("1_bench")]
+position = Vector2(105, 411)
+
+[node name="BenchEastA" parent="Furniture" instance=ExtResource("1_bench")]
+position = Vector2(333, 319)
+
+[node name="LanternGoldA" parent="Lighting" instance=ExtResource("2_lantern_gold")]
+position = Vector2(548, 439)
+
+[node name="LanternGoldB" parent="Lighting" instance=ExtResource("2_lantern_gold")]
+position = Vector2(553, 341)
+
+[node name="LanternGoldC" parent="Lighting" instance=ExtResource("2_lantern_gold")]
+position = Vector2(680, 541)
+
+[node name="LanternGoldD" parent="Lighting" instance=ExtResource("2_lantern_gold")]
+position = Vector2(674, 363)
+
+[node name="LanternGoldE" parent="Lighting" instance=ExtResource("2_lantern_gold")]
+position = Vector2(544, 784)
+
+[node name="LanternGoldF" parent="Lighting" instance=ExtResource("2_lantern_gold")]
+position = Vector2(682, 439)
+
+[node name="LanternArcaneA" parent="Lighting" instance=ExtResource("3_lantern_arcane")]
+position = Vector2(556, 612)
+
+[node name="LanternArcaneB" parent="Lighting" instance=ExtResource("3_lantern_arcane")]
+position = Vector2(677, 624)
+
+[node name="LanternArcaneC" parent="Lighting" instance=ExtResource("3_lantern_arcane")]
+position = Vector2(679, 791)
+
+[node name="StatueWest" parent="Statues" instance=ExtResource("4_statue")]
+position = Vector2(448, 256)
+
+[node name="StatueEast" parent="Statues" instance=ExtResource("4_statue")]
+position = Vector2(937, 520)

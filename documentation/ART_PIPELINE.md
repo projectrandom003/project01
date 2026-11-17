@@ -712,7 +712,7 @@ State plainly:
   `ActorVisual.using_temporary_art == true`) — it is NOT final art.
 - The 12 `CharacterArtSpec` specs and `assets/GENERATION_PROMPTS.md` are
   **PREPARATION for a FUTURE external generation round**, not finished artwork.
-- **NO visual testing** was performed: all verification is `--headless` with
+- **Full visual QA remains incomplete; selected live gameplay and overlay screens have been inspected**: all automated verification is `--headless` with
   Godot's dummy renderer; `_draw()` output, auras, borders, tints, silhouettes and
   tween pops are compile/build-safe and structurally asserted but were **NOT
   visually inspected on screen** — no shader compilation / appearance

@@ -1,0 +1,66 @@
+[gd_scene load_steps=7 format=3]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/architecture/castle_tower.tscn" id="1_tower"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/architecture/castle_wall_y.tscn" id="2_wall_y"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/architecture/castle_wall_x.tscn" id="3_wall_x"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/architecture/castle_gate_arch.tscn" id="4_gate"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/architecture/castle_stairs.tscn" id="5_stairs"]
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/components/castle_architecture_component.gd" id="6_architecture"]
+
+[node name="Castle" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("6_architecture")
+
+[node name="TowerNorthWest" parent="." instance=ExtResource("1_tower")]
+position = Vector2(672, 64)
+
+[node name="TowerNorthEast" parent="." instance=ExtResource("1_tower")]
+position = Vector2(992, 224)
+
+[node name="TowerSouthWest" parent="." instance=ExtResource("1_tower")]
+position = Vector2(448, 176)
+
+[node name="TowerSouthEast" parent="." instance=ExtResource("1_tower")]
+position = Vector2(736, 320)
+
+[node name="WallNorthA" parent="." instance=ExtResource("3_wall_x")]
+position = Vector2(720, 104)
+
+[node name="WallNorthB" parent="." instance=ExtResource("3_wall_x")]
+position = Vector2(784, 136)
+
+[node name="WallNorthC" parent="." instance=ExtResource("3_wall_x")]
+position = Vector2(848, 168)
+
+[node name="WallNorthD" parent="." instance=ExtResource("3_wall_x")]
+position = Vector2(912, 200)
+
+[node name="WallWestA" parent="." instance=ExtResource("2_wall_y")]
+position = Vector2(592, 88)
+
+[node name="WallWestB" parent="." instance=ExtResource("2_wall_y")]
+position = Vector2(528, 120)
+
+[node name="WallWestC" parent="." instance=ExtResource("2_wall_y")]
+position = Vector2(464, 152)
+
+[node name="WallEastA" parent="." instance=ExtResource("2_wall_y")]
+position = Vector2(912, 248)
+
+[node name="WallEastB" parent="." instance=ExtResource("2_wall_y")]
+position = Vector2(848, 280)
+
+[node name="WallEastC" parent="." instance=ExtResource("2_wall_y")]
+position = Vector2(784, 312)
+
+[node name="WallSouthA" parent="." instance=ExtResource("3_wall_x")]
+position = Vector2(496, 216)
+
+[node name="WallSouthB" parent="." instance=ExtResource("3_wall_x")]
+position = Vector2(560, 248)
+
+[node name="Gatehouse" parent="." instance=ExtResource("4_gate")]
+position = Vector2(640, 288)
+scale = Vector2(1.15, 1.15)
+
+[node name="GrandStair" parent="." instance=ExtResource("5_stairs")]
+position = Vector2(640, 272)

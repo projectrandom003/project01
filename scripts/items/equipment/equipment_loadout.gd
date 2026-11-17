@@ -17,7 +17,7 @@ static func for_character(character_uid: String):
 
 func sync_from_game_state() -> void:
 	var instance = null
-	for candidate in GameState.roster:
+	for candidate in GameState.roster_domain.roster:
 		if candidate.uid == uid:
 			instance = candidate
 			break

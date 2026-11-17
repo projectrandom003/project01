@@ -9,9 +9,9 @@ var sort_mode: String = "category_name"
 func build_slots() -> Array:
 	var slots: Array = []
 	var ids: Array = []
-	for key in GameState.inventory.keys():
+	for key in GameState.inventory_domain.inventory.keys():
 		var item_id := str(key)
-		var count := int(GameState.inventory[key])
+		var count := int(GameState.inventory_domain.inventory[key])
 		if count <= 0:
 			continue
 		var category := str(ContentDB.get_item(item_id).get("category", ""))
@@ -22,7 +22,7 @@ func build_slots() -> Array:
 	var i := 0
 	for item_id in ids:
 		var slot_script := load("res://scripts/items/inventory/inventory_slot.gd") as GDScript
-		var slot = slot_script.from_item(str(item_id), GameState.item_count(str(item_id)), i)
+		var slot = slot_script.from_item(str(item_id), GameState.inventory_domain.item_count(str(item_id)), i)
 		if str(ContentDB.get_item(str(item_id)).get("category", "")) == "equipment":
 			slot.equipped_count = _equipped_count(str(item_id))
 		slots.append(slot)
@@ -49,7 +49,7 @@ func _sorted(ids: Array[String]) -> Array[String]:
 
 func _equipped_count(item_id: String) -> int:
 	var n := 0
-	for instance in GameState.roster:
+	for instance in GameState.roster_domain.roster:
 		for slot in CharacterInstance.SLOTS:
 			if instance.equipped_item(slot) == item_id:
 				n += 1

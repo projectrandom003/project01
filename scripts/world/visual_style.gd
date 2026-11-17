@@ -280,7 +280,7 @@ const ALL_PROP_KINDS: Array[String] = [
 	"flower_cluster", "berry_bush", "glow_mushroom",
 	# structures
 	"cottage", "wooden_bridge", "stone_bridge", "dock", "well", "shrine",
-	"ruin_arch", "signpost", "barrel", "cart",
+	"ruin_arch", "signpost", "barrel", "cart", "bench", "crate",
 	# magical
 	"spirit_bloom", "rune_stone", "crystal_cluster", "wisp_lantern",
 	# water
@@ -310,6 +310,7 @@ const KIND_CATEGORY := {
 	"shrine": "structure", "ruin_arch": "structure", "signpost": "structure",
 	"barrel": "structure", "cart": "structure", "waypoint": "structure",
 	"ruin_pillar": "structure", "fence": "structure",
+	"bench": "structure", "crate": "structure",
 	"waterfall": "water", "river_rock": "water", "foam_ripple": "water",
 	"butterfly": "wildlife", "moth": "wildlife", "bird": "wildlife",
 	"firefly_sprite": "wildlife",
@@ -331,6 +332,7 @@ const VARIANT_COUNTS := {
 	"hut": 2, "cottage": 3, "wooden_bridge": 2, "stone_bridge": 2,
 	"dock": 2, "well": 2, "shrine": 2, "ruin_arch": 2, "signpost": 2,
 	"barrel": 2, "cart": 2, "waypoint": 2, "ruin_pillar": 2, "fence": 2,
+	"bench": 2, "crate": 2,
 	"crystal": 3, "crystal_cluster": 3, "rune_stone": 2, "wisp_lantern": 2,
 	"lantern": 2,
 	"waterfall": 1, "river_rock": 1, "foam_ripple": 1,
@@ -367,181 +369,7 @@ static func phase(phase_name: String) -> Dictionary:
 ## Named colours appropriate to a prop kind. Every supported kind returns a
 ## non-empty dictionary; unknown kinds fall back to a generic foliage palette.
 static func prop_palette(kind: String) -> Dictionary:
-	var category := str(KIND_CATEGORY.get(kind, "simple"))
-	var palette: Dictionary = {}
-	match category:
-		"tree":
-			palette = {
-				"trunk": TIMBER.dark, "trunk_light": TIMBER.light,
-				"canopy_deep": CANOPY.deep, "canopy_mid": CANOPY.mid,
-				"canopy_light": CANOPY.light, "rim": CANOPY.rim,
-				"moss": CANOPY.moss,
-			}
-			match kind:
-				"pine_tree":
-					palette["canopy_deep"] = CANOPY.pine
-					palette["canopy_light"] = CANOPY.moss
-				"birch_tree":
-					palette["trunk"] = STONE.light
-					palette["trunk_light"] = CANOPY.birch
-				"blossom_tree":
-					palette["canopy_mid"] = CANOPY.blossom
-					palette["petal"] = ACCENTS.petal
-				"willow_tree":
-					palette["canopy_light"] = CANOPY.bright
-				"dead_tree":
-					palette["canopy_deep"] = STONE.dark
-					palette["canopy_mid"] = STONE.mid
-					palette["canopy_light"] = STONE.light
-				"ancient_tree":
-					palette["rune"] = MAGIC.teal
-				"birch_grove":
-					# PART 5: pale silver-birch cluster for Moonpetal Hollow.
-					palette["trunk"] = CANOPY.birch
-					palette["trunk_light"] = STONE.light
-					palette["canopy_deep"] = CANOPY.moss
-					palette["canopy_mid"] = CANOPY.light
-					palette["canopy_light"] = CANOPY.birch
-					palette["rim"] = LIGHT.cool_moon
-					palette["moss"] = CANOPY.moss
-		"flower":
-			palette = {
-				"stem": UNDERGROWTH.mid, "leaf": UNDERGROWTH.light,
-				"petal": ACCENTS.petal, "petal_alt": ACCENTS.petal_alt,
-				"center": ACCENTS.petal_alt, "berry": ACCENTS.berry,
-			}
-			match kind:
-				"spirit_bloom":
-					palette["petal"] = MAGIC.teal_light
-					palette["center"] = MAGIC.teal
-					palette["glow"] = LIGHT.magic
-				"berry_bush":
-					palette["leaf"] = CANOPY.mid
-					palette["berry"] = ACCENTS.berry
-		"ground":
-			palette = {
-				"dark": UNDERGROWTH.dark, "mid": UNDERGROWTH.mid,
-				"light": UNDERGROWTH.light, "cap_a": CANOPY.mid,
-				"cap_b": CANOPY.light,
-			}
-			match kind:
-				"glow_mushroom":
-					palette["cap_a"] = ACCENTS.glow_mushroom
-					palette["glow"] = LIGHT.magic
-				"mushroom":
-					palette["cap_a"] = ACCENTS.mushroom_cap
-				"reeds":
-					palette["light"] = UNDERGROWTH.reeds
-				"lily_pad":
-					palette["mid"] = UNDERGROWTH.lily
-				"stone_path":
-					# PART 5: cool cobble path tile (moss between the stones).
-					palette["dark"] = STONE.dark
-					palette["mid"] = STONE.mid
-					palette["light"] = STONE.light
-					palette["cap_a"] = STONE.light
-					palette["cap_b"] = STONE.moss
-					palette["moss"] = STONE.moss
-					palette["wet"] = STONE.wet
-		"structure":
-			palette = {
-				"wood": TIMBER.light, "wood_mid": TIMBER.mid,
-				"wood_dark": TIMBER.dark, "roof": TIMBER.plank,
-				"stone": STONE.mid, "stone_light": STONE.light,
-				"moss": CANOPY.moss, "warm": LIGHT.warm_lantern,
-			}
-			match kind:
-				"well", "stone_bridge", "ruin_arch", "shrine", "ruin_pillar", "waypoint":
-					palette["wood"] = STONE.mid
-					palette["wood_mid"] = STONE.dark
-				"cottage":
-					palette["roof"] = TIMBER.thatch
-				"watchtower":
-					palette["roof"] = TIMBER.thatch
-					palette["wood"] = TIMBER.mid
-					palette["stone"] = STONE.dark
-					palette["warm"] = LIGHT.warm_lantern
-				"market_stall":
-					palette["roof"] = TIMBER.thatch
-					palette["warm"] = LIGHT.warm_lantern
-				"stone_wall":
-					palette["wood"] = STONE.mid
-					palette["wood_dark"] = STONE.dark
-					palette["roof"] = STONE.dark
-					palette["stone"] = STONE.light
-					palette["stone_light"] = STONE.mid
-					palette["moss"] = CANOPY.moss
-				"gazebo":
-					palette["roof"] = CANOPY.light
-					palette["wood"] = TIMBER.light
-					palette["warm"] = LIGHT.warm_lantern
-				"banner_post":
-					palette["wood_dark"] = TIMBER.dark
-					palette["warm"] = MAGIC.gold
-				"moon_shrine":
-					palette["stone"] = STONE.light
-					palette["stone_light"] = CANOPY.birch
-					palette["warm"] = LIGHT.cool_moon
-					palette["core"] = MAGIC.teal
-					palette["glow"] = LIGHT.moon_glow
-				"village_gate":
-					# PART 5: warm timber + stone gate with a hanging banner.
-					palette["roof"] = TIMBER.thatch
-					palette["warm"] = LIGHT.warm_lantern
-					palette["stone"] = STONE.dark
-					palette["banner"] = MAGIC.gold
-				"wisp_lantern", "lantern":
-					palette["warm"] = LIGHT.warm_lantern
-		"magical":
-			palette = {
-				"core": MAGIC.teal, "light": MAGIC.teal_light,
-				"deep": MAGIC.teal_deep, "glow": MAGIC.teal,
-				"gold": MAGIC.gold, "rune": ACCENTS.rune,
-			}
-			match kind:
-				"rune_stone":
-					palette["core"] = STONE.mid
-					palette["light"] = STONE.light
-				"wisp_lantern":
-					palette["core"] = LIGHT.warm_lantern
-				"moon_lantern":
-					# PART 5: cool silver-violet fixture for Moonpetal Hollow.
-					palette["core"] = LIGHT.cool_moon
-					palette["light"] = MAGIC.violet_light
-					palette["deep"] = MAGIC.violet
-					palette["glow"] = LIGHT.moon_glow
-					palette["gold"] = MAGIC.violet_light
-					palette["rune"] = LIGHT.cool_moon
-					palette["metal"] = STONE.light
-		"water":
-			palette = {
-				"shallow": WATER.shallow, "deep": WATER.deep,
-				"foam": WATER.foam, "glint": WATER.glint,
-				"stone": STONE.wet, "reflection": WATER.reflection,
-			}
-		"wildlife":
-			palette = {
-				"body": ACCENTS.butterfly, "wing": ACCENTS.butterfly,
-				"accent": ACCENTS.petal, "glow": LIGHT.magic,
-			}
-			match kind:
-				"moth":
-					palette["wing"] = ACCENTS.moth
-				"bird":
-					palette["body"] = ACCENTS.bird
-					palette["wing"] = ACCENTS.bird
-				"firefly_sprite":
-					palette["body"] = ACCENTS.firefly
-					palette["glow"] = ACCENTS.firefly
-		_:
-			palette = {
-				"dark": STONE.dark, "mid": STONE.mid, "light": STONE.light,
-				"moss": STONE.moss, "grass": UNDERGROWTH.mid,
-			}
-	palette["outline"] = INK
-	palette["accent"] = MAGIC.teal
-	return palette
-
+	return GreenwardPropPalette.palette(kind)
 
 ## Element -> colour (used by actors, VFX and UI badges for consistency).
 static func element_color(element: String) -> Color:
@@ -561,95 +389,18 @@ static func variant_count(kind: String) -> int:
 	return int(VARIANT_COUNTS.get(kind, 1))
 
 
+
+
+
+
 ## Flat array of every named Color in the style, for coherence tests.
 static func all_colors() -> Array:
-	var colors: Array = []
-	for group in [SKY, CANOPY, UNDERGROWTH, WATER, STONE, TIMBER, MAGIC,
-			LIGHT, ACCENTS, UI, ELEMENTS]:
-		var dict: Dictionary = group
-		for key in dict.keys():
-			colors.append(dict[key])
-	colors.append(INK)
-	for phase_name in PHASES.keys():
-		var entry: Dictionary = PHASES[phase_name]
-		for key in ["tint", "fog", "sky_top", "sky_bottom"]:
-			colors.append(entry[key])
-	return colors
+	return GreenwardStyleAudit.all_colors()
 
 
-## Returns [] when the palette is internally consistent, otherwise a list of
-## human-readable problems. Used by coherence tests and as a self-check.
+## Returns [] when the palette is internally consistent, otherwise human-readable problems.
 static func coherence_report() -> Array[String]:
-	var problems: Array[String] = []
-	var groups := {
-		"SKY": SKY, "CANOPY": CANOPY, "UNDERGROWTH": UNDERGROWTH,
-		"WATER": WATER, "STONE": STONE, "TIMBER": TIMBER, "MAGIC": MAGIC,
-		"LIGHT": LIGHT, "ACCENTS": ACCENTS, "UI": UI, "ELEMENTS": ELEMENTS,
-	}
-	for group_name in groups.keys():
-		var group: Dictionary = groups[group_name]
-		if group.is_empty():
-			problems.append("Palette group %s is empty" % group_name)
-		for key in group.keys():
-			var value: Variant = group[key]
-			if typeof(value) != TYPE_COLOR:
-				problems.append("%s.%s is not a Color" % [group_name, str(key)])
-			else:
-				var c: Color = value
-				if not _finite_color(c):
-					problems.append("%s.%s has non-finite/out-of-range components" % [group_name, str(key)])
-
-	# Required-distinct roles must not collapse into one colour.
-	var distinct_pairs := [
-		["WATER.shallow", WATER.shallow, WATER.deep],
-		["CANOPY.deep/mid", CANOPY.deep, CANOPY.mid],
-		["CANOPY.mid/light", CANOPY.mid, CANOPY.light],
-		["MAGIC.teal/gold", MAGIC.teal, MAGIC.gold],
-		["MAGIC.teal/violet", MAGIC.teal, MAGIC.violet],
-		["MAGIC.gold/ember", MAGIC.gold, MAGIC.ember],
-		["TIMBER.light/dark", TIMBER.light, TIMBER.dark],
-		["STONE.light/dark", STONE.light, STONE.dark],
-		["LIGHT.warm/cool", LIGHT.warm_lantern, LIGHT.cool_moon],
-	]
-	for pair in distinct_pairs:
-		var color_a: Color = pair[1]
-		var color_b: Color = pair[2]
-		if color_a.is_equal_approx(color_b):
-			problems.append("%s colours should be distinct but are equal" % str(pair[0]))
-
-	# Every prop kind must have a palette, a variant count and a category.
-	for kind in ALL_PROP_KINDS:
-		if prop_palette(kind).is_empty():
-			problems.append("prop_palette('%s') is empty" % kind)
-		if variant_count(kind) < 1:
-			problems.append("variant_count('%s') < 1" % kind)
-		if not KIND_CATEGORY.has(kind):
-			problems.append("KIND_CATEGORY missing '%s'" % kind)
-		if not VARIANT_COUNTS.has(kind):
-			problems.append("VARIANT_COUNTS missing '%s'" % kind)
-	# Complex roles must expose >=2 variants.
-	for kind in ALL_PROP_KINDS:
-		var category := str(KIND_CATEGORY.get(kind, "simple"))
-		if category in ["tree", "flower", "structure"] and variant_count(kind) < 2:
-			problems.append("'%s' (%s) must have >=2 variants" % [kind, category])
-
-	# Every required phase must expose every required key with sane types.
-	for phase_name in REQUIRED_PHASES:
-		var entry := phase(phase_name)
-		for key in REQUIRED_PHASE_KEYS:
-			if not entry.has(key):
-				problems.append("phase('%s') missing key '%s'" % [phase_name, key])
-		if typeof(entry.get("tint")) != TYPE_COLOR:
-			problems.append("phase('%s').tint is not a Color" % phase_name)
-		if typeof(entry.get("fireflies")) != TYPE_BOOL:
-			problems.append("phase('%s').fireflies is not a bool" % phase_name)
-
-	# Sprite specs sanity.
-	if SPRITE_SPECS.world_width != 96 or SPRITE_SPECS.world_height != 128:
-		problems.append("SPRITE_SPECS world size must be 96x128")
-	if SPRITE_SPECS.boss_width != 128 or SPRITE_SPECS.boss_height != 192:
-		problems.append("SPRITE_SPECS boss size must be 128x192")
-	return problems
+	return GreenwardStyleAudit.coherence_report()
 
 
 ## "mobile" or "desktop". This is a coarse platform hint, NOT device profiling.
@@ -658,11 +409,3 @@ static func performance_tier() -> String:
 	if os_name == "Android" or os_name == "iOS" or os_name == "Web":
 		return "mobile"
 	return "desktop"
-
-
-static func _finite_color(c: Color) -> bool:
-	for component in [c.r, c.g, c.b, c.a]:
-		var value: float = component
-		if is_nan(value) or is_inf(value) or value < -0.001 or value > 1.001:
-			return false
-	return true

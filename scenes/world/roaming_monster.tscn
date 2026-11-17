@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/roaming_monster.gd" id="1_monster"]
 [ext_resource type="PackedScene" path="res://scenes/characters/actor_visual.tscn" id="2_visual"]
@@ -26,6 +26,7 @@
 [ext_resource type="Script" path="res://scripts/enemies/states/return_state.gd" id="24_return"]
 [ext_resource type="Script" path="res://scripts/enemies/states/stunned_state.gd" id="25_stunned"]
 [ext_resource type="Script" path="res://scripts/enemies/states/dead_state.gd" id="26_dead"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_roaming_behavior.gd" id="27_roaming"]
 
 [node name="RoamingMonster" type="Node2D"]
 script = ExtResource("1_monster")
@@ -56,6 +57,9 @@ audio_path = NodePath("../EnemyAudio")
 vfx_path = NodePath("../EnemyVFX")
 visual_path = NodePath("../EnemyVisual")
 state_machine_path = NodePath("../../StateMachine")
+
+[node name="EnemyRoamingBehavior" type="Node" parent="Components"]
+script = ExtResource("27_roaming")
 
 [node name="EnemyVisual" type="Node" parent="Components"]
 script = ExtResource("8_visual_comp")

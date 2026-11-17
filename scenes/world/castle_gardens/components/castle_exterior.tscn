@@ -5,3 +5,8 @@
 [node name="CastleExterior" type="Node2D"]
 script = ExtResource("1")
 y_sort_enabled = true
+
+[node name="Visuals" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Collisions" type="Node2D" parent="."]

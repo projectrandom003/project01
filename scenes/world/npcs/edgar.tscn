@@ -1,14 +1,21 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/edgar_npc.gd" id="1_edgar"]
 [ext_resource type="PackedScene" path="res://scenes/characters/actor_visual.tscn" id="2_visual"]
 [ext_resource type="Texture2D" path="res://assets/characters/edgar/edgar_world_idle.png" id="3_edgar_art"]
+[ext_resource type="PackedScene" path="res://scenes/world/components/npc_interaction_ring.tscn" id="4_ring"]
+[ext_resource type="PackedScene" path="res://scenes/world/components/npc_quest_marker.tscn" id="5_marker"]
 
 [node name="Edgar" type="Node2D"]
 script = ExtResource("1_edgar")
 
 [node name="ActorVisual" parent="." instance=ExtResource("2_visual")]
 visible = false
+
+[node name="InteractionRing" parent="." instance=ExtResource("4_ring")]
+
+[node name="QuestMarker" parent="." instance=ExtResource("5_marker")]
+position = Vector2(0, -178)
 
 [node name="EdgarArtwork" type="Sprite2D" parent="."]
 texture = ExtResource("3_edgar_art")

@@ -26,9 +26,9 @@ BossPresentationRig (Control)
 │       │       └── MatronStyle (Node2D: bloom burst)
 │       └── AnimationPlayer
 └── PhaseCue (Control)
-    ├── Veil (ColorRect)
-    ├── PhaseTitle (Label)
-    └── AnimationPlayer
+	├── Veil (ColorRect)
+	├── PhaseTitle (Label)
+	└── AnimationPlayer
 ```
 
 The geometry is authored as Line2D/Polygon2D nodes. Elder Hollow selects the concentric root/radial-mark glyph; Fallen Matron selects a floral petal glyph. Their profiles also supply distinct colors and scales. AnimationPlayer owns the expansion, rotation, and fade timing. There is no runtime vector-art construction and no external texture dependency.

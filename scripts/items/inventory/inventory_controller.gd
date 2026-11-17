@@ -16,9 +16,9 @@ signal notification_requested(message: String, kind: String)
 
 func get_items(filter: String = "all") -> Array[String]:
 	var ids: Array[String] = []
-	for key in GameState.inventory.keys():
+	for key in GameState.inventory_domain.inventory.keys():
 		var item_id := str(key)
-		var count := int(GameState.inventory[key])
+		var count := int(GameState.inventory_domain.inventory[key])
 		if count <= 0:
 			continue
 		var data := ContentDB.get_item(item_id)
@@ -42,35 +42,35 @@ func get_items(filter: String = "all") -> Array[String]:
 func add_item(item_id: String, amount: int = 1) -> bool:
 	if amount <= 0:
 		return false
-	if capacity > 0 and get_unique_item_count() >= capacity and GameState.item_count(item_id) <= 0:
+	if capacity > 0 and get_unique_item_count() >= capacity and GameState.inventory_domain.item_count(item_id) <= 0:
 		inventory_full.emit(item_id, amount)
 		notification_requested.emit("Inventory is full.", "warning")
 		return false
-	var before := GameState.item_count(item_id)
-	GameState.add_item(item_id, amount)
-	var total := GameState.item_count(item_id)
+	var before := GameState.inventory_domain.item_count(item_id)
+	GameState.inventory_domain.add_item(item_id, amount)
+	var total := GameState.inventory_domain.item_count(item_id)
 	item_added.emit(item_id, amount, total)
 	inventory_updated.emit()
 	return total >= before + amount or amount == 0
 
 
 func remove_item(item_id: String, amount: int = 1) -> bool:
-	if not GameState.remove_item(item_id, amount):
+	if not GameState.inventory_domain.remove_item(item_id, amount):
 		return false
-	var total := GameState.item_count(item_id)
+	var total := GameState.inventory_domain.item_count(item_id)
 	item_removed.emit(item_id, amount, total)
 	inventory_updated.emit()
 	return true
 
 
 func get_count(item_id: String) -> int:
-	return GameState.item_count(item_id)
+	return GameState.inventory_domain.item_count(item_id)
 
 
 func get_unique_item_count() -> int:
 	var n := 0
-	for k in GameState.inventory.keys():
-		if int(GameState.inventory[k]) > 0:
+	for k in GameState.inventory_domain.inventory.keys():
+		if int(GameState.inventory_domain.inventory[k]) > 0:
 			n += 1
 	return n
 

@@ -1,29 +1,26 @@
 class_name GardenHedges
 extends Node2D
-## Reusable hedge layout component with collision.
+## Hedge placement instances an authored visual/collision assembly.
 @export var hedge_texture: Texture2D
+const PROP_SCENE: PackedScene = preload("res://scenes/world/castle_gardens/components/garden_sprite_prop.tscn")
 
 func _ready() -> void:
 	if hedge_texture == null:
-		hedge_texture = load("res://assets/environment/castle_gardens/hedge_block.png")
+		hedge_texture = load("res://assets/environment/castle_gardens/hedge_block.png") as Texture2D
 
 func add_hedge(world_pos: Vector2, with_collision: bool = true) -> Node2D:
-	var root := Node2D.new()
+	var root := PROP_SCENE.instantiate() as Node2D
 	root.position = world_pos
-	var s := Sprite2D.new()
-	s.texture = hedge_texture
-	s.centered = true
-	s.offset = Vector2(0, -8)
-	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	root.add_child(s)
+	var sprite := root.get_node("Sprite") as Sprite2D
+	sprite.texture = hedge_texture
+	sprite.offset = Vector2(0, -8)
+	var glow := root.get_node("LanternGlow")
+	glow.queue_free()
 	if with_collision:
-		var body := StaticBody2D.new()
-		var col := CollisionShape2D.new()
-		var shape := RectangleShape2D.new()
-		shape.size = Vector2(34, 18)
-		col.shape = shape
-		col.position = Vector2(0, 2)
-		body.add_child(col)
-		root.add_child(body)
-	add_child(root)
+		var rectangle := RectangleShape2D.new()
+		rectangle.size = Vector2(34, 18)
+		(root.get_node("Body/CollisionShape2D") as CollisionShape2D).shape = rectangle
+	else:
+		root.get_node("Body").queue_free()
+	$HedgeInstances.add_child(root)
 	return root

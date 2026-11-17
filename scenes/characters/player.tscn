@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/characters/actor_visual.tscn" id="2_visual"]
@@ -10,6 +10,9 @@
 [ext_resource type="PackedScene" path="res://scenes/characters/components/character_interaction_component.tscn" id="8_interaction"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/character_status_anchor.tscn" id="9_status"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/character_health_display_anchor.tscn" id="10_health"]
+[ext_resource type="Script" path="res://scripts/characters/components/player_locomotion_component.gd" id="11_locomotion"]
+[ext_resource type="Script" path="res://scripts/characters/components/player_avatar_component.gd" id="12_avatar"]
+[ext_resource type="Script" path="res://scripts/characters/components/player_presentation_component.gd" id="13_presentation"]
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 2
@@ -33,3 +36,12 @@ script = ExtResource("1_player")
 [node name="StatusAnchor" parent="." instance=ExtResource("9_status")]
 
 [node name="HealthDisplayAnchor" parent="." instance=ExtResource("10_health")]
+
+[node name="LocomotionComponent" type="Node" parent="."]
+script = ExtResource("11_locomotion")
+
+[node name="AvatarComponent" type="Node" parent="."]
+script = ExtResource("12_avatar")
+
+[node name="PresentationComponent" type="Node" parent="."]
+script = ExtResource("13_presentation")

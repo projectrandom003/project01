@@ -31,19 +31,19 @@ func _build_content() -> void:
 	_tracked_box = layout.get_node("Right/TrackedQuestContent") as VBoxContainer
 
 	var region: Dictionary = {}
-	if GameState.player_region != "":
-		region = ContentDB.get_region(GameState.player_region)
+	if GameState.session_domain.player_region != "":
+		region = ContentDB.get_region(GameState.session_domain.player_region)
 	var region_name := "Unknown"
 	if not region.is_empty():
-		region_name = str(region.get("name", GameState.player_region))
-	elif not str(GameState.player_region).is_empty():
-		region_name = str(GameState.player_region).replace("_", " ").capitalize()
+		region_name = str(region.get("name", GameState.session_domain.player_region))
+	elif not str(GameState.session_domain.player_region).is_empty():
+		region_name = str(GameState.session_domain.player_region).replace("_", " ").capitalize()
 	_region_label.text = region_name
 	_region_label.add_theme_color_override("font_color", UITheme.TEXT)
 
 	# Use the live player node whenever the world is active; the saved
 	# position is only a fallback for screens opened outside gameplay.
-	var player_world := GameState.player_position
+	var player_world := GameState.session_domain.player_position
 	var live_player := get_tree().get_first_node_in_group("player")
 	if live_player is Node2D:
 		player_world = (live_player as Node2D).global_position
@@ -89,7 +89,7 @@ func _build_content() -> void:
 	_populate_tracked_quest(region, player_world)
 
 
-func _select_poi(poi_id: String, poi: Dictionary, player_world: Vector2 = GameState.player_position, refresh: bool = true) -> void:
+func _select_poi(poi_id: String, poi: Dictionary, player_world: Vector2 = GameState.session_domain.player_position, refresh: bool = true) -> void:
 	_selected_poi_id = poi_id
 	var grid: Array = poi.get("grid", [0, 0])
 	var g := Vector2(float(grid[0]), float(grid[1])) if grid.size() == 2 else Vector2.ZERO
@@ -109,19 +109,19 @@ func _select_poi(poi_id: String, poi: Dictionary, player_world: Vector2 = GameSt
 
 
 func _populate_tracked_quest(region: Dictionary, player_world: Vector2) -> void:
-	var tracked := GameState.tracked_quest()
-	if tracked.is_empty() or GameState.quest_state(tracked) != "active":
+	var tracked := GameState.quest_domain.tracked_quest()
+	if tracked.is_empty() or GameState.quest_domain.quest_state(tracked) != "active":
 		_tracked_box.add_child(UIFactory.label("No quest tracked. Track one from the Quests screen.", 12, UITheme.TEXT_DIM))
 		return
 
 	var definition: Dictionary = ContentDB.get_quest(tracked)
-	var step: Dictionary = GameState.quest_step(tracked)
+	var step: Dictionary = GameState.quest_domain.quest_step(tracked)
 	_tracked_box.add_child(UIFactory.label(str(definition.get("name", tracked)), 13, UITheme.TEXT))
 	var resolver: QuestNavigationResolver = QuestNavigationResolver.shared()
 	var game_screen := get_tree().get_first_node_in_group("game_screen")
 	if game_screen != null and game_screen.get("quest_resolver") is QuestNavigationResolver:
 		resolver = game_screen.get("quest_resolver") as QuestNavigationResolver
-	var resolved := resolver.get_resolved_target(GameState.player_region, player_world)
+	var resolved := resolver.get_resolved_target(GameState.session_domain.player_region, player_world)
 	var objective_text := str(resolved.get("step_text", step.get("text", "")))
 	_tracked_box.add_child(UIFactory.label(objective_text, 11, UITheme.TEXT_DIM))
 	if not bool(resolved.get("valid", false)):
@@ -152,7 +152,7 @@ func _refresh() -> void:
 
 
 func _quest_arrow(direction: Variant = null) -> String:
-	var dir: Vector2 = direction if typeof(direction) == TYPE_VECTOR2 else GameState.direction_to_tracked()
+	var dir: Vector2 = direction if typeof(direction) == TYPE_VECTOR2 else GameState.quest_domain.direction_to_tracked()
 	if dir.length_squared() < 0.0001:
 		return "•"
 	var angle := dir.angle()

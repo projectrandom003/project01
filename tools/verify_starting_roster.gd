@@ -67,7 +67,11 @@ func _check_new_game() -> void:
 	_check("lilith resolves in ContentDB", ContentDB.get_character("lilith") != null)
 	_check("kael resolves in ContentDB", ContentDB.get_character("kael") != null)
 	_check("removed starters are not owned", not GameState.owns_character("mira_sol") and not GameState.owns_character("bramble"))
-	_check("main menu starter cards match the party", MainMenu.STARTERS == ["gerald", "lilith", "kael"], str(MainMenu.STARTERS))
+	var menu_scene := load("res://scenes/ui/main_menu.tscn") as PackedScene
+	var menu := menu_scene.instantiate() as MainMenu
+	add_child(menu)
+	_check("main menu uses the authored title composition", menu.get_node_or_null("ContinueButton") != null and menu.get_node_or_null("NewJourneyButton") != null)
+	menu.queue_free()
 	_check("MainCharacterRoster sees gerald in ContentDB", MainCharacterRoster.is_in_content_db("gerald"))
 	_check("MainCharacterRoster sees lilith in ContentDB", MainCharacterRoster.is_in_content_db("lilith"))
 

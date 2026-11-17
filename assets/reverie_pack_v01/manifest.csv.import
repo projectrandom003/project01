@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://bjhqx8hhm61yl"
+
+[deps]
+
+files=["res://assets/reverie_pack_v01/manifest.category.translation", "res://assets/reverie_pack_v01/manifest.subfolder.translation", "res://assets/reverie_pack_v01/manifest.file.translation", "res://assets/reverie_pack_v01/manifest.w.translation", "res://assets/reverie_pack_v01/manifest.h.translation", "res://assets/reverie_pack_v01/manifest.frames.translation", "res://assets/reverie_pack_v01/manifest.frame.translation", "res://assets/reverie_pack_v01/manifest.frame.translation", "res://assets/reverie_pack_v01/manifest.pivot.translation", "res://assets/reverie_pack_v01/manifest.pivot.translation", "res://assets/reverie_pack_v01/manifest.footprint.translation", "res://assets/reverie_pack_v01/manifest.offset.translation", "res://assets/reverie_pack_v01/manifest.offset.translation", "res://assets/reverie_pack_v01/manifest.intended.translation", "res://assets/reverie_pack_v01/manifest.godot.translation", "res://assets/reverie_pack_v01/manifest.sha1.translation"]
+
+source_file="res://assets/reverie_pack_v01/manifest.csv"
+dest_files=["res://assets/reverie_pack_v01/manifest.category.translation", "res://assets/reverie_pack_v01/manifest.subfolder.translation", "res://assets/reverie_pack_v01/manifest.file.translation", "res://assets/reverie_pack_v01/manifest.w.translation", "res://assets/reverie_pack_v01/manifest.h.translation", "res://assets/reverie_pack_v01/manifest.frames.translation", "res://assets/reverie_pack_v01/manifest.frame.translation", "res://assets/reverie_pack_v01/manifest.frame.translation", "res://assets/reverie_pack_v01/manifest.pivot.translation", "res://assets/reverie_pack_v01/manifest.pivot.translation", "res://assets/reverie_pack_v01/manifest.footprint.translation", "res://assets/reverie_pack_v01/manifest.offset.translation", "res://assets/reverie_pack_v01/manifest.offset.translation", "res://assets/reverie_pack_v01/manifest.intended.translation", "res://assets/reverie_pack_v01/manifest.godot.translation", "res://assets/reverie_pack_v01/manifest.sha1.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

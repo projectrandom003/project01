@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[node name="GardenAmbientShadow" type="ColorRect"]
+size = Vector2(240, 18)
+color = Color(0.04, 0.04, 0.06, 0.16)
+mouse_filter = 2

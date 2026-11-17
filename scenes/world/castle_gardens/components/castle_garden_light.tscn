@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[node name="CastleGardenLight" type="PointLight2D"]
+color = Color(1, 0.92, 0.72, 0.78)
+energy = 0.55
+texture_scale = 1.1
