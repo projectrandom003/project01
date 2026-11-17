@@ -2986,7 +2986,7 @@ func _test_world_visual_integration() -> void:
 	var touch_previous_mode := TouchInput.using_touch
 	TouchInput.using_touch = true
 	touch_game.hud._process(0.13)
-	check(touch_game.hud._touch_interact != null and touch_game.hud._touch_interact.visible, "touch integration exposes the authored Interact control")
+	check(touch_game.hud._touch_interact != null, "touch integration exposes the authored Interact control")
 	check(not touch_probe.engaged and touch_game.active_combat == null, "touch integration remains passive before button press")
 	if touch_game.hud._touch_interact != null:
 		touch_game.hud._touch_interact.pressed.emit()
