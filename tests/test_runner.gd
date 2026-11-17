@@ -7,6 +7,8 @@ extends Node
 ## The runner snapshots the local save and the live GameState before exercising
 ## gameplay, then restores both, so running tests never destroys a player save.
 
+const _CraftingServiceScript = preload("res://scripts/items/crafting_service.gd")
+
 var passed: int = 0
 var failed: int = 0
 var failures: Array[String] = []
@@ -18,10 +20,20 @@ var _loaded_from_save: bool = false
 
 # Phase-4 signal counter for transition_to()/transitioned observations.
 var _phase4_transition_count: int = 0
+var _roaming_encounter_count: int = 0
+var _region_change_count: int = 0
+
+
+func _on_test_region_change(_target_region: String, _entry_point: String) -> void:
+	_region_change_count += 1
 
 
 func _phase4_on_transitioned(_from_state: int, _to_state: int, _direction: int) -> void:
 	_phase4_transition_count += 1
+
+
+func _on_test_roaming_encounter(_group_id: String, _source: Node) -> void:
+	_roaming_encounter_count += 1
 
 
 func _ready() -> void:
@@ -30,21 +42,28 @@ func _ready() -> void:
 
 func _run() -> void:
 	_snapshot()
-
 	_test_content()
+	await _test_player_node_composition()
+	_test_application_scene_composition()
 	_test_math()
 	_test_gacha()
+	await _test_ui_regressions()
 	_test_combat()
+	_test_combat_cooldowns()
+	_test_combat_engine_ownership()
 	# --- Phase 2: passives, equipment, strict content validation, quest gating ---
 	_test_passive_multipliers()
 	_test_passive_battle_hooks()
 	_test_equipment_bonuses()
 	_test_gear_enhancement()
+	_test_crafting_service()
+	_test_shop_service()
 	_test_invalid_json()
 	_test_duplicate_keys()
 	_test_missing_references()
 	_test_invalid_banner_configs()
 	_test_quest_requirements()
+	_test_moonpetal_story_content()
 	_test_reward_validation()
 	# --- Phase 3: visual style, animation, procedural art, world integration ---
 	_test_visual_style()
@@ -54,13 +73,20 @@ func _run() -> void:
 	_test_chunk_visual_quality()
 	_test_weather_director()
 	await _test_animated_and_interactive_props()
+	await _test_roaming_monster_manual_encounter()
 	await _test_world_visual_integration()
 	# --- Phase 4: multi-region graph, asset manifest/loading fallbacks, additive
 	#     CAST animation, chunk preparer, world integration, procedural art ---
 	_test_region_definitions()
 	_test_region_graph_transitions()
+	_test_region_gate_unlocks()
 	_test_invalid_connections()
 	_test_region_save_state()
+	await _test_reverie_expansion()
+	await _test_new_journey_castle_continue()
+	await _test_continue_exact_position_and_return_to_title()
+	await _test_continue_legacy_greenward_save()
+	await _test_continue_does_not_revert_to_greenward_when_save_is_castle()
 	_test_asset_manifest()
 	await _test_asset_loading_fallbacks()
 	await _test_animation_sheet_validation()
@@ -82,6 +108,7 @@ func _run() -> void:
 	_test_asset_status_honesty()
 	_test_state()
 	await _test_ui()
+	_test_minimap_marker_filtering()
 	# --- Phase 6 Round 3A: character progression ---
 	_test_progression_xp()
 	_test_progression_leveling()
@@ -95,9 +122,13 @@ func _run() -> void:
 	_test_progression_combat_stats()
 	await _test_exploration_rewards()
 	await _test_bonus_drop_rewards()
-
+	await _test_settings_regressions()
 	_restore()
-
+	# Drain deferred queue_free() calls and renderer/UI teardown work before
+	# quitting. The suite constructs and detaches many dynamic Controls across
+	# repeated scene loads; allow enough frames for deferred UI frees to settle.
+	for _frame in range(10):
+		await get_tree().process_frame
 	print("")
 	print("==================================================")
 	print("PROJECT FANTASY TESTS: %d passed, %d failed" % [passed, failed])
@@ -106,7 +137,6 @@ func _run() -> void:
 			print("  FAIL  " + message)
 	print("==================================================")
 	get_tree().quit(0 if failed == 0 else 1)
-
 
 # ------------------------------------------------------------------- harness
 
@@ -142,7 +172,7 @@ func _unit(uid: String, passive_id: String = "", element: String = "neutral") ->
 	return c
 
 
-## True if any validation error string contains `needle`.
+## True if any validation error string contains needle.
 func _has_error(errors: Array, needle: String) -> bool:
 	for e in errors:
 		if needle in str(e):
@@ -219,10 +249,277 @@ func _restore() -> void:
 
 # ------------------------------------------------------------------- content
 
+func _test_player_node_composition() -> void:
+	var packed := load("res://scenes/characters/player.tscn") as PackedScene
+	check(packed != null, "Player composition scene loads")
+	if packed == null:
+		return
+	var player := packed.instantiate() as Player
+	add_child(player)
+	await get_tree().process_frame
+	check(player.get_node_or_null("LocomotionComponent") is PlayerLocomotionComponent, "Player scene owns a locomotion component")
+	check(player.get_node_or_null("InteractionComponent") is CharacterInteractionComponent, "Player scene owns an interaction component")
+	check(player.get_node_or_null("AvatarComponent") is PlayerAvatarComponent, "Player scene owns an avatar configuration component")
+	check(player.get_node_or_null("PresentationComponent") is PlayerPresentationComponent, "Player scene owns a presentation component")
+	check(player.presentation_component != null and EventBus.battle_finished.is_connected(player.presentation_component._on_battle_finished), "Player presentation component owns battle-result event binding")
+	check(player.get_node_or_null("PersonalGlow") is PlayerPersonalLightComponent, "Player scene owns a personal-light component")
+	check(player.get_child_count() == 12, "Player binds its authored 12-node hierarchy without runtime child construction", str(player.get_child_count()))
+	check(player.camera is PlayerCameraRig, "Player camera is a dedicated camera rig node")
+	var camera_rig := player.camera as PlayerCameraRig
+	camera_rig.update_follow_offset(1.0, Vector2(100.0, 0.0), 1.0)
+	check(camera_rig.offset.x > 27.0, "Player camera rig owns smoothed movement lookahead")
+	camera_rig.update_follow_offset(1.0, Vector2.ZERO, 0.0)
+	check(camera_rig.offset.length() < 1.0, "Player camera rig recenters when movement stops")
+	check(player.visual != null and player.visual.get_parent() == player, "Player visual is a composed child node")
+	check(player.get_node_or_null("NameLabel") is Label, "Player scene authors the name label")
+	check(player.get_node_or_null("WaterSurface") is Sprite2D, "Player scene authors the water surface")
+	check(player.get_node_or_null("PersonalGlow") is PlayerPersonalLightComponent, "Player scene authors the personal light")
+	check(player.locomotion_component != null and player.locomotion_component.body == player, "Locomotion component binds to its owning Player")
+	var kael_motion := PlayerLocomotionComponent.movement_profile("kael")
+	var gerald_motion := PlayerLocomotionComponent.movement_profile("gerald")
+	var lilith_motion := PlayerLocomotionComponent.movement_profile("lilith")
+	check(float(gerald_motion.walk) < float(kael_motion.walk) and float(gerald_motion.accel) < float(kael_motion.accel), "Gerald has deliberately heavier, slower world locomotion")
+	check(float(lilith_motion.walk) > float(kael_motion.walk) and float(lilith_motion.accel) > float(kael_motion.accel), "Lilith has a lighter, more responsive world locomotion")
+	check(float(gerald_motion.friction) > float(kael_motion.friction) and float(lilith_motion.friction) < float(kael_motion.friction), "Character weight also shapes stopping distance")
+	check(is_equal_approx(float(PlayerLocomotionComponent.movement_profile("unknown").walk), float(kael_motion.walk)), "Unknown avatars safely use the balanced default movement profile")
+	check(player.interaction_component != null and player.interaction_component.interactable_changed.is_connected(player._on_interactable_changed), "Player receives interaction component state through a signal")
+	# Exercise the real nearest-target contract independently of the periodic scan.
+	player.interaction_component.scan_enabled = false
+	var far_target := Interactable.new()
+	far_target.name = "PlayerTestFarInteractable"
+	far_target.position = Vector2(52.0, 0.0)
+	far_target.prompt = "Far target"
+	add_child(far_target)
+	var near_target := Interactable.new()
+	near_target.name = "PlayerTestNearInteractable"
+	near_target.position = Vector2(18.0, 0.0)
+	near_target.prompt = "Near target"
+	add_child(near_target)
+	await get_tree().process_frame
+	check(player.interaction_component.refresh_nearest() == near_target, "Player interaction selects the nearest valid target")
+	check(player.current_prompt() == "Near target", "Player facade exposes the active interaction prompt")
+	near_target.enabled = false
+	check(player.interaction_component.refresh_nearest() == far_target, "Player interaction skips disabled targets and selects the next valid target")
+	far_target.visible = false
+	check(player.interaction_component.refresh_nearest() == null, "Player interaction ignores hidden targets")
+	far_target.visible = true
+	near_target.enabled = true
+	player.interaction_component.refresh_nearest()
+	var interaction_requests := {"count": 0}
+	player.interaction_component.interaction_requested.connect(func(_target: Node) -> void: interaction_requests["count"] = int(interaction_requests["count"]) + 1)
+	check(player.interaction_component.try_interact(), "Player interaction accepts an explicit interaction request")
+	check(int(interaction_requests["count"]) == 1, "Player interaction emits exactly one request per activation", "requests=" + str(interaction_requests["count"]))
+	near_target.enabled = false
+	check(not player.interaction_component.try_interact(), "Player interaction safely rejects a disabled stale target")
+	near_target.enabled = true
+	player.interaction_component.refresh_nearest()
+	near_target.position = Vector2(500.0, 0.0)
+	check(not player.interaction_component.try_interact(), "Player interaction safely rejects a target that moved out of range")
+	check(player.current_prompt().is_empty(), "Player interaction clears stale prompts after a rejected activation")
+	player.velocity = Vector2.ZERO
+	var locomotion_start := player.global_position
+	Input.action_press("move_right")
+	for frame in range(4):
+		await get_tree().physics_frame
+	Input.action_release("move_right")
+	check(player.velocity.x > 0.0, "Player locomotion accelerates from real InputMap movement")
+	check(player.global_position.x > locomotion_start.x, "Player CharacterBody2D advances under physics movement")
+	check(player.visual != null and player.visual.walking, "Player locomotion drives the ActorVisual walking state")
+	var moving_speed := player.velocity.length()
+	for frame in range(18):
+		await get_tree().physics_frame
+	check(player.velocity.length() < moving_speed, "Player locomotion applies friction after movement input is released")
+	near_target.queue_free()
+	far_target.queue_free()
+	player.queue_free()
+	await get_tree().process_frame
+
+
+func _test_application_scene_composition() -> void:
+	check(GameState.inventory_domain != null, "Inventory domain is bound on the live GameState autoload")
+	check(GameState.quest_domain != null, "Quest domain is bound on the live GameState autoload")
+	check(GameState.roster_domain != null, "Roster domain is bound on the live GameState autoload")
+	check(GameState.reward_domain != null, "Reward domain is bound on the live GameState autoload")
+	check(GameState.inventory_domain.currency("gold") == GameState.currency("gold"), "InventoryDomain is the direct wallet API while GameState keeps its compatibility wrapper")
+	check(GameState.roster_domain.owns_character("kael") == GameState.owns_character("kael"), "RosterDomain is the direct roster API while GameState keeps its compatibility wrapper")
+	check(GameState.quest_domain.quest_state("the_first_path") == GameState.quest_state("the_first_path"), "QuestDomain is the direct quest API while GameState keeps its compatibility wrapper")
+	check(GameState.reward_domain.has_method("apply_battle_result"), "RewardDomain directly owns battle reward application")
+	check(GameState.persistence_component is GameStatePersistenceComponent and GameState.persistence_component.get_parent() == GameState, "GameState binds its authored persistence component")
+	check(GameState._save_timer is Timer and GameState._save_timer.get_parent() == GameState, "GameState binds its authored save timer")
+	check(GameState._autosave_timer is Timer and GameState._autosave_timer.get_parent() == GameState, "GameState binds its authored autosave timer")
+	check(GameState.get_child_count() == 9, "GameState owns only its nine authored domain, persistence and timer children", str(GameState.get_child_count()))
+	check(GameState.inventory_domain.inventory == GameState.inventory, "InventoryDomain owns inventory data behind the GameState compatibility property")
+	check(GameState.roster_domain.roster == GameState.roster and GameState.roster_domain.party == GameState.party, "RosterDomain owns roster and party data behind compatibility properties")
+	check(GameState.roster_domain.gear_levels == GameState.gear_levels, "RosterDomain owns gear progression data behind the compatibility property")
+	check(GameState.quest_domain.quests == GameState.quests and GameState.quest_domain.flags == GameState.flags, "QuestDomain owns quest and world-flag data behind compatibility properties")
+	check(GameState.reward_domain.pity == GameState.pity, "RewardDomain owns summon pity data behind the compatibility property")
+	check(GameState.profile_domain is GameProfileDomainComponent and GameState.profile_domain.get_parent() == GameState, "ProfileDomain owns player profile data")
+	check(GameState.profile_domain.profile == GameState.profile, "ProfileDomain data is exposed through the GameState compatibility property")
+	check(GameState.session_domain is GameSessionDomainComponent and GameState.session_domain.get_parent() == GameState, "SessionDomain owns active-world and player-location state")
+	check(GameState.session_domain.player_region == GameState.player_region and GameState.session_domain.region_positions == GameState.region_positions, "SessionDomain data is exposed through GameState compatibility properties")
+	var state_scene := load("res://scenes/core/game_state.tscn") as PackedScene
+	check(state_scene != null, "Persistent GameState scene loads")
+	if state_scene != null:
+		var state := state_scene.get_state()
+		var state_nodes: Array[String] = []
+		for index in state.get_node_count():
+			state_nodes.append(str(state.get_node_name(index)))
+		check(state_nodes.has("InventoryDomain"), "Persistent GameState authors an inventory-domain node")
+		check(state_nodes.has("QuestDomain"), "Persistent GameState authors a quest-domain node")
+		check(state_nodes.has("RosterDomain"), "Persistent GameState authors a roster-domain node")
+		check(state_nodes.has("RewardDomain"), "Persistent GameState authors a reward-domain node")
+		check(state_nodes.has("Persistence"), "Persistent GameState authors its persistence component")
+		check(state_nodes.has("SaveTimer"), "Persistent GameState authors its debounce-save timer")
+		check(state_nodes.has("AutosaveTimer"), "Persistent GameState authors its periodic autosave timer")
+		check(state_nodes.has("ProfileDomain"), "Persistent GameState authors a profile domain")
+		check(state_nodes.has("SessionDomain"), "Persistent GameState authors a session domain")
+	var game_scene := load("res://scenes/game.tscn") as PackedScene
+	check(game_scene != null, "Game composition scene loads")
+	if game_scene != null:
+		var game_state := game_scene.get_state()
+		var game_nodes: Array[String] = []
+		for index in game_state.get_node_count():
+			game_nodes.append(str(game_state.get_node_name(index)))
+		check(game_nodes.has("WorldHost"), "Game scene authors a dedicated WorldHost node")
+		check(game_nodes.has("WorldSession"), "Game scene authors a world-session controller node")
+		check(game_nodes.has("OverlayRouter"), "Game scene authors an overlay-router component")
+		check(game_nodes.has("CombatRouter"), "Game scene authors a combat-router component")
+		check(game_nodes.has("UI"), "Game scene authors the UI hierarchy")
+		check(game_nodes.has("InputRouter"), "Game scene authors its gameplay input router")
+		check(game_nodes.has("Runtime"), "Game scene authors its runtime/HUD refresh component")
+	var shop_layout := load("res://scenes/ui/components/shop_screen_layout.tscn") as PackedScene
+	check(shop_layout != null, "Shop screen static layout scene loads")
+	if shop_layout != null:
+		var shop_state := shop_layout.get_state()
+		var shop_nodes: Array[String] = []
+		for index in shop_state.get_node_count():
+			shop_nodes.append(str(shop_state.get_node_name(index)))
+		check(shop_nodes.has("WalletLabel") and shop_nodes.has("StockScroll"), "Shop screen authors its wallet and stock-list shell")
+	var crafting_panel_scene := load("res://scenes/ui/components/inventory_crafting_panel.tscn") as PackedScene
+	check(crafting_panel_scene != null, "Inventory crafting panel authored scene loads")
+	if crafting_panel_scene != null:
+		var crafting_state := crafting_panel_scene.get_state()
+		var crafting_nodes: Array[String] = []
+		for index in crafting_state.get_node_count():
+			crafting_nodes.append(str(crafting_state.get_node_name(index)))
+		check(crafting_nodes.has("Body") and crafting_nodes.has("RecipeList") and crafting_nodes.has("CloseButton"), "Inventory crafting panel authors its body, recipe list and close control")
+	var gacha_scene := load("res://scenes/ui/gacha_screen.tscn") as PackedScene
+	check(gacha_scene != null, "Gacha screen scene loads")
+	if gacha_scene != null:
+		var gacha_state := gacha_scene.get_state()
+		var gacha_nodes: Array[String] = []
+		for index in gacha_state.get_node_count():
+			gacha_nodes.append(str(gacha_state.get_node_name(index)))
+		check(gacha_nodes.has("BannerContent"), "Gacha scene authors its banner-content component")
+		check(gacha_nodes.has("SummonFlow"), "Gacha scene authors its summon-flow component")
+		check(gacha_nodes.has("SummoningChamberAtmosphere"), "Gacha scene authors its chamber-atmosphere component")
+	var collection_scene := load("res://scenes/ui/collection_screen.tscn") as PackedScene
+	check(collection_scene != null, "Collection screen scene loads")
+	if collection_scene != null:
+		var collection_state := collection_scene.get_state()
+		var collection_nodes: Array[String] = []
+		for index in collection_state.get_node_count():
+			collection_nodes.append(str(collection_state.get_node_name(index)))
+		check(collection_nodes.has("Roster"), "Collection scene authors its roster component")
+		check(collection_nodes.has("Detail"), "Collection scene authors its detail component")
+	var actor_visual_scene := load("res://scenes/characters/actor_visual.tscn") as PackedScene
+	check(actor_visual_scene != null, "ActorVisual scene loads")
+	if actor_visual_scene != null:
+		var actor_visual_state := actor_visual_scene.get_state()
+		var actor_visual_nodes: Array[String] = []
+		for index in actor_visual_state.get_node_count():
+			actor_visual_nodes.append(str(actor_visual_state.get_node_name(index)))
+		check(actor_visual_nodes.has("ProceduralRenderer"), "ActorVisual scene authors its procedural renderer component")
+		check(actor_visual_nodes.has("CharacterEffects"), "ActorVisual scene authors its character-specific effects component")
+		check(actor_visual_nodes.has("Pose"), "ActorVisual scene authors its locomotion-pose component")
+		check(actor_visual_nodes.has("SpritePresentation"), "ActorVisual scene authors its frame-source and sprite-presentation component")
+	var hud_scene := load("res://scenes/ui/hud.tscn") as PackedScene
+	check(hud_scene != null, "HUD scene loads")
+	if hud_scene != null:
+		var hud_state := hud_scene.get_state()
+		var hud_nodes: Array[String] = []
+		for index in hud_state.get_node_count():
+			hud_nodes.append(str(hud_state.get_node_name(index)))
+		check(hud_nodes.has("Currency"), "HUD scene authors its currency component")
+		check(hud_nodes.has("Party"), "HUD scene authors its party component")
+		check(hud_nodes.has("Quest"), "HUD scene authors its quest component")
+		check(hud_nodes.has("Toast"), "HUD scene authors its toast component")
+	var settings_scene := load("res://scenes/ui/settings_screen.tscn") as PackedScene
+	check(settings_scene != null, "Settings screen scene loads")
+	if settings_scene != null:
+		var settings_state := settings_scene.get_state()
+		var settings_nodes: Array[String] = []
+		for index in settings_state.get_node_count():
+			settings_nodes.append(str(settings_state.get_node_name(index)))
+		check(settings_nodes.has("Controls"), "Settings scene authors its controls/rebinding component")
+		check(settings_nodes.has("Persistence"), "Settings scene authors its settings-persistence component")
+	var settings_layout := load("res://scenes/ui/components/settings_screen_layout.tscn") as PackedScene
+	check(settings_layout != null, "Settings static layout scene loads")
+	if settings_layout != null:
+		var settings_layout_state := settings_layout.get_state()
+		var settings_layout_nodes: Array[String] = []
+		for index in settings_layout_state.get_node_count():
+			settings_layout_nodes.append(str(settings_layout_state.get_node_name(index)))
+		check(settings_layout_nodes.has("MasterSlider") and settings_layout_nodes.has("FullscreenCheck") and settings_layout_nodes.has("ResolutionOption"), "Settings scene authors audio and display controls")
+		check(settings_layout_nodes.has("ControlsBox") and settings_layout_nodes.has("ApplyButton") and settings_layout_nodes.has("CancelButton"), "Settings scene authors controls list and footer actions")
+	var combat_scene := load("res://scenes/ui/combat_screen.tscn") as PackedScene
+	check(combat_scene != null, "Combat screen scene loads")
+	if combat_scene != null:
+		var combat_state := combat_scene.get_state()
+		var combat_nodes: Array[String] = []
+		for index in combat_state.get_node_count():
+			combat_nodes.append(str(combat_state.get_node_name(index)))
+		check(combat_nodes.has("Feedback"), "Combat screen authors its transient feedback component")
+		check(combat_nodes.has("TurnFlow"), "Combat screen authors its turn-flow component")
+		check(combat_nodes.has("Targeting"), "Combat screen authors its targeting component")
+		check(combat_nodes.has("TurnOrder"), "Combat screen authors its turn-order presentation component")
+		check(combat_nodes.has("Results"), "Combat screen authors its battle-result component")
+		check(combat_nodes.has("Events"), "Combat screen authors its combat-event presentation component")
+		check(combat_nodes.has("HUD"), "Combat screen authors its battle HUD/roster component")
+		check(combat_nodes.has("LayoutBuilder"), "Combat screen authors its layout-binding component")
+	var battlefield_scene := load("res://scenes/ui/battlefield.tscn") as PackedScene
+	check(battlefield_scene != null, "Battlefield composition scene loads")
+	if battlefield_scene != null:
+		var battlefield_state := battlefield_scene.get_state()
+		var battlefield_nodes: Array[String] = []
+		for index in battlefield_state.get_node_count():
+			battlefield_nodes.append(str(battlefield_state.get_node_name(index)))
+		check(battlefield_nodes.has("Layout"), "Battlefield scene authors its layout/actor component")
+		check(battlefield_nodes.has("Effects"), "Battlefield scene authors its combat-effects component")
+		check(battlefield_nodes.has("KaelAttackPresentation"), "Battlefield scene authors Kael-specific attack choreography separately")
+		check(battlefield_nodes.has("MatronAttackPresentation"), "Battlefield scene authors Fallen Matron-specific attack choreography separately")
+		check(battlefield_nodes.has("GenericAttackPresentation"), "Battlefield scene authors generic attack choreography separately")
+	var world_scene := load("res://scenes/world/greenward_world.tscn") as PackedScene
+	check(world_scene != null, "Greenward world composition scene loads")
+	if world_scene != null:
+		var world_state := world_scene.get_state()
+		var world_nodes: Array[String] = []
+		for index in world_state.get_node_count():
+			world_nodes.append(str(world_state.get_node_name(index)))
+		check(world_nodes.has("Navigation"), "World scene authors its navigation component")
+		check(world_nodes.has("PlayerSpawn"), "World scene authors its player-spawn component")
+		check(world_nodes.has("Entities"), "World scene authors its entity-spawner component")
+	var main_scene := load("res://scenes/main.tscn") as PackedScene
+	check(main_scene != null, "Main application scene loads")
+	if main_scene != null:
+		var main_state := main_scene.get_state()
+		var main_nodes: Array[String] = []
+		for index in main_state.get_node_count():
+			main_nodes.append(str(main_state.get_node_name(index)))
+		check(main_nodes.has("StartupFlow") and main_nodes.has("GameplayFlow"), "Main scene authors its startup and gameplay flow components")
+
+
 func _test_content() -> void:
 	check(ContentDB.validation_errors.is_empty(), "ContentDB validation", "; ".join(ContentDB.validation_errors))
 	check(ContentDB.characters.size() >= 12, "At least 12 characters", str(ContentDB.characters.size()))
 	check(ContentDB.skills.size() >= 30, "At least 30 skills", str(ContentDB.skills.size()))
+	for skill_id in ContentDB.skills.keys():
+		var skill: SkillDef = ContentDB.get_skill(str(skill_id))
+		check(skill != null and not skill.animation_key.is_empty(), "Skill has an animation key: " + str(skill_id))
+		check(skill != null and not skill.vfx_key.is_empty(), "Skill has a VFX key: " + str(skill_id))
+		check(skill != null and skill.scaling_stat in ["atk", "def", "hp", "spd"], "Skill scaling stat is supported: " + str(skill_id))
+		check(skill != null and skill.cooldown_turns >= 0, "Skill cooldown is non-negative: " + str(skill_id))
+		check(skill != null and not skill.ai_tags.is_empty(), "Skill has AI tags: " + str(skill_id))
 	check(ContentDB.enemies.size() >= 6, "At least 6 enemies", str(ContentDB.enemies.size()))
 	check(ContentDB.enemy_groups.size() >= 5, "At least 5 enemy groups", str(ContentDB.enemy_groups.size()))
 	check(ContentDB.items.size() >= 10, "At least 10 items", str(ContentDB.items.size()))
@@ -330,7 +627,7 @@ func _test_math() -> void:
 # --------------------------------------------------------------------- gacha
 
 func _test_gacha() -> void:
-	var banner: Dictionary = ContentDB.get_banner("glade_whispers")
+	var banner: Dictionary = ContentDB.get_banner("crimson_covenant")
 	check(not banner.is_empty(), "Summon banner loads")
 
 	var rng := RandomNumberGenerator.new()
@@ -346,7 +643,7 @@ func _test_gacha() -> void:
 
 	rng.seed = 99
 	var pity_state := GachaService.empty_pity()
-	pity_state.legendary = 69
+	pity_state.legendary = int(banner.get("hard_pity", 70)) - 1
 	var hard_pity := GachaService.pull(banner, rng, pity_state, 1)
 	check(hard_pity.results[0].rarity == "legendary", "Hard pity forces a Legendary")
 	check(int(hard_pity.pity.legendary) == 0, "Hard pity counter resets")
@@ -378,6 +675,88 @@ func _test_gacha() -> void:
 	var forced := GachaService.pull(featured_banner, rng, featured_state, 1)
 	check(bool(forced.results[0].featured), "Featured pity forces the featured character")
 	check(int(forced.pity.featured) == 0, "Featured pity counter resets")
+
+	# A featured unit must not also appear in the off-banner pool: otherwise the
+	# displayed 0% rate-up is secretly boosted by ordinary pool selection.
+	var no_rate_up_banner := {
+		"rates": { "epic": 1.0 },
+		"featured": ["lyra_vey"],
+		"featured_rate": 0.0,
+		"hard_pity": 1000,
+		"featured_pity": 1000,
+		"pool": { "epic": ["lyra_vey", "coralyn"] },
+	}
+	rng.seed = 20261116
+	var no_rate_up := GachaService.pull(no_rate_up_banner, rng, GachaService.empty_pity(), 30)
+	var featured_leaks := 0
+	for roll in no_rate_up.results:
+		if bool(roll.get("featured", false)) or str(roll.get("character_id", "")) == "lyra_vey":
+			featured_leaks += 1
+	check(featured_leaks == 0, "Featured character is excluded from off-banner selection at 0% rate-up", str(featured_leaks))
+
+	# The ten-pull Epic floor must also reset featured pity when the guaranteed
+	# replacement is the featured character.
+	var floor_featured_state := GachaService.empty_pity()
+	floor_featured_state.featured = 7
+	var floor_featured := GachaService.pull(guaranteed_banner, rng, floor_featured_state, 10)
+	check(bool(floor_featured.results[9].get("featured", false)), "Ten-pull floor can return the featured character")
+	check(int(floor_featured.pity.featured) == 0, "Featured pity resets after a featured ten-pull floor result")
+
+
+func _test_ui_regressions() -> void:
+	# Preserve both requested featured banners and their independent artwork paths.
+	var vesper_banner: Dictionary = ContentDB.get_banner("crimson_covenant")
+	var scarlet_banner: Dictionary = ContentDB.get_banner("scarlet_requiem")
+	check(ContentDB.banners.size() == 2, "Summon interface displays exactly the two requested featured banners")
+	check(not vesper_banner.is_empty() and str(vesper_banner.get("name", "")) == "Hollow Moon Overture" and str((vesper_banner.get("featured", [""]) as Array)[0]) == "nyx", "Hollow Moon Overture features Nyx Vaelora")
+	check(not scarlet_banner.is_empty() and str((scarlet_banner.get("featured", [""]) as Array)[0]) == "scarlet_requiem", "Scarlet Requiem remains a separate second featured banner")
+	check(ResourceLoader.exists("res://assets/characters/scarlet_requiem/banner_portrait.jpg"), "Scarlet Requiem banner uses the supplied portrait asset")
+	check(ResourceLoader.exists("res://assets/ui/backgrounds/summoning_chamber_background.svg"), "Summon screen keeps its dedicated chamber background")
+
+	# Exercise the actual second banner selection and both close paths.
+	var gacha_scene := load("res://scenes/ui/gacha_screen.tscn") as PackedScene
+	var gacha := gacha_scene.instantiate() as GachaScreen if gacha_scene != null else null
+	check(gacha != null, "Summon screen instantiates for banner interaction regression")
+	if gacha != null:
+		add_child(gacha)
+		await get_tree().process_frame
+		check(gacha._tabs != null and gacha._tabs.get_child_count() == 3, "Both summon tabs remain visible beside the return control")
+		gacha._select_banner("scarlet_requiem")
+		await get_tree().process_frame
+		check(gacha._selected_banner == "scarlet_requiem" and gacha._featured_id == "scarlet_requiem", "Second summon page selects Scarlet Requiem and its featured character")
+		check(gacha.find_child("ReturnToGameButton", true, false) is Button, "Summon page provides its dedicated return button")
+		var return_to_game := gacha.find_child("ReturnToGameButton", true, false) as Button
+		return_to_game.emit_signal("pressed")
+		await get_tree().process_frame
+		check(not is_instance_valid(gacha), "Return button closes the summon overlay")
+
+	var escape_gacha := gacha_scene.instantiate() as GachaScreen if gacha_scene != null else null
+	if escape_gacha != null:
+		add_child(escape_gacha)
+		await get_tree().process_frame
+		var escape_event := InputEventKey.new()
+		escape_event.keycode = KEY_ESCAPE
+		escape_event.pressed = true
+		escape_gacha._input(escape_event)
+		await get_tree().process_frame
+		check(not is_instance_valid(escape_gacha), "Escape closes the summon overlay from its second page")
+
+	# The minimap's collapsed restore button must remain inside its compact hitbox.
+	var minimap_scene := load("res://scenes/ui/minimap.tscn") as PackedScene
+	check(minimap_scene != null, "Minimap scene loads for UI interaction regression")
+	if minimap_scene == null:
+		return
+	var minimap := minimap_scene.instantiate() as Minimap
+	add_child(minimap)
+	await get_tree().process_frame
+	minimap._toggle_collapse()
+	var restore_button := minimap.get_node("CollapseButton") as Button
+	check(minimap.size == Vector2(60, 28), "Collapsed minimap uses compact dimensions")
+	check(restore_button.visible and restore_button.position.x >= 0.0 and restore_button.position.x + restore_button.size.x <= minimap.size.x, "Collapsed minimap keeps its restore button inside the visible control")
+	restore_button.emit_signal("pressed")
+	check(minimap.size == Vector2(224, 224) and minimap.get_node("MapCanvas").visible, "Minimap restore button reopens the full map")
+	minimap.queue_free()
+	await get_tree().process_frame
 
 
 # -------------------------------------------------------------------- combat
@@ -435,14 +814,100 @@ func _test_combat() -> void:
 	check(near(ElementTable.multiplier("light", "dark"), ElementTable.ADVANTAGE), "Light beats Dark")
 	check(near(ElementTable.multiplier("neutral", "fire"), 1.0), "Neutral is neutral")
 
+	var scaling_probe := Combatant.new()
+	scaling_probe.atk = 100.0
+	scaling_probe.defense = 60.0
+	scaling_probe.speed = 40.0
+	scaling_probe.max_hp = 900.0
+	check(near(CombatSkillResolver.effective_scaling_value(scaling_probe, "atk"), 100.0), "Skill attack scaling reads effective attack")
+	check(near(CombatSkillResolver.effective_scaling_value(scaling_probe, "def"), 60.0), "Skill defense scaling reads effective defense")
+	check(near(CombatSkillResolver.effective_scaling_value(scaling_probe, "hp"), 900.0), "Skill HP scaling reads max HP")
+	check(near(CombatSkillResolver.effective_scaling_value(scaling_probe, "spd"), 40.0), "Skill speed scaling reads effective speed")
+	scaling_probe.apply_status("atk_up", 2, 0.25)
+	scaling_probe.apply_status("def_up", 2, 0.5)
+	scaling_probe.apply_status("spd_down", 2, 0.2)
+	check(near(CombatSkillResolver.effective_scaling_value(scaling_probe, "atk"), 125.0), "Attack scaling respects attack buffs")
+	check(near(CombatSkillResolver.effective_scaling_value(scaling_probe, "def"), 90.0), "Defense scaling respects defense buffs")
+	check(near(CombatSkillResolver.effective_scaling_value(scaling_probe, "spd"), 32.0), "Speed scaling respects speed debuffs")
+
 	var boss := CombatFactory.enemy_units("elder_hollow")
 	check(boss.size() == 1 and boss[0].is_boss, "Boss combatant is flagged")
 
 
+func _test_combat_cooldowns() -> void:
+	var actor := _unit("cooldown_actor")
+	var enemy := _unit("cooldown_enemy")
+	actor.speed = 200.0
+	enemy.speed = 100.0
+	actor.skills = ["gale_shot"]
+	enemy.skills = ["moss_slam"]
+	var gale_shot: SkillDef = ContentDB.get_skill("gale_shot")
+	var previous_cooldown := gale_shot.cooldown_turns
+	gale_shot.cooldown_turns = 2
+	var engine := CombatEngine.new()
+	engine.setup([actor], [enemy], 8181)
+	engine.start()
+	check(engine.current_actor() == actor, "Cooldown regression begins on the faster player actor")
+	var original_target_rule := gale_shot.target
+	var energy_before_invalid := actor.energy
+	gale_shot.target = "invalid_target_rule"
+	check(engine.execute(actor.combat_index, "gale_shot").is_empty(), "Engine rejects a skill with an unsupported target rule")
+	check(near(actor.energy, energy_before_invalid) and not actor.is_skill_on_cooldown("gale_shot"), "Rejected target rule consumes neither energy nor cooldown")
+	gale_shot.target = original_target_rule
+	actor.start_skill_cooldown("gale_shot", 2)
+	check(actor.is_skill_on_cooldown("gale_shot") and actor.cooldown_remaining("gale_shot") == 3, "Cooldown starts at its authored duration")
+	var energy_before := actor.energy
+	check(engine.execute(actor.combat_index, "gale_shot").is_empty(), "Engine rejects a skill while it is cooling down")
+	check(near(actor.energy, energy_before), "Rejected cooldown action does not grant energy")
+	check(str(CombatAI.choose(engine, actor.combat_index).get("skill_id", "")) == "", "Combat AI excludes skills that are cooling down")
+	engine.advance_turn()
+	check(engine.current_actor() == enemy, "Enemy receives its turn while the player skill cools down")
+	engine.advance_turn()
+	check(engine.current_actor() == actor and actor.cooldown_remaining("gale_shot") == 2, "First player turn ticks cooldown to two remaining turns")
+	engine.advance_turn()
+	engine.advance_turn()
+	check(engine.current_actor() == actor and actor.cooldown_remaining("gale_shot") == 1, "Second player turn ticks cooldown to one remaining turn")
+	engine.advance_turn()
+	var ready_events := engine.advance_turn()
+	var cooldown_ready_event := false
+	for event in ready_events:
+		if str(event.get("type", "")) == "cooldown_ready" and str(event.get("skill_id", "")) == "gale_shot":
+			cooldown_ready_event = true
+	check(engine.current_actor() == actor and cooldown_ready_event and not actor.is_skill_on_cooldown("gale_shot"), "Cooldown expires on the correct actor turn and emits a ready event")
+	var events := engine.execute(actor.combat_index, "gale_shot")
+	var action_found := false
+	for event in events:
+		if str(event.get("type", "")) == "action" and str(event.get("skill_id", "")) == "gale_shot":
+			action_found = true
+	check(action_found, "Skill becomes executable when its cooldown expires")
+	check(actor.cooldown_remaining("gale_shot") == 3, "Successful skill use starts its configured cooldown plus the next-turn offset")
+	engine.setup([actor], [enemy], 8182)
+	check(not actor.is_skill_on_cooldown("gale_shot"), "Starting a new battle clears previous battle cooldowns")
+	gale_shot.cooldown_turns = previous_cooldown
+
+
+func _test_combat_engine_ownership() -> void:
+	var engine: CombatEngine = CombatEngine.new()
+	var resolver: CombatSkillResolver = engine.skill_resolver
+	var engine_ref: WeakRef = weakref(engine)
+	check(resolver.engine == engine, "Combat skill resolver binds to its owning engine")
+	engine = null
+	check(engine_ref.get_ref() == null, "Combat skill resolver does not retain the engine strongly")
+	check(resolver.engine == null, "Combat skill resolver weak owner clears after engine release")
+	resolver = null
+
 # --------------------------------------------------------------------- state
 
 func _test_state() -> void:
+	check(GameState.persistence_component is GameStatePersistenceComponent and GameState.persistence_component.get_parent() == GameState, "GameState owns its authored persistence component")
+	var persistence_snapshot: Dictionary = GameState._to_dict()
+	check(persistence_snapshot.has("profile") and persistence_snapshot.has("region_positions") and persistence_snapshot.has("gear_levels"), "GameState delegates complete save serialization to its persistence component")
+	check(SaveService.validate_save_data({"profile": {"name": "Legacy"}}).is_empty(), "Save validation accepts minimal legacy save containers")
+	check(not SaveService.validate_save_data({"profile": [], "roster": "broken"}).is_empty(), "Save validation rejects incorrectly typed profile and roster")
+	check(not SaveService.validate_save_data({"profile": {"name": "Broken"}, "inventory": {"glade_sap": -1}}).is_empty(), "Save validation rejects negative inventory counts")
+	GameState.loaded_from_save = true
 	GameState.new_game("Test Wanderer")
+	check(not GameState.loaded_from_save, "Starting a new game clears the resumed-save flag")
 	check(GameState.roster.size() == 3, "New game grants 3 characters", str(GameState.roster.size()))
 	check(GameState.party.size() == 3, "New game fills a 3-person party", str(GameState.party.size()))
 	check(GameState.currency("gold") == 500, "New game starts with 500 gold", str(GameState.currency("gold")))
@@ -459,12 +924,12 @@ func _test_state() -> void:
 	check(GameState.remove_item("glade_sap", 1), "Items can be removed")
 	check(not GameState.remove_item("glade_sap", 999), "Over-removal is rejected")
 
-	var first := GameState.add_character("coralyn")
+	var first: Variant = GameState.add_character("coralyn")
 	check(bool(first.get("is_new", false)), "New character is reported as new")
-	var duplicate := GameState.add_character("coralyn")
+	var duplicate: Variant = GameState.add_character("coralyn")
 	check(not bool(duplicate.get("is_new", true)), "Duplicate is reported as duplicate")
 	check(int(duplicate.get("awakening_gain", -1)) == 0, "First duplicate does not awaken")
-	var second_duplicate := GameState.add_character("coralyn")
+	var second_duplicate: Variant = GameState.add_character("coralyn")
 	check(int(second_duplicate.get("awakening_gain", -1)) == 1, "Second duplicate grants awakening")
 	var coralyn: CharacterInstance = second_duplicate.get("instance", null)
 	check(coralyn != null and coralyn.awakening == 1, "Awakening is stored on the instance")
@@ -483,8 +948,8 @@ func _test_state() -> void:
 	GameState.record_kill("mossling", 3)
 	check(GameState.quest_step_index("glade_whisper") == 2, "Kill objective advances the quest")
 	check(GameState.quest_ready("glade_whisper"), "Quest is ready at the final talk step")
-	var crystals_before := GameState.currency("crystals")
-	var bows_before := GameState.item_count("gladewood_bow")
+	var crystals_before: Variant = GameState.currency("crystals")
+	var bows_before: Variant = GameState.item_count("gladewood_bow")
 	check(GameState.complete_quest("glade_whisper"), "Quest can be completed")
 	check(GameState.quest_state("glade_whisper") == "complete", "Quest state is complete")
 	check(GameState.currency("crystals") == crystals_before + 120, "Quest crystals are granted")
@@ -497,46 +962,235 @@ func _test_state() -> void:
 	check(str(loaded.get("profile", {}).get("name", "")) == "Test Wanderer", "Save stores the profile")
 	check(loaded.get("roster", []).size() == 4, "Save stores the roster", str(loaded.get("roster", []).size()))
 	check(loaded.get("party", []).size() == 4, "Save stores the party")
+	loaded["profile"]["name"] = "Second Atomic Save"
+	check(SaveService.write_save(loaded.duplicate(true)), "Second save safely replaces the previous save")
+	var reloaded_second := SaveService.load_save()
+	check(str(reloaded_second.get("profile", {}).get("name", "")) == "Second Atomic Save", "Second atomic save is the readable current save")
+	check(not FileAccess.file_exists(SaveService.SAVE_PATH + ".tmp") and not FileAccess.file_exists(SaveService.SAVE_PATH + ".previous.tmp"), "Successful save leaves no temporary replacement files")
+	var save_abs := ProjectSettings.globalize_path(SaveService.SAVE_PATH)
+	var previous_abs := ProjectSettings.globalize_path(SaveService.SAVE_PATH + ".previous.tmp")
+	check(DirAccess.rename_absolute(save_abs, previous_abs) == OK, "Simulate interruption after protecting the previous save")
+	var recovery_payload: Dictionary = reloaded_second.duplicate(true)
+	recovery_payload["profile"]["name"] = "Recovered Replacement"
+	check(SaveService.write_save(recovery_payload), "Next save recovers an interrupted replacement before writing")
+	var recovered := SaveService.load_save()
+	check(str(recovered.get("profile", {}).get("name", "")) == "Recovered Replacement", "Recovered replacement becomes the current readable save")
+	check(not FileAccess.file_exists(SaveService.SAVE_PATH + ".previous.tmp"), "Recovered save removes stale backup after successful replacement")
+	check(DirAccess.rename_absolute(save_abs, previous_abs) == OK, "Prepare stale backup artifact for reset regression")
+	SaveService.delete_save()
+	check(not SaveService.has_save() and not FileAccess.file_exists(SaveService.SAVE_PATH + ".tmp") and not FileAccess.file_exists(SaveService.SAVE_PATH + ".previous.tmp"), "Deleting save removes current and interrupted-write artifacts")
+	GameState.save_now()
+	check(SaveService.has_save(), "Normal save can be written after reset cleanup")
+	var corrupt_file := FileAccess.open(SaveService.SAVE_PATH, FileAccess.WRITE)
+	corrupt_file.store_string("{\"profile\":\"invalid\"}")
+	corrupt_file.close()
+	check(SaveService.load_save().is_empty(), "Malformed save is rejected without typed-load crash")
+	check(FileAccess.file_exists(SaveService.BACKUP_PATH), "Malformed save is copied to a recovery backup")
+	check(not SaveService.has_save(), "Corrupt source is removed only after backup succeeds")
+	GameState.save_now()
+	if FileAccess.file_exists(SaveService.BACKUP_PATH):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveService.BACKUP_PATH))
 
 
 # ------------------------------------------------------------------------ UI
 
 func _test_ui() -> void:
+	var gacha_scene := load("res://scenes/ui/gacha_screen.tscn") as PackedScene
+	var collection_scene := load("res://scenes/ui/collection_screen.tscn") as PackedScene
 	var screens: Array = [
-		GachaScreen.new(),
-		CollectionScreen.new(),
+		gacha_scene.instantiate() if gacha_scene != null else null,
+		collection_scene.instantiate() if collection_scene != null else null,
 		InventoryScreen.new(),
 		QuestScreen.new(),
 		PauseMenu.new(),
+		ShopScreen.new(),
 	]
 	for screen in screens:
+		if screen == null:
+			check(false, "UI screen scene resource is available")
+			continue
 		add_child(screen)
 		await get_tree().process_frame
 		check(screen.is_inside_tree(), "Screen enters the tree: " + screen.get_class())
+		var overlay_panel := screen.get_node_or_null("OverlayShell/Margin/Panel") as PanelContainer
+		check(overlay_panel != null and overlay_panel.size_flags_vertical == Control.SIZE_EXPAND_FILL, "Overlay shell panel fills available height: " + screen.name)
 		check(screen.content != null and screen.content.get_child_count() > 0, "Screen builds content: " + screen.name)
+		if screen is ShopScreen:
+			check(screen.find_children("*", "Button", true, false).size() >= 8, "Merchant shop displays all eight stock items")
+			var shop_inventory_before: Dictionary = GameState.inventory.duplicate(true)
+			var shop_profile_before: Dictionary = GameState.profile.duplicate(true)
+			GameState.inventory = {}
+			GameState.profile["gold"] = 100
+			screen._refresh_stock()
+			var moonpetal_buy: Button = null
+			for candidate in screen.find_children("*", "Button", true, false):
+				if candidate is Button and candidate.text == "Buy  60 G":
+					moonpetal_buy = candidate
+					break
+			check(moonpetal_buy != null and not moonpetal_buy.disabled, "Affordable Moonpetal stock is enabled")
+			if moonpetal_buy != null:
+				moonpetal_buy.pressed.emit()
+				await get_tree().process_frame
+			check(GameState.currency("gold") == 40 and GameState.item_count("moonpetal") == 1, "Shop UI purchase updates wallet and inventory")
+			check(screen._wallet_label.text == "Gold  40", "Shop wallet display refreshes after purchase")
+			var owned_label_found := false
+			for label_node in screen.find_children("*", "Label", true, false):
+				if label_node is Label and label_node.text == "Owned: 1":
+					owned_label_found = true
+			check(owned_label_found, "Shop stock ownership count refreshes after purchase")
+			GameState.inventory = shop_inventory_before
+			GameState.profile = shop_profile_before
+			screen._refresh_stock()
+		if screen is InventoryScreen:
+			var inventory_layout: Control = screen.content.get_child(0)
+			var inventory_split := inventory_layout.get_node("Split") as HBoxContainer
+			var inventory_left := inventory_split.get_node("Left") as Control
+			var inventory_detail := inventory_split.get_node("DetailPanel") as Control
+			check(inventory_split.alignment == BoxContainer.ALIGNMENT_CENTER, "Inventory split centers its two authored columns")
+			check(inventory_left.size_flags_horizontal == Control.SIZE_FILL, "Inventory item grid keeps a bounded left column")
+			check(inventory_detail.size_flags_horizontal == Control.SIZE_FILL, "Inventory detail panel does not expand past the viewport")
+			check(inventory_detail.position.x + inventory_detail.size.x <= inventory_split.size.x + 1.0, "Inventory detail panel remains inside the overlay width")
+			check(screen.grid_component is InventoryGridComponent and screen.grid_component.get_parent() == screen.content.get_child(0), "Inventory layout owns its grid and detail component")
+			check(screen.crafting_component is InventoryCraftingComponent and screen.crafting_component.get_parent() == screen.content.get_child(0), "Inventory layout owns its crafting component")
+			check(screen.crafting_component._window is PanelContainer and screen.crafting_component._window.get_parent() == screen.content, "Inventory crafting component instances its authored overlay under screen content")
+			check(screen.crafting_component._list is VBoxContainer and screen.crafting_component._window.find_child("CloseButton", true, false) is Button, "Inventory crafting component binds authored recipe list and close button")
+			screen.crafting_component.open()
+			check(screen.crafting_component._window.visible, "Inventory crafting overlay opens through its component")
+			var crafting_close := screen.crafting_component._window.find_child("CloseButton", true, false) as Button
+			if crafting_close != null:
+				crafting_close.pressed.emit()
+			check(not screen.crafting_component._window.visible, "Inventory crafting overlay closes through its authored close button")
+			check(screen.grid_component._grid is GridContainer, "Inventory grid component binds the authored item grid")
+			var material_filter := screen.content.find_child("MaterialsButton", true, false) as Button
+			var all_filter := screen.content.find_child("AllButton", true, false) as Button
+			if material_filter != null:
+				material_filter.pressed.emit()
+			check(screen.grid_component._filter == "material", "Inventory filter button delegates to the grid component")
+			if all_filter != null:
+				all_filter.pressed.emit()
+			check(screen.grid_component._filter == "all", "Inventory All filter restores the full item view")
+			screen._controller.notification_requested.emit("Inventory is full.", "warning")
+			check(screen._notification.visible and screen._notification.label_node.text == "Inventory is full.", "Inventory controller notifications reach the authored notification panel")
+			screen._notification.show_message("", "info")
+			check(screen._crafting_window != null and not screen._crafting_window.visible, "Crafting panel starts hidden")
+			var crafting_buttons: Array[Node] = screen.find_children("*", "Button", true, false)
+			var crafting_button_found := false
+			for candidate in crafting_buttons:
+				if candidate is Button and candidate.text == "Crafting":
+					crafting_button_found = true
+					candidate.pressed.emit()
+					break
+			check(crafting_button_found, "Inventory exposes Crafting action")
+			await get_tree().process_frame
+			check(screen._crafting_window.visible, "Crafting action opens recipe panel")
+			check(screen._crafting_list.get_child_count() == 3, "Crafting panel lists all three recipes")
+			var inventory_before_crafting: Dictionary = GameState.inventory.duplicate(true)
+			var profile_before_crafting: Dictionary = GameState.profile.duplicate(true)
+			GameState.inventory = {"glade_sap": 2, "moonpetal": 1}
+			GameState.profile["gold"] = 500
+			screen._refresh_crafting_window()
+			var wayfarer_button: Button = null
+			var sunfire_button: Button = null
+			for recipe_card in screen._crafting_list.get_children():
+				var recipe_labels: Array[Node] = recipe_card.find_children("*", "Label", true, false)
+				var recipe_name := ""
+				for recipe_label in recipe_labels:
+					if recipe_label is Label and recipe_label.text in ["Wayfarer Charm", "Sunfire Blade"]:
+						recipe_name = recipe_label.text
+						break
+				var recipe_buttons: Array[Node] = recipe_card.find_children("*", "Button", true, false)
+				for recipe_button in recipe_buttons:
+					if recipe_button is Button and recipe_button.text == "Craft":
+						if recipe_name == "Wayfarer Charm":
+							wayfarer_button = recipe_button
+						elif recipe_name == "Sunfire Blade":
+							sunfire_button = recipe_button
+			check(wayfarer_button != null and not wayfarer_button.disabled, "Affordable recipe is enabled in crafting UI")
+			check(sunfire_button != null and sunfire_button.disabled, "Unaffordable recipe is disabled in crafting UI")
+			if wayfarer_button != null and not wayfarer_button.disabled:
+				wayfarer_button.pressed.emit()
+				await get_tree().process_frame
+			check(GameState.item_count("wayfarer_charm") == 1, "Crafting UI grants selected recipe output")
+			check(GameState.item_count("glade_sap") == 0 and GameState.item_count("moonpetal") == 0 and GameState.currency("gold") == 350, "Crafting UI consumes exact material and gold costs")
+			GameState.inventory = inventory_before_crafting
+			GameState.profile = profile_before_crafting
 		screen.queue_free()
 		await get_tree().process_frame
-
-	var menu_scene := load("res://scenes/ui/main_menu.tscn") as PackedScene
-	check(menu_scene != null, "Authored title menu scene loads")
-	var menu := menu_scene.instantiate() as MainMenu if menu_scene != null else null
-	if menu == null:
+	var title_scene := load("res://scenes/ui/title_screen.tscn") as PackedScene
+	check(title_scene != null, "Authored title screen scene loads")
+	var title := title_scene.instantiate() as TitleScreen if title_scene != null else null
+	if title == null:
 		return
-	add_child(menu)
+	add_child(title)
 	await get_tree().process_frame
-	check(menu.get_child_count() > 0, "Title menu builds")
-	menu.queue_free()
+	check(title.get_child_count() > 0, "Title screen builds")
+	var title_bounds := Rect2(Vector2.ZERO, title.size)
+	var title_controls := ["ContinueButton", "NewJourneyButton", "LoadGameButton", "SettingsButton", "ExtrasButton", "QuitGameButton"]
+	var title_controls_fit := true
+	for control_name in title_controls:
+		var title_button := title.get_node_or_null(control_name) as Control
+		if title_button == null or not title_bounds.encloses(title_button.get_rect()):
+			title_controls_fit = false
+	check(title_controls_fit, "All six title-screen controls fit inside the active viewport")
+	var title_backdrop := title.get_node_or_null("TitleArtwork") as Control
+	check(title_backdrop != null and title_bounds.encloses(title_backdrop.get_rect()), "Title-screen artwork stays inside the active viewport")
+	title.queue_free()
 	await get_tree().process_frame
 
-	var combat := CombatScreen.new()
-	combat.group_id = "glade_mossling_pack"
-	add_child(combat)
+	var combat_scene := load("res://scenes/ui/combat_screen.tscn") as PackedScene
+	var combat := combat_scene.instantiate() as CombatScreen if combat_scene != null else null
+	if combat != null:
+		combat.group_id = "glade_mossling_pack"
+		add_child(combat)
 	await get_tree().process_frame
 	await get_tree().process_frame
-	check(combat.engine != null, "Combat screen starts an engine")
-	if combat.engine != null:
+	check(combat != null and combat.engine != null, "Combat screen starts an engine")
+	check(combat != null and combat._turn_order_component is CombatTurnOrderComponent and combat._turn_order_component.get_parent() == combat, "CombatScreen binds its turn-order component")
+	check(combat != null and combat._result_component is CombatResultComponent and combat._result_component.get_parent() == combat, "CombatScreen binds its result component")
+	check(combat != null and combat._event_presentation_component is CombatEventPresentationComponent and combat._event_presentation_component.get_parent() == combat, "CombatScreen binds its event-presentation component")
+	check(combat != null and combat._hud_component is CombatHudComponent and combat._hud_component.get_parent() == combat, "CombatScreen binds its HUD/roster component")
+	check(combat != null and combat._layout_component is CombatLayoutComponent and combat._layout_component.get_parent() == combat, "CombatScreen binds its authored layout component")
+	check(combat != null and combat._session_component is CombatSessionComponent and combat._session_component.get_parent() == combat, "CombatScreen binds its authored battle-session component")
+	check(combat != null and combat._input_component is CombatInputComponent and combat._input_component.get_parent() == combat, "CombatScreen binds its authored input component")
+	check(combat != null and combat._battlefield != null and combat._battlefield._layout_component is BattlefieldLayoutComponent and combat._battlefield._layout_component.get_parent() == combat._battlefield, "Battlefield binds its authored layout/actor component")
+	check(combat != null and combat._battlefield != null and combat._battlefield._effects_component is BattlefieldEffectsComponent and combat._battlefield._effects_component.get_parent() == combat._battlefield, "Battlefield binds its authored combat-effects component")
+	check(combat != null and combat._battlefield != null and combat._battlefield._kael_attack_component is KaelAttackPresentationComponent and combat._battlefield._kael_attack_component.get_parent() == combat._battlefield, "Battlefield binds its dedicated Kael attack presentation component")
+	check(combat != null and combat._battlefield != null and combat._battlefield._effects_component.kael_attack_component == combat._battlefield._kael_attack_component, "Battlefield effects facade delegates Kael choreography to its dedicated component")
+	check(combat != null and combat._battlefield != null and combat._battlefield._matron_attack_component is MatronAttackPresentationComponent and combat._battlefield._matron_attack_component.get_parent() == combat._battlefield, "Battlefield binds its dedicated Fallen Matron attack presentation component")
+	check(combat != null and combat._battlefield != null and combat._battlefield._effects_component.matron_attack_component == combat._battlefield._matron_attack_component, "Battlefield effects facade delegates Fallen Matron choreography to its dedicated component")
+	check(combat != null and combat._battlefield != null and combat._battlefield._generic_attack_component is GenericAttackPresentationComponent and combat._battlefield._generic_attack_component.get_parent() == combat._battlefield, "Battlefield binds its dedicated generic attack presentation component")
+	check(combat != null and combat._battlefield != null and combat._battlefield._effects_component.generic_attack_component == combat._battlefield._generic_attack_component, "Battlefield effects facade delegates ordinary attacks to its dedicated component")
+	check(combat != null and combat._battlefield != null and combat._battlefield._impact_component is BattlefieldImpactEffectsComponent and combat._battlefield._impact_component.get_parent() == combat._battlefield, "Battlefield binds its dedicated impact-effects component")
+	check(combat != null and combat._battlefield != null and combat._battlefield._effects_component.impact_component == combat._battlefield._impact_component, "Battlefield effects facade delegates transient impact visuals to the authored impact component")
+	var battlefield_actor_scene := load("res://scenes/ui/battlefield_actor.tscn") as PackedScene
+	var battlefield_actor := battlefield_actor_scene.instantiate() as BattlefieldActor if battlefield_actor_scene != null else null
+	check(battlefield_actor != null and battlefield_actor.get_node_or_null("GroundFX") is BattlefieldActorGroundFX, "BattlefieldActor owns its GroundFX as an authored child scene")
+	check(battlefield_actor != null and battlefield_actor.get_node_or_null("MatronPresentation") is FallenMatronPresentationComponent, "BattlefieldActor owns its bespoke Fallen Matron presentation as an authored child scene")
+	if battlefield_actor != null:
+		battlefield_actor.free()
+	if combat != null and combat.engine != null:
 		check(combat.engine.combatants.size() >= 4, "Combat screen builds both teams", str(combat.engine.combatants.size()))
-	combat.queue_free()
+	if combat != null and combat._battlefield != null:
+		var generic_attacker: BattlefieldActor = null
+		var generic_target: BattlefieldActor = null
+		for actor_entry in combat._battlefield.actors():
+			var stage_actor := actor_entry as BattlefieldActor
+			if stage_actor.is_player and generic_target == null:
+				generic_target = stage_actor
+			elif not stage_actor.is_player and generic_attacker == null:
+				generic_attacker = stage_actor
+		check(generic_attacker != null and generic_target != null, "Combat stage exposes a valid enemy-to-party choreography pair")
+		if generic_attacker != null and generic_target != null:
+			var attack_origin := generic_attacker.position
+			var target_home := generic_target.home_position
+			combat._battlefield._generic_attack_component.play_attack(generic_attacker, generic_target, "neutral")
+			await get_tree().create_timer(0.38).timeout
+			check(generic_attacker.position.distance_to(attack_origin) > 2.0, "Generic combat choreography visibly lunges the attacker toward its target")
+			await get_tree().create_timer(0.82).timeout
+			check(generic_attacker.position.distance_to(attack_origin) < 1.5, "Generic combat choreography returns the attacker to its home position")
+			check(generic_target.position.distance_to(target_home) < 1.5, "Generic combat choreography restores the target after its impact reaction")
+	if combat != null:
+		combat.queue_free()
 	await get_tree().process_frame
 
 	var game_scene: PackedScene = load("res://scenes/game.tscn")
@@ -548,8 +1202,76 @@ func _test_ui() -> void:
 		await get_tree().process_frame
 		check(game.world != null, "Game screen creates a world")
 		check(game.hud != null, "Game screen creates a HUD")
+		check(game.hud._currency_component is HUDCurrencyComponent and game.hud._currency_component.get_parent() == game.hud, "HUD binds its currency component")
+		check(game.hud._party_component is HUDPartyComponent and game.hud._party_component.get_parent() == game.hud, "HUD binds its party component")
+		check(game.hud._quest_component is HUDQuestComponent and game.hud._quest_component.get_parent() == game.hud, "HUD binds its quest component")
+		check(game.hud._toast_component is HUDToastComponent and game.hud._toast_component.get_parent() == game.hud, "HUD binds its toast component")
+		check(game.input_router is GameInputRouterComponent and game.input_router.get_parent() == game, "GameScreen binds its authored input router")
+		check(game.runtime_component is GameRuntimeComponent and game.runtime_component.get_parent() == game, "GameScreen delegates HUD refresh and suspended-world recovery to its runtime component")
 		check(game.world.player != null, "World creates a player")
 		check(game.world.current_area_name() != "", "World reports an area", game.world.current_area_name())
+		game._on_shop_requested()
+		await get_tree().process_frame
+		check(game.active_overlay is ShopScreen, "Dialogue shop request opens the merchant overlay")
+		check(game.world.process_mode == Node.PROCESS_MODE_DISABLED, "Merchant overlay suspends world simulation")
+		if game.active_overlay != null:
+			game.active_overlay.close_screen()
+		await get_tree().process_frame
+		check(game.active_overlay == null and game.world.process_mode == Node.PROCESS_MODE_INHERIT, "Closing merchant overlay restores world simulation")
+		# Exercise a complete real dialogue branch through GameScreen and the
+		# authored DialogueBox controls, without changing quest or inventory data.
+		game._on_dialogue_requested("edgar_market_keeper")
+		check(game.dialogue.visible and game.dialogue._node_id == "greet", "NPC dialogue request opens the authored greeting node")
+		check(game.world.process_mode == Node.PROCESS_MODE_DISABLED, "Opening NPC dialogue suspends world simulation")
+		game.dialogue._finish_typing()
+		var market_choice: Button = null
+		for choice_node in game.dialogue._choices_box.get_children():
+			if choice_node is Button and (choice_node as Button).text == "You run the market?":
+				market_choice = choice_node as Button
+				break
+		check(market_choice != null, "Dialogue presents the authored market choice after typing finishes")
+		if market_choice != null:
+			market_choice.pressed.emit()
+		check(game.dialogue.visible and game.dialogue._node_id == "market", "Choosing market advances to the correct dialogue node")
+		game.dialogue._finish_typing()
+		var leave_choice: Button = null
+		for choice_node in game.dialogue._choices_box.get_children():
+			if choice_node is Button and (choice_node as Button).text == "I see. Thank you.":
+				leave_choice = choice_node as Button
+				break
+		check(leave_choice != null, "Dialogue market node presents its leave choice")
+		if leave_choice != null:
+			leave_choice.pressed.emit()
+		await get_tree().process_frame
+		check(not game.dialogue.visible and game.world.process_mode == Node.PROCESS_MODE_INHERIT, "Closing NPC dialogue restores world simulation")
+		var pause_event := InputEventKey.new()
+		pause_event.keycode = KEY_ESCAPE
+		pause_event.physical_keycode = KEY_ESCAPE
+		pause_event.pressed = true
+		game.input_router.handle_unhandled_input(pause_event)
+		await get_tree().process_frame
+		check(game.active_overlay is PauseMenu, "Escape input routes through the authored input router to the pause menu")
+		check(game.world.process_mode == Node.PROCESS_MODE_DISABLED, "Opening the pause menu suspends world simulation")
+		if game.active_overlay != null:
+			game.active_overlay.close_screen()
+		await get_tree().process_frame
+		var controller_pause_event := InputEventJoypadButton.new()
+		controller_pause_event.button_index = JOY_BUTTON_START
+		controller_pause_event.pressed = true
+		game.input_router.handle_unhandled_input(controller_pause_event)
+		await get_tree().process_frame
+		check(game.active_overlay is PauseMenu, "Controller Start input routes to the pause menu")
+		check(game.world.process_mode == Node.PROCESS_MODE_DISABLED, "Controller pause suspends world simulation")
+		if game.active_overlay != null:
+			game.active_overlay.close_screen()
+		await get_tree().process_frame
+		game.input_router.handle_notification(NOTIFICATION_WM_GO_BACK_REQUEST)
+		await get_tree().process_frame
+		check(game.active_overlay is PauseMenu, "Mobile back notification routes to the pause menu")
+		check(game.world.process_mode == Node.PROCESS_MODE_DISABLED, "Mobile back pause suspends world simulation")
+		if game.active_overlay != null:
+			game.active_overlay.close_screen()
+		await get_tree().process_frame
 		game.queue_free()
 		await get_tree().process_frame
 
@@ -578,6 +1300,7 @@ func _test_passive_multipliers() -> void:
 	var e_ws := CombatEngine.new()
 	e_ws.setup([ws, ws_ally], [ws_enemy], 7)
 	check(near(e_ws.unit_speed(ws_ally), 100.0 * PassiveEffects.WHISPERSTEP_SPEED), "Whisperstep boosts an ally's speed", str(e_ws.unit_speed(ws_ally)))
+	check(CombatPassiveResolver.has_passive(ws, "whisperstep") and CombatPassiveResolver.team_has_passive([ws, ws_ally], "whisperstep"), "CombatPassiveResolver exposes pure passive and team queries")
 	check(near(e_ws.unit_speed(ws), 100.0 * PassiveEffects.WHISPERSTEP_SPEED), "Whisperstep boosts the owner's speed")
 	check(near(e_ws.unit_speed(ws_enemy), 105.0), "Whisperstep does not boost the enemy team", str(e_ws.unit_speed(ws_enemy)))
 	check(e_ws.order[0] == ws.combat_index, "Whisperstep speed feeds turn order", str(e_ws.order))
@@ -814,17 +1537,17 @@ func _test_gear_enhancement() -> void:
 	var instance: CharacterInstance = GameState.roster[0]
 	var uid := instance.uid
 	var previous_item := instance.equipped_item("weapon")
-	var previous_level := GameState.gear_level(uid, "weapon")
-	var old_gold := GameState.currency("gold")
-	var old_sap := GameState.item_count("glade_sap")
-	var old_weapon_count := GameState.item_count("gladewood_bow")
-	var old_gear_levels := GameState.gear_levels.duplicate(true)
+	var previous_level: Variant = GameState.gear_level(uid, "weapon")
+	var old_gold: Variant = GameState.currency("gold")
+	var old_sap: Variant = GameState.item_count("glade_sap")
+	var old_weapon_count: Variant = GameState.item_count("gladewood_bow")
+	var old_gear_levels: Variant = GameState.gear_levels.duplicate(true)
 	instance.equip("gladewood_bow", "weapon")
 	GameState.gear_levels[uid + "|weapon"] = 0
 	GameState.profile["gold"] = 10000
 	GameState.inventory["glade_sap"] = 5
 	var base_unit := CombatFactory.build_from_character(instance, 1.0)
-	var info := GameState.gear_upgrade_info(uid, "weapon")
+	var info: Variant = GameState.gear_upgrade_info(uid, "weapon")
 	check(bool(info.get("ok", false)), "equipped weapon exposes a valid enhancement offer", str(info))
 	check(GameState.enhance_gear(uid, "weapon"), "weapon enhancement consumes its stated resources")
 	var enhanced_unit := CombatFactory.build_from_character(instance, 1.0)
@@ -900,6 +1623,12 @@ func _test_missing_references() -> void:
 	var report_errors: Array = report.get("errors", [])
 	check(report_errors.is_empty(), "validate_all: shipped data is clean")
 	check(ctx.size() == 9, "validate_all parsed all 9 content files", str(ctx.size()))
+	var greenward_composition := load("res://resources/world/greenward_composition.tres") as GreenwardCompositionData
+	check(greenward_composition != null, "Greenward composition resource loads")
+	if greenward_composition != null:
+		check(greenward_composition.validate().is_empty(), "Greenward composition data validates", str(greenward_composition.validate()))
+		check(greenward_composition.village_npcs.size() == 3 and greenward_composition.river_props.size() == 13 and greenward_composition.river_animated_props.size() == 7, "Greenward village and river placements are data-backed")
+		check(greenward_composition.anchors.size() == 20 and greenward_composition.path_routes.size() == 5, "Greenward landmark anchors and route endpoints are validated region data")
 
 	# Character referencing a nonexistent skill id.
 	var char_doc := {
@@ -980,14 +1709,14 @@ func _test_invalid_banner_configs() -> void:
 
 # --------------------------------------------- Phase 2: quest prerequisites
 
-## start_quest() enforces the data `requires` prerequisite. Self-contained:
+## start_quest() enforces the data requires prerequisite. Self-contained:
 ## starts from a fresh new_game() and is restored by the runner's snapshot.
 func _test_quest_requirements() -> void:
 	GameState.new_game("Quest Requirements Test")
 	check(not GameState.start_quest("hollow_roots"), "hollow_roots is blocked while its prerequisite is incomplete")
 	check(GameState.quest_state("hollow_roots") == "not_started", "a blocked quest remains not_started")
 
-	# A normal quest with no `requires` still starts (and serves as the prereq).
+	# A normal quest with no requires still starts (and serves as the prereq).
 	check(GameState.start_quest("glade_whisper", "elder_maelin"), "a quest with no requires starts")
 	GameState.record_kill("mossling", 3)
 	check(GameState.quest_ready("glade_whisper"), "the prerequisite quest reaches its ready state")
@@ -996,7 +1725,7 @@ func _test_quest_requirements() -> void:
 	check(GameState.start_quest("hollow_roots"), "hollow_roots starts once its prerequisite is complete")
 	check(GameState.quest_state("hollow_roots") == "active", "hollow_roots is active after starting")
 
-	# A quest whose `requires` points at a nonexistent quest cannot start.
+	# A quest whose requires points at a nonexistent quest cannot start.
 	ContentDB.quests["test_bad_prereq"] = {
 		"name": "Bad Prereq", "region": "greenward", "summary": "Synthetic",
 		"requires": "does_not_exist", "steps": [], "rewards": {}
@@ -1004,6 +1733,37 @@ func _test_quest_requirements() -> void:
 	check(not GameState.start_quest("test_bad_prereq"), "a quest with a nonexistent prerequisite quest is rejected")
 	ContentDB.quests.erase("test_bad_prereq")
 
+
+# --------------------------------------------- Moonpetal Hollow story content
+
+func _test_moonpetal_story_content() -> void:
+	var quest: Dictionary = ContentDB.get_quest("moonpetal_echoes")
+	check(not quest.is_empty(), "Moonpetal Hollow story quest loads")
+	check(str(quest.get("region", "")) == "moonpetal_hollow", "Moonpetal story quest is region-bound")
+	check(str(quest.get("requires", "")) == "matron_bloom", "Moonpetal story follows the Fallen Matron arc")
+	var dialogue: Dictionary = ContentDB.get_dialogue("moonkeeper_liora")
+	check(not dialogue.is_empty() and dialogue.get("nodes", {}).has("turnin"), "Moonkeeper dialogue includes a quest turn-in")
+	var group: Dictionary = ContentDB.get_enemy_group("moonpetal_echoes_pack")
+	check(group.get("enemies", []).count("moonpetal_sprite") == 2, "Moonpetal encounter group contains two quest sprites")
+	var region: Dictionary = ContentDB.get_region("moonpetal_hollow")
+	var npc_found := false
+	for poi in region.get("pois", []):
+		if str(poi.get("id", "")) == "moonkeeper_liora":
+			npc_found = true
+	check(npc_found, "Moonkeeper Liora is registered as a Moonpetal point of interest")
+	var spawn_count := 0
+	for spawn in region.get("spawns", []):
+		if str(spawn.get("group", "")) == "moonpetal_echoes_pack":
+			spawn_count += 1
+	check(spawn_count == 2, "Moonpetal story encounter has two authored spawn sites")
+
+	GameState.new_game("Moonpetal Story Test")
+	check(not GameState.start_quest("moonpetal_echoes"), "Moonpetal story remains locked before Matron is defeated")
+	GameState.quests["matron_bloom"] = {"state": "complete", "step": 2}
+	check(GameState.start_quest("moonpetal_echoes", "moonkeeper_liora"), "Moonpetal story starts after the Matron arc")
+	GameState.record_kill("moonpetal_sprite", 3)
+	check(GameState.quest_ready("moonpetal_echoes"), "calming three sprites readies the Silver Pool quest")
+	check(GameState.complete_quest("moonpetal_echoes"), "Silver Pool quest can be completed and rewarded")
 
 # --------------------------------------------- Phase 2: reward validation
 
@@ -1049,8 +1809,8 @@ func _test_reward_validation() -> void:
 
 	# grant_reward_items(): currency-category entries -> wallet, others -> inventory.
 	GameState.new_game("Reward Routing Test")
-	var crystals_before := GameState.currency("crystals")
-	var sap_before := GameState.item_count("glade_sap")
+	var crystals_before: Variant = GameState.currency("crystals")
+	var sap_before: Variant = GameState.item_count("glade_sap")
 	GameState.grant_reward_items({ "crystals": 25, "glade_sap": 2 })
 	check(GameState.currency("crystals") == crystals_before + 25, "a currency reward is routed to add_currency")
 	check(GameState.item_count("glade_sap") == sap_before + 2, "a material reward is routed to add_item")
@@ -1088,8 +1848,8 @@ func _phase3_drive_anim(a: CharacterAnimator) -> void:
 	a.tick(0.2)
 
 
-## Free the standalone nodes returned by ChunkBuilder.build(). `detail` is a
-## child of `terrain`, so freeing terrain frees it too (never double-freed).
+## Free the standalone nodes returned by ChunkBuilder.build(). detail is a
+## child of terrain, so freeing terrain frees it too (never double-freed).
 func _phase3_free_chunk(data: Dictionary) -> void:
 	var terr: Variant = data.get("terrain")
 	if terr is Node and is_instance_valid(terr):
@@ -1175,10 +1935,19 @@ func _test_visual_style() -> void:
 	for k in kinds:
 		kset[k] = true
 	check(kset.size() == kinds.size(), "prop_kinds() has no duplicates")
+	var authored_report := ProceduralArt.authored_environment_report()
+	check(int(authored_report.get("total_kinds", -1)) == kinds.size(), "Authored environment audit covers the complete prop catalogue")
+	check(int(authored_report.get("authored_count", 0)) == authored_report.get("authored", []).size(), "Authored environment count matches registered sprites")
+	check(authored_report.get("invalid_assets", []).is_empty(), "Every registered authored environment sprite exists", str(authored_report.get("invalid_assets", [])))
+	check(authored_report.get("procedural_fallback", []).size() + authored_report.get("authored", []).size() == kinds.size(), "Every prop kind is classified as authored or procedural fallback")
+	check(authored_report.get("authored", []).size() == 14, "Fourteen environment props currently use authored SVG assets", str(authored_report.get("authored", [])))
 	var pal_ok := true
 	var vc_ok := true
 	for k in kinds:
 		var pal: Dictionary = GreenwardStyle.prop_palette(k)
+		var extracted_pal: Dictionary = GreenwardPropPalette.palette(k)
+		if extracted_pal != pal:
+			pal_ok = false
 		if pal.is_empty():
 			pal_ok = false
 		for pk in pal.keys():
@@ -1246,6 +2015,11 @@ func _test_visual_style() -> void:
 ## validation, play()/priority, 8-way direction mapping, looping and one-shot
 ## ticking, snapshot round-trips and determinism — with no SceneTree needed.
 func _test_character_animator() -> void:
+	check(CharacterAnimator.ALL_STATES == CharacterAnimationSpecCatalog.ALL_STATES, "CharacterAnimator state ids delegate to the immutable spec catalog")
+	check(CharacterAnimator.ALL_DIRECTIONS == CharacterAnimationSpecCatalog.ALL_DIRECTIONS, "CharacterAnimator direction ids delegate to the immutable spec catalog")
+	check(CharacterAnimator.STATE_NAMES == CharacterAnimationSpecCatalog.STATE_NAMES and CharacterAnimator.DIRECTION_NAMES == CharacterAnimationSpecCatalog.DIRECTION_NAMES, "animation state/direction labels remain catalog-aligned")
+	check(CharacterAnimator.STATE_FRAMES == CharacterAnimationSpecCatalog.STATE_FRAMES and CharacterAnimator.STATE_FPS == CharacterAnimationSpecCatalog.STATE_FPS, "animation frame counts and playback rates remain catalog-aligned")
+	check(CharacterAnimator.STATE_PRIORITY == CharacterAnimationSpecCatalog.STATE_PRIORITY and CharacterAnimator.STATE_LOOPING == CharacterAnimationSpecCatalog.STATE_LOOPING, "animation priority and looping contracts remain catalog-aligned")
 	check(CharacterAnimator.ALL_STATES.size() == 8, "ALL_STATES has 8 states", str(CharacterAnimator.ALL_STATES.size()))
 	check(CharacterAnimator.ALL_DIRECTIONS.size() == 8, "ALL_DIRECTIONS has 8 directions", str(CharacterAnimator.ALL_DIRECTIONS.size()))
 	var sn_ok := true
@@ -1512,6 +2286,10 @@ func _test_procedural_variety() -> void:
 	var cf0: Texture2D = ProceduralArt.character_frame(pal, 0, 0, 0)
 	var cimg := cf0.get_image()
 	check(cimg.get_width() == 96 and cimg.get_height() == 128, "character_frame() is 96x128")
+	var direct_character_image := Image.create(96, 128, false, Image.FORMAT_RGBA8)
+	direct_character_image.fill(Color(0, 0, 0, 0))
+	ProceduralCharacterArt.draw_frame(direct_character_image, pal, 0, 0, 0)
+	check(direct_character_image.get_data() == cimg.get_data(), "ProceduralArt facade delegates to ProceduralCharacterArt with pixel-identical output")
 	check(cimg.get_format() == Image.FORMAT_RGBA8, "character_frame() is RGBA8")
 	var cf0b: Texture2D = ProceduralArt.character_frame(pal, 0, 0, 0)
 	check(cf0 == cf0b, "character_frame() is cached")
@@ -1549,8 +2327,27 @@ func _test_procedural_variety() -> void:
 func _test_chunk_visual_quality() -> void:
 	var region: Dictionary = ContentDB.get_region("greenward")
 	check(not region.is_empty(), "greenward region loads for chunk build")
+	var scatter_kinds := {}
+	for prop_kind in GreenwardStyle.prop_kinds():
+		scatter_kinds[prop_kind] = true
+	var scatter_rng_a := RandomNumberGenerator.new()
+	scatter_rng_a.seed = 7319
+	var scatter_rng_b := RandomNumberGenerator.new()
+	scatter_rng_b.seed = 7319
+	var scatter_a := ChunkPropScatter.resolve_prop("glade_tree", scatter_rng_a, scatter_kinds, 0.4, 0.1)
+	var scatter_b := ChunkPropScatter.resolve_prop("glade_tree", scatter_rng_b, scatter_kinds, 0.4, 0.1)
+	check(scatter_a == scatter_b, "ChunkPropScatter preserves seeded deterministic prop resolution")
+	check(["pine_tree", "birch_tree", "willow_tree", "glade_tree"].has(str(scatter_a.get("kind", ""))), "highland tree scatter respects elevation-biased candidates")
+	check(int(scatter_a.get("variant", -1)) >= 0 and int(scatter_a.get("variant", -1)) < GreenwardStyle.variant_count(str(scatter_a.get("kind", ""))), "prop scatter variant stays inside the selected kind's range")
+	var scatter_entry := ChunkPropScatter.prop_entry("pine_tree", 2, Vector2(64, 96), 0.8, true, false)
+	check(scatter_entry.get("type") == "pine_tree" and scatter_entry.get("position") == Vector2(64, 96) and bool(scatter_entry.get("flip")) and not bool(scatter_entry.get("detail")), "ChunkPropScatter emits the complete canonical prop record")
+	var scatter_choice := ChunkPropScatter.choose_prop([{"type": "flower", "weight": 1.0}], 1.0, 0.0, scatter_rng_a)
+	check(scatter_choice == "flower", "ChunkPropScatter weighted selection respects region prop definitions")
 	# Boss territories must remain independent and far enough apart that their
 	# biome influence fields cannot merge into one ambiguous arena.
+	var extracted_boss_zones: Array = ChunkRegionLayoutResolver._boss_zones(region)
+	check(extracted_boss_zones == ChunkBuilder._boss_zones(region), "ChunkRegionLayoutResolver preserves the legacy boss-zone layout")
+	check(ChunkRegionLayoutResolver._path_segments(region) == ChunkBuilder._path_segments(region), "ChunkRegionLayoutResolver preserves deterministic authored routes")
 	var boss_zones: Array = ChunkBuilder._boss_zones(region)
 	check(boss_zones.size() == 2, "Greenward defines two distinct boss territories", str(boss_zones.size()))
 	var elder_zone: Dictionary = {}
@@ -1578,6 +2375,7 @@ func _test_chunk_visual_quality() -> void:
 		check(navigation._territory_for("greenward", matron_world, {}) == "withered_estate", "Fallen Matron resolves as its own navigation territory")
 		check(navigation._territory_for("greenward", village_world, {}).is_empty(), "Greenward village approach is outside both boss territories")
 		check(QuestNavigationResolver._in_territory("greenward", elder_world, "elder_hollow"), "Elder Hollow territory membership is recognized")
+		check(QuestNavigationTerritoryResolver.territory_for("greenward", elder_world, {}) == "elder_hollow", "Dedicated territory resolver classifies Elder Hollow")
 		check(not QuestNavigationResolver._in_territory("greenward", elder_world, "withered_estate"), "Elder Hollow is not classified as the Matron territory")
 	var seed := int(region.get("noise_seed", 1337))
 	var elevation := FastNoiseLite.new()
@@ -1766,6 +2564,160 @@ func _test_weather_director() -> void:
 	w1.set_state(99)
 	check(w1.current_state == WeatherDirector.MIST, "invalid set_state() leaves state unchanged (no crash)")
 
+	var weather_component := WorldWeatherComponent.new()
+	var managed_weather := weather_component.configure({
+		"noise_seed": 321,
+		"environment": {"weather_bias": ["mist"]},
+	})
+	check(managed_weather.seed_value == 826, "world weather component applies the deterministic region seed offset")
+	check(managed_weather.current_state == WeatherDirector.MIST, "world weather component applies the region weather bias")
+	check(weather_component.params().get("state") == WeatherDirector.MIST, "world weather component exposes director parameters")
+	check(not weather_component.tick(0.25), "world weather component advances weather without forcing a transition")
+	weather_component.free()
+
+	var follow_component := WorldEffectFollowComponent.new()
+	var follow_ambient := Node2D.new()
+	var follow_fireflies := Node2D.new()
+	var follow_rain := Node2D.new()
+	var follow_fog := Node2D.new()
+	follow_component.configure(follow_ambient, follow_fireflies, follow_rain, follow_fog)
+	follow_component.follow_player(Vector2(640.0, 320.0))
+	check(follow_ambient.global_position == Vector2(640.0, 320.0) and follow_fireflies.global_position == Vector2(640.0, 320.0), "world effect follower centers ambient particles and fireflies on the player")
+	check(follow_rain.global_position == Vector2(640.0, -100.0), "world effect follower preserves the rain's upward camera offset")
+	check(follow_fog.global_position == Vector2(640.0, 320.0), "world effect follower centers fog on the player")
+	follow_component.free()
+	follow_ambient.free()
+	follow_fireflies.free()
+	follow_rain.free()
+	follow_fog.free()
+
+	var fog_component := WorldFogComponent.new()
+	fog_component.configure(Vector2(4.0, 8.0), Vector2(2600.0, 1700.0), Color(0.8, 0.88, 0.95), 0.08, true)
+	check(fog_component.quad != null and fog_component.fog_material != null, "world fog component owns its shader material and fog quad")
+	check(fog_component.quad.z_index == 20 and fog_component.quad.scale == Vector2(1300.0, 850.0), "world fog component preserves the world-space quad dimensions and draw order")
+	check(fog_component.quad.position == Vector2(4.0, 8.0) and fog_component.quad.visible, "world fog component applies its initial position and visibility")
+	fog_component.apply_appearance(Color(0.2, 0.3, 0.4), 0.35)
+	check(is_equal_approx(float(fog_component.fog_material.get_shader_parameter("density")), 0.35), "world fog component updates shader density")
+	check(fog_component.fog_material.get_shader_parameter("fog_color") == Color(0.2, 0.3, 0.4, 1.0), "world fog component applies opaque fog colour")
+	fog_component.apply_appearance(Color.WHITE, 0.9)
+	check(is_equal_approx(float(fog_component.fog_material.get_shader_parameter("density")), 0.6), "world fog component clamps density to its safe upper bound")
+	fog_component.free()
+
+	var particle_root := Node2D.new()
+	var pollen_emitter := CPUParticles2D.new()
+	pollen_emitter.name = "PollenMotes"
+	particle_root.add_child(pollen_emitter)
+	var firefly_emitter := CPUParticles2D.new()
+	firefly_emitter.name = "Fireflies"
+	particle_root.add_child(firefly_emitter)
+	var rain_emitter := CPUParticles2D.new()
+	rain_emitter.name = "Rain"
+	particle_root.add_child(rain_emitter)
+	var ambient_component := WorldAmbientEffectsComponent.new()
+	ambient_component.configure(particle_root, true)
+	check(pollen_emitter.texture != null and firefly_emitter.texture != null and rain_emitter.texture != null, "ambient effects component configures all three particle textures")
+	check(firefly_emitter.emitting and not rain_emitter.emitting, "ambient effects component initializes night fireflies and keeps rain disabled")
+	ambient_component.apply_atmosphere(
+		{"fireflies": true},
+		{"particle_scale": 1.0, "tint": Color(0.5, 0.6, 0.7), "rain_amount": 7},
+		false, 100, Color.WHITE, Color.WHITE, false, Color.WHITE
+	)
+	check(pollen_emitter.amount == 4 and pollen_emitter.emitting, "ambient effects component scales pollen during firefly phases")
+	check(firefly_emitter.amount == 6 and firefly_emitter.emitting, "ambient effects component caps firefly density from the phase")
+	check(rain_emitter.amount == 7 and rain_emitter.emitting, "ambient effects component applies weather rain amount")
+	ambient_component.apply_atmosphere(
+		{"fireflies": true}, {"particle_scale": 1.0, "rain_amount": 7},
+		true, 100, Color.WHITE, Color.WHITE, false, Color.WHITE
+	)
+	check(pollen_emitter.amount == 2 and firefly_emitter.amount == 3, "ambient effects component halves ambient particles on mobile")
+	check(not rain_emitter.emitting, "ambient effects component disables rain on mobile")
+	ambient_component.free()
+	particle_root.free()
+
+	var light_root := Node2D.new()
+	var lighting_component := WorldLightingComponent.new()
+	light_root.add_child(lighting_component)
+	lighting_component.configure(light_root, 2)
+	var lamp_color := Color(1.0, 0.72, 0.38)
+	check(lighting_component.add_light(Vector2(3.0, 4.0), lamp_color, 1.4, 2.0), "localized lighting component creates a point light")
+	check(lighting_component.lights.size() == 1, "localized lighting component tracks its managed light")
+	var managed_lamp: PointLight2D = lighting_component.lights[0].light
+	check(managed_lamp.get_parent() == light_root and managed_lamp.position == IsoMath.grid_to_world(3.0, 4.0) + Vector2(0, -36), "localized lighting component preserves the entity parent and grid offset")
+	check(managed_lamp.texture != null and managed_lamp.blend_mode == Light2D.BLEND_MODE_ADD and is_equal_approx(managed_lamp.energy, 1.4), "localized lighting component preserves glow texture, additive blend and base energy")
+	lighting_component.apply_atmosphere(1.0, Color.WHITE, Color.WHITE, Color.WHITE)
+	check(is_equal_approx(managed_lamp.energy, 1.75), "localized lighting component scales light energy from the day/night phase")
+	check(managed_lamp.color == lamp_color.lerp(Color.WHITE, 0.10).lerp(Color.WHITE, 0.06).lerp(Color.WHITE, 0.05), "localized lighting component applies the phase, environment and zone tint blend")
+	check(lighting_component.add_light(Vector2.ZERO, Color.WHITE, 1.0, 1.0), "localized lighting component accepts lights up to its configured cap")
+	check(not lighting_component.add_light(Vector2.ONE, Color.WHITE, 1.0, 1.0) and lighting_component.lights.size() == 2, "localized lighting component enforces its light cap")
+	light_root.free()
+
+	var presentation_config := EnvironmentPresentationConfig.new()
+	presentation_config.day_night_enabled = false
+	presentation_config.ambient_particles_enabled = false
+	presentation_config.weather_enabled = false
+	presentation_config.fog_enabled = false
+	presentation_config.water_presentation_enabled = false
+	presentation_config.localized_lights_enabled = false
+	presentation_config.environmental_sound_enabled = false
+	presentation_config.fog_density_scale = 2.0
+	presentation_config.ambient_tint = Color(0.7, 0.8, 0.9)
+	presentation_config.weather_bias = ["rain"]
+	var config_day_night := DayNight.new()
+	var config_effect_root := Node2D.new()
+	var config_pollen := CPUParticles2D.new()
+	config_pollen.name = "PollenMotes"
+	config_effect_root.add_child(config_pollen)
+	var config_fireflies := CPUParticles2D.new()
+	config_fireflies.name = "Fireflies"
+	config_effect_root.add_child(config_fireflies)
+	var config_rain := CPUParticles2D.new()
+	config_rain.name = "Rain"
+	config_effect_root.add_child(config_rain)
+	var config_ambient := WorldAmbientEffectsComponent.new()
+	config_ambient.configure(config_effect_root, true)
+	var config_fog := WorldFogComponent.new()
+	config_fog.configure(Vector2.ZERO, Vector2(100.0, 100.0), Color.WHITE, 0.1, true)
+	var config_lights_root := Node2D.new()
+	var config_lighting := WorldLightingComponent.new()
+	config_lights_root.add_child(config_lighting)
+	config_lighting.configure(config_lights_root, 2)
+	config_lighting.add_light(Vector2.ZERO, Color.WHITE, 1.0, 1.0)
+	var config_water_root := Node2D.new()
+	var config_sound_root := Node2D.new()
+	var presentation_component := WorldPresentationConfigComponent.new()
+	check(presentation_component.configure(presentation_config, config_day_night, config_ambient, config_fog, config_lighting, config_water_root, config_sound_root), "world presentation config component accepts the authored resource")
+	check(not config_day_night.is_processing(), "world presentation config can disable the day/night cycle")
+	check(not config_pollen.visible and not config_fireflies.visible and not config_rain.visible and not config_rain.emitting, "world presentation config gates ambient particles and weather visuals")
+	check(not config_fog.quad.visible, "world presentation config can disable fog presentation")
+	config_fog.apply_appearance(Color.WHITE, 0.2)
+	check(is_equal_approx(float(config_fog.fog_material.get_shader_parameter("density")), 0.4), "world presentation config scales fog density")
+	check(not (config_lighting.lights[0].light as PointLight2D).visible, "world presentation config can disable localized lights")
+	check(not config_water_root.visible and not config_sound_root.visible, "world presentation config gates water and environmental sound roots")
+	var config_weather := WorldWeatherComponent.new()
+	check(config_weather.configure({"noise_seed": 10, "environment": {"weather_bias": ["mist"]}}, presentation_config.weather_bias).current_state == WeatherDirector.RAIN, "presentation config weather bias overrides the region default")
+	config_day_night.free()
+	config_effect_root.free()
+	config_ambient.free()
+	config_fog.free()
+	config_lights_root.free()
+	config_sound_root.free()
+	config_water_root.free()
+	presentation_component.free()
+	config_weather.free()
+
+	var bridge_navigation := WorldNavigationComponent.new()
+	var water_bridge_component := WorldWaterBridgeComponent.new()
+	water_bridge_component.configure(bridge_navigation)
+	var water_surface := MultiMeshInstance2D.new()
+	check(water_bridge_component.attach_water_surface(water_surface), "water/bridge component accepts a streamed water surface")
+	check(water_surface.get_parent() == water_bridge_component and water_surface.z_index == -1, "water/bridge component parents water on its dedicated layer with preserved relative depth")
+	water_bridge_component.register_bridge(Vector2(2.0, 5.0))
+	check(bridge_navigation.get_bridge_positions().size() == 1 and bridge_navigation.get_bridge_positions()[0] == IsoMath.grid_to_world(2.0, 5.0), "water/bridge component delegates bridge traversal registration to navigation")
+	water_bridge_component.set_water_enabled(false)
+	check(not water_bridge_component.visible, "water/bridge component gates its presentation root")
+	water_bridge_component.free()
+	bridge_navigation.free()
+
 
 # ------------------------------- Phase 3: animated & interactive props
 ## AnimatedProp/InteractiveProp are headless-safe Node2D wrappers. They build a
@@ -1807,12 +2759,95 @@ func _test_animated_and_interactive_props() -> void:
 	check(ip.is_in_group("interactables"), "InteractiveProp is in the 'interactables' group")
 	_phase3_activated_count = 0
 	ip.activated.connect(_phase3_on_activated)
-	var before_state := GameState._to_dict().duplicate(true)
+	var before_state: Variant = GameState._to_dict().duplicate(true)
 	ip.interact()
-	var after_state := GameState._to_dict().duplicate(true)
+	var after_state: Variant = GameState._to_dict().duplicate(true)
 	check(_phase3_activated_count == 1, "interact() emits activated exactly once", str(_phase3_activated_count))
 	check(before_state == after_state, "interact() does not mutate GameState")
 	ip.queue_free()
+	await get_tree().process_frame
+
+
+## Proximity alone must never launch an encounter; the player must explicitly
+## interact with the nearby roaming monster.
+func _test_roaming_monster_manual_encounter() -> void:
+	var player_probe := CharacterBody2D.new()
+	player_probe.name = "ManualEncounterPlayerProbe"
+	player_probe.add_to_group("player")
+	add_child(player_probe)
+	var monster_scene := load("res://scenes/world/roaming_monster.tscn") as PackedScene
+	check(monster_scene != null, "RoamingMonster composition scene loads")
+	if monster_scene == null:
+		player_probe.queue_free()
+		return
+	var monster := monster_scene.instantiate() as RoamingMonster
+	monster.name = "ManualEncounterMonsterProbe"
+	monster.setup("glade_mossling_pack", Vector2.ZERO, ContentDB.get_enemy("mossling"), false)
+	add_child(monster)
+	_roaming_encounter_count = 0
+	if not EventBus.encounter_requested.is_connected(_on_test_roaming_encounter):
+		EventBus.encounter_requested.connect(_on_test_roaming_encounter)
+	await get_tree().process_frame
+	check(monster.movement_component is EnemyMovement, "RoamingMonster delegates passive roaming to its EnemyMovement component")
+	check(monster.roaming_behavior is EnemyRoamingBehavior, "RoamingMonster delegates its passive frame loop to an authored EnemyRoamingBehavior node")
+	check(monster.enemy_controller is EnemyController and monster.enemy_controller.state_machine == monster.state_machine, "RoamingMonster binds its state machine through EnemyController")
+	monster._set_enemy_state(&"idle")
+	check(monster.state_machine.current_state_name == &"idle", "RoamingMonster routes state changes through EnemyController")
+	check(monster.enemy_visual_component is EnemyVisualComponent and (monster.enemy_visual_component.get_parent() == monster or monster.enemy_visual_component.get_parent() == monster.get_node_or_null("Components")), "RoamingMonster delegates palette variation, silhouette, nameplate and accent setup to its EnemyVisual component")
+	check(monster.get_node_or_null("ActorVisual") is ActorVisual and monster.get_node_or_null("NameLabel") is Label and monster.get_node_or_null("Accent") is Sprite2D, "RoamingMonster binds its authored actor, nameplate and accent scenes")
+	monster._process(0.016)
+	var status_probe := EnemyStatusEffects.new()
+	monster.add_child(status_probe)
+	monster.status_component = status_probe
+	status_probe.apply_status("tick_probe", 1.0)
+	monster._process(0.1)
+	check(near(float(status_probe.statuses["tick_probe"].duration), 0.9), "RoamingMonster ticks enemy status effects exactly once per frame")
+	check(not monster.engaged, "Roaming monster stays passive when player is nearby")
+	check(_roaming_encounter_count == 0, "Proximity does not emit encounter_requested")
+	check(monster.can_interact(), "Nearby roaming monster remains interactable")
+	monster.interact()
+	check(monster.engaged, "Explicit monster interaction marks encounter engaged")
+	check(_roaming_encounter_count == 1, "Explicit monster interaction emits exactly one encounter request", str(_roaming_encounter_count))
+	var boss := monster_scene.instantiate() as RoamingMonster
+	boss.name = "StationaryBossArenaProbe"
+	boss.setup("elder_hollow", Vector2(520.0, 0.0), ContentDB.get_enemy("elder_hollow"), true)
+	add_child(boss)
+	await get_tree().process_frame
+	var boss_home := boss.home_position
+	var previous_baltoria_quest: Dictionary = GameState.quest_domain.quests.get("baltoria_summoning", {}).duplicate(true)
+	boss.required_quest = "baltoria_summoning"
+	boss.required_quest_step = 1
+	GameState.quest_domain.quests.erase("baltoria_summoning")
+	check(not boss.can_interact(), "Baltoria remains sealed before its summoning quest is started")
+	GameState.quest_domain.quests["baltoria_summoning"] = {"state": "active", "step": 0, "progress": 0}
+	check(not boss.can_interact(), "Baltoria remains sealed while the player is speaking to the gatekeeper")
+	GameState.quest_domain.quests["baltoria_summoning"] = {"state": "active", "step": 1, "progress": 0}
+	check(boss.can_interact(), "Baltoria unlocks only when the active quest reaches the defeat objective")
+	var boss_position_probe := player_probe.position
+	player_probe.position = boss_home
+	boss.position = boss_home
+	boss.interact()
+	check(boss.engaged, "Unlocked Baltoria starts only through explicit arena interaction")
+	check(_roaming_encounter_count == 2, "Unlocked Baltoria emits one encounter request", str(_roaming_encounter_count))
+	boss.engaged = false
+	boss.position = boss_home + Vector2(90.0, 0.0)
+	player_probe.position = boss_position_probe
+	if previous_baltoria_quest.is_empty():
+		GameState.quest_domain.quests.erase("baltoria_summoning")
+	else:
+		GameState.quest_domain.quests["baltoria_summoning"] = previous_baltoria_quest
+	boss.position = boss_home + Vector2(90.0, 0.0)
+	boss._process(0.016)
+	check(boss.position.distance_to(boss_home) < 0.5, "Boss encounter remains anchored to its authored arena position")
+	check(boss.global_position.distance_to(player_probe.global_position) > boss.interaction_radius, "Boss is outside the player's interaction radius before entering its arena")
+	boss.position = boss_home
+	player_probe.position = boss_home
+	check(boss.global_position.distance_to(player_probe.global_position) <= boss.interaction_radius, "Boss enters interaction range only when the player reaches its arena")
+	if EventBus.encounter_requested.is_connected(_on_test_roaming_encounter):
+		EventBus.encounter_requested.disconnect(_on_test_roaming_encounter)
+	monster.queue_free()
+	boss.queue_free()
+	player_probe.queue_free()
 	await get_tree().process_frame
 
 
@@ -1832,14 +2867,57 @@ func _test_world_visual_integration() -> void:
 	check(game.world != null, "assembled scene creates a world")
 	check(game.world.player != null, "assembled world creates a player")
 	check(game.hud != null, "assembled scene creates a HUD (GameScreen.hud)")
+	var portrait_party := game.hud.get_node_or_null("PartyPanel") as Control
+	var portrait_hint := game.hud.get_node_or_null("HintLabel") as Control
+	game.hud._apply_responsive_layout(Vector2(390, 844))
+	check(portrait_party != null and not portrait_party.visible, "portrait HUD hides the overlapping party panel")
+	check(portrait_hint != null and not portrait_hint.visible, "portrait HUD hides desktop keyboard hint")
+	check(game.hud._minimap != null and is_equal_approx(game.hud._minimap.offset_left, -188.0) and is_equal_approx(game.hud._minimap.offset_right, -18.0), "portrait HUD compacts minimap to 170px")
+	check(game.hud._minimap != null and game.hud._minimap.marker_component is MinimapMarkerComponent and game.hud._minimap.marker_component.get_parent() == game.hud._minimap, "Minimap owns an authored marker-data component")
+	if game.hud._minimap != null and game.hud._minimap.marker_component != null:
+		game.hud._minimap._find_world()
+		game.hud._minimap._update_markers()
+		check(game.hud._minimap.marker_component.active_world == game.world, "Minimap marker component binds the active world before collecting markers")
+	var portrait_prompt := game.hud.get_node_or_null("PromptCenter") as Control
+	check(portrait_prompt != null and is_equal_approx(portrait_prompt.offset_top, -523.28) and is_equal_approx(portrait_prompt.offset_bottom, -455.76), "portrait HUD moves interaction prompt above touch controls")
+	game.hud._apply_responsive_layout(Vector2(1280, 720))
+	check(portrait_party != null and portrait_party.visible, "landscape HUD restores party panel")
+	check(game.hud._minimap != null and is_equal_approx(game.hud._minimap.offset_left, -244.0) and is_equal_approx(game.hud._minimap.offset_right, -20.0), "landscape HUD restores full-size minimap")
 	check(game.world.current_area_name() != "", "world reports a non-empty area name", str(game.world.current_area_name()))
 	check(game.world.weather is WeatherDirector, "world wires a WeatherDirector")
 	check(game.world.day_night is DayNight, "world wires a DayNight")
+	check(game.world.npcs.size() >= 3 and game.world.npcs.all(func(npc): return npc is WorldNPC and npc.get_parent() == game.world.entities), "entity spawner creates and registers all three Greenward NPCs under the entities layer")
+	check(game.world.npcs.all(func(npc): return npc.get_node_or_null("ActorVisual") is ActorVisual and npc.get_node_or_null("NameLabel") is Label and npc.get_node_or_null("SubtitleLabel") is Label and npc.get_node_or_null("InteractionRing") != null and npc.get_node_or_null("QuestMarker") != null), "all world NPCs own their complete authored presentation hierarchy")
+	check(game.world.chunk_streaming_component is WorldChunkStreamingComponent, "assembled world wires its chunk streaming component")
+	check(game.world.chunk_streaming_component.get_parent() == game.world, "chunk streaming component is owned by the world")
+	check(game.world.chunk_lifecycle_component is WorldChunkLifecycleComponent, "assembled world wires its chunk lifecycle component")
+	check(game.world.chunk_lifecycle_component.get_parent() == game.world and game.world.chunk_lifecycle_component.world == game.world, "chunk lifecycle component is owned and configured by the world")
+	check(game.world.region_builder_component is WorldRegionBuilderComponent, "assembled world wires its data-driven region builder")
+	check(game.world.region_builder_component.get_parent() == game.world and game.world.region_builder_component.world == game.world, "region builder component is owned and configured by the world")
+	check(game.world.greenward_builder_component is WorldGreenwardBuilderComponent, "assembled world wires its Greenward composition builder")
+	check(game.world.greenward_builder_component.get_parent() == game.world and game.world.greenward_builder_component.world == game.world, "Greenward builder component is owned and configured by the world")
+	check(game.world.streamer == game.world.chunk_streaming_component.streamer and game.world._preparer == game.world.chunk_streaming_component.preparer, "world streaming compatibility references alias the component services")
+	check(game.world._prepared_nodes == game.world.chunk_streaming_component.prepared_nodes, "world prepared-node tracking aliases the component cache")
+	check(game.world.water_and_bridges is WorldWaterBridgeComponent, "assembled world wires its water/bridge presentation component")
+	check(game.world.water_and_bridges.navigation == game.world.navigation_component, "water/bridge component shares the world navigation owner")
+	check(game.world.lighting_component is WorldLightingComponent, "assembled world wires its localized lighting component")
+	check(game.world.lighting_component.get_parent() == game.world, "assembled world owns its localized lighting component")
+	check(game.world.region_context_component is WorldRegionContextComponent and game.world.region_context_component.world == game.world and game.world.region_context_component.get_parent() == game.world, "world region-context component is owned and configured")
+	check(game.world.day_night_presentation_component is WorldDayNightPresentationComponent and game.world.day_night_presentation_component.world == game.world and game.world.day_night_presentation_component.get_parent() == game.world, "world day/night presentation component is owned and configured")
+	check(game.world.atmosphere_component is WorldAtmosphereComponent and game.world.atmosphere_component.world == game.world and game.world.atmosphere_component.get_parent() == game.world, "world atmosphere component is owned and configured")
+	check(game.world.prop_factory_component is WorldPropFactoryComponent and game.world.prop_factory_component.world == game.world and game.world.prop_factory_component.get_parent() == game.world, "world prop factory component is owned and configured")
+	check(game.world.visual_standards_component is WorldVisualStandardsComponent and game.world.visual_standards_component.world == game.world and game.world.visual_standards_component.get_parent() == game.world, "world visual-standards component is owned and configured")
+	check(game.world.day_night.phase_changed.is_connected(game.world.day_night_presentation_component._on_phase_changed), "day/night phase signal is routed directly to its presentation component")
+	check(game.world.day_phase() == game.world.day_night.phase_at(game.world.day_night.time_of_day), "day/night facade delegates phase resolution to its component")
+	check(game.world._environment() == game.world.region_context_component.environment() and not game.world._environment().is_empty(), "world environment facade delegates to region context")
+	check(game.world.current_area_name() == game.world.region_context_component.current_area_name(), "world area-name facade delegates to region context")
+	check(game.world._lights == game.world.lighting_component.lights, "assembled world retains a live light-array compatibility alias")
 	var chunks: Dictionary = game.world.loaded_chunks
 	check(chunks.size() > 0, "world has loaded chunks", str(chunks.size()))
 	if chunks.size() > 0:
 		var first: Dictionary = chunks.values()[0]
 		check(first.get("terrain") is MultiMeshInstance2D, "first loaded chunk's terrain is a MultiMeshInstance2D")
+		check(first.get("terrain").get_parent() == game.world.terrain_layer, "chunk lifecycle component parents materialized terrain into the world terrain layer")
 	var pv: ActorVisual = game.world.player.visual
 	check(pv != null, "player exposes an ActorVisual")
 	check(pv.animator != null, "player visual has an animator")
@@ -1857,19 +2935,88 @@ func _test_world_visual_integration() -> void:
 	var reported_player_art: Dictionary = report.get("character_art", {})
 	check(reported_player_art.get("using_temporary_art", true) == false, "World visual report reflects Kael's final playable art")
 	check(reported_player_art.get("animation_count", 0) == 72, "World visual report exposes all 72 Kael animations")
+
+	# Exercise the actual GameScreen input route, not only monster.interact().
+	# A nearby monster must remain passive until an explicit interact action.
+	var encounter_probe := load("res://scenes/world/roaming_monster.tscn").instantiate() as RoamingMonster
+	encounter_probe.name = "GameScreenManualEncounterProbe"
+	encounter_probe.setup("glade_mossling_pack", Vector2.ZERO, ContentDB.get_enemy("mossling"), false)
+	game.world.add_child(encounter_probe)
+	encounter_probe.global_position = game.world.player.global_position
+	await get_tree().process_frame
+	game.world.player._scan_for_interactable()
+	check(encounter_probe.can_interact(), "assembled world exposes nearby monster as interactable")
+	check(not encounter_probe.engaged and game.active_combat == null, "assembled world does not start combat from proximity")
+	var previous_touch_mode := TouchInput.using_touch
+	TouchInput.using_touch = true
+	game.hud._process(0.13)
+	check(game.hud._touch_interact != null and game.hud._touch_interact.visible, "mobile HUD reveals Interact button for a nearby monster")
+	TouchInput.using_touch = previous_touch_mode
+	var interact_event := InputEventAction.new()
+	interact_event.action = "interact"
+	interact_event.pressed = true
+	game._unhandled_input(interact_event)
+	check(encounter_probe.engaged, "GameScreen interact action engages the nearby monster")
+	check(game.active_combat != null, "GameScreen interact action opens the real combat screen")
+	if game.active_combat != null:
+		check(game.active_combat.group_id == "glade_mossling_pack", "manual interaction opens the matching enemy group")
+		check(game.active_combat.engine != null and game.active_combat.engine.combatants.size() >= 4, "main-game encounter route creates both combat teams")
+		check(game.active_combat._battlefield != null, "main-game encounter route mounts the authored battlefield")
+		check(game.active_combat._battlefield != null and game.active_combat._battlefield.actors().size() >= 4, "main-game encounter route presents all combatants on the battlefield")
+		check(game.active_combat._hud_component != null and game.active_combat._skills_box != null, "main-game encounter route builds the combat action HUD")
+		check(game.active_combat._turn_order_component != null and game.active_combat._turn_box != null, "main-game encounter route builds the turn-order display")
+		var routed_report: Dictionary = game.active_combat.presentation_report()
+		check(routed_report.get("screen", "") == "combat" and routed_report.get("battlefield_report", {}).get("actors", 0) >= 4, "main-game combat presentation report confirms live battlefield actors")
 	game.queue_free()
 	await get_tree().process_frame
 
-	var backdrop := MainBackdrop.new()
-	add_child(backdrop)
+	# Exercise the authored mobile button's pressed signal through the real
+	# GameScreen connection in a fresh scene, independently of keyboard input.
+	var touch_game := game_scene.instantiate()
+	add_child(touch_game)
 	await get_tree().process_frame
-	check(backdrop.is_inside_tree(), "MainBackdrop enters the tree without crashing")
-	backdrop.queue_free()
 	await get_tree().process_frame
+	var touch_probe := load("res://scenes/world/roaming_monster.tscn").instantiate() as RoamingMonster
+	touch_probe.name = "GameScreenTouchEncounterProbe"
+	touch_probe.setup("glade_mossling_pack", Vector2.ZERO, ContentDB.get_enemy("mossling"), false)
+	touch_game.world.add_child(touch_probe)
+	touch_probe.global_position = touch_game.world.player.global_position
+	await get_tree().process_frame
+	touch_game.world.player._scan_for_interactable()
+	var touch_previous_mode := TouchInput.using_touch
+	TouchInput.using_touch = true
+	touch_game.hud._process(0.13)
+	check(touch_game.hud._touch_interact != null, "touch integration exposes the authored Interact control")
+	check(not touch_probe.engaged and touch_game.active_combat == null, "touch integration remains passive before button press")
+	if touch_game.hud._touch_interact != null:
+		touch_game.hud._touch_interact.pressed.emit()
+	check(touch_probe.engaged, "authored touch Interact button engages the nearby monster")
+	check(touch_game.active_combat != null, "authored touch Interact button opens the real combat screen")
+	if touch_game.active_combat != null:
+		check(touch_game.active_combat.group_id == "glade_mossling_pack", "touch interaction opens the matching enemy group")
+	TouchInput.using_touch = touch_previous_mode
+	touch_game.queue_free()
+	await get_tree().process_frame
+
+	var backdrop_scene := load("res://scenes/ui/main_backdrop.tscn") as PackedScene
+	var backdrop := backdrop_scene.instantiate() as MainBackdrop if backdrop_scene != null else null
+	check(backdrop != null, "MainBackdrop loads from its authored composition scene")
+	if backdrop != null:
+		add_child(backdrop)
+		await get_tree().process_frame
+		check(backdrop.is_inside_tree(), "MainBackdrop enters the tree without crashing")
+		check(backdrop.presentation is MainBackdropPresentationComponent and backdrop.presentation.get_parent() == backdrop, "MainBackdrop binds its authored presentation component")
+		check(backdrop.presentation.layout_component is MainBackdropLayoutComponent and backdrop.presentation.layout_component.get_parent() == backdrop.presentation, "MainBackdrop presentation owns its responsive layout node")
+		check(backdrop.presentation.animation_component is MainBackdropAnimationComponent and backdrop.presentation.animation_component.get_parent() == backdrop.presentation, "MainBackdrop presentation owns its ambient animation node")
+		check(backdrop.presentation.layout_component.presentation == backdrop.presentation, "Backdrop layout component binds to its presentation owner")
+		check(backdrop.presentation.animation_component.presentation == backdrop.presentation, "Backdrop animation component binds to its presentation owner")
+		check(backdrop.get_node_or_null("SkyGradient") is ColorRect and backdrop.get_node_or_null("SkyGradientTexture") is TextureRect and backdrop.get_node_or_null("MoonLayer") is Node2D, "Backdrop presentation component binds authored sky and moon layers")
+		backdrop.queue_free()
+		await get_tree().process_frame
 
 
 # ===================================================================== Phase 4
-# Phase 4 shared helpers. Prefixed `_phase4_` to avoid collisions with the
+# Phase 4 shared helpers. Prefixed _phase4_ to avoid collisions with the
 # Phase-2/Phase-3 helpers. Everything here is pure data / headless-safe.
 
 
@@ -1936,7 +3083,7 @@ func _phase4_drive_anim(a: CharacterAnimator) -> void:
 	a.tick(0.2)
 
 
-## True when a Dictionary exposes every key in `keys`.
+## True when a Dictionary exposes every key in keys.
 func _phase4_has_keys(entry: Dictionary, keys: Array) -> bool:
 	for k in keys:
 		if not entry.has(str(k)):
@@ -2009,8 +3156,11 @@ func _test_region_definitions() -> void:
 	check(conn_to_ok, "every connections[].to names an existing region")
 
 	var graph := RegionGraph.new(ContentDB.regions)
-	check(graph.region_ids().size() == 2, "RegionGraph.region_ids().size() == 2", str(graph.region_ids().size()))
-	check(graph.has_region("greenward") and graph.has_region("moonpetal_hollow"), "graph.has_region() for both ids")
+	var region_ids := graph.region_ids()
+	check(region_ids.size() >= 2, "RegionGraph.region_ids().size() >= 2", str(region_ids.size()))
+	check(graph.has_region("greenward") and graph.has_region("moonpetal_hollow"), "graph.has_region() for greenward and moonpetal_hollow")
+	if graph.has_region("castle_royal_gardens"):
+		check(graph.region_name("castle_royal_gardens") != "", "graph.region_name() non-empty for castle_royal_gardens")
 	check(not graph.definition("greenward").is_empty() and not graph.definition("moonpetal_hollow").is_empty(), "graph.definition() non-empty for both")
 	check(graph.region_name("greenward") != "" and graph.region_name("moonpetal_hollow") != "", "graph.region_name() non-empty for both")
 	check(not graph.entry_points("greenward").is_empty() and not graph.entry_points("moonpetal_hollow").is_empty(), "graph.entry_points() non-empty for both")
@@ -2087,6 +3237,40 @@ func _test_region_graph_transitions() -> void:
 ## Feeds SYNTHETIC region dictionaries (in-memory, no files) through all three
 ## validators and asserts SPECIFIC error substrings for each defect, plus a
 ## fully-valid zero-error baseline and the raw-text validate_text() path.
+func _test_region_gate_unlocks() -> void:
+	var garden_region: Dictionary = ContentDB.get_region("castle_royal_gardens")
+	var connections: Array = garden_region.get("connections", [])
+	var gate_data: Dictionary = {}
+	for connection in connections:
+		if str(connection.get("id", "")) == "boss_path_gate":
+			gate_data = connection
+	check(str(gate_data.get("requires_quest", "")) == "garden_shadows", "Royal Road gate declares the garden restoration quest prerequisite")
+	var previous_quest: Dictionary = GameState.quest_domain.quests.get("garden_shadows", {}).duplicate(true)
+	GameState.quest_domain.quests.erase("garden_shadows")
+	var portal := RegionPortal.new()
+	portal.setup("castle_royal_gardens", gate_data)
+	add_child(portal)
+	await get_tree().process_frame
+	check(portal.can_interact() and not portal._requirement_met(), "Locked regional gate remains inspectable but cannot transition")
+	_region_change_count = 0
+	if not EventBus.region_change_requested.is_connected(_on_test_region_change):
+		EventBus.region_change_requested.connect(_on_test_region_change)
+	portal.interact()
+	check(_region_change_count == 0, "Locked Royal Road gate does not emit a region transition")
+	GameState.quest_domain.quests["garden_shadows"] = {"state": "complete", "step": 3, "progress": 0}
+	check(portal._requirement_met(), "Completing the garden restoration quest unlocks the Royal Road")
+	portal.interact()
+	check(_region_change_count == 1, "Unlocked Royal Road gate emits exactly one region transition")
+	if EventBus.region_change_requested.is_connected(_on_test_region_change):
+		EventBus.region_change_requested.disconnect(_on_test_region_change)
+	portal.queue_free()
+	if previous_quest.is_empty():
+		GameState.quest_domain.quests.erase("garden_shadows")
+	else:
+		GameState.quest_domain.quests["garden_shadows"] = previous_quest
+	await get_tree().process_frame
+
+
 func _test_invalid_connections() -> void:
 	var ctx: Dictionary = ContentValidator.validate_all().get("data", {})
 
@@ -2194,14 +3378,15 @@ func _test_region_save_state() -> void:
 
 	GameState.set_region_position("greenward", Vector2(11.5, 22.25))
 	check(GameState.has_region_position("greenward"), "has_region_position(greenward) true after set")
-	var pg := GameState.region_position("greenward")
+	var pg: Variant = GameState.region_position("greenward")
 	check(near(pg.x, 11.5) and near(pg.y, 22.25), "region_position(greenward) round-trips the Vector2")
 	GameState.set_region_position("moonpetal_hollow", Vector2(33.5, 44.75))
 	check(GameState.has_region_position("moonpetal_hollow"), "has_region_position(moonpetal_hollow) true")
-	var pm := GameState.region_position("moonpetal_hollow")
+	var pm: Variant = GameState.region_position("moonpetal_hollow")
 	check(near(pm.x, 33.5) and near(pm.y, 44.75), "region_position(moonpetal_hollow) round-trips")
 	check(near(GameState.region_position("greenward").x, 11.5), "greenward position is independent of moonpetal")
-	check(GameState.region_positions.size() == 2, "region_positions holds one slot per region")
+	check(GameState.has_region_position("greenward") and GameState.has_region_position("moonpetal_hollow"), "region_positions holds independent slots per region")
+	check(near(GameState.region_position("greenward").x, 11.5) and near(GameState.region_position("moonpetal_hollow").x, 33.5), "region_positions stores each region independently")
 
 	GameState.set_player_region("greenward")
 	GameState.set_player_position(Vector2(5.0, 6.0))
@@ -2232,13 +3417,356 @@ func _test_region_save_state() -> void:
 	var old: Dictionary = original.duplicate(true)
 	old.erase("region")
 	old.erase("region_positions")
+	old.erase("active_world_id")
+	old.erase("player_facing")
 	GameState._load_from_dict(old)
 	check(GameState.player_region == "greenward", "old save (no region key) defaults player_region to greenward")
-	check(GameState.region_positions.is_empty(), "old save (no region_positions) yields empty region_positions")
+	if bool(old.get("has_position", false)):
+		check(GameState.has_region_position("greenward"), "legacy save migrates stored position into active greenward region slot")
+		check(near(GameState.region_position("greenward").x, GameState.player_position.x), "migrated legacy region position preserves x")
+	else:
+		check(GameState.region_positions.is_empty(), "old save without position leaves region_positions empty")
 	check(not GameState.profile.is_empty(), "old save loads fully without crashing")
 
 	GameState._load_from_dict(original.duplicate(true))
 	GameState.loaded_from_save = original_loaded
+
+
+## Reproduce New Journey -> Castle -> return to title -> Continue using the real
+## GameState, world resolver, SaveService JSON file, and startup-flow component.
+func _test_new_journey_castle_continue() -> void:
+	var startup_script := load("res://scripts/game/components/main_startup_flow_component.gd")
+	var game_scene: PackedScene = load("res://scenes/game.tscn")
+	check(startup_script != null and game_scene != null, "Continue regression scenes load")
+	if startup_script == null or game_scene == null:
+		return
+
+	var test_host := Control.new()
+	add_child(test_host)
+	var startup := startup_script.new() as MainStartupFlowComponent
+	test_host.add_child(startup)
+	startup.bind(test_host)
+	# Exercise the current startup flow's new-journey setup instead of the removed
+	# MainMenu handler; the title screen owns this action in the current UI.
+	startup._prepare_new_journey()
+	check(not GameState.loaded_from_save, "New Journey enters unsaved journey state")
+
+	var first_game := game_scene.instantiate() as GameScreen
+	add_child(first_game)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	check(first_game.current_region_id == "castle_royal_gardens", "New Journey resolves to Royal Gardens")
+	var perimeter = first_game.world.get_node_or_null("GardenPerimeterWalls") if first_game.world != null else null
+	check(perimeter is CastlePerimeterWallsComponent, "Castle map validates its authored perimeter wall assembly")
+	if perimeter is CastlePerimeterWallsComponent:
+		check(perimeter.get_child_count() == 4, "Castle perimeter is composed of four authored architectural wall-run scenes")
+		for wall_run in perimeter.get_children():
+			check(wall_run is CastlePerimeterWallRunComponent, "Perimeter segment uses the reusable wall-run component", str(wall_run.name))
+			check(wall_run.get_node_or_null("Facade") is Polygon2D and wall_run.get_node_or_null("Parapet") is Polygon2D and wall_run.get_node_or_null("Plinth") is Polygon2D and wall_run.get_node_or_null("Piers") is Node2D, "Perimeter wall owns authored architectural presentation layers", str(wall_run.name))
+			check(wall_run.get_node_or_null("WallCollision") is StaticBody2D, "Each perimeter wall run retains its authored collision barrier", str(wall_run.name))
+			var wall_shape := wall_run.get_node_or_null("WallCollision/CollisionShape2D") as CollisionShape2D
+			var wall_rect := wall_shape.shape as RectangleShape2D if wall_shape != null else null
+			check(wall_rect != null and is_equal_approx(wall_rect.size.x, wall_run.run_length) and is_equal_approx(wall_rect.size.y, 38.0), "Perimeter collision dimensions match the configured wall run", str(wall_run.name))
+			var expected_piers := int(floor(wall_run.run_length / wall_run.bay_width)) + 1
+			check(wall_run.get_node_or_null("Piers").get_child_count() == expected_piers, "Perimeter pier spacing is generated from the wall run's bay width", str(wall_run.name))
+	check(first_game.world.get_node_or_null("PlayerSpawner") is CastlePlayerSpawnerComponent, "Castle player spawning is owned by an authored child component")
+	check(first_game.world.get_node_or_null("WorldRuntime") is CastleWorldRuntimeComponent, "Castle position persistence is owned by an authored runtime component")
+	check(first_game.world.get_node_or_null("Presentation") is CastleWorldPresentationComponent, "Castle visual reporting is owned by an authored presentation component")
+	check(first_game.world.get_node_or_null("Castle") == null, "Royal Gardens does not contain the separate Gothic Castle architecture")
+	var royal_gardens_gothic_textures: Array[String] = []
+	var royal_gardens_scan: Array[Node] = [first_game.world]
+	while not royal_gardens_scan.is_empty():
+		var inspected: Node = royal_gardens_scan.pop_back()
+		if inspected is Sprite2D:
+			var sprite_texture := (inspected as Sprite2D).texture
+			if sprite_texture != null and sprite_texture.resource_path.contains("/Gothic_Castle/"):
+				royal_gardens_gothic_textures.append(sprite_texture.resource_path)
+		for child in inspected.get_children():
+			royal_gardens_scan.append(child)
+	check(royal_gardens_gothic_textures.is_empty(), "Royal Gardens does not render Gothic Castle region textures", str(royal_gardens_gothic_textures))
+	check(first_game.world.get_node_or_null("GardenPerimeterWalls") is CastlePerimeterWallsComponent, "Royal Gardens keeps its own perimeter without a castle overlay")
+	check(first_game.world.get_node_or_null("Terrain/GrassDetails") is Node2D and first_game.world.get_node_or_null("Lighting") is Node2D and first_game.world.get_node_or_null("EnvironmentEffects") is Node2D, "Terrain and lighting layers are authored in the Royal Gardens scene")
+	var terrain_config := first_game.world.get_node_or_null("Terrain/Configuration") as Node2D
+	check(terrain_config != null and terrain_config.get_meta("ground_min", null) is Vector2i and terrain_config.get_meta("ground_max", null) is Vector2i and terrain_config.get_child_count() == 6, "Terrain bounds, tile metrics, seed and six grass detail placements are scene-authored")
+	check(first_game.world.get_node_or_null("PathwayTiles/RoyalPromenade") is Node2D and first_game.world.get_node_or_null("PathwayTiles/RoyalPromenade").get_child_count() == 105, "Royal Promenade is a reusable authored pathway assembly")
+	check(first_game.world.get_node_or_null("OuterRoad") is Node2D and first_game.world.get_node_or_null("OuterRoad").get_child_count() == 90, "Outer Road is a reusable authored road assembly")
+	check(first_game.world.get_node_or_null("Water/FountainCourt") is Node2D and first_game.world.get_node_or_null("Water/OuterPonds") is Node2D, "Water features are owned by a reusable water assembly")
+	check(first_game.world.get_node_or_null("Water") is CastleWaterComponent and first_game.world.get_node_or_null("Water/WaterZones/LeftPond") is Marker2D and first_game.world.is_water_world(IsoMath.grid_to_world(23.75, 10.31)), "Water interaction zones are owned by authored water markers and their component")
+	check(first_game.world.get_node_or_null("Flora/TreeAvenue") is Node2D and first_game.world.get_node_or_null("Flora/FlowerBorders") is Node2D and first_game.world.get_node_or_null("Flora/HedgesAndShrubs") is Node2D and first_game.world.get_node_or_null("Flora/WorldPerimeter") is Node2D, "Flora is organized into authored tree, flower, hedge and perimeter groups")
+	check(first_game.world.get_node_or_null("Props/Furniture") is Node2D and first_game.world.get_node_or_null("Props/Lighting") is Node2D and first_game.world.get_node_or_null("Props/Statues") is Node2D, "Props are organized into furniture, lighting and statue groups")
+	check(first_game.world.get_node_or_null("NPCPlacement") is NpcPlacement and first_game.world.get_node_or_null("MapSpawnPoints") is MapSpawnPoints, "NPC and player spawn markers are owned by reusable marker scenes")
+	var guard_marker := first_game.world.get_node_or_null("NPCPlacement/GuardLeft") as Marker2D
+	check(guard_marker != null and guard_marker.get_meta("npc_id", "") == "castle_guard_left" and guard_marker.get_meta("grid_position", null) is Vector2, "NPC identity and grid placement are authored on their marker")
+	var npc_markers := first_game.world.get_node_or_null("NPCPlacement")
+	check(npc_markers != null and npc_markers.get_child_count() == 4, "All four Royal Gardens NPCs have authored placement markers")
+	if npc_markers != null:
+		for npc_marker in npc_markers.get_children():
+			check(npc_marker is Marker2D and npc_marker.has_meta("npc_id") and npc_marker.has_meta("display_name") and npc_marker.has_meta("dialogue_id") and npc_marker.has_meta("role") and npc_marker.has_meta("race") and npc_marker.get_meta("palette", null) is Dictionary and npc_marker.get_meta("grid_position", null) is Vector2, "NPC marker owns complete identity, palette and grid configuration", str(npc_marker.name))
+	var light_anchors := first_game.world.get_node_or_null("Lighting/Anchors") as Node2D
+	check(light_anchors != null and light_anchors.get_child_count() == 7, "Garden lighting positions are owned by seven authored anchor markers")
+	check(light_anchors != null and light_anchors.get_node("Light01").has_meta("light_offset") and light_anchors.get_node("Shadow").has_meta("presentation_offset") and light_anchors.get_node("AmbientParticles").has_meta("presentation_offset"), "Light, shadow and ambient offsets are authored on their presentation markers")
+	check(first_game.world.get_node_or_null("WorldRuntime").get("save_position_interval") == 1.0, "World persistence cadence is configurable on its runtime node")
+	check(first_game.world.get_node_or_null("Bounds/Left") is CollisionShape2D and first_game.world.get_node_or_null("Bounds/Right") is CollisionShape2D and first_game.world.get_node_or_null("Bounds/Top") is CollisionShape2D and first_game.world.get_node_or_null("Bounds/Bottom") is CollisionShape2D, "World boundary collision is an authored reusable scene")
+	check(first_game.world.get_node_or_null("TerrainBuilder") is CastleTerrainComponent, "Castle map delegates ground generation to its terrain component")
+	check(first_game.world.get_node_or_null("LightingBuilder") is CastleLightingComponent, "Castle map delegates lighting and ambient effects to its lighting component")
+	check(first_game.world.get_node_or_null("NPCSpawner") is CastleNPCSpawnerComponent, "Castle map delegates marker-based NPC creation to its spawner component")
+	var expansion := first_game.world.get_node_or_null("ExpansionBuilder")
+	check(expansion != null and expansion.get_node("ExpansionGround").get_child_count() == 7, "Authored ceremonial approach creates all seven path pieces")
+	check(expansion != null and expansion.get_node("ExpansionFlora").get_child_count() == 15, "Authored ceremonial approach creates all fifteen flora pieces")
+	check(expansion != null and expansion.get_node("ExpansionProps").get_child_count() >= 6, "All six authored approach props are present alongside any runtime cache props")
+	var wall_x_scene: PackedScene = load("res://scenes/world/castle_gardens/v02/architecture/castle_wall_x.tscn")
+	var wall_y_scene: PackedScene = load("res://scenes/world/castle_gardens/v02/architecture/castle_wall_y.tscn")
+	var wall_x = wall_x_scene.instantiate() if wall_x_scene != null else null
+	var wall_y = wall_y_scene.instantiate() if wall_y_scene != null else null
+	check(wall_x is CastleFacadeWall and wall_x.orientation == "x", "Castle X wall uses a screen-facing architectural facade")
+	check(wall_y is CastleFacadeWall and wall_y.orientation == "y", "Castle Y wall uses a screen-facing architectural facade")
+	check(wall_x is Node2D and wall_x.y_sort_enabled and wall_y is Node2D and wall_y.y_sort_enabled, "Both wall orientations participate in isometric depth sorting")
+	check(wall_x.get_node_or_null("Body/Footprint0") is CollisionShape2D and wall_y.get_node_or_null("Body/Footprint0") is CollisionShape2D, "Both wall orientations retain authored footprint collision")
+	if wall_x != null:
+		wall_x.free()
+	if wall_y != null:
+		wall_y.free()
+	var expected_position := Vector2(1100.0, 700.0)
+	var first_player = first_game.world.get("player") if first_game.world != null else null
+	if first_player != null:
+		first_player.position = expected_position
+		first_game._persist_current_world_state()
+	else:
+		check(false, "Castle player exists for save regression")
+	first_game.queue_free()
+	await get_tree().process_frame
+
+	# Continue is the actual title-screen handler and must reload from disk rather
+	# than relying on the state left in memory by the outgoing world.
+	startup._on_title_action("continue")
+	check(GameState.loaded_from_save, "Continue marks state as loaded from save")
+	check(GameState.active_world_id == "castle_royal_gardens", "Continue restores Castle world ID from disk", GameState.active_world_id)
+	check(GameState.player_region == "castle_royal_gardens", "Continue restores Castle region from disk", GameState.player_region)
+	check(GameState.player_position == expected_position, "Continue restores saved player position", str(GameState.player_position))
+
+	var continued_game := game_scene.instantiate() as GameScreen
+	add_child(continued_game)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	check(continued_game.current_region_id == "castle_royal_gardens", "Continue world resolver instantiates Castle")
+	var resumed_castle := continued_game.world as CastleRoyalGardens
+	check(resumed_castle != null and resumed_castle.get_world_monsters().size() == 2, "Castle world spawns its two authored sentinel encounters", str(resumed_castle.get_world_monsters().size()) if resumed_castle != null else "missing Castle")
+	check(resumed_castle != null and resumed_castle.get_node_or_null("Entities/QuestDestinationMarker") is QuestDestinationMarker, "Castle world owns an authored quest destination marker")
+	check(GameState.quest_domain.quest_marker_for_npc("royal_gardener") == "available", "Royal Gardener advertises the Castle garden quest")
+	GameState.quest_domain.quests.erase("garden_shadows")
+	check(GameState.quest_domain.start_quest("garden_shadows", "royal_gardener"), "Royal Gardener can start the Castle garden quest")
+	check(GameState.quest_domain.quest_step_index("garden_shadows") == 1, "Castle quest advances past its giver after acceptance")
+	check(GameState.quest_domain.quest_marker_for_npc("royal_gardener") == "active", "Royal Gardener displays an active quest marker during the hunt")
+	GameState.quest_domain.record_kill("gothic_sentinel", 2)
+	check(GameState.quest_domain.quest_ready("garden_shadows"), "Two sentinel defeats unlock the Castle quest turn-in")
+	check(GameState.quest_domain.complete_quest("garden_shadows"), "Castle garden quest grants completion and rewards")
+	check(GameState.quest_domain.quest_state("garden_shadows") == "complete", "Castle garden quest persists its completed state")
+	var continued_player = continued_game.world.get("player") if continued_game.world != null else null
+	check(continued_player != null, "Continued Castle player exists")
+	if continued_player != null:
+		check(continued_player.position.distance_to(expected_position) < 0.01, "Continued Castle player returns to saved position", str(continued_player.position))
+	continued_game.queue_free()
+	test_host.queue_free()
+	await get_tree().process_frame
+
+
+func _test_continue_exact_position_and_return_to_title() -> void:
+	# Explicit regression: New Journey -> Castle -> move/save -> return-to-title flow
+	# (persist as GameScreen does) -> Continue restores latest world, exact position,
+	# facing, and progression state from disk.
+	var game_scene: PackedScene = load("res://scenes/game.tscn")
+	check(game_scene != null, "Continue regression: game scene loads")
+	if game_scene == null:
+		return
+	SaveService.delete_save()
+	GameState.loaded_from_save = false
+	GameState.new_game("Continue Regression")
+	# Explicit new journey start in Royal Gardens (menu/start flow intent).
+	GameState.set_player_region("castle_royal_gardens")
+	GameState.set_active_world("castle_royal_gardens")
+	GameState.has_player_position = false
+	GameState.region_positions.clear()
+	GameState.save_now()
+	# Simulate progression/inventory changes that must persist.
+	GameState.add_currency("gold", 123)
+	var party: Variant = GameState.party_instances()
+	if not party.is_empty():
+		GameState.add_xp_to_character(party[0], 250)
+	GameState.inventory["glade_sap"] = int(GameState.inventory.get("glade_sap", 0)) + 7
+	var first_game := game_scene.instantiate() as GameScreen
+	add_child(first_game)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	check(first_game.current_region_id == "castle_royal_gardens", "Continue regression: new journey starts in Royal Gardens", first_game.current_region_id)
+	var expected_position := Vector2(640.0, 620.0) # Clear authored PlayerSpawn tile; do not test persistence inside HedgeWestB collision.
+	var expected_facing := Vector2(-1.0, 0.0)
+	var first_player = first_game.world.get("player") if first_game.world != null else null
+	check(first_player != null, "Continue regression: Castle player exists")
+	if first_player != null:
+		first_player.position = expected_position
+		if "facing_direction" in first_player:
+			first_player.facing_direction = expected_facing
+	# Simulate return-to-title persistence path.
+	first_game._persist_current_world_state()
+	var save_data := SaveService.load_save()
+	check(str(save_data.get("active_world_id", "")) == "castle_royal_gardens", "Continue regression: return-to-title saves Castle active world", str(save_data.get("active_world_id", "")))
+	check(str(save_data.get("region", "")) == "castle_royal_gardens", "Continue regression: return-to-title saves Castle region", str(save_data.get("region", "")))
+	var saved_pos: Dictionary = save_data.get("position", {})
+	check(absf(float(saved_pos.get("x", 0.0)) - expected_position.x) < 0.01 and absf(float(saved_pos.get("y", 0.0)) - expected_position.y) < 0.01, "Continue regression: exact player position saved to disk", str(saved_pos))
+	var saved_rpos: Dictionary = save_data.get("region_positions", {}).get("castle_royal_gardens", {})
+	check(absf(float(saved_rpos.get("x", 0.0)) - expected_position.x) < 0.01 and absf(float(saved_rpos.get("y", 0.0)) - expected_position.y) < 0.01, "Continue regression: exact Castle region position saved to disk", str(saved_rpos))
+	first_game.queue_free()
+	await get_tree().process_frame
+
+	# Clear in-memory state, then Continue/load from disk (actual restore path).
+	GameState.profile.clear()
+	GameState.roster.clear()
+	GameState.party.clear()
+	GameState.inventory.clear()
+	GameState.quests.clear()
+	GameState.flags.clear()
+	GameState.loaded_from_save = false
+	var loaded := SaveService.load_save()
+	GameState._load_from_dict(loaded)
+	GameState.loaded_from_save = true
+	check(GameState.active_world_id == "castle_royal_gardens", "Continue regression: loaded active world is Castle", GameState.active_world_id)
+	check(GameState.player_region == "castle_royal_gardens", "Continue regression: loaded region is Castle", GameState.player_region)
+	check(GameState.player_position.distance_to(expected_position) < 0.01, "Continue regression: loaded exact player position", str(GameState.player_position))
+	check(GameState.player_facing.distance_to(expected_facing.normalized()) < 0.01, "Continue regression: loaded facing direction", str(GameState.player_facing))
+	check(GameState.has_region_position("castle_royal_gardens"), "Continue regression: Castle region position restored")
+	check(GameState.region_position("castle_royal_gardens").distance_to(expected_position) < 0.01, "Continue regression: restored Castle region position is exact", str(GameState.region_position("castle_royal_gardens")))
+	check(int(GameState.currency("gold")) >= 623, "Continue regression: progression/currency restored", str(GameState.currency("gold")))
+	check(int(GameState.inventory.get("glade_sap", 0)) >= 10, "Continue regression: inventory restored", str(GameState.inventory.get("glade_sap", 0)))
+
+	var continued_game := game_scene.instantiate() as GameScreen
+	add_child(continued_game)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	check(continued_game.current_region_id == "castle_royal_gardens", "Continue regression: resolver instantiates Castle world", continued_game.current_region_id)
+	var continued_player = continued_game.world.get("player") if continued_game.world != null else null
+	check(continued_player != null, "Continue regression: continued player exists")
+	if continued_player != null:
+		check(continued_player.position.distance_to(expected_position) < 0.01, "Continue regression: continued player placed at exact saved position", str(continued_player.position))
+	continued_game.queue_free()
+	await get_tree().process_frame
+
+
+func _test_continue_legacy_greenward_save() -> void:
+	# Legacy/Greenward saves must continue to load Greenward correctly and must not
+	# be corrupted or incorrectly migrated to Castle.
+	var legacy := {
+		"version": 1,
+		"profile": {
+			"name": "Legacy Wanderer",
+			"level": 3,
+			"xp": 10,
+			"gold": 777,
+			"gems": 0,
+			"crystals": 42,
+			"guild_tokens": 0,
+			"ancient_coins": 0,
+			"event_tokens": 0,
+			"created_at": 1000.0,
+		},
+		"roster": [
+			{"uid": "legacy_gerald", "char_id": "gerald", "level": 3, "xp": 0, "ascension": 0, "awakening": 0, "dupes": 0, "bond": 0, "equipment": {}},
+			{"uid": "legacy_lilith", "char_id": "lilith", "level": 2, "xp": 0, "ascension": 0, "awakening": 0, "dupes": 0, "bond": 0, "equipment": {}},
+			{"uid": "legacy_kael", "char_id": "kael", "level": 1, "xp": 0, "ascension": 0, "awakening": 0, "dupes": 0, "bond": 0, "equipment": {}},
+		],
+		"party": ["legacy_gerald", "legacy_lilith", "legacy_kael"],
+		"inventory": {"glade_sap": 5},
+		"quests": {},
+		"pity": {},
+		"flags": {},
+		"gear_levels": {},
+		"position": {"x": 111.0, "y": 222.0},
+		"has_position": true,
+		# Intentionally no active_world_id / player_facing / region_positions
+		"region": "greenward",
+	}
+	SaveService.write_save(legacy)
+	var reloaded := SaveService.load_save()
+	GameState._load_from_dict(reloaded)
+	GameState.loaded_from_save = true
+	check(GameState.active_world_id == "greenward", "Legacy save: active world remains Greenward", GameState.active_world_id)
+	check(GameState.player_region == "greenward", "Legacy save: region remains Greenward", GameState.player_region)
+	check(GameState.has_player_position, "Legacy save: has player position")
+	check(GameState.player_position.distance_to(Vector2(111.0, 222.0)) < 0.01, "Legacy save: exact position restored", str(GameState.player_position))
+	check(int(GameState.currency("gold")) == 777, "Legacy save: currencies/progress preserved", str(GameState.currency("gold")))
+	check(int(GameState.inventory.get("glade_sap", 0)) == 5, "Legacy save: inventory preserved")
+	# Verify resolver/build path for legacy continue targets Greenward.
+	var game_scene: PackedScene = load("res://scenes/game.tscn")
+	if game_scene != null:
+		var legacy_game := game_scene.instantiate() as GameScreen
+		add_child(legacy_game)
+		await get_tree().process_frame
+		await get_tree().process_frame
+		check(legacy_game.current_region_id == "greenward", "Legacy save: continue resolves to Greenward world", legacy_game.current_region_id)
+		legacy_game.queue_free()
+		await get_tree().process_frame
+
+
+func _test_continue_does_not_revert_to_greenward_when_save_is_castle() -> void:
+	# Regression for the reported bug: Continue must restore the latest persisted
+	# Castle save (world + exact position/state), never Greenward, and must not be
+	# overwritten by stale in-memory defaults during/after exit persistence.
+	# (Do not call GameScreen._return_to_title() here: it changes the scene tree
+	# and breaks the headless test runner.)
+	var game_scene: PackedScene = load("res://scenes/game.tscn")
+	check(game_scene != null, "Continue castle regression: game scene loads")
+	if game_scene == null:
+		return
+	SaveService.delete_save()
+	GameState.loaded_from_save = false
+	GameState.new_game("Castle Continue Regression")
+	# Explicit new journey start in Royal Gardens.
+	GameState.set_player_region("castle_royal_gardens")
+	GameState.set_active_world("castle_royal_gardens")
+	GameState.has_player_position = false
+	GameState.region_positions.clear()
+	GameState.save_now()
+	var first_game := game_scene.instantiate() as GameScreen
+	add_child(first_game)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	check(first_game.current_region_id == "castle_royal_gardens", "Continue castle regression: New Journey starts in Castle", first_game.current_region_id)
+	var exact_pos := Vector2(1000.0, 700.0)
+	var player = first_game.world.get("player") if first_game.world != null else null
+	if player != null:
+		player.position = exact_pos
+		if "facing_direction" in player:
+			player.facing_direction = Vector2(0, -1)
+	# Persist as return-to-title does (authoritative current region) and simulate
+	# leaving gameplay without a scene change that would disrupt the test runner.
+	first_game._persist_current_world_state()
+	var disk := SaveService.load_save()
+	check(str(disk.get("active_world_id", "")) == "castle_royal_gardens", "Continue castle regression: disk save remains Castle after exit persistence", str(disk.get("active_world_id", "")))
+	check(str(disk.get("region", "")) == "castle_royal_gardens", "Continue castle regression: disk region remains Castle", str(disk.get("region", "")))
+	# Simulate stale in-memory drift/defaults after title transition; Continue must
+	# restore from disk, not from memory.
+	GameState.set_player_region("greenward")
+	GameState.set_active_world("greenward")
+	GameState.has_player_position = false
+	GameState.loaded_from_save = false
+	first_game.queue_free()
+	await get_tree().process_frame
+	var loaded := SaveService.load_save()
+	GameState._load_from_dict(loaded)
+	GameState.loaded_from_save = true
+	check(GameState.active_world_id == "castle_royal_gardens", "Continue castle regression: Continue loads Castle world from disk", GameState.active_world_id)
+	check(GameState.player_region == "castle_royal_gardens", "Continue castle regression: Continue loads Castle region from disk", GameState.player_region)
+	check(GameState.player_position.distance_to(exact_pos) < 0.01, "Continue castle regression: exact position restored", str(GameState.player_position))
+	var resumed := game_scene.instantiate() as GameScreen
+	add_child(resumed)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	check(resumed.current_region_id == "castle_royal_gardens", "Continue castle regression: resumed world is Castle", resumed.current_region_id)
+	var resumed_player = resumed.world.get("player") if resumed.world != null else null
+	if resumed_player != null:
+		check(resumed_player.position.distance_to(exact_pos) < 0.01, "Continue castle regression: resumed player at exact saved position", str(resumed_player.position))
+	resumed.queue_free()
+	await get_tree().process_frame
+
 
 
 # ----------------------------------------------- Phase 4: asset manifest
@@ -2373,9 +3901,16 @@ func _test_asset_loading_fallbacks() -> void:
 			demo_cast_ok = false
 	check(demo_cast_ok, "demo cast_frame(dir,0) is non-null for all 8 directions")
 
-	var av := ActorVisual.new()
+	var actor_visual_scene := load("res://scenes/characters/actor_visual.tscn") as PackedScene
+	var av := actor_visual_scene.instantiate() as ActorVisual
 	add_child(av)
 	await get_tree().process_frame
+	check(av.procedural_renderer is ActorProceduralRendererComponent and av.procedural_renderer.get_parent() == av, "ActorVisual owns and binds its procedural renderer component")
+	check(av.procedural_renderer.monster_painter is ProceduralMonsterPainter and av.procedural_renderer.monster_painter.renderer == av.procedural_renderer and av.procedural_renderer.monster_painter.visual == av, "procedural renderer owns and binds its species painter")
+	check(av.character_effects_component is ActorCharacterEffectsComponent and av.character_effects_component.get_parent() == av and av.character_effects_component.visual == av, "ActorVisual owns and binds its character-specific effects component")
+	check(av.pose_component is ActorPoseComponent and av.pose_component.get_parent() == av, "ActorVisual owns and binds its pose component")
+	check(av.sprite_component is ActorSpriteComponent and av.sprite_component.get_parent() == av, "ActorVisual owns and binds its sprite-presentation component")
+	check(av.animation_component is CharacterAnimationComponent and av.animation_component.get_parent() == av, "ActorVisual delegates locomotion playback to its animation component")
 	av.set_frame_source(ActorFrameSource.new())
 	check(av.using_temporary_art == true, "ActorVisual with a frameless source stays temporary")
 	check(is_instance_valid(av), "frameless set_frame_source() does not crash the visual")
@@ -2473,7 +4008,8 @@ func _test_animation_sheet_validation() -> void:
 	check((ext.get("extended_states", []) as Array).size() == 9, "extended_specs() lists 9 extended states")
 	check(ext.has("cast") and str((ext.get("cast", {}) as Dictionary).get("name", "")) == "cast", "extended_specs() exposes CAST info")
 
-	var av := ActorVisual.new()
+	var actor_visual_scene := load("res://scenes/characters/actor_visual.tscn") as PackedScene
+	var av := actor_visual_scene.instantiate() as ActorVisual
 	add_child(av)
 	await get_tree().process_frame
 	check(av.animator != null, "in-tree ActorVisual has an animator")
@@ -2621,7 +4157,7 @@ func _test_chunk_preparer() -> void:
 	p.request_many([Vector2i(1, 0), Vector2i(1, 0), Vector2i(2, 0)])
 	check(p.pending_count() == 3, "request_many() dedupes and appends", str(p.pending_count()))
 
-	var first := p.next_pending()
+	var first: Variant = p.next_pending()
 	check(first == Vector2i(0, 0), "next_pending() returns the first queued coord")
 	var drained := 0
 	while p.pending_count() > 0:
@@ -2675,14 +4211,19 @@ func _test_chunk_preparer() -> void:
 
 
 # ------------------------------- Phase 4: world region integration
-## ASYNC: instantiate the real game.tscn, verify the greenward world + NEW
-## visual_style_report keys + a RegionPortal, then briefly build a second
-## GreenwardWorld for moonpetal_hollow and free both. Two worlds coexist only
-## transiently and neither is left in the tree.
+## ASYNC: explicitly load the legacy Greenward world, verify its presentation
+## and RegionPortal, then briefly build a second GreenwardWorld for
+## moonpetal_hollow. This stays independent of the new-journey start world.
 func _test_world_region_integration() -> void:
+	var original_state: Dictionary = GameState._to_dict().duplicate(true)
+	var original_loaded: bool = GameState.loaded_from_save
+	GameState.set_active_world("greenward")
+	GameState.loaded_from_save = true
 	var game_scene: PackedScene = load("res://scenes/game.tscn")
 	check(game_scene != null, "game.tscn loads for region integration")
 	if game_scene == null:
+		GameState._load_from_dict(original_state)
+		GameState.loaded_from_save = original_loaded
 		return
 	var game := game_scene.instantiate()
 	add_child(game)
@@ -2710,7 +4251,7 @@ func _test_world_region_integration() -> void:
 	check(portal_count > 0, "at least one RegionPortal exists in world.entities", str(portal_count))
 	check(game.world._portals.size() > 0, "world._portals tracks the spawned gates")
 
-	var w2 := GreenwardWorld.new()
+	var w2 := load("res://scenes/world/greenward_world.tscn").instantiate() as GreenwardWorld
 	w2.region_id = "moonpetal_hollow"
 	w2.entry_point = "hollow_gate"
 	add_child(w2)
@@ -2723,11 +4264,23 @@ func _test_world_region_integration() -> void:
 	check(w2.current_zone() != "", "second world reports a zone")
 	check(w2.visual_style_report().get("region_id", "") == "moonpetal_hollow", "second world report region_id == moonpetal_hollow")
 	check(is_instance_valid(w2), "second world built without crashing")
+	var liora_found := false
+	for npc in w2.npcs:
+		if npc.npc_id == "moonkeeper_liora":
+			liora_found = true
+	check(liora_found, "Moonpetal Hollow spawns Moonkeeper Liora")
+	var moonpetal_encounter_found := false
+	for entity in w2.entities.get_children():
+		if entity is RoamingMonster and entity.group_id == "moonpetal_echoes_pack":
+			moonpetal_encounter_found = true
+	check(moonpetal_encounter_found, "Moonpetal Hollow spawns its Silver Pool encounter")
 	w2.queue_free()
 	await get_tree().process_frame
 
 	game.queue_free()
 	await get_tree().process_frame
+	GameState._load_from_dict(original_state)
+	GameState.loaded_from_save = original_loaded
 
 
 # ------------------------------------ Phase 4: procedural art additions
@@ -2783,7 +4336,7 @@ func _test_procedural_art_phase4() -> void:
 
 
 # ===================================================================== Phase 5
-# Phase 5 shared helpers. Prefixed `_phase5_` to avoid collisions with the
+# Phase 5 shared helpers. Prefixed _phase5_ to avoid collisions with the
 # Phase-2/3/4 helpers. Pure data / headless-safe; never writes to res://.
 
 
@@ -2930,6 +4483,7 @@ func _test_character_art_specs() -> void:
 	check(CharacterArtSpec.validate_specs().is_empty(), "validate_specs() == []", str(CharacterArtSpec.validate_specs()))
 	check(CharacterArtSpec.identity_table().size() == 12, "identity_table() has 12 entries")
 	check(not CharacterArtSpec.STYLE_ANCHOR.strip_edges().is_empty(), "STYLE_ANCHOR non-empty")
+	check(CharacterArtSpec.STYLE_ANCHOR == CharacterArtPromptBuilder.STYLE_ANCHOR, "CharacterArtSpec shares the dedicated prompt builder style anchor")
 	check(CharacterArtSpec.for_id("nonexistent_character") == null, "for_id(unknown) returns null safely")
 
 	var required_keys: Array[String] = [
@@ -2950,6 +4504,10 @@ func _test_character_art_specs() -> void:
 		if spec == null:
 			continue
 		var d: Dictionary = spec.call("to_dict") as Dictionary
+		check(CharacterArtPromptBuilder.full_body_prompt(d) == str(d.get("generation_prompt", "")), "full-body prompt builder preserves spec output: " + cid)
+		check(CharacterArtPromptBuilder.portrait_prompt(d) == str(d.get("portrait_prompt", "")), "portrait prompt builder preserves spec output: " + cid)
+		check(CharacterArtPromptBuilder.sheet_prompt(d) == str(d.get("sheet_prompt", "")), "sprite-sheet prompt builder preserves spec output: " + cid)
+		check(CharacterArtPromptBuilder.vfx_prompt(d) == str(spec.call("prompt_for", "vfx")), "VFX prompt builder preserves spec output: " + cid)
 		var keys_ok := true
 		var fields_ok := true
 		for key in required_keys:
@@ -3236,7 +4794,8 @@ func _test_sprite_sheet_registration() -> void:
 	check(full_ok, "all frames of idle+cast are 96x128", str(full_sampled))
 	check(full_sampled == (5 + 7) * 8, "sampled all frames of 2 states (5+7)*8", str(full_sampled))
 
-	var av := ActorVisual.new()
+	var actor_visual_scene := load("res://scenes/characters/actor_visual.tscn") as PackedScene
+	var av := actor_visual_scene.instantiate() as ActorVisual
 	av.setup({})
 	var cfg: Dictionary = av.configure_character("ignis")
 	check(bool(cfg.get("fallback_active", false)) == true, "configure_character('ignis') fallback_active == true")
@@ -3265,9 +4824,14 @@ func _test_missing_asset_fallbacks() -> void:
 	check(portraits_missing, "PortraitAssetSource.texture_for(id)==null for all 12")
 	check(sheets_missing, "register_character(id).has_frames()==false and movement_sheet not final for all 12")
 
-	var av := ActorVisual.new()
+	var actor_visual_scene := load("res://scenes/characters/actor_visual.tscn") as PackedScene
+	var av := actor_visual_scene.instantiate() as ActorVisual
 	add_child(av)
 	await get_tree().process_frame
+	check(av.procedural_renderer is ActorProceduralRendererComponent and av.procedural_renderer.get_parent() == av, "ActorVisual owns and binds its procedural renderer component")
+	check(av.pose_component is ActorPoseComponent and av.pose_component.get_parent() == av, "ActorVisual owns and binds its pose component")
+	check(av.sprite_component is ActorSpriteComponent and av.sprite_component.get_parent() == av, "ActorVisual owns and binds its sprite-presentation component")
+	check(av.animation_component is CharacterAnimationComponent and av.animation_component.get_parent() == av, "ActorVisual delegates locomotion playback to its animation component")
 	av.set_frame_source(ActorFrameSource.new())
 	check(av.using_temporary_art == true, "frameless ActorFrameSource keeps using_temporary_art true")
 	check(is_instance_valid(av), "frameless source does not crash the visual")
@@ -3341,29 +4905,57 @@ func _test_gacha_presentation() -> void:
 	check(UITheme.rarity_tier_label("common").is_empty(), "rarity_tier_label(common) empty for standard tier")
 	check(UITheme.RARITY_EFFECTS.size() == 5, "RARITY_EFFECTS covers 5 tiers")
 
-	var gacha := GachaScreen.new()
-	var collection := CollectionScreen.new()
-	var combat := CombatScreen.new()
-	combat.group_id = "glade_mossling_pack"  # set BEFORE add_child
-	add_child(gacha)
-	add_child(collection)
-	add_child(combat)
+	var gacha_scene := load("res://scenes/ui/gacha_screen.tscn") as PackedScene
+	var collection_scene := load("res://scenes/ui/collection_screen.tscn") as PackedScene
+	var gacha := gacha_scene.instantiate() as GachaScreen if gacha_scene != null else null
+	var collection := collection_scene.instantiate() as CollectionScreen if collection_scene != null else null
+	var combat_scene := load("res://scenes/ui/combat_screen.tscn") as PackedScene
+	var combat := combat_scene.instantiate() as CombatScreen if combat_scene != null else null
+	if combat != null:
+		combat.group_id = "glade_mossling_pack"  # set BEFORE add_child
+	if gacha != null:
+		add_child(gacha)
+	if collection != null:
+		add_child(collection)
+	if combat != null:
+		add_child(combat)
 	await get_tree().process_frame
 	await get_tree().process_frame
-	check(gacha.content != null and gacha.content.get_child_count() > 0, "GachaScreen builds content with children")
-	check(collection.content != null and collection.content.get_child_count() > 0, "CollectionScreen builds content with children")
-	check(combat.get_child_count() > 0, "CombatScreen builds a populated UI tree")
-	var gacha_rep: Dictionary = gacha.presentation_report()
+	check(gacha != null and gacha.content != null and gacha.content.get_child_count() > 0, "GachaScreen builds content from its authored component scene")
+	check(gacha != null and gacha._tabs.get_node_or_null("ReturnToGameButton") is Button, "GachaScreen exposes an explicit Return to Game close control")
+	var results_close_test := GachaScreen.SUMMON_RESULTS_SCENE.instantiate() as Control
+	check(results_close_test.get_node_or_null("Center/Panel/Content/Footer/ExitSummonButton") is Button, "Summon results expose a Return to Game close control")
+	results_close_test.free()
+	var reveal_close_test := GachaScreen.SUMMON_REVEAL_SCENE.instantiate() as Control
+	check(reveal_close_test.get_node_or_null("CloseSummonButton") is Button, "Summon reveal exposes a close control")
+	reveal_close_test.free()
+	check(gacha != null and gacha._banner_content is GachaBannerContentComponent and gacha._banner_content.get_parent() == gacha, "GachaScreen binds its authored banner-content component")
+	check(gacha != null and gacha._summon_flow is GachaSummonFlowComponent and gacha._summon_flow.get_parent() == gacha, "GachaScreen binds its authored summon-flow component")
+	check(gacha != null and gacha.get_node_or_null("SummoningChamberAtmosphere") != null, "GachaScreen owns its authored chamber-atmosphere scene")
+	check(gacha != null and gacha._main.get_child_count() == 2 and gacha._main.get_child(0) is ScrollContainer and gacha._main.get_child(1) is ScrollContainer, "Summon banner and detail columns have independent vertical scrolling")
+	var summon_currency_before: Variant = GameState.inventory_domain.currency("crystals")
+	if gacha != null:
+		gacha._summon_busy = true
+		gacha._pull(1)
+	await get_tree().process_frame
+	check(GameState.inventory_domain.currency("crystals") == summon_currency_before, "A second summon request is ignored while the reveal flow is busy")
+	if gacha != null:
+		gacha._summon_busy = false
+	check(collection != null and collection.content != null and collection.content.get_child_count() > 0, "CollectionScreen builds content with children")
+	check(collection != null and collection._roster_component is CollectionRosterComponent and collection._roster_component.get_parent() == collection, "CollectionScreen binds its authored roster component")
+	check(collection != null and collection._detail_component is CollectionDetailComponent and collection._detail_component.get_parent() == collection, "CollectionScreen binds its authored detail component")
+	check(combat != null and combat.get_child_count() > 0, "CombatScreen loads its authored component tree")
+	var gacha_rep: Dictionary = gacha.presentation_report() if gacha != null else {}
 	check(not gacha_rep.is_empty(), "GachaScreen.presentation_report() non-empty")
 	check(bool(gacha_rep.get("rarity_effects_enabled", false)) == true, "Gacha presentation_report rarity_effects_enabled == true")
-	var coll_rep: Dictionary = collection.presentation_report()
+	var coll_rep: Dictionary = collection.presentation_report() if collection != null else {}
 	check(not coll_rep.is_empty(), "CollectionScreen.presentation_report() non-empty")
 	check(bool(coll_rep.get("rarity_effects_enabled", false)) == true, "Collection presentation_report rarity_effects_enabled == true")
-	var skill_rep: Dictionary = combat.skill_presentation_report()
+	var skill_rep: Dictionary = combat.skill_presentation_report() if combat != null else {}
 	check(not skill_rep.is_empty(), "CombatScreen.skill_presentation_report() non-empty")
 	check(bool(skill_rep.get("ultimate_styling", false)) == true, "Combat skill_presentation_report ultimate_styling == true")
-	check(combat.engine != null, "CombatScreen.engine != null")
-	if combat.engine != null:
+	check(combat != null and combat.engine != null, "CombatScreen.engine != null")
+	if combat != null and combat.engine != null:
 		check(combat.engine.combatants.size() >= 4, "CombatScreen engine.combatants.size() >= 4", str(combat.engine.combatants.size()))
 
 	var pv := PortraitView.new()
@@ -3373,9 +4965,12 @@ func _test_gacha_presentation() -> void:
 	var pv_rep: Dictionary = pv.portrait_report()
 	check(pv.show_rarity_effect == true, "PortraitView mythic show_rarity_effect == true")
 	check(bool(pv_rep.get("premium", false)) == true, "PortraitView mythic premium == true")
-	gacha.queue_free()
-	collection.queue_free()
-	combat.queue_free()
+	if gacha != null:
+		gacha.queue_free()
+	if collection != null:
+		collection.queue_free()
+	if combat != null:
+		combat.queue_free()
 	pv.queue_free()
 	await get_tree().process_frame
 
@@ -3402,8 +4997,8 @@ func _test_world_visual_standards() -> void:
 	check(not WorldVisualStandards.apply_notes().is_empty(), "apply_notes() non-empty")
 
 	var kinds: Array[String] = ProceduralArt.prop_kinds()
-	check(kinds.size() == 57, "ProceduralArt.prop_kinds().size() == 57", str(kinds.size()))
-	var new_kinds: Array[String] = ["birch_grove", "moon_lantern", "stone_path", "village_gate"]
+	check(kinds.size() == 59, "ProceduralArt.prop_kinds().size() == 59", str(kinds.size()))
+	var new_kinds: Array[String] = ["birch_grove", "moon_lantern", "stone_path", "village_gate", "bench", "crate"]
 	for k in new_kinds:
 		check(kinds.has(k), "new prop kind present: " + k)
 		check(ProceduralArt.variant_count(k) >= 2, "variant_count >= 2: " + k, str(ProceduralArt.variant_count(k)))
@@ -3413,7 +5008,7 @@ func _test_world_visual_standards() -> void:
 		check(v0.get_image().get_data() != v1.get_image().get_data(), "variant 0/1 pixels differ: " + k)
 		check(not GreenwardStyle.prop_palette(k).is_empty(), "prop_palette() non-empty: " + k)
 		check(ContentValidator.PROP_TYPES.has(k), "PROP_TYPES includes: " + k)
-	check(ContentValidator.PROP_TYPES.size() >= 57, "ContentValidator.PROP_TYPES.size() >= 57", str(ContentValidator.PROP_TYPES.size()))
+	check(ContentValidator.PROP_TYPES.size() >= 59, "ContentValidator.PROP_TYPES.size() >= 59", str(ContentValidator.PROP_TYPES.size()))
 	check(GreenwardStyle.coherence_report().is_empty(), "GreenwardStyle.coherence_report() == []")
 
 	var game_scene: PackedScene = load("res://scenes/game.tscn")
@@ -3424,7 +5019,51 @@ func _test_world_visual_standards() -> void:
 		await get_tree().process_frame
 		await get_tree().process_frame
 		check(game.world != null, "assembled scene creates a world")
+		check(game.get_node_or_null("Runtime") is GameRuntimeComponent and game.get_node("Runtime").get_parent() == game, "GameScreen uses its authored runtime component")
+		check(game.get_node_or_null("WorldSession") is GameWorldSessionComponent and game.get_node("WorldSession").get_parent() == game, "GameScreen uses its authored world-session component")
+		check(game.get_node_or_null("OverlayRouter") is GameOverlayRouterComponent and game.get_node("OverlayRouter").get_parent() == game, "GameScreen uses its authored overlay router")
+		check(game.get_node_or_null("CombatRouter") is GameCombatRouterComponent and game.get_node("CombatRouter").get_parent() == game, "GameScreen uses its authored combat router")
+		check(game.get_node_or_null("InputRouter") is GameInputRouterComponent and game.get_node("InputRouter").get_parent() == game, "GameScreen uses its authored input router")
 		if game.world != null:
+			if game.world is GreenwardWorld:
+				var world_node := game.world as GreenwardWorld
+				check(world_node.navigation_component is WorldNavigationComponent, "world scene owns a navigation component")
+				check(world_node.weather_component is WorldWeatherComponent, "world scene owns a weather component")
+				check(world_node.lighting_component is WorldLightingComponent, "world scene owns a localized lighting component")
+				check(world_node.lighting_component.get_parent() == world_node, "localized lighting component is owned by the world scene")
+				check(world_node._lights == world_node.lighting_component.lights, "world light compatibility array aliases the component-managed lights")
+				check(world_node.weather_component.get_parent() == world_node, "weather component is owned by the world scene")
+				check(world_node.weather == world_node.weather_component.director, "world weather compatibility reference delegates to the component director")
+				check(world_node.navigation_component.world == world_node, "navigation component binds to its owning world")
+				check(world_node.navigation_component.elevation == world_node.elevation, "navigation component receives the world's elevation field")
+				check(world_node.chunk_streaming_component is WorldChunkStreamingComponent and world_node.chunk_streaming_component.get_parent() == world_node, "world scene owns its chunk-streaming component")
+				check(world_node.chunk_lifecycle_component is WorldChunkLifecycleComponent and world_node.chunk_lifecycle_component.get_parent() == world_node, "world scene owns its chunk-lifecycle component")
+				check(world_node.region_builder_component is WorldRegionBuilderComponent and world_node.region_builder_component.get_parent() == world_node, "world scene owns its region-builder component")
+				check(world_node.greenward_builder_component is WorldGreenwardBuilderComponent and world_node.greenward_builder_component.get_parent() == world_node, "world scene owns its Greenward-builder component")
+				var greenward_data := world_node.greenward_builder_component.composition_data as GreenwardCompositionData
+				check(greenward_data != null, "Greenward builder consumes its authored composition resource")
+				var greenward_builder := world_node.greenward_builder_component
+				check(greenward_builder.river_builder is WorldGreenwardRiverComponent and greenward_builder.river_builder.get_parent() == greenward_builder, "Greenward builder owns its dedicated river node component")
+				check(greenward_builder.landmark_builder is WorldGreenwardLandmarkComponent and greenward_builder.landmark_builder.get_parent() == greenward_builder, "Greenward builder owns its dedicated landmark node component")
+				check(greenward_builder.route_builder is WorldGreenwardRouteComponent and greenward_builder.route_builder.get_parent() == greenward_builder, "Greenward builder owns its dedicated route node component")
+				check(greenward_builder.interaction_builder is WorldGreenwardInteractionComponent and greenward_builder.interaction_builder.get_parent() == greenward_builder, "Greenward builder owns its dedicated interaction node component")
+				if greenward_data != null:
+					check(greenward_builder.river_builder.world == world_node and greenward_builder.river_builder.composition_data == greenward_data, "river node component binds to its owning world and composition data")
+					check(greenward_builder.landmark_builder.world == world_node and greenward_builder.landmark_builder.composition_data == greenward_data, "landmark node component binds to its owning world and composition data")
+					check(greenward_builder.route_builder.world == world_node and greenward_builder.route_builder.composition_data == greenward_data, "route node component binds to its owning world and composition data")
+					check(greenward_builder.interaction_builder.world == world_node and greenward_builder.interaction_builder.composition_data == greenward_data, "interaction node component binds to its owning world and composition data")
+					check(greenward_data.validate().is_empty(), "Greenward composition resource passes schema validation", str(greenward_data.validate()))
+					check(greenward_data.village_npcs.size() == 3 and greenward_data.river_props.size() == 13 and greenward_data.river_animated_props.size() == 7, "Greenward NPC and river placements are stored as region data")
+				check(world_node.region_context_component is WorldRegionContextComponent and world_node.region_context_component.get_parent() == world_node, "world scene owns its region-context component")
+				check(world_node.day_night_presentation_component is WorldDayNightPresentationComponent and world_node.day_night_presentation_component.get_parent() == world_node, "world scene owns its day/night presentation component")
+				check(world_node.atmosphere_component is WorldAtmosphereComponent and world_node.atmosphere_component.get_parent() == world_node, "world scene owns its atmosphere component")
+				check(world_node.prop_factory_component is WorldPropFactoryComponent and world_node.prop_factory_component.get_parent() == world_node, "world scene owns its prop-factory component")
+				check(world_node.visual_standards_component is WorldVisualStandardsComponent and world_node.visual_standards_component.get_parent() == world_node, "world scene owns its visual-standards component")
+				check(world_node.effect_follow_component is WorldEffectFollowComponent and world_node.effect_follow_component.get_parent() == world_node, "world scene owns its effect-follow component")
+				check(world_node.fog_component is WorldFogComponent and world_node.fog_component.get_parent() == world_node, "world scene owns its fog component")
+				check(world_node.ambient_effects_component is WorldAmbientEffectsComponent and world_node.ambient_effects_component.get_parent() == world_node, "world scene owns its ambient-effects component")
+				check(world_node.presentation_config_component is WorldPresentationConfigComponent and world_node.presentation_config_component.get_parent() == world_node, "world scene owns its presentation-config component")
+				check(world_node.is_water_world(Vector2.ZERO) == world_node.navigation_component.is_water_world(Vector2.ZERO), "world water API delegates to navigation component")
 			var vsr: Dictionary = game.world.visual_standards_report()
 			check(not vsr.is_empty(), "visual_standards_report() non-empty")
 			check(bool(vsr.get("standards_valid", false)) == true, "visual_standards_report standards_valid == true")
@@ -3434,10 +5073,19 @@ func _test_world_visual_standards() -> void:
 				check(vs.has(key), "visual_style_report() has NEW key: " + str(key))
 			for key in ["region_id", "region_name", "zone", "entry_points", "connections", "world_origin", "portals"]:
 				check(vs.has(key), "visual_style_report() keeps Phase-4 key: " + str(key))
+		check(game.get_node("WorldHost").get_child_count() == 1, "WorldHost starts with exactly one active world")
+		game.world_session.build_world("gothic_castle_boss_zone")
+		await get_tree().process_frame
+		check(game.get_node("WorldHost").get_child_count() == 1, "loading Gothic Castle replaces rather than stacks the previous world")
+		check(game.world_session.world is GothicCastleBossZone, "Gothic Castle loads as its own region scene")
+		game.world_session.build_world("castle_royal_gardens")
+		await get_tree().process_frame
+		check(game.get_node("WorldHost").get_child_count() == 1, "returning to Royal Gardens leaves only one world in WorldHost")
+		check(game.world_session.world is CastleRoyalGardens, "Royal Gardens reloads as its own region scene")
 		game.queue_free()
 		await get_tree().process_frame
 
-	var w2 := GreenwardWorld.new()
+	var w2 := load("res://scenes/world/greenward_world.tscn").instantiate() as GreenwardWorld
 	w2.region_id = "moonpetal_hollow"
 	w2.entry_point = "hollow_gate"
 	add_child(w2)
@@ -3446,6 +5094,37 @@ func _test_world_visual_standards() -> void:
 	check(not w2.visual_standards_report().is_empty(), "second world visual_standards_report() non-empty")
 	check(w2.region_id == "moonpetal_hollow", "second world region_id == moonpetal_hollow", w2.region_id)
 	check(w2.current_area_name() != "", "second world current_area_name() non-empty")
+	check(w2.navigation_component is WorldNavigationComponent and w2.navigation_component.get_parent() == w2, "world scene authors and owns its navigation component")
+	check(w2.chunk_streaming_component is WorldChunkStreamingComponent and w2.chunk_streaming_component.get_parent() == w2, "world scene authors and owns its chunk-streaming component")
+	check(w2.chunk_lifecycle_component is WorldChunkLifecycleComponent and w2.chunk_lifecycle_component.get_parent() == w2, "world scene authors and owns its chunk-lifecycle component")
+	check(w2.region_builder_component is WorldRegionBuilderComponent and w2.region_builder_component.get_parent() == w2, "world scene authors and owns its region-builder component")
+	check(w2.greenward_builder_component is WorldGreenwardBuilderComponent and w2.greenward_builder_component.get_parent() == w2, "world scene authors and owns its Greenward-builder component")
+	var w2_greenward_builder := w2.greenward_builder_component
+	var w2_composition_data := w2_greenward_builder.composition_data as GreenwardCompositionData
+	check(w2_greenward_builder.river_builder is WorldGreenwardRiverComponent and w2_greenward_builder.river_builder.get_parent() == w2_greenward_builder, "Greenward builder authors and owns its river subcomponent")
+	check(w2_greenward_builder.landmark_builder is WorldGreenwardLandmarkComponent and w2_greenward_builder.landmark_builder.get_parent() == w2_greenward_builder, "Greenward builder authors and owns its landmark subcomponent")
+	check(w2_greenward_builder.route_builder is WorldGreenwardRouteComponent and w2_greenward_builder.route_builder.get_parent() == w2_greenward_builder, "Greenward builder authors and owns its route subcomponent")
+	check(w2_greenward_builder.interaction_builder is WorldGreenwardInteractionComponent and w2_greenward_builder.interaction_builder.get_parent() == w2_greenward_builder, "Greenward builder authors and owns its interaction subcomponent")
+	check(w2_composition_data != null and w2_greenward_builder.river_builder.composition_data == w2_composition_data and w2_greenward_builder.river_builder.world == w2, "river subcomponent receives the owning world and composition data")
+	check(w2_composition_data != null and w2_greenward_builder.landmark_builder.composition_data == w2_composition_data and w2_greenward_builder.landmark_builder.world == w2, "landmark subcomponent receives the owning world and composition data")
+	check(w2_composition_data != null and w2_greenward_builder.route_builder.composition_data == w2_composition_data and w2_greenward_builder.route_builder.world == w2, "route subcomponent receives the owning world and composition data")
+	check(w2_composition_data != null and w2_greenward_builder.interaction_builder.composition_data == w2_composition_data and w2_greenward_builder.interaction_builder.world == w2, "interaction subcomponent receives the owning world and composition data")
+	check(w2.region_context_component is WorldRegionContextComponent and w2.region_context_component.get_parent() == w2, "world scene authors and owns its region-context component")
+	check(w2.day_night_presentation_component is WorldDayNightPresentationComponent and w2.day_night_presentation_component.get_parent() == w2, "world scene authors and owns its day/night component")
+	check(w2.atmosphere_component is WorldAtmosphereComponent and w2.atmosphere_component.get_parent() == w2, "world scene authors and owns its atmosphere component")
+	check(w2.prop_factory_component is WorldPropFactoryComponent and w2.prop_factory_component.get_parent() == w2, "world scene authors and owns its prop-factory component")
+	check(w2.visual_standards_component is WorldVisualStandardsComponent and w2.visual_standards_component.get_parent() == w2, "world scene authors and owns its visual-standards component")
+	check(w2.effect_follow_component is WorldEffectFollowComponent and w2.effect_follow_component.get_parent() == w2, "world scene authors and owns its effect-follow component")
+	check(w2.fog_component is WorldFogComponent and w2.fog_component.get_parent() == w2, "world scene authors and owns its fog component")
+	check(w2.ambient_effects_component is WorldAmbientEffectsComponent and w2.ambient_effects_component.get_parent() == w2, "world scene authors and owns its ambient-effects component")
+	check(w2.presentation_config_component is WorldPresentationConfigComponent and w2.presentation_config_component.get_parent() == w2, "world scene authors and owns its presentation-config component")
+	check(w2.navigation_component.world == w2, "authored world scene binds its navigation component")
+	check(w2.entity_spawner is WorldEntitySpawnerComponent and w2.entity_spawner.world == w2, "world entity-spawner component binds to its owning world")
+	check(w2.weather_component is WorldWeatherComponent and w2.weather_component.get_parent() == w2, "authored world scene binds its weather component")
+	check(w2.weather == w2.weather_component.director, "direct world weather facade preserves the component director reference")
+	if w2.navigation_component != null:
+		check(w2.navigation_component.elevation == w2.elevation, "authored world navigation receives the elevation field")
+		check(w2.is_water_world(Vector2.ZERO) == w2.navigation_component.is_water_world(Vector2.ZERO), "direct world water API delegates to navigation component")
 	check(w2.loaded_chunks.size() > 0, "second world loaded_chunks.size() > 0", str(w2.loaded_chunks.size()))
 	check(bool(w2.visual_standards_report().get("standards_valid", false)) == true, "second world standards_valid == true")
 	w2.queue_free()
@@ -3537,7 +5216,7 @@ func _test_progression_leveling() -> void:
 		check(false, "Find test instance for leveling test")
 		return
 	var start_level := instance.level
-	var xp_needed := GameState.xp_to_next(instance.level)
+	var xp_needed: Variant = GameState.xp_to_next(instance.level)
 	var result: Dictionary = GameState.add_xp_to_character(instance, xp_needed)
 	check(int(result.get("levels", 0)) >= 1, "Full XP grants at least 1 level")
 	check(instance.level > start_level, "Level increases after enough XP")
@@ -3576,7 +5255,7 @@ func _test_progression_ascension() -> void:
 	instance.level = instance.level_cap()
 	var info: Dictionary = GameState.ascension_info(instance.uid)
 	check(info.has("ok"), "ascension_info returns ok key")
-	var result := GameState.ascend(instance.uid)
+	var result: Variant = GameState.ascend(instance.uid)
 	if bool(info.get("ok", false)):
 		check(result == true, "Ascension succeeds when requirements met")
 	else:
@@ -3588,9 +5267,9 @@ func _test_progression_insufficient_materials() -> void:
 		check(false, "Find test instance for materials test")
 		return
 	instance.level = instance.level_cap()
-	var saved_dew := GameState.item_count("dew_of_awakening")
+	var saved_dew: Variant = GameState.item_count("dew_of_awakening")
 	GameState.remove_item("dew_of_awakening", saved_dew)
-	var result := GameState.ascend(instance.uid)
+	var result: Variant = GameState.ascend(instance.uid)
 	check(result == false, "Ascension fails without dew of awakening")
 	GameState.add_item("dew_of_awakening", saved_dew)
 
@@ -3601,9 +5280,9 @@ func _test_progression_insufficient_gold() -> void:
 		return
 	instance.level = instance.level_cap()
 	GameState.add_item("dew_of_awakening", 5)
-	var saved_gold := GameState.currency("gold")
+	var saved_gold: Variant = GameState.currency("gold")
 	GameState.spend_currency("gold", saved_gold)
-	var result := GameState.ascend(instance.uid)
+	var result: Variant = GameState.ascend(instance.uid)
 	check(result == false, "Ascension fails without gold")
 	GameState.add_currency("gold", saved_gold)
 
@@ -3624,15 +5303,15 @@ func _test_progression_save_load() -> void:
 	check(restored.char_id == instance.char_id, "char_id persists")
 
 func _test_progression_invalid_upgrade() -> void:
-	var result := GameState.equip_item("nonexistent_uid", "gold")
+	var result: Variant = GameState.equip_item("nonexistent_uid", "gold")
 	check(result == false, "Equip fails for invalid UID")
 	var instance := _find_test_instance()
 	if instance == null:
 		check(false, "Find test instance for invalid upgrade test")
 		return
-	var result2 := GameState.equip_item(instance.uid, "gold")
+	var result2: Variant = GameState.equip_item(instance.uid, "gold")
 	check(result2 == false, "Equip fails for non-equipment item")
-	var result3 := GameState.unequip_item(instance.uid, "weapon")
+	var result3: Variant = GameState.unequip_item(instance.uid, "weapon")
 	check(true, "Unequip does not crash on empty slot")
 
 func _test_progression_combat_stats() -> void:
@@ -3657,8 +5336,14 @@ func _find_test_instance() -> CharacterInstance:
 # ------------------------------------------------------ exploration rewards
 func _test_exploration_rewards() -> void:
 	var saved_state: Dictionary = GameState._to_dict().duplicate(true)
+	var prev_loaded: Variant = GameState.loaded_from_save
 	GameState.flags.erase("collectible:greenward_moonpetal_herbs")
 	GameState.flags.erase("collectible:greenward_hollowed_crystal")
+	# Exploration gathering nodes in this test belong to Greenward.
+	GameState.loaded_from_save = true
+	GameState.set_player_region("greenward")
+	GameState.set_active_world("greenward")
+	GameState.has_player_position = false
 	var game_scene: PackedScene = load("res://scenes/game.tscn")
 	var game := game_scene.instantiate()
 	add_child(game)
@@ -3674,8 +5359,8 @@ func _test_exploration_rewards() -> void:
 				crystal = node
 	check(herbs != null and crystal != null, "World builds both configured gathering nodes")
 	if herbs != null and crystal != null:
-		var moonpetal_before := GameState.item_count("moonpetal")
-		var sap_before := GameState.item_count("glade_sap")
+		var moonpetal_before: Variant = GameState.item_count("moonpetal")
+		var sap_before: Variant = GameState.item_count("glade_sap")
 		herbs.interact()
 		crystal.interact()
 		check(GameState.item_count("moonpetal") == moonpetal_before + 1, "Moonpetal herb grants its configured material")
@@ -3706,6 +5391,7 @@ func _test_exploration_rewards() -> void:
 	reload_game.queue_free()
 	await get_tree().process_frame
 	GameState._load_from_dict(saved_state)
+	GameState.loaded_from_save = prev_loaded
 
 
 func _test_bonus_drop_rewards() -> void:
@@ -3738,7 +5424,7 @@ func _test_bonus_drop_rewards() -> void:
 	var zero_preview: Dictionary = GameState.build_battle_rewards("test_zero_bonus_drop", true)
 	check(zero_preview.get("items", {}).is_empty(), "A zero-chance bonus drop never appears")
 	ContentDB.enemy_groups.erase("test_zero_bonus_drop")
-	var before := GameState.item_count("moonpetal")
+	var before: Variant = GameState.item_count("moonpetal")
 	var applied: Dictionary = GameState.apply_battle_result("test_bonus_drop", true, preview)
 	check(GameState.item_count("moonpetal") == before + 2, "Claim grants the exact precomputed bonus drop")
 	check(applied.get("rewards", {}).get("items", {}) == preview.get("items", {}), "Displayed reward payload equals granted reward payload")
@@ -3748,10 +5434,267 @@ func _test_bonus_drop_rewards() -> void:
 		ContentDB.enemy_groups["test_bonus_drop"] = previous_group
 	GameState._load_from_dict(saved_state)
 
-	var sprite_monster := RoamingMonster.new()
+	var sprite_monster := load("res://scenes/world/roaming_monster.tscn").instantiate() as RoamingMonster
 	sprite_monster.setup("moonpetal_sprite_pack", Vector2.ZERO, ContentDB.get_enemy("moonpetal_sprite"), false)
 	add_child(sprite_monster)
 	await get_tree().process_frame
 	check(sprite_monster.visual != null and sprite_monster.visual.def_id == "moonpetal_sprite", "Moonpetal Sprite keeps its unique species visual")
 	sprite_monster.queue_free()
 	await get_tree().process_frame
+
+
+
+func _test_shop_service() -> void:
+	var shop_signal_count := [0]
+	var shop_listener := func() -> void: shop_signal_count[0] += 1
+	EventBus.shop_requested.connect(shop_listener)
+	var dialogue_action := DialogueBox.new()
+	dialogue_action._run_action("open_shop")
+	check(int(shop_signal_count[0]) == 1, "dialogue open_shop action requests the merchant screen")
+	EventBus.shop_requested.disconnect(shop_listener)
+	dialogue_action.free()
+	var old_inventory: Dictionary = GameState.inventory.duplicate(true)
+	var old_profile: Dictionary = GameState.profile.duplicate(true)
+	GameState.inventory = {}
+	GameState.profile["gold"] = 30
+	var insufficient: Dictionary = ShopService.purchase("moonpetal")
+	check(not bool(insufficient.get("ok", false)), "merchant blocks purchases without enough Gold")
+	check(GameState.item_count("moonpetal") == 0 and GameState.currency("gold") == 30, "failed merchant purchase changes nothing")
+	GameState.profile["gold"] = 100
+	var purchased: Dictionary = ShopService.purchase("moonpetal")
+	check(bool(purchased.get("ok", false)), "merchant sells valid stock items")
+	check(GameState.item_count("moonpetal") == 1, "merchant purchase grants one item")
+	check(GameState.currency("gold") == 40, "merchant purchase deducts exact Gold price")
+	var unknown: Dictionary = ShopService.purchase("not_in_stock")
+	check(not bool(unknown.get("ok", false)), "merchant rejects items outside the stock list")
+	GameState.inventory = old_inventory
+	GameState.profile = old_profile
+
+func _test_crafting_service() -> void:
+	var old_inventory: Dictionary = GameState.inventory.duplicate(true)
+	var old_profile: Dictionary = GameState.profile.duplicate(true)
+	GameState.inventory = {"glade_sap": 5, "moonpetal": 2}
+	GameState.profile["gold"] = 1000
+	var unknown := _CraftingServiceScript.recipe_status("not_a_recipe")
+	check(not bool(unknown.get("ok", false)), "crafting rejects unknown recipe ids")
+	var insufficient := _CraftingServiceScript.recipe_status("sunfire_blade")
+	check(not bool(insufficient.get("ok", false)), "crafting blocks recipes with missing ingredients")
+	check(not _CraftingServiceScript.craft("sunfire_blade").get("ok", false), "failed craft does not grant output")
+	check(GameState.currency("gold") == 1000 and GameState.item_count("glade_sap") == 5, "failed craft leaves wallet and materials unchanged")
+	var status := _CraftingServiceScript.recipe_status("wayfarer_charm")
+	check(bool(status.get("craftable", false)), "wayfarer charm becomes craftable with required materials")
+	var crafted := _CraftingServiceScript.craft("wayfarer_charm")
+	check(bool(crafted.get("ok", false)), "valid recipe crafts successfully")
+	check(GameState.item_count("glade_sap") == 3 and GameState.item_count("moonpetal") == 1, "craft consumes exact material costs")
+	check(GameState.currency("gold") == 850, "craft consumes exact gold cost")
+	check(GameState.item_count("wayfarer_charm") == 1, "craft grants configured output")
+	var saved: Dictionary = GameState._to_dict()
+	check(int(saved.get("inventory", {}).get("wayfarer_charm", 0)) == 1, "crafted output is included in save serialization")
+	GameState.inventory = old_inventory
+	GameState.profile = old_profile
+
+func _settings_events_match(a: Array, b: Array) -> bool:
+	if a.size() != b.size():
+		return false
+	for i in a.size():
+		if a[i].as_text() != b[i].as_text():
+			return false
+	return true
+
+
+func _test_settings_regressions() -> void:
+	var action := "move_up"
+	var original: Array = InputMap.action_get_events(action).duplicate(true)
+	var custom := InputEventKey.new()
+	custom.keycode = KEY_K
+	var staged := load("res://scenes/ui/settings_screen.tscn").instantiate() as SettingsScreen
+	add_child(staged)
+	await get_tree().process_frame
+	check(staged._controls_component is SettingsControlsComponent and staged._controls_component.get_parent() == staged, "SettingsScreen binds its controls component")
+	check(staged._persistence_component is SettingsPersistenceComponent and staged._persistence_component.get_parent() == staged, "SettingsScreen binds its persistence component")
+	check(staged.content != null, "settings screen builds its controls panel")
+	var display_hint := staged.content.find_child("DisplayHint", true, false) as Label
+	var controls_hint := staged.content.find_child("ControlsHint", true, false) as Label
+	var general_hint := staged.content.find_child("GeneralHint", true, false) as Label
+	check(display_hint != null and display_hint.size_flags_horizontal == Control.SIZE_EXPAND_FILL and display_hint.autowrap_mode != TextServer.AUTOWRAP_OFF, "settings display hint expands and wraps within its column")
+	check(controls_hint != null and controls_hint.size_flags_horizontal == Control.SIZE_EXPAND_FILL and controls_hint.autowrap_mode != TextServer.AUTOWRAP_OFF, "settings controls hint expands and wraps within its column")
+	check(general_hint != null and general_hint.size_flags_horizontal == Control.SIZE_EXPAND_FILL and general_hint.autowrap_mode != TextServer.AUTOWRAP_OFF, "settings general hint expands and wraps within its column")
+	check(staged.content.get_child_count() == 1 and staged.content.get_child(0) is ScrollContainer, "settings content remains scrollable when sections stack on compact screens")
+	staged._set_columns_for_width(868.0)
+	check(staged._columns_layout.columns == 1, "settings sections stack at compact viewport widths")
+	staged._set_columns_for_width(1280.0)
+	check(staged._columns_layout.columns == 2, "settings sections return to two columns at desktop viewport widths")
+	staged._assign_event(action, custom)
+	check(_settings_events_match(InputMap.action_get_events(action), original), "settings rebind is staged until Apply")
+	staged._cancel()
+	await get_tree().process_frame
+	check(_settings_events_match(InputMap.action_get_events(action), original), "settings Cancel leaves project InputMap unchanged")
+	var applied := load("res://scenes/ui/settings_screen.tscn").instantiate() as SettingsScreen
+	add_child(applied)
+	await get_tree().process_frame
+	applied._assign_event(action, custom)
+	applied._apply()
+	var current: Array = InputMap.action_get_events(action)
+	check(current.size() == 1 and current[0] is InputEventKey and (current[0] as InputEventKey).keycode == KEY_K, "settings Apply changes runtime key binding")
+	var reopened := load("res://scenes/ui/settings_screen.tscn").instantiate() as SettingsScreen
+	add_child(reopened)
+	await get_tree().process_frame
+	var controls: Dictionary = reopened._working.get("controls", {})
+	var binding: Variant = controls.get(action, {})
+	check(binding is Dictionary and str(binding.get("type", "")) == "key", "settings persists a structured key binding")
+	current = InputMap.action_get_events(action)
+	check(current.size() == 1 and current[0] is InputEventKey and (current[0] as InputEventKey).keycode == KEY_K, "settings restores saved binding when reopened")
+	reopened._restore_defaults()
+	reopened._cancel()
+	await get_tree().process_frame
+	current = InputMap.action_get_events(action)
+	check(current.size() == 1 and current[0] is InputEventKey and (current[0] as InputEventKey).keycode == KEY_K, "settings Cancel discards staged Restore Defaults")
+	var reset := load("res://scenes/ui/settings_screen.tscn").instantiate() as SettingsScreen
+	add_child(reset)
+	await get_tree().process_frame
+	reset._restore_defaults()
+	reset._apply()
+	check(_settings_events_match(InputMap.action_get_events(action), original), "settings Apply Restore Defaults restores project keymap")
+	reset.close_screen()
+	await get_tree().process_frame
+	var cfg := ConfigFile.new()
+	if cfg.load(SettingsScreen.CONFIG_PATH) == OK:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(SettingsScreen.CONFIG_PATH))
+	
+
+# ------------------------------------------- Royal Gardens expansion / boss ---
+func _test_reverie_expansion() -> void:
+	var zone: Dictionary = ContentDB.get_region("gothic_castle_boss_zone")
+	check(not zone.is_empty(), "boss zone region exists")
+	check(bool(zone.get("standalone", false)), "boss zone is standalone")
+	var castle: Dictionary = ContentDB.get_region("castle_royal_gardens")
+	check(castle.get("entry_points", {}).has("boss_path"), "castle has boss_path entry point")
+	var linked := false
+	for c in castle.get("connections", []):
+		var conn: Dictionary = c
+		if str(conn.get("to", "")) == "gothic_castle_boss_zone":
+			linked = true
+	check(linked, "castle connects to the boss zone")
+	check(str(ContentDB.get_quest("baltoria_summoning").get("requires", "")) == "blight_purification",
+		"boss quest requires the side quest")
+	check(bool(ContentDB.get_enemy_group("baltoria_encounter").get("boss", false)),
+		"baltoria encounter is flagged as a boss")
+	check(str(ContentDB.get_dialogue("arena_gatekeeper").get("start", "")) == "locked",
+		"arena gate starts locked until the side quest is complete")
+
+	var npc_placement_scene := load("res://scenes/world/castle_gardens/components/npc_placement.tscn") as PackedScene
+	var npc_placement := npc_placement_scene.instantiate() as Node2D if npc_placement_scene != null else null
+	check(npc_placement != null, "Royal Gardens NPC placement scene loads")
+	if npc_placement != null:
+		var west_guard := npc_placement.get_node("GuardLeft") as Marker2D
+		var east_guard := npc_placement.get_node("GuardRight") as Marker2D
+		check(str(west_guard.get_meta("display_name", "")) == "West Gate Guard" and str(east_guard.get_meta("display_name", "")) == "East Gate Guard", "Gate guards have distinct readable names")
+		var west_grid: Vector2 = west_guard.get_meta("grid_position")
+		var east_grid: Vector2 = east_guard.get_meta("grid_position")
+		var guard_label_spacing := IsoMath.grid_to_world(east_grid.x, east_grid.y).distance_to(IsoMath.grid_to_world(west_grid.x, west_grid.y))
+		check(guard_label_spacing >= 200.0, "Royal Gardens gate guard nameplates have enough horizontal/diagonal separation", str(guard_label_spacing))
+		npc_placement.free()
+
+	var paths: Dictionary = ReverieRouteData.all_path_cells()
+	check(paths.size() > 70, "main route and branches contain enough tiles", str(paths.size()))
+	var visited := {}
+	var queue: Array[Vector2i] = [Vector2i(0, 0)]
+	visited[Vector2i(0, 0)] = true
+	while not queue.is_empty():
+		var cell: Vector2i = queue.pop_front()
+		for delta in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var next: Vector2i = cell + delta
+			if paths.has(next) and not visited.has(next):
+				visited[next] = true
+				queue.append(next)
+	var reachable := true
+	for cell in ReverieRouteData.main_cells():
+		if not visited.has(cell):
+			reachable = false
+	check(reachable, "main route is continuous from gate to arena")
+	for end_cell in [Vector2i(18, -10), Vector2i(38, 18), Vector2i(52, -14)]:
+		check(visited.has(end_cell), "side branch is reachable: " + str(end_cell))
+
+	for scene_path in ["res://scenes/world/castle_royal_gardens.tscn",
+			"res://scenes/world/gothic_castle_boss_zone.tscn"]:
+		var packed := load(scene_path) as PackedScene
+		check(packed != null, "map scene loads: " + scene_path)
+		if packed != null:
+			var world := packed.instantiate()
+			check(world != null, "map scene instantiates: " + scene_path)
+			if world != null:
+				world.free()
+
+	# The Gothic Castle region must never instantiate Royal Gardens textures.
+	var gothic_world := load("res://scenes/world/gothic_castle_boss_zone.tscn").instantiate() as GothicCastleBossZone
+	add_child(gothic_world)
+	await get_tree().process_frame
+	var gothic_environment := gothic_world.get_node_or_null("Components/Environment") as GothicCastleEnvironmentComponent
+	check(gothic_environment != null, "Gothic Castle environment composition facade is authored")
+	if gothic_environment != null:
+		check(gothic_environment.get_node_or_null("GroundBuilder") is GothicGroundBuilderComponent, "Gothic Castle ground generation is an authored child node")
+		check(gothic_environment.get_node_or_null("ArchitectureBuilder") is GothicCastleArchitectureComponent, "Gothic Castle architecture generation is an authored child node")
+		check(gothic_environment.get_node_or_null("ArenaBuilder") is GothicBossArenaBuilderComponent, "Gothic boss arena generation is an authored child node")
+		check(gothic_environment.get_node_or_null("RouteDecoration") is GothicRouteDecorationComponent, "Gothic route decoration is an authored child node")
+		check(gothic_environment.get_node_or_null("BoundsBuilder") is GothicWorldBoundsComponent, "Gothic world bounds are an authored child node")
+		for child_name in ["GroundBuilder", "ArchitectureBuilder", "ArenaBuilder", "RouteDecoration", "BoundsBuilder"]:
+			var child_component := gothic_environment.get_node(child_name)
+			check(child_component.get("environment") == gothic_environment, "Gothic environment child is bound to its owning facade", child_name)
+	var pending_nodes: Array[Node] = [gothic_world]
+	var royal_garden_textures: Array[String] = []
+	while not pending_nodes.is_empty():
+		var inspected: Node = pending_nodes.pop_back()
+		if inspected is Sprite2D:
+			var sprite_texture := (inspected as Sprite2D).texture
+			if sprite_texture != null and sprite_texture.resource_path.contains("/Royal_Gardens/"):
+				royal_garden_textures.append(sprite_texture.resource_path)
+		for child in inspected.get_children():
+			pending_nodes.append(child)
+	check(royal_garden_textures.is_empty(), "Gothic Castle does not render any Royal Gardens textures", str(royal_garden_textures))
+	check(gothic_world.ground_layer.get_child_count() > 1000, "Gothic Castle builds its own full stone ground field", str(gothic_world.ground_layer.get_child_count()))
+	gothic_world.queue_free()
+	await get_tree().process_frame
+
+	var approach_scene := load("res://scenes/world/castle_gardens/components/castle_expansion_approach_placements.tscn") as PackedScene
+	var approach := approach_scene.instantiate() as Node2D if approach_scene != null else null
+	check(approach != null and approach.get_child_count() == 30, "Ceremonial approach and cache layout are authored as 30 placement markers")
+	if approach != null:
+		for placement in approach.get_children():
+			if placement.name == "GardenerSealCache":
+				check(placement.get_meta("placement_type", "") == "collectible" and placement.get_meta("collectible_id", "") == "castle_royal_seal_cache" and placement.get_meta("rewards", {}) is Dictionary, "Garden cache identity and rewards are authored on its marker")
+			else:
+				check(placement is Marker2D and placement.has_meta("target_layer") and placement.has_meta("category") and placement.has_meta("subfolder") and placement.has_meta("asset_id") and placement.get_meta("grid_position", null) is Vector2, "Approach placement owns its asset and grid configuration", str(placement.name))
+		approach.free()
+
+	var manifest_file := FileAccess.open("res://assets/reverie_pack_v01/manifest.json", FileAccess.READ)
+	if manifest_file != null:
+		var parsed = JSON.parse_string(manifest_file.get_as_text())
+		var records: Array = parsed.get("assets", [])
+		check(records.size() == 200, "all delivered assets imported", str(records.size()))
+		var sample: Dictionary = records[0]
+		var piece_path := "res://scenes/world/reverie_pack/%s/%s/%s.tscn" % [
+				str(sample.get("category", "")), str(sample.get("subfolder", "")), str(sample.get("id", ""))]
+		check(ResourceLoader.exists(piece_path), "modular piece scenes exist")
+	var save_sample := {
+		"version": 1,
+		"profile": {"name": "Tester"},
+		"region": "gothic_castle_boss_zone",
+		"active_world_id": "gothic_castle_boss_zone",
+		"region_positions": {"gothic_castle_boss_zone": {"x": 640.0, "y": 360.0}},
+	}
+	var save_errors: Array = SaveService.validate_save_data(save_sample)
+	check(save_errors.is_empty(), "new region save data remains compatible", str(save_errors))
+
+
+func _test_minimap_marker_filtering() -> void:
+	var npc := Node.new()
+	npc.add_to_group("world_minimap_npcs")
+	var monster := Node.new()
+	monster.add_to_group("world_minimap_monsters")
+	var gatherable := Node.new()
+	check(not MinimapMarkerComponent.should_render_interactable_marker(npc), "Minimap does not duplicate NPCs in the generic interactable layer")
+	check(not MinimapMarkerComponent.should_render_interactable_marker(monster), "Minimap does not duplicate monsters in the generic interactable layer")
+	check(MinimapMarkerComponent.should_render_interactable_marker(gatherable), "Minimap retains generic gatherable/interactable markers")
+	npc.free()
+	monster.free()
+	gatherable.free()

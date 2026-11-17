@@ -1,8 +1,18 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/screens/combat_screen.gd" id="1"]
-[ext_resource type="PackedScene" path="res://scenes/ui/combat_screen_backdrop.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/combat/components/combat_screen_backdrop.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/components/combat_screen_layout.tscn" id="3"]
+[ext_resource type="Script" path="res://scripts/ui/combat/combat_feedback_component.gd" id="4_feedback"]
+[ext_resource type="Script" path="res://scripts/ui/combat/combat_turn_flow_component.gd" id="5_turn_flow"]
+[ext_resource type="Script" path="res://scripts/ui/combat/combat_targeting_component.gd" id="6_targeting"]
+[ext_resource type="Script" path="res://scripts/ui/combat/combat_turn_order_component.gd" id="7_turn_order"]
+[ext_resource type="Script" path="res://scripts/ui/combat/combat_result_component.gd" id="8_result"]
+[ext_resource type="Script" path="res://scripts/ui/combat/combat_event_presentation_component.gd" id="9_events"]
+[ext_resource type="Script" path="res://scripts/ui/combat/combat_hud_component.gd" id="10_hud"]
+[ext_resource type="Script" path="res://scripts/ui/combat/combat_layout_component.gd" id="11_layout"]
+[ext_resource type="Script" path="res://scripts/ui/combat/combat_session_component.gd" id="12_session"]
+[ext_resource type="Script" path="res://scripts/ui/combat/combat_input_component.gd" id="13_input"]
 
 [node name="CombatScreen" type="Control"]
 script = ExtResource("1")
@@ -22,3 +32,33 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Feedback" type="Node" parent="."]
+script = ExtResource("4_feedback")
+
+[node name="TurnFlow" type="Node" parent="."]
+script = ExtResource("5_turn_flow")
+
+[node name="Targeting" type="Node" parent="."]
+script = ExtResource("6_targeting")
+
+[node name="TurnOrder" type="Node" parent="."]
+script = ExtResource("7_turn_order")
+
+[node name="Results" type="Node" parent="."]
+script = ExtResource("8_result")
+
+[node name="Events" type="Node" parent="."]
+script = ExtResource("9_events")
+
+[node name="HUD" type="Node" parent="."]
+script = ExtResource("10_hud")
+
+[node name="LayoutBuilder" type="Node" parent="."]
+script = ExtResource("11_layout")
+
+[node name="Session" type="Node" parent="."]
+script = ExtResource("12_session")
+
+[node name="Input" type="Node" parent="."]
+script = ExtResource("13_input")

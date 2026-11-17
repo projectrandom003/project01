@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CharacterAnimationConfig" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/character_animation_config.gd" id="1_script"]
+[ext_resource type="AnimationLibrary" path="res://resources/characters/animations/character_locomotion.tres" id="2_locomotion"]
+
+[resource]
+script = ExtResource("1_script")
+character_id = &"kael"
+locomotion_library = ExtResource("2_locomotion")
+default_idle_animation = &"idle_bob"
+default_walk_animation = &"walk_bob"
+default_run_animation = &"run_bob"
+supports_directions = true
+supports_one_shots = true
+notes = "Reusable locomotion library for Kael's node-based character presentation."

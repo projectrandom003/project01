@@ -1,7 +1,74 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/ui/backgrounds/reverie_title_screen.jpg" id="2_art"]
+[ext_resource type="PackedScene" path="res://scenes/ui/main_backdrop.tscn" id="2_backdrop"]
+[ext_resource type="Script" path="res://scripts/ui/components/main_menu_navigation_component.gd" id="3_navigation"]
+[ext_resource type="Script" path="res://scripts/ui/components/main_menu_skin_component.gd" id="4_skin"]
+[ext_resource type="Script" path="res://scripts/ui/components/main_menu_overlay_component.gd" id="5_overlays"]
+[ext_resource type="Texture2D" path="res://assets/characters/ravienna/main_menu_illustration.png" id="6_ravienna"]
+[ext_resource type="Texture2D" path="res://assets/ui/dialogue/gothic_rose_dialogue_box.png" id="7_dialogue"]
+[ext_resource type="Texture2D" path="res://assets/ui/logos/reverie_title_logo.png" id="8_logo"]
+[ext_resource type="Texture2D" path="res://assets/characters/kael/player_avatar.png" id="9_kael_avatar"]
+
+
+
+[sub_resource type="StyleBoxFlat" id="MenuButtonNormal"]
+bg_color = Color(0.105, 0.035, 0.075, 0.96)
+border_color = Color(0.78, 0.62, 0.39, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 13
+corner_radius_top_right = 13
+corner_radius_bottom_right = 13
+corner_radius_bottom_left = 13
+shadow_color = Color(0.015, 0.02, 0.06, 0.8)
+shadow_size = 5
+content_margin_left = 10.0
+content_margin_top = 7.0
+content_margin_right = 10.0
+content_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxFlat" id="MenuButtonHover"]
+bg_color = Color(0.24, 0.09, 0.19, 0.98)
+border_color = Color(0.96, 0.80, 0.53, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 13
+corner_radius_top_right = 13
+corner_radius_bottom_right = 13
+corner_radius_bottom_left = 13
+shadow_color = Color(0.30, 0.48, 0.78, 0.55)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="MenuButtonPressed"]
+bg_color = Color(0.32, 0.11, 0.23, 1)
+border_color = Color(0.99, 0.86, 0.62, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 13
+corner_radius_top_right = 13
+corner_radius_bottom_right = 13
+corner_radius_bottom_left = 13
+
+[sub_resource type="StyleBoxFlat" id="MenuPanel"]
+bg_color = Color(0.075, 0.025, 0.065, 0.90)
+border_color = Color(0.68, 0.53, 0.37, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.01, 0.015, 0.04, 0.8)
+shadow_size = 8
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -12,19 +79,71 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="ReverieTitleArtwork" type="TextureRect" parent="."]
+[node name="MainMenuBackdrop" parent="." instance=ExtResource("2_backdrop")]
+layout_mode = 1
+z_index = -10
+
+[node name="ReferenceInterface" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
+visible = true
+z_index = 2
+
+[node name="WelcomePanel" type="PanelContainer" parent="ReferenceInterface"]
+visible = false
+anchor_left = 0.30
+anchor_top = 0.72
+anchor_right = 0.70
+anchor_bottom = 0.85
+
+[node name="WelcomeText" type="Label" parent="ReferenceInterface/WelcomePanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Welcome back, traveler. Your story is waiting."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.94, 0.88, 1, 1)
+theme_override_font_sizes/font_size = 21
+
+[node name="ReverieTitleLogo" type="TextureRect" parent="ReferenceInterface"]
+z_index = -3
+anchor_left = 0.315
+anchor_top = 0.115
+anchor_right = 0.635
+anchor_bottom = 0.285
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
 mouse_filter = 2
-texture = ExtResource("2_art")
+texture = ExtResource("8_logo")
 expand_mode = 1
-stretch_mode = 6
+stretch_mode = 5
 
-[node name="TitleArtworkReadabilityShade" type="ColorRect" parent="."]
+[node name="TopProfile" type="PanelContainer" parent="ReferenceInterface"]
+offset_left = 18.0
+offset_top = 16.0
+offset_right = 390.0
+offset_bottom = 92.0
+theme_override_styles/panel = SubResource("MenuPanel")
+
+[node name="ProfileRow" type="HBoxContainer" parent="ReferenceInterface/TopProfile"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="AvatarFrame" type="PanelContainer" parent="ReferenceInterface/TopProfile/ProfileRow"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+theme_override_styles/panel = SubResource("MenuPanel")
+
+[node name="KaelAvatar" type="TextureRect" parent="ReferenceInterface/TopProfile/ProfileRow/AvatarFrame"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,70 +151,431 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.012, 0.009, 0.028, 0.08)
+texture = ExtResource("9_kael_avatar")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="ContinueButton" type="Button" parent="."]
-layout_mode = 1
-anchor_left = 0.505
-anchor_top = 0.445
-anchor_right = 0.704
-anchor_bottom = 0.505
-focus_mode = 2
-mouse_default_cursor_shape = 2
-text = "CONTINUE"
-metadata/menu_action = "continue"
+[node name="ProfileDetails" type="VBoxContainer" parent="ReferenceInterface/TopProfile/ProfileRow"]
+layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="NewJourneyButton" type="Button" parent="."]
-layout_mode = 1
-anchor_left = 0.505
-anchor_top = 0.522
-anchor_right = 0.704
-anchor_bottom = 0.582
-focus_mode = 2
-mouse_default_cursor_shape = 2
-text = "▤   NEW JOURNEY"
-metadata/menu_action = "new"
+[node name="PlayerName" type="Label" parent="ReferenceInterface/TopProfile/ProfileRow/ProfileDetails"]
+layout_mode = 2
+text = "TRAVELER"
 
-[node name="LoadGameButton" type="Button" parent="."]
-layout_mode = 1
-anchor_left = 0.505
-anchor_top = 0.598
-anchor_right = 0.704
-anchor_bottom = 0.658
-focus_mode = 2
-mouse_default_cursor_shape = 2
-text = "♜   LOAD GAME"
-metadata/menu_action = "load"
+[node name="PlayerLevel" type="Label" parent="ReferenceInterface/TopProfile/ProfileRow/ProfileDetails"]
+layout_mode = 2
+text = "LEVEL 01"
 
-[node name="SettingsButton" type="Button" parent="."]
-layout_mode = 1
-anchor_left = 0.505
-anchor_top = 0.67
-anchor_right = 0.704
-anchor_bottom = 0.73
-focus_mode = 2
-mouse_default_cursor_shape = 2
-text = "⚙   SETTINGS"
-metadata/menu_action = "settings"
+[node name="ExperienceBar" type="ProgressBar" parent="ReferenceInterface/TopProfile/ProfileRow/ProfileDetails"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+show_percentage = false
+value = 35.0
 
-[node name="ExtrasButton" type="Button" parent="."]
-layout_mode = 1
-anchor_left = 0.505
-anchor_top = 0.742
-anchor_right = 0.704
-anchor_bottom = 0.802
-focus_mode = 2
-mouse_default_cursor_shape = 2
-text = "✥   EXTRAS"
-metadata/menu_action = "extras"
+[node name="CurrencyBar" type="HBoxContainer" parent="ReferenceInterface"]
+anchor_left = 0.355
+anchor_top = 0.02
+anchor_right = 0.875
+anchor_bottom = 0.10
+theme_override_constants/separation = 10
 
-[node name="QuitGameButton" type="Button" parent="."]
+[node name="PremiumCurrency" type="Button" parent="ReferenceInterface/CurrencyBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "✧  CRYSTALS   +"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 13
+
+[node name="GoldCurrency" type="Button" parent="ReferenceInterface/CurrencyBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "◈  GOLD   +"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 13
+
+[node name="ResourceCurrency" type="Button" parent="ReferenceInterface/CurrencyBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "◇  RESOURCES   +"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 13
+
+[node name="MailButton" type="Button" parent="ReferenceInterface"]
+anchor_left = 0.895
+anchor_top = 0.018
+anchor_right = 0.95
+anchor_bottom = 0.095
+text = "✉"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="SettingsShortcut" type="Button" parent="ReferenceInterface"]
+anchor_left = 0.96
+anchor_top = 0.018
+anchor_right = 0.995
+anchor_bottom = 0.095
+text = "⚙"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="LeftRail" type="VBoxContainer" parent="ReferenceInterface"]
+anchor_left = 0.012
+anchor_top = 0.19
+anchor_right = 0.075
+anchor_bottom = 0.67
+theme_override_constants/separation = 12
+
+[node name="EventsButton" type="Button" parent="ReferenceInterface/LeftRail"]
+custom_minimum_size = Vector2(68, 68)
+layout_mode = 2
+text = "EVENTS"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="CalendarButton" type="Button" parent="ReferenceInterface/LeftRail"]
+custom_minimum_size = Vector2(68, 68)
+layout_mode = 2
+text = "CALENDAR"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="GiftsButton" type="Button" parent="ReferenceInterface/LeftRail"]
+custom_minimum_size = Vector2(68, 68)
+layout_mode = 2
+text = "GIFTS"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="AchievementsButton" type="Button" parent="ReferenceInterface/LeftRail"]
+custom_minimum_size = Vector2(68, 68)
+layout_mode = 2
+text = "ACHIEVEMENTS"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="FeaturedBanners" type="VBoxContainer" parent="ReferenceInterface"]
+visible = false
+anchor_left = 0.82
+anchor_top = 0.16
+anchor_right = 0.985
+anchor_bottom = 0.62
+theme_override_constants/separation = 10
+
+[node name="FeaturedBannerOne" type="Button" parent="ReferenceInterface/FeaturedBanners"]
+custom_minimum_size = Vector2(0, 112)
+layout_mode = 2
+text = "VESPER NOCT\nCRIMSON COVENANT"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="FeaturedBannerTwo" type="Button" parent="ReferenceInterface/FeaturedBanners"]
+custom_minimum_size = Vector2(0, 112)
+layout_mode = 2
+text = "SCARLET REQUIEM"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 19
+
+[node name="BannerPager" type="HBoxContainer" parent="ReferenceInterface"]
+visible = false
+anchor_left = 0.87
+anchor_top = 0.63
+anchor_right = 0.96
+anchor_bottom = 0.67
+alignment = 1
+
+[node name="BannerPageOne" type="Button" parent="ReferenceInterface/BannerPager"]
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+text = "•"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 19
+
+[node name="BannerPageTwo" type="Button" parent="ReferenceInterface/BannerPager"]
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+text = "•"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 19
+
+[node name="BottomNavigation" type="HBoxContainer" parent="ReferenceInterface"]
+anchor_left = 0.09
+anchor_top = 0.88
+anchor_right = 0.91
+anchor_bottom = 0.99
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="WorldButton" type="Button" parent="ReferenceInterface/BottomNavigation"]
+custom_minimum_size = Vector2(94, 76)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "WORLD"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 19
+
+[node name="CommunicationButton" type="Button" parent="ReferenceInterface/BottomNavigation"]
+custom_minimum_size = Vector2(84, 68)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "MESSAGES"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 19
+
+[node name="CharactersButton" type="Button" parent="ReferenceInterface/BottomNavigation"]
+custom_minimum_size = Vector2(84, 68)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "PARTY"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 19
+
+[node name="InventoryButton" type="Button" parent="ReferenceInterface/BottomNavigation"]
+custom_minimum_size = Vector2(84, 68)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "INVENTORY"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 19
+
+[node name="SummonButton" type="Button" parent="ReferenceInterface/BottomNavigation"]
+custom_minimum_size = Vector2(94, 76)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "SUMMON"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 19
+
+[node name="StoryButton" type="Button" parent="ReferenceInterface/BottomNavigation"]
+custom_minimum_size = Vector2(84, 68)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "STORY"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 19
+
+[node name="CombatButton" type="Button" parent="ReferenceInterface/BottomNavigation"]
+custom_minimum_size = Vector2(84, 68)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "COMBAT"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 19
+
+[node name="CastleButton" type="Button" parent="ReferenceInterface/BottomNavigation"]
+custom_minimum_size = Vector2(94, 76)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CASTLE"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 19
+
+[node name="ResourcesButton" type="Button" parent="ReferenceInterface/BottomNavigation"]
+custom_minimum_size = Vector2(84, 68)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "RESOURCES"
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+theme_override_styles/pressed = SubResource("MenuButtonPressed")
+theme_override_styles/focus = SubResource("MenuButtonHover")
+theme_override_colors/font_color = Color(0.91, 0.88, 0.96, 1)
+theme_override_colors/font_hover_color = Color(1, 0.88, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.78, 0.52, 1)
+theme_override_font_sizes/font_size = 19
+
+[node name="RaviennaPortrait" type="TextureRect" parent="."]
+z_index = 0
+anchor_left = 0.53
+anchor_top = 0.105
+anchor_right = 1.0
+anchor_bottom = 0.965
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+mouse_filter = 2
+texture = ExtResource("6_ravienna")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RaviennaDialogue" type="TextureRect" parent="."]
+visible = false
+z_index = 3
+anchor_left = 0.035
+anchor_top = 0.565
+anchor_right = 0.49
+anchor_bottom = 0.835
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+mouse_filter = 2
+texture = ExtResource("7_dialogue")
+flip_h = true
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DialogueMargin" type="MarginContainer" parent="RaviennaDialogue"]
 layout_mode = 1
-anchor_left = 0.505
-anchor_top = 0.814
-anchor_right = 0.704
-anchor_bottom = 0.874
-focus_mode = 2
-mouse_default_cursor_shape = 2
-text = "✧   QUIT"
-metadata/menu_action = "quit"
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 126
+theme_override_constants/margin_top = 48
+theme_override_constants/margin_right = 126
+theme_override_constants/margin_bottom = 88
+
+[node name="DialogueContent" type="VBoxContainer" parent="RaviennaDialogue/DialogueMargin"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="RaviennaLine" type="Label" parent="RaviennaDialogue/DialogueMargin/DialogueContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "The night is young. Shall we see what secrets it keeps?"
+autowrap_mode = 3
+text_overrun_behavior = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_colors/font_color = Color(0.98, 0.94, 1, 1)
+theme_override_font_sizes/font_size = 17
+theme_override_constants/line_spacing = 2
+
+[node name="Navigation" type="Node" parent="."]
+script = ExtResource("3_navigation")
+
+[node name="Skin" type="Node" parent="."]
+script = ExtResource("4_skin")
+
+[node name="Overlays" type="Node" parent="."]
+script = ExtResource("5_overlays")

@@ -1,0 +1,51 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/v2/castle_piece.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/v2/animated_frame_sprite.gd" id="7_anim"]
+[ext_resource type="Texture2D" path="res://assets/castle_pack_v02/environment/water/fountain_tiered_2x2.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/castle_pack_v02/effects/shadow_blob_64.png" id="3_shadow"]
+[ext_resource type="Texture2D" path="res://assets/castle_pack_v02/effects/fountain_spray_anim.png" id="6_spray"]
+
+[sub_resource type="ConvexPolygonShape2D" id="Shape_footprint"]
+points = PackedVector2Array(0.0, -32.0, 64.0, 0.0, 0.0, 32.0, -64.0, 0.0)
+
+[node name="FountainTiered" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_script")
+piece_id = "fountain_tiered_2x2"
+footprint_cells = Vector2i(2, 2)
+
+[node name="ContactShadow" type="Sprite2D" parent="."]
+texture_filter = 1
+z_index = -1
+centered = false
+offset = Vector2(-32, -16)
+modulate = Color(1, 1, 1, 0.34)
+texture = ExtResource("3_shadow")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture_filter = 1
+centered = false
+offset = Vector2(-65, -90)
+texture = ExtResource("2_tex")
+
+[node name="Body" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Footprint0" type="CollisionShape2D" parent="Body"]
+shape = SubResource("Shape_footprint")
+
+[node name="Spray" type="Sprite2D" parent="."]
+texture_filter = 1
+centered = false
+offset = Vector2(-24, -58)
+position = Vector2(0, -85)
+z_index = 2
+hframes = 6
+vframes = 1
+modulate = Color(1, 1, 1, 0.85)
+frames_per_second = 10.0
+texture = ExtResource("6_spray")
+script = ExtResource("7_anim")
+

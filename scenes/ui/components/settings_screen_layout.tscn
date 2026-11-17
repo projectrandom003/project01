@@ -1,0 +1,118 @@
+[gd_scene format=3]
+
+[node name="SettingsLayout" type="VBoxContainer"]
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="Columns" type="GridContainer" parent="."]
+columns = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 14
+theme_override_constants/v_separation = 14
+
+[node name="Left" type="VBoxContainer" parent="Columns"]
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.1
+theme_override_constants/separation = 8
+
+[node name="AudioTitle" type="Label" parent="Columns/Left"]
+text = "AUDIO"
+
+[node name="MasterLabel" type="Label" parent="Columns/Left"]
+text = "Master Volume"
+
+[node name="MasterSlider" type="HSlider" parent="Columns/Left"]
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+
+[node name="MusicLabel" type="Label" parent="Columns/Left"]
+text = "Music Volume"
+
+[node name="MusicSlider" type="HSlider" parent="Columns/Left"]
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+
+[node name="SFXLabel" type="Label" parent="Columns/Left"]
+text = "Sound Effects Volume"
+
+[node name="SFXSlider" type="HSlider" parent="Columns/Left"]
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+
+[node name="AudioSeparator" type="HSeparator" parent="Columns/Left"]
+
+[node name="DisplayTitle" type="Label" parent="Columns/Left"]
+text = "DISPLAY"
+
+[node name="FullscreenCheck" type="CheckButton" parent="Columns/Left"]
+text = "Fullscreen"
+
+[node name="ResolutionRow" type="HBoxContainer" parent="Columns/Left"]
+theme_override_constants/separation = 8
+
+[node name="ResolutionLabel" type="Label" parent="Columns/Left/ResolutionRow"]
+text = "Resolution"
+
+[node name="ResolutionOption" type="OptionButton" parent="Columns/Left/ResolutionRow"]
+size_flags_horizontal = 3
+
+[node name="DisplayHint" type="Label" parent="Columns/Left"]
+text = "Display changes can be applied safely. If a mode is unsupported, revert using Cancel or Restore Defaults."
+size_flags_horizontal = 3
+autowrap_mode = 3
+
+[node name="LeftSpacer" type="Control" parent="Columns/Left"]
+size_flags_vertical = 3
+
+[node name="Right" type="VBoxContainer" parent="Columns"]
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.0
+theme_override_constants/separation = 8
+
+[node name="ControlsTitle" type="Label" parent="Columns/Right"]
+text = "CONTROLS"
+
+[node name="ControlsHint" type="Label" parent="Columns/Right"]
+text = "Reference and key rebinding for supported actions. Press a binding button, then press a key/button to assign it. ESC cancels capture."
+size_flags_horizontal = 3
+autowrap_mode = 3
+
+[node name="ControlsScroll" type="ScrollContainer" parent="Columns/Right"]
+custom_minimum_size = Vector2(0, 260)
+size_flags_vertical = 3
+
+[node name="ControlsBox" type="VBoxContainer" parent="Columns/Right/ControlsScroll"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="GeneralSeparator" type="HSeparator" parent="Columns/Right"]
+
+[node name="GeneralTitle" type="Label" parent="Columns/Right"]
+text = "GENERAL"
+
+[node name="GeneralHint" type="Label" parent="Columns/Right"]
+text = "Settings persist after restarting. Use Apply to save changes, Cancel to discard, or Restore Defaults for safe defaults."
+size_flags_horizontal = 3
+autowrap_mode = 3
+
+[node name="Footer" type="HBoxContainer" parent="."]
+theme_override_constants/separation = 8
+
+[node name="DefaultsButton" type="Button" parent="Footer"]
+text = "Restore Defaults"
+
+[node name="FooterSpacer" type="Control" parent="Footer"]
+size_flags_horizontal = 3
+
+[node name="CancelButton" type="Button" parent="Footer"]
+text = "Cancel"
+
+[node name="ApplyButton" type="Button" parent="Footer"]
+text = "Apply"

@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/minimap.gd" id="1_minimap"]
+[ext_resource type="Script" path="res://scripts/ui/components/minimap_marker_component.gd" id="2_marker_data"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_map"]
 bg_color = Color(0.0392157, 0.0588235, 0.101961, 0.98)
@@ -23,6 +24,9 @@ custom_minimum_size = Vector2(224, 224)
 mouse_filter = 0
 script = ExtResource("1_minimap")
 
+[node name="MarkerData" type="Node" parent="."]
+script = ExtResource("2_marker_data")
+
 [node name="Frame" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -41,6 +45,133 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="Overlay" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Border" type="ReferenceRect" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+border_color = Color(0.42, 0.58, 0.66, 0.9)
+border_width = 1.0
+editor_only = false
+
+[node name="CompassN" type="Label" parent="Overlay"]
+layout_mode = 0
+offset_left = 108.0
+offset_top = 2.0
+offset_right = 116.0
+offset_bottom = 14.0
+theme_override_colors/font_color = Color(0.862745, 0.909804, 0.87451, 1)
+theme_override_font_sizes/font_size = 8
+text = "N"
+
+[node name="CompassTick" type="ColorRect" parent="Overlay"]
+layout_mode = 0
+offset_left = 111.0
+offset_top = 13.0
+offset_right = 112.0
+offset_bottom = 19.0
+mouse_filter = 2
+color = Color(0.862745, 0.909804, 0.87451, 0.8)
+
+[node name="LegendBG" type="ColorRect" parent="Overlay"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 205.0
+offset_right = 221.0
+offset_bottom = 221.0
+mouse_filter = 2
+color = Color(0.015, 0.025, 0.04, 0.88)
+
+[node name="YouDot" type="ColorRect" parent="Overlay"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 211.0
+offset_right = 12.0
+offset_bottom = 215.0
+mouse_filter = 2
+color = Color(0.411765, 0.788235, 0.929412, 1)
+
+[node name="YouLabel" type="Label" parent="Overlay"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 206.0
+offset_right = 35.0
+offset_bottom = 218.0
+theme_override_colors/font_color = Color(0.898039, 0.929412, 0.960784, 1)
+theme_override_font_sizes/font_size = 7
+text = "You"
+
+[node name="NpcDot" type="ColorRect" parent="Overlay"]
+layout_mode = 0
+offset_left = 41.0
+offset_top = 211.0
+offset_right = 45.0
+offset_bottom = 215.0
+mouse_filter = 2
+color = Color(0.513726, 0.890196, 0.607843, 1)
+
+[node name="NpcLabel" type="Label" parent="Overlay"]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 206.0
+offset_right = 70.0
+offset_bottom = 218.0
+theme_override_colors/font_color = Color(0.898039, 0.929412, 0.960784, 1)
+theme_override_font_sizes/font_size = 7
+text = "NPC"
+
+[node name="BossDot" type="ColorRect" parent="Overlay"]
+layout_mode = 0
+offset_left = 76.0
+offset_top = 210.0
+offset_right = 80.0
+offset_bottom = 214.0
+rotation = 0.785398
+pivot_offset = Vector2(2, 2)
+mouse_filter = 2
+color = Color(1, 0.407843, 0.470588, 1)
+
+[node name="BossLabel" type="Label" parent="Overlay"]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 206.0
+offset_right = 110.0
+offset_bottom = 218.0
+theme_override_colors/font_color = Color(0.898039, 0.929412, 0.960784, 1)
+theme_override_font_sizes/font_size = 7
+text = "Boss"
+
+[node name="PoiDot" type="ColorRect" parent="Overlay"]
+layout_mode = 0
+offset_left = 115.0
+offset_top = 211.0
+offset_right = 119.0
+offset_bottom = 215.0
+mouse_filter = 2
+color = Color(0.941176, 0.823529, 0.486275, 1)
+
+[node name="PoiLabel" type="Label" parent="Overlay"]
+layout_mode = 0
+offset_left = 122.0
+offset_top = 206.0
+offset_right = 145.0
+offset_bottom = 218.0
+theme_override_colors/font_color = Color(0.898039, 0.929412, 0.960784, 1)
+theme_override_font_sizes/font_size = 7
+text = "POI"
 
 [node name="ExpandButton" type="Button" parent="."]
 offset_left = 180.0

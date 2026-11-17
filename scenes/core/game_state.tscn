@@ -1,0 +1,41 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/game_state.gd" id="1_state"]
+[ext_resource type="Script" path="res://scripts/core/components/game_inventory_domain_component.gd" id="2_inventory"]
+[ext_resource type="Script" path="res://scripts/core/components/game_quest_domain_component.gd" id="3_quests"]
+[ext_resource type="Script" path="res://scripts/core/components/game_roster_domain_component.gd" id="4_roster"]
+[ext_resource type="Script" path="res://scripts/core/components/game_reward_domain_component.gd" id="5_rewards"]
+[ext_resource type="Script" path="res://scripts/core/components/game_state_persistence_component.gd" id="6_persistence"]
+[ext_resource type="Script" path="res://scripts/core/components/game_profile_domain_component.gd" id="7_profile"]
+[ext_resource type="Script" path="res://scripts/core/components/game_session_domain_component.gd" id="8_session"]
+
+[node name="GameState" type="Node"]
+script = ExtResource("1_state")
+
+[node name="InventoryDomain" type="Node" parent="."]
+script = ExtResource("2_inventory")
+
+[node name="QuestDomain" type="Node" parent="."]
+script = ExtResource("3_quests")
+
+[node name="RosterDomain" type="Node" parent="."]
+script = ExtResource("4_roster")
+
+[node name="RewardDomain" type="Node" parent="."]
+script = ExtResource("5_rewards")
+
+[node name="Persistence" type="Node" parent="."]
+script = ExtResource("6_persistence")
+
+[node name="SaveTimer" type="Timer" parent="."]
+one_shot = true
+wait_time = 1.0
+
+[node name="AutosaveTimer" type="Timer" parent="."]
+wait_time = 60.0
+
+[node name="ProfileDomain" type="Node" parent="."]
+script = ExtResource("7_profile")
+
+[node name="SessionDomain" type="Node" parent="."]
+script = ExtResource("8_session")

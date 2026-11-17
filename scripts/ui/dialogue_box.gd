@@ -91,7 +91,7 @@ func close() -> void:
 func _resolve_start() -> String:
 	for rule in _data.get("start_rules", []):
 		var condition := str(rule.get("if", ""))
-		if GameState.check_condition(condition):
+		if GameState.quest_domain.check_condition(condition):
 			return str(rule.get("node", ""))
 	return str(_data.get("start", "greet"))
 
@@ -182,21 +182,23 @@ func _run_action(action: String) -> void:
 	match parts[0]:
 		"start_quest":
 			if parts.size() >= 2:
-				if not GameState.start_quest(parts[1], _dialogue_id):
+				if not GameState.quest_domain.start_quest(parts[1], _dialogue_id):
 					EventBus.toast_requested.emit("This quest is not available yet.")
 		"complete_quest":
 			if parts.size() >= 2:
-				if not GameState.complete_quest(parts[1]):
+				if not GameState.quest_domain.complete_quest(parts[1]):
 					EventBus.toast_requested.emit("Quest objective not complete yet. Check your current objective.")
+		"open_shop":
+			EventBus.shop_requested.emit()
 		"add_item":
 			if parts.size() >= 2:
-				GameState.add_item(parts[1], int(parts[2]) if parts.size() >= 3 else 1)
+				GameState.inventory_domain.add_item(parts[1], int(parts[2]) if parts.size() >= 3 else 1)
 		"add_currency":
 			if parts.size() >= 3:
-				GameState.add_currency(parts[1], int(parts[2]))
+				GameState.inventory_domain.add_currency(parts[1], int(parts[2]))
 		"set_flag":
 			if parts.size() >= 3:
-				GameState.flags[parts[1]] = parts[2]
+				GameState.quest_domain.flags[parts[1]] = parts[2]
 				GameState.queue_save()
 		"toast":
 			if parts.size() >= 2:
@@ -213,5 +215,7 @@ func _race_for_speaker(speaker: String) -> String:
 			return "Beastkin"
 		"Sera Quill":
 			return "Human"
+		"Moonkeeper Liora":
+			return "Fae"
 		_:
 			return "Human"

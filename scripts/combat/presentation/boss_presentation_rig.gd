@@ -17,13 +17,66 @@ const IMPACT_SCENE: PackedScene = preload("res://scenes/combat/presentation/boss
 
 @onready var _world_effects: Node2D = $WorldEffects
 @onready var _phase_cue: Node = $PhaseCue
+@onready var boss_controller: Node = get_node_or_null("BossController")
+@onready var boss_phase_controller: Node = get_node_or_null("BossPhaseController")
+@onready var boss_state_machine: Node = get_node_or_null("BossStateMachine")
+@onready var boss_attack_controller: Node = get_node_or_null("BossAttackController")
+@onready var boss_skill_controller: Node = get_node_or_null("BossSkillController")
+@onready var boss_animation_controller: Node = get_node_or_null("BossAnimationController")
+@onready var boss_health_display: Node = get_node_or_null("BossHealthDisplay")
+@onready var boss_presentation_controller: Node = get_node_or_null("BossPresentationController")
+@onready var boss_transition_effects: Node = get_node_or_null("BossTransitionEffects")
 
 var _sequence_token: int = 0
+var active_boss_id: String = ""
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_phase_cue.connect("finished", _on_phase_cue_finished)
+	_wire_boss_components()
+
+
+func _wire_boss_components() -> void:
+	if boss_presentation_controller != null:
+		if "presentation_rig_path" in boss_presentation_controller:
+			boss_presentation_controller.presentation_rig_path = NodePath(".")
+		if "presentation_rig" in boss_presentation_controller:
+			boss_presentation_controller.presentation_rig = self
+	if boss_phase_controller != null and boss_controller != null and boss_phase_controller.has_signal("phase_transition_requested") and not boss_phase_controller.phase_transition_requested.is_connected(_on_modular_phase_transition_requested):
+		boss_phase_controller.phase_transition_requested.connect(_on_modular_phase_transition_requested)
+
+
+func configure_boss_modules(boss_id: String, config: Resource = null) -> void:
+	active_boss_id = boss_id
+	if boss_controller != null:
+		if "boss_id" in boss_controller: boss_controller.boss_id = boss_id
+		if "boss_config" in boss_controller and config != null: boss_controller.boss_config = config
+	if boss_phase_controller != null and "boss_config" in boss_phase_controller and config != null:
+		boss_phase_controller.boss_config = config
+	if boss_presentation_controller != null and "boss_id" in boss_presentation_controller:
+		boss_presentation_controller.boss_id = boss_id
+
+
+func get_boss_module(module_name: StringName) -> Node:
+	match module_name:
+		&"controller": return boss_controller
+		&"phase_controller": return boss_phase_controller
+		&"state_machine": return boss_state_machine
+		&"attack_controller": return boss_attack_controller
+		&"skill_controller": return boss_skill_controller
+		&"animation_controller": return boss_animation_controller
+		&"health_display": return boss_health_display
+		&"presentation": return boss_presentation_controller
+		&"transition_effects": return boss_transition_effects
+	return null
+
+
+func _on_modular_phase_transition_requested(phase_index: int, _reason: String) -> void:
+	if boss_controller != null and boss_controller.has_method("set_phase"):
+		boss_controller.call("set_phase", phase_index)
+	elif not active_boss_id.is_empty():
+		show_phase_transition(active_boss_id, phase_index)
 
 
 func show_target_telegraph(at: Vector2, boss_id: String, duration: float = 0.42) -> Node2D:

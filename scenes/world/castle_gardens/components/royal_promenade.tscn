@@ -1,0 +1,533 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/castle_pack_v02/environment/terrain/path_cobble_01.png" id="1_path"]
+
+[node name="RoyalPromenade" type="Node2D"]
+y_sort_enabled = true
+
+[node name="Promenade_0_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 285)
+texture = ExtResource("1_path")
+
+[node name="Promenade_0_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 301)
+texture = ExtResource("1_path")
+
+[node name="Promenade_0_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 317)
+texture = ExtResource("1_path")
+
+[node name="Promenade_1_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 301)
+texture = ExtResource("1_path")
+
+[node name="Promenade_1_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 317)
+texture = ExtResource("1_path")
+
+[node name="Promenade_1_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 333)
+texture = ExtResource("1_path")
+
+[node name="Promenade_2_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 317)
+texture = ExtResource("1_path")
+
+[node name="Promenade_2_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 333)
+texture = ExtResource("1_path")
+
+[node name="Promenade_2_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 349)
+texture = ExtResource("1_path")
+
+[node name="Promenade_3_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 333)
+texture = ExtResource("1_path")
+
+[node name="Promenade_3_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 349)
+texture = ExtResource("1_path")
+
+[node name="Promenade_3_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 365)
+texture = ExtResource("1_path")
+
+[node name="Promenade_4_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 349)
+texture = ExtResource("1_path")
+
+[node name="Promenade_4_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 365)
+texture = ExtResource("1_path")
+
+[node name="Promenade_4_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 381)
+texture = ExtResource("1_path")
+
+[node name="Promenade_5_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 365)
+texture = ExtResource("1_path")
+
+[node name="Promenade_5_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 381)
+texture = ExtResource("1_path")
+
+[node name="Promenade_5_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 397)
+texture = ExtResource("1_path")
+
+[node name="Promenade_6_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 381)
+texture = ExtResource("1_path")
+
+[node name="Promenade_6_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 397)
+texture = ExtResource("1_path")
+
+[node name="Promenade_6_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 413)
+texture = ExtResource("1_path")
+
+[node name="Promenade_7_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 397)
+texture = ExtResource("1_path")
+
+[node name="Promenade_7_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 413)
+texture = ExtResource("1_path")
+
+[node name="Promenade_7_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 429)
+texture = ExtResource("1_path")
+
+[node name="Promenade_8_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 413)
+texture = ExtResource("1_path")
+
+[node name="Promenade_8_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 429)
+texture = ExtResource("1_path")
+
+[node name="Promenade_8_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 445)
+texture = ExtResource("1_path")
+
+[node name="Promenade_9_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 429)
+texture = ExtResource("1_path")
+
+[node name="Promenade_9_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 445)
+texture = ExtResource("1_path")
+
+[node name="Promenade_9_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 461)
+texture = ExtResource("1_path")
+
+[node name="Promenade_10_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 445)
+texture = ExtResource("1_path")
+
+[node name="Promenade_10_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 461)
+texture = ExtResource("1_path")
+
+[node name="Promenade_10_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 477)
+texture = ExtResource("1_path")
+
+[node name="Promenade_11_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 461)
+texture = ExtResource("1_path")
+
+[node name="Promenade_11_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 477)
+texture = ExtResource("1_path")
+
+[node name="Promenade_11_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 493)
+texture = ExtResource("1_path")
+
+[node name="Promenade_12_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 477)
+texture = ExtResource("1_path")
+
+[node name="Promenade_12_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 493)
+texture = ExtResource("1_path")
+
+[node name="Promenade_12_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 509)
+texture = ExtResource("1_path")
+
+[node name="Promenade_13_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 493)
+texture = ExtResource("1_path")
+
+[node name="Promenade_13_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 509)
+texture = ExtResource("1_path")
+
+[node name="Promenade_13_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 525)
+texture = ExtResource("1_path")
+
+[node name="Promenade_14_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 509)
+texture = ExtResource("1_path")
+
+[node name="Promenade_14_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 525)
+texture = ExtResource("1_path")
+
+[node name="Promenade_14_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 541)
+texture = ExtResource("1_path")
+
+[node name="Promenade_15_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 525)
+texture = ExtResource("1_path")
+
+[node name="Promenade_15_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 541)
+texture = ExtResource("1_path")
+
+[node name="Promenade_15_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 557)
+texture = ExtResource("1_path")
+
+[node name="Promenade_16_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 541)
+texture = ExtResource("1_path")
+
+[node name="Promenade_16_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 557)
+texture = ExtResource("1_path")
+
+[node name="Promenade_16_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 573)
+texture = ExtResource("1_path")
+
+[node name="Promenade_17_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 557)
+texture = ExtResource("1_path")
+
+[node name="Promenade_17_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 573)
+texture = ExtResource("1_path")
+
+[node name="Promenade_17_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 589)
+texture = ExtResource("1_path")
+
+[node name="Promenade_18_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 573)
+texture = ExtResource("1_path")
+
+[node name="Promenade_18_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 589)
+texture = ExtResource("1_path")
+
+[node name="Promenade_18_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 605)
+texture = ExtResource("1_path")
+
+[node name="Promenade_19_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 589)
+texture = ExtResource("1_path")
+
+[node name="Promenade_19_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 605)
+texture = ExtResource("1_path")
+
+[node name="Promenade_19_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 621)
+texture = ExtResource("1_path")
+
+[node name="Promenade_20_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 605)
+texture = ExtResource("1_path")
+
+[node name="Promenade_20_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 621)
+texture = ExtResource("1_path")
+
+[node name="Promenade_20_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 637)
+texture = ExtResource("1_path")
+
+[node name="Promenade_21_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 621)
+texture = ExtResource("1_path")
+
+[node name="Promenade_21_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 637)
+texture = ExtResource("1_path")
+
+[node name="Promenade_21_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 653)
+texture = ExtResource("1_path")
+
+[node name="Promenade_22_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 637)
+texture = ExtResource("1_path")
+
+[node name="Promenade_22_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 653)
+texture = ExtResource("1_path")
+
+[node name="Promenade_22_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 669)
+texture = ExtResource("1_path")
+
+[node name="Promenade_23_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 653)
+texture = ExtResource("1_path")
+
+[node name="Promenade_23_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 669)
+texture = ExtResource("1_path")
+
+[node name="Promenade_23_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 685)
+texture = ExtResource("1_path")
+
+[node name="Promenade_24_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 669)
+texture = ExtResource("1_path")
+
+[node name="Promenade_24_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 685)
+texture = ExtResource("1_path")
+
+[node name="Promenade_24_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 701)
+texture = ExtResource("1_path")
+
+[node name="Promenade_25_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 685)
+texture = ExtResource("1_path")
+
+[node name="Promenade_25_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 701)
+texture = ExtResource("1_path")
+
+[node name="Promenade_25_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 717)
+texture = ExtResource("1_path")
+
+[node name="Promenade_26_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 701)
+texture = ExtResource("1_path")
+
+[node name="Promenade_26_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 717)
+texture = ExtResource("1_path")
+
+[node name="Promenade_26_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 733)
+texture = ExtResource("1_path")
+
+[node name="Promenade_27_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 717)
+texture = ExtResource("1_path")
+
+[node name="Promenade_27_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 733)
+texture = ExtResource("1_path")
+
+[node name="Promenade_27_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 749)
+texture = ExtResource("1_path")
+
+[node name="Promenade_28_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 733)
+texture = ExtResource("1_path")
+
+[node name="Promenade_28_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 749)
+texture = ExtResource("1_path")
+
+[node name="Promenade_28_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 765)
+texture = ExtResource("1_path")
+
+[node name="Promenade_29_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 749)
+texture = ExtResource("1_path")
+
+[node name="Promenade_29_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 765)
+texture = ExtResource("1_path")
+
+[node name="Promenade_29_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 781)
+texture = ExtResource("1_path")
+
+[node name="Promenade_30_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 765)
+texture = ExtResource("1_path")
+
+[node name="Promenade_30_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 781)
+texture = ExtResource("1_path")
+
+[node name="Promenade_30_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 797)
+texture = ExtResource("1_path")
+
+[node name="Promenade_31_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 781)
+texture = ExtResource("1_path")
+
+[node name="Promenade_31_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 797)
+texture = ExtResource("1_path")
+
+[node name="Promenade_31_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 813)
+texture = ExtResource("1_path")
+
+[node name="Promenade_32_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 797)
+texture = ExtResource("1_path")
+
+[node name="Promenade_32_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 813)
+texture = ExtResource("1_path")
+
+[node name="Promenade_32_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 829)
+texture = ExtResource("1_path")
+
+[node name="Promenade_33_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 813)
+texture = ExtResource("1_path")
+
+[node name="Promenade_33_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 829)
+texture = ExtResource("1_path")
+
+[node name="Promenade_33_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 845)
+texture = ExtResource("1_path")
+
+[node name="Promenade_34_-1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(583, 829)
+texture = ExtResource("1_path")
+
+[node name="Promenade_34_0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(615, 845)
+texture = ExtResource("1_path")
+
+[node name="Promenade_34_1" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(647, 861)
+texture = ExtResource("1_path")
+
+

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyAttackConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_attack_config.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+attack_enabled = true
+attack_range = 70.0
+attack_cooldown = 1.2
+cast_enabled = false
+projectile_enabled = false
+hit_reaction_enabled = true
+metadata = {"basic_skill":"moss_slam"}

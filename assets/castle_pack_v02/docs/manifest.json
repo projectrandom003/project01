@@ -1,0 +1,1198 @@
+{
+ "project": "Project Fantasy",
+ "pack": "castle_royal_gardens_v0.2_refinement",
+ "tile": [
+  64,
+  32
+ ],
+ "assets": [
+  {
+   "id": "grass_01",
+   "file": "assets/environment/terrain/grass_01.png",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Base grass ground tile",
+   "godot": "TileSet atlas tile 64x32, tile_shape=isometric, texture_origin=(0,0), y_sort_origin=0, z_index=-10 (ground)",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "grass_02",
+   "file": "assets/environment/terrain/grass_02.png",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Base grass ground tile",
+   "godot": "TileSet atlas tile 64x32, tile_shape=isometric, texture_origin=(0,0), y_sort_origin=0, z_index=-10 (ground)",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "grass_03",
+   "file": "assets/environment/terrain/grass_03.png",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Base grass ground tile",
+   "godot": "TileSet atlas tile 64x32, tile_shape=isometric, texture_origin=(0,0), y_sort_origin=0, z_index=-10 (ground)",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "path_cobble_01",
+   "file": "assets/environment/terrain/path_cobble_01.png",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Royal garden cobblestone path",
+   "godot": "TileSet atlas tile 64x32, tile_shape=isometric, texture_origin=(0,0), y_sort_origin=0, z_index=-10 (ground)",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "grass_path_edge_ne",
+   "file": "assets/environment/terrain/grass_path_edge_ne.png",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Grass-to-path transition; path hugs the NE edge of the diamond",
+   "godot": "TileSet atlas tile 64x32, tile_shape=isometric, texture_origin=(0,0), y_sort_origin=0, z_index=-10 (ground); use as terrain-transition tile",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "grass_path_edge_se",
+   "file": "assets/environment/terrain/grass_path_edge_se.png",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Grass-to-path transition; path hugs the SE edge of the diamond",
+   "godot": "TileSet atlas tile 64x32, tile_shape=isometric, texture_origin=(0,0), y_sort_origin=0, z_index=-10 (ground); use as terrain-transition tile",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "grass_path_edge_sw",
+   "file": "assets/environment/terrain/grass_path_edge_sw.png",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Grass-to-path transition; path hugs the SW edge of the diamond",
+   "godot": "TileSet atlas tile 64x32, tile_shape=isometric, texture_origin=(0,0), y_sort_origin=0, z_index=-10 (ground); use as terrain-transition tile",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "grass_path_edge_nw",
+   "file": "assets/environment/terrain/grass_path_edge_nw.png",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Grass-to-path transition; path hugs the NW edge of the diamond",
+   "godot": "TileSet atlas tile 64x32, tile_shape=isometric, texture_origin=(0,0), y_sort_origin=0, z_index=-10 (ground); use as terrain-transition tile",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "water_tile_anim",
+   "file": "assets/environment/water/water_tile_anim.png",
+   "size": [
+    256,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    4,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Animated pond/channel water tile, 4 looping frames @ 6 fps",
+   "godot": "TileSet animated tile (animation_columns=4, animation_frame_duration=0.166) or AnimatedSprite2D",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "wall_segment_x",
+   "file": "assets/environment/architecture/wall_segment_x.png",
+   "size": [
+    98,
+    178
+   ],
+   "frame_size": [
+    98,
+    178
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    153
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -153
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -64.0
+   ],
+   "intended_use": "Castle curtain wall, 2 cells along +X, 128 px tall",
+   "godot": "Sprite2D, y_sort_enabled, StaticBody2D footprint 2x1 diamond",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "wall_segment_y",
+   "file": "assets/environment/architecture/wall_segment_y.png",
+   "size": [
+    98,
+    178
+   ],
+   "frame_size": [
+    98,
+    178
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    48,
+    153
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -48,
+    -153
+   ],
+   "sprite2d_offset_if_centered_true": [
+    1.0,
+    -64.0
+   ],
+   "intended_use": "Mirrored wall running along +Y",
+   "godot": "Sprite2D + StaticBody2D footprint 1x2 diamond",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "tower_body",
+   "file": "assets/environment/architecture/tower_body.png",
+   "size": [
+    130,
+    258
+   ],
+   "frame_size": [
+    130,
+    258
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    225
+   ],
+   "footprint_cells": "2x2",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -225
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -96.0
+   ],
+   "intended_use": "Tower shaft, 192 px tall; roof attaches at pivot minus 192 px in Y",
+   "godot": "Sprite2D + child Marker2D 'RoofAnchor' at (0,-192); StaticBody2D footprint 2x2",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "tower_roof",
+   "file": "assets/environment/architecture/tower_roof.png",
+   "size": [
+    130,
+    134
+   ],
+   "frame_size": [
+    130,
+    134
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    99
+   ],
+   "footprint_cells": "2x2",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -99
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -32.0
+   ],
+   "intended_use": "Conical-pyramid slate roof with gold trim; sits on tower_body RoofAnchor",
+   "godot": "Sprite2D child of tower, z_index +1",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "gate_arch_x",
+   "file": "assets/environment/architecture/gate_arch_x.png",
+   "size": [
+    130,
+    226
+   ],
+   "frame_size": [
+    130,
+    226
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    193
+   ],
+   "footprint_cells": "3x1",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -193
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -80.0
+   ],
+   "intended_use": "Gatehouse wall with 40x72 px arched opening (player ~40 px tall) and gold trim",
+   "godot": "Sprite2D + StaticBody2D footprint 3x1, leave arch cell walkable via collision polygon gap",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "door_double_left",
+   "file": "assets/environment/architecture/door_double_left.png",
+   "size": [
+    34,
+    82
+   ],
+   "frame_size": [
+    34,
+    82
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    1,
+    64
+   ],
+   "footprint_cells": "decal",
+   "sprite2d_offset_if_centered_false": [
+    -1,
+    -64
+   ],
+   "sprite2d_offset_if_centered_true": [
+    16.0,
+    -23.0
+   ],
+   "intended_use": "Arched double door for the left (+Y facing) wall face; anchor = bottom-left",
+   "godot": "Sprite2D child of wall/tower; Area2D for interaction",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "door_double_right",
+   "file": "assets/environment/architecture/door_double_right.png",
+   "size": [
+    34,
+    82
+   ],
+   "frame_size": [
+    34,
+    82
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    64
+   ],
+   "footprint_cells": "decal",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -64
+   ],
+   "sprite2d_offset_if_centered_true": [
+    -15.0,
+    -23.0
+   ],
+   "intended_use": "Mirrored door for the right (+X facing) wall face; anchor = bottom-right",
+   "godot": "Sprite2D child of wall/tower; Area2D for interaction",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "stairs_x_4step",
+   "file": "assets/environment/architecture/stairs_x_4step.png",
+   "size": [
+    194,
+    138
+   ],
+   "frame_size": [
+    194,
+    138
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    97,
+    89
+   ],
+   "footprint_cells": "4x2",
+   "sprite2d_offset_if_centered_false": [
+    -97,
+    -89
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "4-step stair rising 40 px toward -X (back-left)",
+   "godot": "Sprite2D; Area2D 'StairZone' for z-height change",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "tree_oak_01",
+   "file": "assets/environment/flora/tree_oak_01.png",
+   "size": [
+    98,
+    130
+   ],
+   "frame_size": [
+    98,
+    130
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    126
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -126
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -61.0
+   ],
+   "intended_use": "Large garden tree, 128 px tall (~3x player)",
+   "godot": "Sprite2D, y_sort_origin at pivot; trunk-only collision circle r=8",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "tree_blossom_01",
+   "file": "assets/environment/flora/tree_blossom_01.png",
+   "size": [
+    98,
+    130
+   ],
+   "frame_size": [
+    98,
+    130
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    126
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -126
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -61.0
+   ],
+   "intended_use": "Magical blossom tree variant",
+   "godot": "Sprite2D, y_sort_origin at pivot; trunk-only collision",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "bush_round_01",
+   "file": "assets/environment/flora/bush_round_01.png",
+   "size": [
+    50,
+    38
+   ],
+   "frame_size": [
+    50,
+    38
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    25,
+    34
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -25,
+    -34
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -15.0
+   ],
+   "intended_use": "Round ornamental bush",
+   "godot": "Sprite2D, optional collision",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "hedge_x_2x1",
+   "file": "assets/environment/flora/hedge_x_2x1.png",
+   "size": [
+    98,
+    90
+   ],
+   "frame_size": [
+    98,
+    90
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    65
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -65
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "Trimmed hedge along +X, 40 px",
+   "godot": "Sprite2D + StaticBody2D 2x1",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "hedge_y_1x2",
+   "file": "assets/environment/flora/hedge_y_1x2.png",
+   "size": [
+    98,
+    90
+   ],
+   "frame_size": [
+    98,
+    90
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    65
+   ],
+   "footprint_cells": "1x2",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -65
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -20.0
+   ],
+   "intended_use": "Trimmed hedge along +Y, 40 px",
+   "godot": "Sprite2D + StaticBody2D 1x2",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "flower_bed_01",
+   "file": "assets/environment/flora/flower_bed_01.png",
+   "size": [
+    66,
+    42
+   ],
+   "frame_size": [
+    66,
+    42
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    25
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -25
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -4.0
+   ],
+   "intended_use": "Raised stone flower bed with mixed blooms",
+   "godot": "Sprite2D + StaticBody2D 1x1",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "lantern_post_gold",
+   "file": "assets/environment/props/lantern_post_gold.png",
+   "size": [
+    18,
+    66
+   ],
+   "frame_size": [
+    18,
+    66
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    9,
+    64
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -9,
+    -64
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -31.0
+   ],
+   "intended_use": "Warm lantern post 64 px; light emitter at (0,-46) from pivot",
+   "godot": "Sprite2D + PointLight2D (glow_warm texture) at (0,-46)",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "lantern_post_arcane",
+   "file": "assets/environment/props/lantern_post_arcane.png",
+   "size": [
+    18,
+    66
+   ],
+   "frame_size": [
+    18,
+    66
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    9,
+    64
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -9,
+    -64
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -31.0
+   ],
+   "intended_use": "Magical cyan lantern post",
+   "godot": "Sprite2D + PointLight2D (glow_cyan) at (0,-46)",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "bench_stone_x",
+   "file": "assets/environment/props/bench_stone_x.png",
+   "size": [
+    98,
+    66
+   ],
+   "frame_size": [
+    98,
+    66
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    49,
+    41
+   ],
+   "footprint_cells": "2x1",
+   "sprite2d_offset_if_centered_false": [
+    -49,
+    -41
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -8.0
+   ],
+   "intended_use": "Stone garden bench",
+   "godot": "Sprite2D + StaticBody2D 2x1; optional 'sit' Area2D",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "statue_guardian_generic",
+   "file": "assets/environment/props/statue_guardian_generic.png",
+   "size": [
+    66,
+    116
+   ],
+   "frame_size": [
+    66,
+    116
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    33,
+    99
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -33,
+    -99
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -41.0
+   ],
+   "intended_use": "Generic stone guardian statue on pedestal (NOT a named character)",
+   "godot": "Sprite2D + StaticBody2D 1x1",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "fountain_tiered_2x2",
+   "file": "assets/environment/water/fountain_tiered_2x2.png",
+   "size": [
+    130,
+    122
+   ],
+   "frame_size": [
+    130,
+    122
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    65,
+    90
+   ],
+   "footprint_cells": "2x2",
+   "sprite2d_offset_if_centered_false": [
+    -65,
+    -90
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -29.0
+   ],
+   "intended_use": "Two-tier fountain; emitter for fountain_spray_anim at (0,-85) from pivot",
+   "godot": "Sprite2D + StaticBody2D 2x2 + child AnimatedSprite2D spray",
+   "revision": "v0.2",
+   "status": "regenerated"
+  },
+  {
+   "id": "fountain_spray_anim",
+   "file": "assets/effects/fountain_spray_anim.png",
+   "size": [
+    288,
+    64
+   ],
+   "frame_size": [
+    48,
+    64
+   ],
+   "frames": [
+    6,
+    1
+   ],
+   "pivot_px": [
+    24,
+    58
+   ],
+   "footprint_cells": "n/a",
+   "sprite2d_offset_if_centered_false": [
+    -24,
+    -58
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -26.0
+   ],
+   "intended_use": "6-frame water spray loop @ 10 fps",
+   "godot": "AnimatedSprite2D, additive not required",
+   "revision": "v0.2",
+   "status": "unchanged"
+  },
+  {
+   "id": "glow_warm",
+   "file": "assets/effects/glow_warm.png",
+   "size": [
+    128,
+    128
+   ],
+   "frame_size": [
+    128,
+    128
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    64,
+    64
+   ],
+   "footprint_cells": "n/a",
+   "sprite2d_offset_if_centered_false": [
+    -64,
+    -64
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Soft warm light halo",
+   "godot": "PointLight2D texture OR Sprite2D with CanvasItemMaterial blend_mode=Add",
+   "revision": "v0.2",
+   "status": "unchanged"
+  },
+  {
+   "id": "glow_cyan",
+   "file": "assets/effects/glow_cyan.png",
+   "size": [
+    128,
+    128
+   ],
+   "frame_size": [
+    128,
+    128
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    64,
+    64
+   ],
+   "footprint_cells": "n/a",
+   "sprite2d_offset_if_centered_false": [
+    -64,
+    -64
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Soft arcane cyan halo",
+   "godot": "PointLight2D texture OR Sprite2D with blend_mode=Add",
+   "revision": "v0.2",
+   "status": "unchanged"
+  },
+  {
+   "id": "light_shaft_01",
+   "file": "assets/effects/light_shaft_01.png",
+   "size": [
+    64,
+    176
+   ],
+   "frame_size": [
+    64,
+    176
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    16,
+    0
+   ],
+   "footprint_cells": "n/a",
+   "sprite2d_offset_if_centered_false": [
+    -16,
+    0
+   ],
+   "sprite2d_offset_if_centered_true": [
+    16.0,
+    88.0
+   ],
+   "intended_use": "Slanted sunbeam through foliage/windows",
+   "godot": "Sprite2D, blend_mode=Add, modulate alpha tween 0.5-1.0",
+   "revision": "v0.2",
+   "status": "unchanged"
+  },
+  {
+   "id": "magic_mote_anim",
+   "file": "assets/effects/magic_mote_anim.png",
+   "size": [
+    128,
+    16
+   ],
+   "frame_size": [
+    16,
+    16
+   ],
+   "frames": [
+    8,
+    1
+   ],
+   "pivot_px": [
+    8,
+    8
+   ],
+   "footprint_cells": "n/a",
+   "sprite2d_offset_if_centered_false": [
+    -8,
+    -8
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "8-frame cyan twinkle particle @ 12 fps",
+   "godot": "GPUParticles2D with AnimatedTexture / CPUParticles2D spritesheet (8x1)",
+   "revision": "v0.2",
+   "status": "unchanged"
+  },
+  {
+   "id": "shadow_blob_64",
+   "file": "assets/effects/shadow_blob_64.png",
+   "size": [
+    64,
+    32
+   ],
+   "frame_size": [
+    64,
+    32
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    32,
+    16
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -32,
+    -16
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    0.0
+   ],
+   "intended_use": "Soft contact shadow, scale per object",
+   "godot": "Sprite2D under object, z_index -1 relative to parent",
+   "revision": "v0.2",
+   "status": "unchanged"
+  },
+  {
+   "id": "scale_ruler_player_PLACEHOLDER",
+   "file": "assets/characters/placeholders/scale_ruler_player_PLACEHOLDER.png",
+   "size": [
+    26,
+    42
+   ],
+   "frame_size": [
+    26,
+    42
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    13,
+    40
+   ],
+   "footprint_cells": "1x1",
+   "sprite2d_offset_if_centered_false": [
+    -13,
+    -40
+   ],
+   "sprite2d_offset_if_centered_true": [
+    0.0,
+    -19.0
+   ],
+   "intended_use": "SCALE REFERENCE ONLY (40 px). Not a character design; no established identity used.",
+   "godot": "Do not ship",
+   "revision": "v0.2",
+   "status": "unchanged"
+  },
+  {
+   "id": "ui_panel_midnight_9slice",
+   "file": "assets/ui/ui_panel_midnight_9slice.png",
+   "size": [
+    48,
+    48
+   ],
+   "frame_size": [
+    48,
+    48
+   ],
+   "frames": [
+    1,
+    1
+   ],
+   "pivot_px": [
+    0,
+    0
+   ],
+   "footprint_cells": "n/a",
+   "sprite2d_offset_if_centered_false": [
+    0,
+    0
+   ],
+   "sprite2d_offset_if_centered_true": [
+    24.0,
+    24.0
+   ],
+   "intended_use": "Midnight/silver/gold panel frame, 9-slice margins 8 px",
+   "godot": "NinePatchRect patch_margin_*=8",
+   "revision": "v0.2",
+   "status": "unchanged"
+  }
+ ]
+}

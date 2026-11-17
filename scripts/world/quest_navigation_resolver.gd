@@ -25,15 +25,7 @@ const STATUS_OTHER_REGION := "other_region"
 const STATUS_UNREACHABLE := "unreachable"
 const STATUS_COMPLETE := "complete"
 
-# Known intra-region territories (region_id -> Array of {id, grid, radius}).
-# Elder Hollow and Withered Estate are territories within Greenward, not
-# separate region IDs.
-const TERRITORIES := {
-	"greenward": [
-		{ "id": "elder_hollow", "grid": Vector2(-88, 76), "radius": 14.0 },
-		{ "id": "withered_estate", "grid": Vector2(116, 78), "radius": 14.0 },
-	],
-}
+const TERRITORIES := QuestNavigationTerritoryResolver.TERRITORIES
 
 var _registry: Dictionary = {} # id -> provider Dictionary
 var _cache: Dictionary = {}
@@ -406,60 +398,19 @@ func _quest_region(definition: Dictionary, db: Object) -> String:
 
 
 func _territory_for(region_id: String, local_pos: Vector2, step: Dictionary) -> String:
-	# Explicit territory on step takes precedence (future-proof, optional).
-	var explicit := str(step.get("territory", step.get("subarea", "")))
-	if not explicit.is_empty():
-		return explicit
-	var list: Variant = TERRITORIES.get(region_id, [])
-	if typeof(list) != TYPE_ARRAY:
-		return ""
-	var pos_grid := IsoMath.world_to_grid(local_pos)
-	for entry in list:
-		if typeof(entry) != TYPE_DICTIONARY:
-			continue
-		var t: Dictionary = entry
-		var center_grid := _territory_center_grid(t)
-		var radius_tiles := float(t.get("radius", 14.0))
-		# radius is in grid tiles; compare in grid space.
-		if pos_grid.distance_to(center_grid) <= radius_tiles:
-			return str(t.get("id", ""))
-	return ""
+	return QuestNavigationTerritoryResolver.territory_for(region_id, local_pos, step)
 
 
 static func _in_territory(region_id: String, local_pos: Vector2, territory_id: String) -> bool:
-	var list: Variant = TERRITORIES.get(region_id, [])
-	if typeof(list) != TYPE_ARRAY:
-		return false
-	var pos_grid := IsoMath.world_to_grid(local_pos)
-	for entry in list:
-		if typeof(entry) != TYPE_DICTIONARY:
-			continue
-		var t: Dictionary = entry
-		if str(t.get("id", "")) != territory_id:
-			continue
-		var center_grid := _territory_center_grid(t)
-		var radius_tiles := float(t.get("radius", 14.0))
-		return pos_grid.distance_to(center_grid) <= radius_tiles
-	return false
+	return QuestNavigationTerritoryResolver.in_territory(region_id, local_pos, territory_id)
 
 
 static func _territory_center_grid(t: Dictionary) -> Vector2:
-	var grid: Variant = t.get("grid", null)
-	if typeof(grid) == TYPE_VECTOR2:
-		return grid
-	if typeof(grid) == TYPE_ARRAY and (grid as Array).size() == 2:
-		var g: Array = grid
-		return Vector2(float(g[0]), float(g[1]))
-	return Vector2.ZERO
+	return QuestNavigationTerritoryResolver.territory_center_grid(t)
 
 
 static func _grid_to_world_value(grid: Variant) -> Vector2:
-	if typeof(grid) == TYPE_VECTOR2:
-		return IsoMath.grid_to_world((grid as Vector2).x, (grid as Vector2).y)
-	if typeof(grid) == TYPE_ARRAY and (grid as Array).size() == 2:
-		var g: Array = grid
-		return IsoMath.grid_to_world(float(g[0]), float(g[1]))
-	return IsoMath.grid_to_world(8.0, 8.0)
+	return QuestNavigationTerritoryResolver.grid_to_world_value(grid)
 
 
 func _resolve_graph(graph: Object, db: Object) -> Object:

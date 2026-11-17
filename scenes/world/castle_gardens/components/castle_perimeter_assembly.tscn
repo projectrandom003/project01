@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/components/castle_perimeter_walls_component.gd" id="1_wall_validator"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_perimeter_wall_run.tscn" id="2_wall_run"]
+
+[node name="GardenPerimeterWalls" type="Node2D"]
+script = ExtResource("1_wall_validator")
+
+[node name="NorthWall" parent="." instance=ExtResource("2_wall_run")]
+z_index = -18
+position = Vector2(640, -180)
+run_length = 1440.0
+
+[node name="WestWall" parent="." instance=ExtResource("2_wall_run")]
+z_index = -16
+position = Vector2(-80, 490)
+rotation = 1.570796
+run_length = 1340.0
+
+[node name="EastWall" parent="." instance=ExtResource("2_wall_run")]
+z_index = -16
+position = Vector2(1360, 490)
+rotation = -1.570796
+run_length = 1340.0
+
+[node name="SouthWall" parent="." instance=ExtResource("2_wall_run")]
+z_index = 70
+position = Vector2(640, 1160)
+run_length = 1440.0

@@ -52,6 +52,14 @@ func _run() -> void:
 	world.region = region
 	world.entities = Node2D.new()
 	world.add_child(world.entities)
+	var entity_spawner := WorldEntitySpawnerComponent.new()
+	world.entities.add_child(entity_spawner)
+	world.entity_spawner = entity_spawner
+	entity_spawner.configure(world)
+	var prop_factory := WorldPropFactoryComponent.new()
+	world.add_child(prop_factory)
+	world.prop_factory_component = prop_factory
+	prop_factory.configure(world)
 	world._setup_interactive_props()
 	if world._interactive_props.size() < 16:
 		failures.append("Greenward does not create enough distributed interactables.")

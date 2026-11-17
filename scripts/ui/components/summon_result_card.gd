@@ -40,20 +40,25 @@ func setup(roll: Dictionary) -> void:
 	if premium:
 		_tier_label.text = "✦ " + UITheme.rarity_tier_label(rarity) + " ✦"
 		_tier_label.add_theme_color_override("font_color", glow)
-	var status := ""
+	# Keep every meaningful result tag visible. The old mutually-exclusive
+	# chain hid NEW / awakening / guaranteed whenever a unit was featured.
+	var tags: Array[String] = []
 	var status_color := UITheme.TEXT_DIM
 	if bool(roll.get("featured", false)):
-		status = "FEATURED"
+		tags.append("FEATURED")
 		status_color = UITheme.GOLD
-	elif bool(roll.get("is_new", false)):
-		status = "NEW"
-		status_color = UITheme.GREEN
+	if bool(roll.get("is_new", false)):
+		tags.append("NEW")
+		if not bool(roll.get("featured", false)):
+			status_color = UITheme.GREEN
 	elif int(roll.get("awakening_gain", 0)) > 0:
-		status = "AWAKENING +1"
-		status_color = UITheme.TEAL
-	elif bool(roll.get("guaranteed", false)):
-		status = "GUARANTEED"
-		status_color = UITheme.VIOLET
-	_status_label.text = status
-	_status_label.visible = not status.is_empty()
+		tags.append("AWAKENING +%d" % int(roll.get("awakening_gain", 0)))
+		if not bool(roll.get("featured", false)):
+			status_color = UITheme.TEAL
+	if bool(roll.get("guaranteed", false)):
+		tags.append("GUARANTEED")
+		if tags.size() == 1:
+			status_color = UITheme.VIOLET
+	_status_label.text = " · ".join(tags)
+	_status_label.visible = not tags.is_empty()
 	_status_label.add_theme_color_override("font_color", status_color)

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="CharacterCombatConfig" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/character_combat_config.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/combat_attachment_points.tscn" id="2_combat"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/vfx_attachment_points.tscn" id="3_vfx"]
+
+[resource]
+script = ExtResource("1_script")
+character_id = &"gerald"
+combat_attachment_scene = ExtResource("2_combat")
+vfx_attachment_scene = ExtResource("3_vfx")
+default_attack_animation = &"attack"
+default_skill_animation = &"cast"
+default_hit_animation = &"damage"
+default_death_animation = &"defeat"
+default_victory_animation = &"victory"
+projectile_origin = Vector2(20, -40)
+hit_origin = Vector2(0, -28)
+notes = "Reusable combat/VFX attachment configuration for Gerald."

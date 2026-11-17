@@ -386,6 +386,32 @@
       "crit_dmg": 0.01
     }
   },
+  "scarlet_requiem": {
+    "name": "Scarlet Requiem",
+    "title": "The Crimson Reaper",
+    "race": "Vampire",
+    "element": "dark",
+    "rarity": "epic",
+    "role": "Assassin",
+    "base": { "hp": 45, "atk": 17, "def": 6, "spd": 15, "crit": 0.14, "crit_dmg": 1.4 },
+    "skills": ["reapers_waltz", "crimson_binding"],
+    "ultimate": "red_requiem",
+    "passive": {
+      "name": "Blood Moon Waltz",
+      "id": "sanguine_waltz",
+      "text": "Scarlet restores 20% of damage dealt as health; critical strikes prepare a faster follow-up."
+    },
+    "lore": "When the blood moon rises above the old cathedral, a crimson reaper walks among the roses. Her scythe remembers every name the night has taken.",
+    "palette": {
+      "hair": "#24151d",
+      "primary": "#171019",
+      "secondary": "#8f1f3d",
+      "accent": "#ff405f",
+      "skin": "#f0d6d7"
+    },
+    "portrait_seed": 131,
+    "growth": { "hp": 3, "atk": 2, "def": 1, "spd": 2, "crit": 0.006, "crit_dmg": 0.01 }
+  },
   "arachnia": {
     "name": "Arachnia Silk",
     "title": "Weaver of the Quiet Web",

@@ -8,22 +8,16 @@ extends Node
 
 signal exit_to_menu
 
-const GREENWARD_WORLD_SCENE: PackedScene = preload("res://scenes/world/greenward_world.tscn")
-const GAME_UI_SCENE: PackedScene = preload("res://scenes/ui/game_ui.tscn")
-const COMBAT_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/combat_screen.tscn")
-const GACHA_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/gacha_screen.tscn")
-const COLLECTION_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/collection_screen.tscn")
-const INVENTORY_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/inventory_screen.tscn")
-const QUEST_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/quest_screen.tscn")
-const MAP_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/map_screen.tscn")
-const PAUSE_MENU_SCENE: PackedScene = preload("res://scenes/ui/pause_menu.tscn")
-
-var world: GreenwardWorld
+var world: Node2D
+var world_host: Node2D
+var world_session: GameWorldSessionComponent
+var overlay_router: GameOverlayRouterComponent
+var combat_router: GameCombatRouterComponent
+var input_router: GameInputRouterComponent
+var runtime_component: GameRuntimeComponent
 var ui_layer: CanvasLayer
 var hud: HUD
 var dialogue: DialogueBox
-var overlay_root: Control
-var combat_root: Control
 
 ## Single shared quest navigation resolver owned by GameScreen and injected into
 ## HUD (and later consumers). Do not instantiate separate resolvers per consumer.
@@ -33,17 +27,30 @@ var active_overlay: OverlayScreen = null
 var active_combat: CombatScreen = null
 
 var current_region_id: String = "greenward"
-var _changing_region: bool = false
-var _hud_accumulator: float = 0.0
 
 
 func _ready() -> void:
 	add_to_group("game_screen")
-	_build_world(GameState.player_region, "")
+	world_host = get_node_or_null("WorldHost") as Node2D
+	world_session = get_node_or_null("WorldSession") as GameWorldSessionComponent
+	runtime_component = get_node_or_null("Runtime") as GameRuntimeComponent
+	overlay_router = get_node_or_null("OverlayRouter") as GameOverlayRouterComponent
+	combat_router = get_node_or_null("CombatRouter") as GameCombatRouterComponent
+	input_router = get_node_or_null("InputRouter") as GameInputRouterComponent
+	if world_host == null or world_session == null or runtime_component == null or overlay_router == null or combat_router == null or input_router == null:
+		push_error("GameScreen scene is missing a required authored composition child")
+		return
+	runtime_component.bind(self)
+	_build_world(GameState.session_domain.player_region, "")
 	_build_ui()
+	overlay_router.overlay_closed.connect(_on_overlay_closed)
+	overlay_router.main_menu_requested.connect(_return_to_title)
+	overlay_router.reset_requested.connect(_reset_journey)
+	overlay_router.navigate_requested.connect(_on_pause_navigation)
+	combat_router.combat_closed.connect(_on_combat_closed)
+	input_router.bind(self)
 	_connect_signals()
 	_set_world_active(true)
-
 
 func _exit_tree() -> void:
 	# Explicit shutdown cleanup BEFORE the RenderingServer is finalized. GDScript
@@ -60,104 +67,63 @@ func _exit_tree() -> void:
 	# is rebuilt lazily by _detail_material_cached() on the next build.
 	ChunkBuilder._detail_material = null
 	ChunkBuilder._valid_kind_set = {}
-	if world != null and is_instance_valid(world) and world.player != null:
-		GameState.set_region_position(current_region_id, world.player.position)
-		GameState.set_player_position(world.player.position)
-		GameState.save_now()
+	if world_session != null:
+		world_session.persist_current_world_state()
 	TouchInput.release()
 	if EventBus.encounter_requested.is_connected(_on_encounter_requested):
 		EventBus.encounter_requested.disconnect(_on_encounter_requested)
 	if EventBus.dialogue_requested.is_connected(_on_dialogue_requested):
 		EventBus.dialogue_requested.disconnect(_on_dialogue_requested)
+	if EventBus.shop_requested.is_connected(_on_shop_requested):
+		EventBus.shop_requested.disconnect(_on_shop_requested)
 	if EventBus.region_change_requested.is_connected(_on_region_change_requested):
 		EventBus.region_change_requested.disconnect(_on_region_change_requested)
 
 
 func _process(delta: float) -> void:
-	_hud_accumulator += delta
-	if _hud_accumulator < 0.2:
-		return
-	_hud_accumulator = 0.0
-	if world == null or not is_instance_valid(world):
-		return
-	if hud != null:
-		hud.set_world_info(world.current_area_name(), world.day_phase())
-	# Safety net: recover from any stuck suspended state.
-	if active_combat != null and not is_instance_valid(active_combat):
-		active_combat = null
-	if active_overlay != null and not is_instance_valid(active_overlay):
-		active_overlay = null
-	if world.process_mode == Node.PROCESS_MODE_DISABLED and not _is_busy():
-		_set_world_active(true)
+	if runtime_component != null:
+		runtime_component.tick(delta)
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _is_busy():
-		return
-	if event.is_action_pressed("interact"):
-		_interact()
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("open_menu"):
-		_open_pause_menu()
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("open_gacha"):
-		open_screen("gacha")
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("open_collection"):
-		open_screen("collection")
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("open_inventory"):
-		open_screen("inventory")
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("open_quests"):
-		open_screen("quests")
-		get_viewport().set_input_as_handled()
-
+	if input_router != null:
+		input_router.handle_unhandled_input(event)
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
-		if _is_busy():
-			return
-		_open_pause_menu()
+	if input_router != null:
+		input_router.handle_notification(what)
+
+func _build_world(region_id: String = "", entry_point: String = "") -> void:
+	world = world_session.build_world(region_id, entry_point) if world_session != null else null
+	current_region_id = world_session.current_region_id if world_session != null else "greenward"
 
 
-# --------------------------------------------------------------------- setup
-
-func _build_world(region_id: String = "greenward", entry_point: String = "") -> void:
-	# Defensive fallback for an unknown / empty saved region id.
-	var rid := region_id
-	if rid.is_empty() or not ContentDB.regions.has(rid):
-		rid = "greenward"
-	current_region_id = rid
-	world = GREENWARD_WORLD_SCENE.instantiate() as GreenwardWorld
-	world.region_id = rid
-	world.entry_point = entry_point
-	world.name = "World_" + rid
-	add_child(world)
+func _resolve_region_id(region_id: String) -> String:
+	return world_session.resolve_region_id(region_id) if world_session != null else region_id
 
 
 func _build_ui() -> void:
-	# The top-level presentation hierarchy is authored in game_ui.tscn.
-	# GameScreen retains orchestration/signals; the editor owns the node layout.
-	ui_layer = GAME_UI_SCENE.instantiate() as CanvasLayer
-	add_child(ui_layer)
-	hud = ui_layer.get_node("HUD") as HUD
-	dialogue = ui_layer.get_node("Dialogue") as DialogueBox
-	overlay_root = ui_layer.get_node("Overlays") as Control
-	combat_root = ui_layer.get_node("Combat") as Control
-	if hud != null:
-		hud.set_quest_resolver(quest_resolver)
+	ui_layer = get_node_or_null("UI") as CanvasLayer
+	if ui_layer == null:
+		push_error("GameScreen requires its authored UI CanvasLayer")
+		return
+	hud = ui_layer.get_node_or_null("HUD") as HUD
+	dialogue = ui_layer.get_node_or_null("Dialogue") as DialogueBox
+	if hud == null or dialogue == null:
+		push_error("GameScreen UI scene is missing HUD or Dialogue")
+		return
+	hud.set_quest_resolver(quest_resolver)
 	dialogue.closed.connect(_on_dialogue_closed)
-
 	hud.screen_requested.connect(open_screen)
 	hud.menu_requested.connect(_open_pause_menu)
+	hud.return_to_title_requested.connect(_return_to_title)
 	hud.interact_requested.connect(_interact)
 	hud.switch_avatar_requested.connect(_switch_avatar)
-
 
 func _connect_signals() -> void:
 	EventBus.encounter_requested.connect(_on_encounter_requested)
 	EventBus.dialogue_requested.connect(_on_dialogue_requested)
+	EventBus.shop_requested.connect(_on_shop_requested)
 	if not EventBus.region_change_requested.is_connected(_on_region_change_requested):
 		EventBus.region_change_requested.connect(_on_region_change_requested)
 
@@ -165,78 +131,35 @@ func _connect_signals() -> void:
 # ----------------------------------------------------------- region transitions
 
 func _on_region_change_requested(target_region_id: String, entry_point: String) -> void:
-	if _changing_region:
+	if world_session == null:
 		return
-	if world == null or not is_instance_valid(world) or world.player == null:
+	var result := world_session.transition_to(target_region_id, entry_point)
+	if not bool(result.get("ok", false)):
+		EventBus.toast_requested.emit(str(result.get("reason", "Could not travel there.")))
 		return
-
-	# Validate with a pure RegionGraph built from the shipped content.
-	var graph := RegionGraph.new(ContentDB.regions)
-	if not graph.has_region(target_region_id):
-		EventBus.toast_requested.emit("Unknown destination: " + target_region_id)
-		return
-	var conn_id := ""
-	for entry in graph.connections_from(current_region_id):
-		if typeof(entry) == TYPE_DICTIONARY and str(entry.get("to", "")) == target_region_id:
-			conn_id = str(entry.get("id", ""))
-			break
-	if conn_id.is_empty():
-		EventBus.toast_requested.emit("No route to " + graph.region_name(target_region_id))
-		return
-	var resolved := graph.resolve_transition(current_region_id, conn_id)
-	if not bool(resolved.get("valid", false)):
-		EventBus.toast_requested.emit("Route unavailable: " + str(resolved.get("error", "")))
-		return
-
-	_changing_region = true
-	# Remember where the player stood in the CURRENT region, then switch.
-	GameState.set_region_position(current_region_id, world.player.position)
-	GameState.set_player_region(target_region_id)
-	var old_world := world
-	world = null
-	old_world.queue_free()
-	_build_world(target_region_id, entry_point)
+	world = world_session.world
+	current_region_id = world_session.current_region_id
 	_set_world_active(true)
-	EventBus.toast_requested.emit("Arrived in " + graph.region_name(target_region_id))
-	_changing_region = false
+	EventBus.toast_requested.emit("Arrived in " + str(result.get("display_name", current_region_id)))
 
 
 # ------------------------------------------------------------------- helpers
 
 func _is_busy() -> bool:
-	return (
-		(dialogue != null and dialogue.visible)
-		or active_combat != null
-		or active_overlay != null
-	)
-
+	return input_router.is_busy() if input_router != null else false
 
 func _set_world_active(active: bool) -> void:
-	if world == null or not is_instance_valid(world):
-		return
-	world.process_mode = Node.PROCESS_MODE_INHERIT if active else Node.PROCESS_MODE_DISABLED
-	if world.player != null and is_instance_valid(world.player):
-		world.player.input_enabled = active
-	TouchInput.release()
+	if world_session != null:
+		world_session.set_world_active(active)
 
 
 func _interact() -> void:
-	if world == null or world.player == null:
-		return
-	if not world.player.input_enabled:
-		return
-	world.player.try_interact()
-
+	if input_router != null:
+		input_router.interact()
 
 func _switch_avatar() -> void:
-	if world == null or world.player == null:
-		return
-	if not world.player.input_enabled:
-		return
-	world.player.cycle_avatar()
-
-
-# ------------------------------------------------------------------ dialogue
+	if input_router != null:
+		input_router.switch_avatar()
 
 func _on_dialogue_requested(dialogue_id: String) -> void:
 	if _is_busy():
@@ -250,28 +173,28 @@ func _on_dialogue_closed(_dialogue_id: String) -> void:
 		_set_world_active(true)
 
 
+func _on_shop_requested() -> void:
+	# DialogueBox emits while the conversation is closing; defer until its
+	# visibility flag is cleared so the single-overlay lock is released.
+	call_deferred("open_screen", "shop")
+
+
 # -------------------------------------------------------------------- combat
 
 func _on_encounter_requested(group_id: String, source: Node) -> void:
-	if _is_busy():
+	if _is_busy() or combat_router == null:
 		# The monster already marked itself engaged; let it return to roaming.
 		if source != null and is_instance_valid(source) and "engaged" in source:
 			source.engaged = false
 		return
-	if group_id.is_empty():
+	if not combat_router.start_encounter(group_id):
 		return
+	active_combat = combat_router.active_combat
 	_set_world_active(false)
-	var combat := COMBAT_SCREEN_SCENE.instantiate() as CombatScreen
-	combat.name = "Battle"
-	combat.group_id = group_id
-	active_combat = combat
-	combat.closed.connect(_on_combat_closed)
-	combat_root.add_child(combat)
 
 
 func _on_combat_closed() -> void:
 	active_combat = null
-	TouchInput.release()
 	if not _is_busy():
 		_set_world_active(true)
 
@@ -279,27 +202,11 @@ func _on_combat_closed() -> void:
 # ------------------------------------------------------------------- screens
 
 func open_screen(screen_id: String) -> void:
-	if _is_busy() or active_combat != null:
+	if _is_busy() or active_combat != null or overlay_router == null:
 		return
-	var screen_scene: PackedScene
-	match screen_id:
-		"gacha":
-			screen_scene = GACHA_SCREEN_SCENE
-		"collection":
-			screen_scene = COLLECTION_SCREEN_SCENE
-		"inventory":
-			screen_scene = INVENTORY_SCREEN_SCENE
-		"quests":
-			screen_scene = QUEST_SCREEN_SCENE
-		"map":
-			screen_scene = MAP_SCREEN_SCENE
-		_:
-			push_warning("[GameScreen] Unknown screen: " + screen_id)
-			return
-	var screen := screen_scene.instantiate() as OverlayScreen
-	active_overlay = screen
-	screen.closed.connect(_on_overlay_closed)
-	overlay_root.add_child(screen)
+	if not overlay_router.open_screen(screen_id):
+		return
+	active_overlay = overlay_router.active_overlay
 	_set_world_active(false)
 	EventBus.screen_changed.emit(screen_id)
 
@@ -312,15 +219,11 @@ func _on_overlay_closed() -> void:
 
 
 func _open_pause_menu() -> void:
-	if _is_busy() or active_combat != null:
+	if _is_busy() or active_combat != null or overlay_router == null:
 		return
-	var menu := PAUSE_MENU_SCENE.instantiate() as PauseMenu
-	active_overlay = menu
-	menu.closed.connect(_on_overlay_closed)
-	menu.main_menu_requested.connect(_return_to_title)
-	menu.reset_requested.connect(_reset_journey)
-	menu.navigate_requested.connect(_on_pause_navigation)
-	overlay_root.add_child(menu)
+	if not overlay_router.open_pause_menu():
+		return
+	active_overlay = overlay_router.active_overlay
 	_set_world_active(false)
 	EventBus.screen_changed.emit("pause")
 
@@ -334,13 +237,16 @@ func _on_pause_navigation(screen_id: String) -> void:
 
 
 func _return_to_title() -> void:
-	if world != null and is_instance_valid(world) and world.player != null:
-		GameState.set_region_position(current_region_id, world.player.position)
-		GameState.set_player_position(world.player.position)
-	GameState.save_now()
+	_persist_current_world_state()
 	TouchInput.release()
 	exit_to_menu.emit()
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
+
+
+## Keep the in-memory world and disk save in sync before leaving gameplay.
+func _persist_current_world_state() -> void:
+	if world_session != null:
+		world_session.persist_current_world_state()
 
 
 func _reset_journey() -> void:

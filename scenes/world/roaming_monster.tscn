@@ -1,9 +1,32 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/roaming_monster.gd" id="1_monster"]
 [ext_resource type="PackedScene" path="res://scenes/characters/actor_visual.tscn" id="2_visual"]
 [ext_resource type="PackedScene" path="res://scenes/world/components/monster_name_label.tscn" id="3_name"]
 [ext_resource type="PackedScene" path="res://scenes/world/components/monster_accent.tscn" id="4_accent"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_status_anchor.tscn" id="5_status"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_health_display_anchor.tscn" id="6_health"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_controller.gd" id="7_controller"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_visual.gd" id="8_visual_comp"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_movement.gd" id="9_movement"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_detection.gd" id="10_detection"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_targeting.gd" id="11_targeting"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_combat.gd" id="12_combat"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_health.gd" id="13_health"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_status_effects.gd" id="14_status"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_animation.gd" id="15_animation"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_interaction_component.gd" id="16_interaction"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_audio.gd" id="17_audio"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_vfx.gd" id="18_vfx"]
+[ext_resource type="Script" path="res://scripts/enemies/states/enemy_state_machine.gd" id="19_sm"]
+[ext_resource type="Script" path="res://scripts/enemies/states/idle_state.gd" id="20_idle"]
+[ext_resource type="Script" path="res://scripts/enemies/states/patrol_state.gd" id="21_patrol"]
+[ext_resource type="Script" path="res://scripts/enemies/states/chase_state.gd" id="22_chase"]
+[ext_resource type="Script" path="res://scripts/enemies/states/attack_state.gd" id="23_attack"]
+[ext_resource type="Script" path="res://scripts/enemies/states/return_state.gd" id="24_return"]
+[ext_resource type="Script" path="res://scripts/enemies/states/stunned_state.gd" id="25_stunned"]
+[ext_resource type="Script" path="res://scripts/enemies/states/dead_state.gd" id="26_dead"]
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_roaming_behavior.gd" id="27_roaming"]
 
 [node name="RoamingMonster" type="Node2D"]
 script = ExtResource("1_monster")
@@ -13,3 +36,97 @@ script = ExtResource("1_monster")
 [node name="NameLabel" parent="." instance=ExtResource("3_name")]
 
 [node name="Accent" parent="." instance=ExtResource("4_accent")]
+
+[node name="StatusAnchor" parent="." instance=ExtResource("5_status")]
+
+[node name="HealthDisplayAnchor" parent="." instance=ExtResource("6_health")]
+
+[node name="Components" type="Node" parent="."]
+
+[node name="EnemyController" type="Node" parent="Components"]
+script = ExtResource("7_controller")
+movement_path = NodePath("../EnemyMovement")
+detection_path = NodePath("../EnemyDetection")
+targeting_path = NodePath("../EnemyTargeting")
+combat_path = NodePath("../EnemyCombat")
+health_path = NodePath("../EnemyHealth")
+status_path = NodePath("../EnemyStatusEffects")
+animation_path = NodePath("../EnemyAnimation")
+interaction_path = NodePath("../EnemyInteraction")
+audio_path = NodePath("../EnemyAudio")
+vfx_path = NodePath("../EnemyVFX")
+visual_path = NodePath("../EnemyVisual")
+state_machine_path = NodePath("../../StateMachine")
+
+[node name="EnemyRoamingBehavior" type="Node" parent="Components"]
+script = ExtResource("27_roaming")
+
+[node name="EnemyVisual" type="Node" parent="Components"]
+script = ExtResource("8_visual_comp")
+actor_visual_path = NodePath("../../ActorVisual")
+name_label_path = NodePath("../../NameLabel")
+accent_path = NodePath("../../Accent")
+
+[node name="EnemyMovement" type="Node" parent="Components"]
+script = ExtResource("9_movement")
+
+[node name="EnemyDetection" type="Node" parent="Components"]
+script = ExtResource("10_detection")
+
+[node name="EnemyTargeting" type="Node" parent="Components"]
+script = ExtResource("11_targeting")
+
+[node name="EnemyCombat" type="Node" parent="Components"]
+script = ExtResource("12_combat")
+
+[node name="EnemyHealth" type="Node" parent="Components"]
+script = ExtResource("13_health")
+
+[node name="EnemyStatusEffects" type="Node" parent="Components"]
+script = ExtResource("14_status")
+
+[node name="EnemyAnimation" type="Node" parent="Components"]
+script = ExtResource("15_animation")
+visual_path = NodePath("../../ActorVisual")
+
+[node name="EnemyInteraction" type="Node" parent="Components"]
+script = ExtResource("16_interaction")
+
+[node name="EnemyAudio" type="Node" parent="Components"]
+script = ExtResource("17_audio")
+
+[node name="EnemyVFX" type="Node" parent="Components"]
+script = ExtResource("18_vfx")
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("19_sm")
+initial_state = &"patrol"
+controller_path = NodePath("../Components/EnemyController")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("20_idle")
+state_name = &"idle"
+
+[node name="Patrol" type="Node" parent="StateMachine"]
+script = ExtResource("21_patrol")
+state_name = &"patrol"
+
+[node name="Chase" type="Node" parent="StateMachine"]
+script = ExtResource("22_chase")
+state_name = &"chase"
+
+[node name="Attack" type="Node" parent="StateMachine"]
+script = ExtResource("23_attack")
+state_name = &"attack"
+
+[node name="Return" type="Node" parent="StateMachine"]
+script = ExtResource("24_return")
+state_name = &"return"
+
+[node name="Stunned" type="Node" parent="StateMachine"]
+script = ExtResource("25_stunned")
+state_name = &"stunned"
+
+[node name="Dead" type="Node" parent="StateMachine"]
+script = ExtResource("26_dead")
+state_name = &"dead"

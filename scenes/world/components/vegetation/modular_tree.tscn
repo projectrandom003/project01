@@ -1,0 +1,38 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/components/modular_vegetation.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/world/components/vegetation/vegetation_shadow.tscn" id="2_shadow"]
+[ext_resource type="PackedScene" path="res://scenes/world/components/vegetation/vegetation_trunk.tscn" id="3_trunk"]
+[ext_resource type="PackedScene" path="res://scenes/world/components/vegetation/vegetation_branch.tscn" id="4_branch"]
+[ext_resource type="PackedScene" path="res://scenes/world/components/vegetation/vegetation_canopy.tscn" id="5_canopy"]
+[ext_resource type="PackedScene" path="res://scenes/world/components/vegetation/vegetation_leaf_cluster.tscn" id="6_leaves"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tree_trunk"]
+size = Vector2(20, 14)
+
+[node name="ModularTree" type="Node2D"]
+y_sort_enabled = false
+script = ExtResource("1_script")
+vegetation_kind = "tree"
+
+[node name="Shadow" parent="." instance=ExtResource("2_shadow")]
+
+[node name="Trunk" parent="." instance=ExtResource("3_trunk")]
+
+[node name="Branches" parent="." instance=ExtResource("4_branch")]
+
+[node name="Canopy" parent="." instance=ExtResource("5_canopy")]
+
+[node name="Leaves" parent="." instance=ExtResource("6_leaves")]
+
+[node name="Collision" type="Node2D" parent="."]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Collision"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/StaticBody2D"]
+position = Vector2(0, -7)
+shape = SubResource("RectangleShape2D_tree_trunk")
+
+[node name="Base" type="Node2D" parent="."]

@@ -1,0 +1,109 @@
+[gd_resource type="Resource" script_class="GreenwardCompositionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/components/greenward_composition_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+village_npcs = Array[Dictionary]([{
+"npc_id": "elder_maelin",
+"display_name": "Elder Maelin",
+"dialogue_id": "elder_maelin",
+"grid": Vector2(4.4, 7.2),
+"palette": {"hair": "#d8d8c0", "primary": "#4a5a3a", "secondary": "#c9a45a", "accent": "#9df5cf", "skin": "#e8c8a8"},
+"race": "Elf",
+"role": "Village Elder"
+}, {
+"npc_id": "merchant_sera",
+"display_name": "Sera Quill",
+"dialogue_id": "merchant_sera",
+"grid": Vector2(12.5, 8.5),
+"palette": {"hair": "#c96f3a", "primary": "#5a3a2a", "secondary": "#e8c27a", "accent": "#ffd27a", "skin": "#e8b890"},
+"race": "Human",
+"role": "Traveling Merchant"
+}, {
+"npc_id": "wanderer_pip",
+"display_name": "Pip",
+"dialogue_id": "wanderer_pip",
+"grid": Vector2(7.5, 12.5),
+"palette": {"hair": "#f2e2a8", "primary": "#3f5a6b", "secondary": "#8fd9c4", "accent": "#ffeaa0", "skin": "#f6e3cf"},
+"race": "Beastkin",
+"role": "Wandering Scout"
+}])
+river_props = Array[Dictionary]([{
+"kind": "river_rock", "grid": Vector2(3.5, 13.4), "scale": 0.9, "flip": true, "variant": 0
+}, {
+"kind": "river_rock", "grid": Vector2(5.0, 13.8), "scale": 1.0, "flip": false, "variant": 1
+}, {
+"kind": "river_rock", "grid": Vector2(7.0, 14.1), "scale": 0.85, "flip": true, "variant": 0
+}, {
+"kind": "river_rock", "grid": Vector2(11.0, 14.3), "scale": 1.0, "flip": false, "variant": 1
+}, {
+"kind": "river_rock", "grid": Vector2(13.2, 14.0), "scale": 0.9, "flip": true, "variant": 0
+}, {
+"kind": "reeds", "grid": Vector2(4.2, 12.9), "scale": 0.9, "flip": false, "variant": 1
+}, {
+"kind": "reeds", "grid": Vector2(6.2, 13.2), "scale": 1.0, "flip": true, "variant": 0
+}, {
+"kind": "reeds", "grid": Vector2(12.2, 13.6), "scale": 0.9, "flip": false, "variant": 1
+}, {
+"kind": "lily_pad", "grid": Vector2(8.4, 13.9), "scale": 0.9, "flip": true, "variant": 0
+}, {
+"kind": "lily_pad", "grid": Vector2(10.2, 14.2), "scale": 0.85, "flip": false, "variant": 1
+}, {
+"kind": "lily_pad", "grid": Vector2(5.6, 14.4), "scale": 0.8, "flip": true, "variant": 0
+}, {
+"kind": "wooden_bridge", "grid": Vector2(8.8, 13.5), "scale": 1.0, "flip": false, "variant": 0
+}, {
+"kind": "stone_bridge", "grid": Vector2(12.4, 13.8), "scale": 0.9, "flip": false, "variant": 1
+}])
+river_animated_props = Array[Dictionary]([{
+"kind": "waterfall", "grid": Vector2(3.0, 13.0), "scale": 1.0, "flip": false, "variant": 0, "motion": 4
+}, {
+"kind": "waterfall", "grid": Vector2(14.0, 13.6), "scale": 1.0, "flip": false, "variant": 0, "motion": 4
+}, {
+"kind": "foam_ripple", "grid": Vector2(4.6, 13.6), "scale": 1.0, "flip": true, "variant": 0, "motion": 3
+}, {
+"kind": "foam_ripple", "grid": Vector2(6.6, 14.0), "scale": 1.0, "flip": false, "variant": 0, "motion": 3
+}, {
+"kind": "foam_ripple", "grid": Vector2(8.8, 14.2), "scale": 1.0, "flip": true, "variant": 0, "motion": 3
+}, {
+"kind": "foam_ripple", "grid": Vector2(10.8, 14.1), "scale": 1.0, "flip": false, "variant": 0, "motion": 3
+}, {
+"kind": "foam_ripple", "grid": Vector2(12.6, 13.9), "scale": 1.0, "flip": true, "variant": 0, "motion": 3
+}])
+river_lights = Array[Dictionary]([{
+"grid": Vector2(3.0, 13.0), "energy": 0.7, "scale": 1.8
+}])
+anchors = {
+"listening_stones": Vector2(2, 20),
+"hollowed_grove": Vector2(26, 16),
+"moonpetal_glade": Vector2(18, 5),
+"hilltop_watch": Vector2(30, 6),
+"market_row": Vector2(13, 8),
+"lakeside": Vector2(6.4, 15.0),
+"elder_hollow": Vector2(-88, 76),
+"withered_estate": Vector2(116, 78),
+"village_gate": Vector2(8, 3.6),
+"village_hub": Vector2(8, 8),
+"river_foam_a": Vector2(7.0, 12.4),
+"river_foam_b": Vector2(9.4, 12.8),
+"hilltop_dial": Vector2(48, 18),
+"traders_sign": Vector2(-10, -22),
+"old_mooring": Vector2(16, 52),
+"shrine_wisp": Vector2(34, -28),
+"grove_shard": Vector2(-36, 8),
+"extra_waterfall": Vector2(13.8, 13.4),
+"extra_foam": Vector2(5.2, 13.9),
+"butterfly": Vector2(9.0, 9.0)
+}
+path_routes = Array[Dictionary]([{
+"from": Vector2(8, 8), "to": Vector2(2, 20), "marker_count": 7
+}, {
+"from": Vector2(8, 8), "to": Vector2(26, 16), "marker_count": 7
+}, {
+"from": Vector2(8, 8), "to": Vector2(-88, 76), "marker_count": 18
+}, {
+"from": Vector2(8, 8), "to": Vector2(116, 78), "marker_count": 18
+}, {
+"from": Vector2(8, 8), "to": Vector2(30, 8), "marker_count": 7
+}])

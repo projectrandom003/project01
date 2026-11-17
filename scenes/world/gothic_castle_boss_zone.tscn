@@ -1,0 +1,90 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/gothic_castle/gothic_castle_boss_zone.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/world/gothic_castle/gothic_castle_environment_component.gd" id="2_environment"]
+[ext_resource type="Script" path="res://scripts/world/gothic_castle/gothic_castle_actor_spawner_component.gd" id="3_spawner"]
+[ext_resource type="Script" path="res://scripts/world/gothic_castle/gothic_castle_session_component.gd" id="4_session"]
+[ext_resource type="Script" path="res://scripts/world/gothic_castle/components/gothic_ground_builder_component.gd" id="6_ground"]
+[ext_resource type="Script" path="res://scripts/world/gothic_castle/components/gothic_castle_architecture_component.gd" id="7_architecture"]
+[ext_resource type="Script" path="res://scripts/world/gothic_castle/components/gothic_boss_arena_builder_component.gd" id="8_arena"]
+[ext_resource type="Script" path="res://scripts/world/gothic_castle/components/gothic_route_decoration_component.gd" id="9_route"]
+[ext_resource type="Script" path="res://scripts/world/gothic_castle/components/gothic_world_bounds_component.gd" id="10_bounds"]
+[ext_resource type="Script" path="res://scripts/world/day_night.gd" id="5_day_night"]
+
+[node name="GothicCastleBossZone" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_script")
+
+[node name="Components" type="Node" parent="."]
+
+[node name="Environment" type="Node" parent="Components"]
+script = ExtResource("2_environment")
+
+[node name="GroundBuilder" type="Node" parent="Components/Environment"]
+script = ExtResource("6_ground")
+
+[node name="ArchitectureBuilder" type="Node" parent="Components/Environment"]
+script = ExtResource("7_architecture")
+
+[node name="ArenaBuilder" type="Node" parent="Components/Environment"]
+script = ExtResource("8_arena")
+
+[node name="RouteDecoration" type="Node" parent="Components/Environment"]
+script = ExtResource("9_route")
+
+[node name="BoundsBuilder" type="Node" parent="Components/Environment"]
+script = ExtResource("10_bounds")
+
+[node name="ActorSpawner" type="Node" parent="Components"]
+script = ExtResource("3_spawner")
+
+[node name="Session" type="Node" parent="Components"]
+script = ExtResource("4_session")
+
+[node name="DayNight" type="CanvasModulate" parent="."]
+script = ExtResource("5_day_night")
+day_length_seconds = 600.0
+
+[node name="Terrain" type="Node2D" parent="."]
+z_index = -20
+
+[node name="Ground" type="Node2D" parent="Terrain"]
+
+[node name="Paths" type="Node2D" parent="Terrain"]
+
+[node name="Castle" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Arena" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Flora" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Props" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Effects" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Entities" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="NPCPlacement" type="Node2D" parent="."]
+
+[node name="RoadWarden" type="Marker2D" parent="NPCPlacement"]
+position = Vector2(0, 64)
+
+[node name="BlightWarden" type="Marker2D" parent="NPCPlacement"]
+position = Vector2(256, 704)
+
+[node name="ArenaGatekeeper" type="Marker2D" parent="NPCPlacement"]
+position = Vector2(1792, 1280)
+
+[node name="MapSpawnPoints" type="Node2D" parent="."]
+
+[node name="PlayerSpawn" type="Marker2D" parent="MapSpawnPoints"]
+position = Vector2(640, 360)
+
+[node name="ArenaGate" type="Marker2D" parent="MapSpawnPoints"]
+position = Vector2(1792, 1024)

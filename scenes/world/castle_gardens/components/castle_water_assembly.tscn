@@ -1,0 +1,62 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/water/fountain_tiered.tscn" id="1_fountain"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/water/water_tile_anim.tscn" id="2_water_tile"]
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/components/castle_water_component.gd" id="3_water"]
+
+[node name="Water" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("3_water")
+
+[node name="WaterZones" type="Node2D" parent="."]
+
+[node name="LeftPond" type="Marker2D" parent="WaterZones"]
+metadata/grid_position = Vector2(23.75, 10.31)
+metadata/radius = 2.1
+
+[node name="RightPond" type="Marker2D" parent="WaterZones"]
+metadata/grid_position = Vector2(30.31, 3.75)
+metadata/radius = 2.1
+
+[node name="FountainCourt" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Fountain" parent="FountainCourt" instance=ExtResource("1_fountain")]
+position = Vector2(235, 372)
+
+[node name="OuterPonds" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="PondLeftTile0" parent="OuterPonds" instance=ExtResource("2_water_tile")]
+
+[node name="PondLeftTile1" parent="OuterPonds" instance=ExtResource("2_water_tile")]
+phase_offset = 1
+
+[node name="PondLeftTile2" parent="OuterPonds" instance=ExtResource("2_water_tile")]
+phase_offset = 2
+
+[node name="PondLeftTile3" parent="OuterPonds" instance=ExtResource("2_water_tile")]
+phase_offset = 3
+
+[node name="PondLeftTile4" parent="OuterPonds" instance=ExtResource("2_water_tile")]
+
+[node name="PondLeftTile5" parent="OuterPonds" instance=ExtResource("2_water_tile")]
+scale = Vector2(1.4375, 1)
+phase_offset = 1
+
+[node name="PondRightTile0" parent="OuterPonds" instance=ExtResource("2_water_tile")]
+phase_offset = 2
+
+[node name="PondRightTile1" parent="OuterPonds" instance=ExtResource("2_water_tile")]
+phase_offset = 3
+
+[node name="PondRightTile2" parent="OuterPonds" instance=ExtResource("2_water_tile")]
+
+[node name="PondRightTile3" parent="OuterPonds" instance=ExtResource("2_water_tile")]
+phase_offset = 1
+
+[node name="PondRightTile4" parent="OuterPonds" instance=ExtResource("2_water_tile")]
+phase_offset = 2
+
+[node name="PondRightTile5" parent="OuterPonds" instance=ExtResource("2_water_tile")]
+phase_offset = 3

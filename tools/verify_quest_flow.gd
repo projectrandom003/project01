@@ -92,7 +92,7 @@ func _ready() -> void:
 	# the static centre coordinate from the quest data.
 	GameState.quests["elder_memory"] = { "state": "active", "step": 0, "progress": 0 }
 	GameState.set_tracked_quest("elder_memory")
-	var fake_boss := RoamingMonster.new()
+	var fake_boss := preload("res://scenes/world/roaming_monster.tscn").instantiate() as RoamingMonster
 	fake_boss.setup("elder_hollow", Vector2(520.0, 640.0), {
 		"id": "elder_hollow", "name": "Elder Hollow", "element": "nature", "palette": {}
 	}, true)

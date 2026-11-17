@@ -1,325 +1,111 @@
 class_name MainMenu
 extends Control
-## Art-forward title screen. The party stands in the world scene; navigation is
-## deliberately short and consistent instead of presenting the cast as cards.
+## Composition root. Presentation, routing and overlay ownership live in child nodes.
 
 signal play_requested
 signal quit_requested
 
-const STARTERS := ["gerald", "lilith", "kael"]
+@onready var navigation: MainMenuNavigationComponent = $Navigation
+@onready var skin: MainMenuSkinComponent = $Skin
+@onready var overlays: MainMenuOverlayComponent = $Overlays
+@onready var ravienna_line: Label = $RaviennaDialogue/DialogueMargin/DialogueContent/RaviennaLine
 
-var _play_button: Button
-var _reset_button: Button
-var _summary_label: Label
-var _party_names_label: Label
-var _party_layer: Node2D
-var _party_visuals: Array[ActorVisual] = []
-var _reset_armed: bool = false
+var ravienna_lines: Array[String] = [
+	"The night is young. Shall we see what secrets it keeps?",
+	"Careful, darling. Not every shadow is as harmless as it looks.",
+	"I was beginning to think you had forgotten me.",
+	"Come closer. I have a little story for you.",
+	"The roses are beautiful tonight… almost as beautiful as the danger.",
+	"Stay a while. The world can wait for us.",
+	"Do you hear that? The castle is whispering again.",
+	"I wonder what fate has written for us this time."
+]
+var ravienna_line_index := 0
 
 func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	theme = UITheme.build()
-	# Artwork and six plaque hit areas are pre-authored in main_menu.tscn.
-	# Runtime code binds actions, save-state availability and visual states.
-	var actions := {
-		"ContinueButton": {"action": "continue", "accent": Color("#f0d5f5"), "primary": true},
-		"NewJourneyButton": {"action": "new", "accent": Color("#d9b9e7"), "primary": false},
-		"LoadGameButton": {"action": "load", "accent": Color("#d9b9e7"), "primary": false},
-		"SettingsButton": {"action": "settings", "accent": Color("#d9b9e7"), "primary": false},
-		"ExtrasButton": {"action": "extras", "accent": Color("#d9b9e7"), "primary": false},
-		"QuitGameButton": {"action": "quit", "accent": Color("#c5b7d8"), "primary": false},
-	}
-	for node_name in actions:
-		var button := get_node(node_name) as Button
-		var spec: Dictionary = actions[node_name]
-		var action := str(spec.action)
-		button.add_theme_font_size_override("font_size", 17)
-		button.add_theme_color_override("font_color", Color("#f0e5f3"))
-		button.add_theme_color_override("font_hover_color", Color("#ffffff"))
-		button.add_theme_color_override("font_pressed_color", Color("#fff0dc"))
-		_style_ornate_menu_button(button, spec.accent, bool(spec.primary))
-		if action in ["continue", "load"]:
-			button.disabled = not SaveService.has_save()
-		button.pressed.connect(_on_menu_action.bind(action))
-		if action == "continue":
-			_play_button = button
-		elif action == "new":
-			_reset_button = button
-	continue_button_focus()
-	resized.connect(_layout_art_menu)
-	_layout_art_menu()
+	_cycle_ravienna_dialogue()
+	_fit_ravienna_dialogue()
+	navigation.bind(self)
+	skin.bind(self)
+	overlays.bind(self)
+	navigation.play_requested.connect(play_requested.emit)
+	navigation.world_requested.connect(overlays.open_world_map)
+	navigation.summon_requested.connect(overlays.open_summon)
+	navigation.inventory_requested.connect(overlays.open_inventory)
+	navigation.settings_requested.connect(overlays.open_settings)
+	navigation.characters_requested.connect(overlays.open_characters)
+	navigation.mail_requested.connect(_show_mail)
+	navigation.events_requested.connect(_show_events)
+	navigation.calendar_requested.connect(_show_calendar)
+	navigation.gifts_requested.connect(_show_gifts)
+	navigation.achievements_requested.connect(_show_achievements)
+	navigation.messages_requested.connect(_show_messages)
+	navigation.combat_requested.connect(_show_combat)
+	navigation.castle_requested.connect(_show_castle)
+	navigation.resources_requested.connect(_show_resources)
+	navigation.crystals_requested.connect(_show_crystals)
+	navigation.gold_requested.connect(_show_gold)
 
-func _layout_art_menu() -> void:
-	# Coordinates are normalized to the 16:9 reference artwork. Each live
-	# button occupies exactly one painted plaque, rather than a shared panel.
-	var rows := [0.475, 0.552, 0.628, 0.700, 0.772, 0.844]
-	var names := ["ContinueButton", "NewJourneyButton", "LoadGameButton", "SettingsButton", "ExtrasButton", "QuitGameButton"]
-	for i in range(names.size()):
-		var button := get_node_or_null(names[i]) as Button
-		if button == null:
-			continue
-		button.set_anchors_preset(Control.PRESET_TOP_LEFT)
-		button.anchor_left = 0.505
-		button.anchor_right = 0.704
-		button.anchor_top = rows[i] - 0.030
-		button.anchor_bottom = rows[i] + 0.030
-		button.offset_left = 0
-		button.offset_right = 0
-		button.offset_top = 0
-		button.offset_bottom = 0
+func _cycle_ravienna_dialogue() -> void:
+	while is_inside_tree():
+		await get_tree().create_timer(10.0).timeout
+		if not is_inside_tree():
+			return
+		ravienna_line_index = (ravienna_line_index + 1) % ravienna_lines.size()
+		ravienna_line.text = ravienna_lines[ravienna_line_index]
+		_fit_ravienna_dialogue()
 
-
-func continue_button_focus() -> void:
-	if _play_button != null:
-		_play_button.grab_focus()
-
-
-func _on_menu_action(action: String) -> void:
-	match action:
-		"continue":
-			_on_play()
-		"new":
-			_on_new_journey()
-		"load":
-			if SaveService.has_save():
-				GameState.loaded_from_save = true
-				_on_play()
-			else:
-				EventBus.toast_requested.emit("No saved journey found. Begin a new journey first.")
-		"settings":
-			_show_settings()
-		"extras":
-			_show_extras()
-		"quit":
-			quit_requested.emit()
-
-
-func _on_new_journey() -> void:
-	if GameState.loaded_from_save and not _reset_armed:
-		_reset_armed = true
-		_reset_button.text = "CONFIRM NEW JOURNEY?"
-		_reset_button.add_theme_color_override("font_color", Color("#ffb7c5"))
-		EventBus.toast_requested.emit("Select New Journey again to erase the current save.")
+func _fit_ravienna_dialogue() -> void:
+	if ravienna_line == null:
 		return
-	if GameState.loaded_from_save:
-		GameState.reset_progress()
-		GameState.loaded_from_save = false
-	_reset_armed = false
-	_on_play()
+	var length := ravienna_line.text.length()
+	var font_size := 17
+	if length > 105:
+		font_size = 12
+	elif length > 85:
+		font_size = 13
+	elif length > 65:
+		font_size = 14
+	elif length > 48:
+		font_size = 15
+	ravienna_line.add_theme_font_size_override("font_size", font_size)
+	ravienna_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	ravienna_line.clip_text = false
 
+func _show_mail() -> void:
+	overlays.show_notice("Mail", "Your messages and rewards will appear here.")
 
-func _show_settings() -> void:
-	var dialog := AcceptDialog.new()
-	dialog.title = "Settings"
-	dialog.dialog_text = "Adjust your journey's presentation."
-	var content := UIFactory.vbox(12)
-	content.custom_minimum_size = Vector2(340, 0)
-	var audio_label := UIFactory.label("MASTER VOLUME", 11, UITheme.GOLD_BRIGHT)
-	content.add_child(audio_label)
-	var volume := HSlider.new()
-	volume.min_value = 0.0
-	volume.max_value = 1.0
-	volume.step = 0.01
-	var master_bus := AudioServer.get_bus_index("Master")
-	volume.value = db_to_linear(AudioServer.get_bus_volume_db(master_bus)) if master_bus >= 0 else 1.0
-	volume.value_changed.connect(func(value: float) -> void:
-		if master_bus >= 0:
-			AudioServer.set_bus_volume_db(master_bus, linear_to_db(maxf(value, 0.001)))
-	)
-	content.add_child(volume)
-	var fullscreen := CheckButton.new()
-	fullscreen.text = "Fullscreen"
-	fullscreen.button_pressed = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
-	fullscreen.toggled.connect(func(enabled: bool) -> void:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if enabled else DisplayServer.WINDOW_MODE_WINDOWED)
-	)
-	content.add_child(fullscreen)
-	dialog.add_child(content)
-	add_child(dialog)
-	dialog.confirmed.connect(dialog.queue_free)
-	dialog.canceled.connect(dialog.queue_free)
-	dialog.popup_centered()
+func _show_events() -> void:
+	overlays.show_notice("Events", "Limited-time events will appear here.")
 
+func _show_calendar() -> void:
+	overlays.show_notice("Calendar", "Your daily and monthly schedule will appear here.")
 
-func _show_extras() -> void:
-	var dialog := AcceptDialog.new()
-	dialog.title = "Reverie — Extras"
-	dialog.dialog_text = "A story of two souls.\n\nCreated with love for dark fantasy, forgotten memories, and the bond between Gerald and Lilith.\n\nREVERIE  •  v0.2.1"
-	add_child(dialog)
-	dialog.confirmed.connect(dialog.queue_free)
-	dialog.canceled.connect(dialog.queue_free)
-	dialog.popup_centered()
+func _show_gifts() -> void:
+	overlays.show_notice("Gifts", "Claimable gifts will appear here.")
 
-func _build_navigation(layout: HBoxContainer) -> void:
-	var panel := UIFactory.panel(Color(0.012, 0.018, 0.038, 0.78), Color(0.78, 0.68, 0.48, 0.34), 22, 1, 30, true)
-	panel.custom_minimum_size = Vector2(390, 0)
-	panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	layout.add_child(panel)
+func _show_achievements() -> void:
+	overlays.show_notice("Achievements", "Your milestones and rewards will appear here.")
 
-	var column := UIFactory.vbox(15)
-	panel.add_child(column)
-	column.add_child(UIFactory.label("✦     A DARK FANTASY RPG     ✦", 10, UITheme.GOLD_BRIGHT))
+func _show_messages() -> void:
+	overlays.show_notice("Messages", "Your conversations will appear here.")
 
-	var title := UIFactory.heading("REVERIE", 54, Color("#f0e6d1"))
-	title.add_theme_color_override("font_outline_color", Color("#080b18"))
-	title.add_theme_constant_override("outline_size", 6)
-	column.add_child(title)
+func _show_combat() -> void:
+	overlays.show_notice("Combat", "Enter the Story to begin your next encounter.")
 
-	var subtitle := UIFactory.label("WHERE MEMORY BECOMES MYTH", 10, Color("#c6ad7c"))
-	subtitle.add_theme_constant_override("letter_spacing", 3)
-	column.add_child(subtitle)
-	column.add_child(UIFactory.separator())
-	column.add_child(UIFactory.wrapped(
-		"Some promises outlive the ones who made them.\nA brother. A sister. A world that has not forgotten.",
-		15,
-		Color("#d0d0d4")
-	))
-	column.add_child(UIFactory.spacer())
-	_play_button = UIFactory.button("Continue the Journey" if GameState.loaded_from_save else "Begin the Journey", true)
-	_play_button.custom_minimum_size = Vector2(0, 58)
-	_play_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_play_button.pressed.connect(_on_play)
-	column.add_child(_play_button)
+func _show_castle() -> void:
+	overlays.show_notice("Castle", "Your castle and royal gardens are waiting in the world.")
 
-	var journey_note := UIFactory.label("ENTER THE WHISPERING GLADE", 9, Color("#9d9ba8"))
-	journey_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	column.add_child(journey_note)
-	column.add_child(UIFactory.separator())
+func _show_resources() -> void:
+	overlays.show_notice("Resources", "Your gathered materials and currencies are shown here.")
 
-	_reset_button = UIFactory.button("Reset Journey", false, true)
-	_reset_button.custom_minimum_size = Vector2(0, 42)
-	_reset_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_reset_button.pressed.connect(_on_reset)
-	column.add_child(_reset_button)
+func _show_crystals() -> void:
+	overlays.show_notice("Crystals", "Premium currency balance and offers.")
 
-	var quit := UIFactory.button("Quit", false, true)
-	quit.custom_minimum_size = Vector2(0, 38)
-	quit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	quit.pressed.connect(func() -> void: quit_requested.emit())
-	column.add_child(quit)
-	column.add_child(UIFactory.spacer())
+func _show_gold() -> void:
+	overlays.show_notice("Gold", "Your gold balance and spending options.")
 
-	var controls := UIFactory.label("WASD / ARROWS  MOVE     •     E  INTERACT", 9, Color("#898b9a"))
-	controls.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	column.add_child(controls)
-	var build := UIFactory.label("REVERIE     •     v0.2.1     •     OFFLINE STORY", 8, Color("#777987"))
-	build.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	column.add_child(build)
-
-func _build_scene_copy(layout: HBoxContainer) -> void:
-	var right := UIFactory.vbox(10)
-	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	layout.add_child(right)
-
-	var eyebrow := UIFactory.label("A TALE OF TWO SOULS", 10, Color("#d7c18f"))
-	eyebrow.add_theme_constant_override("letter_spacing", 2)
-	right.add_child(eyebrow)
-	right.add_child(UIFactory.label("The Whispering Glade", 24, Color("#f0e8d8")))
-	right.add_child(UIFactory.label("THE FIRST CHAPTER", 9, Color("#b7b0a4")))
-	right.add_child(UIFactory.spacer())
-
-	var party_heading := UIFactory.label("YOUR COMPANIONS", 9, Color("#d7c18f"))
-	party_heading.add_theme_constant_override("letter_spacing", 2)
-	right.add_child(party_heading)
-	_party_names_label = UIFactory.label("", 15, Color("#f0e8d8"))
-	right.add_child(_party_names_label)
-	_summary_label = UIFactory.label("", 10, Color("#c4b58e"))
-	right.add_child(_summary_label)
-
-func _build_party_showcase() -> void:
-	if _party_layer == null:
-		return
-	for child in _party_layer.get_children():
-		child.queue_free()
-	_party_visuals.clear()
-	var ids: Array[String] = []
-	for instance in GameState.party_instances():
-		ids.append(str(instance.char_id))
-	if ids.is_empty():
-		for starter_id in STARTERS:
-			ids.append(starter_id)
-	for character_id in ids:
-		var definition: CharacterDef = ContentDB.get_character(character_id)
-		if definition == null:
-			continue
-		var visual := ActorVisual.new()
-		visual.name = "Party_" + character_id
-		visual.visual_scale = 2.8
-		visual.facing = -1.0
-		visual.setup(definition.palette, ActorVisual.Kind.HUMAN, definition.id, definition.race, definition.element)
-		# Reuse the exact registered playable art and idle animation sheets.
-		visual.configure_character(character_id)
-		_party_layer.add_child(visual)
-		_party_visuals.append(visual)
-
-func _layout_party() -> void:
-	if _party_layer == null or _party_visuals.is_empty():
-		return
-	var count := _party_visuals.size()
-	var spacing := minf(size.x * 0.125, 150.0)
-	var center_x := size.x * 0.70
-	for i in range(count):
-		var visual := _party_visuals[i]
-		visual.position = Vector2(center_x + (float(i) - float(count - 1) * 0.5) * spacing, size.y * 0.82)
-		visual.z_index = i
-
-func _refresh_summary() -> void:
-	if _play_button != null:
-		_play_button.text = "✧   CONTINUE   ✧" if GameState.loaded_from_save else "✧   BEGIN JOURNEY   ✧"
-	if _summary_label == null:
-		return
-	var profile: Dictionary = GameState.profile
-	var party_names: Array[String] = []
-	for instance in GameState.party_instances():
-		var definition: CharacterDef = ContentDB.get_character(instance.char_id)
-		if definition != null:
-			party_names.append(definition.display_name)
-	if _party_names_label != null:
-		_party_names_label.text = "  ·  ".join(party_names) if not party_names.is_empty() else "No party selected"
-	_summary_label.text = "Lv %d   ·   %d collected   ·   %s gold   ·   %s crystals" % [
-		int(profile.get("level", 1)),
-		GameState.unique_owned_count(),
-		UIFactory.number(GameState.currency("gold")),
-		UIFactory.number(GameState.currency("crystals")),
-	]
-	if _play_button != null:
-		_play_button.text = "✧   CONTINUE   ✧" if GameState.loaded_from_save else "✧   BEGIN JOURNEY   ✧"
-
-func _style_ornate_menu_button(button: Button, accent: Color, primary: bool) -> void:
-	# The dark glass face masks the illustration's printed lettering while the
-	# live hitbox sits precisely over the matching plaque and icon.
-	var normal_bg := Color("#100d1c")
-	var hover_bg := Color("#25182d")
-	var pressed_bg := Color("#33203b")
-	var edge := Color(accent.r, accent.g, accent.b, 0.92)
-	button.add_theme_stylebox_override("normal", UITheme.style(normal_bg, edge, 18, 1, 10))
-	button.add_theme_stylebox_override("hover", UITheme.style(hover_bg, Color("#fff0ff"), 18, 2, 10, true))
-	button.add_theme_stylebox_override("pressed", UITheme.style(pressed_bg, Color("#fff0dc"), 18, 2, 10))
-	button.add_theme_stylebox_override("disabled", UITheme.style(Color("#100d1c"), Color("#51445d"), 18, 1, 10))
-	button.add_theme_stylebox_override("focus", UITheme.style(hover_bg, Color("#fff0d8"), 18, 2, 10))
-	button.add_theme_color_override("font_color", Color("#fff0fa") if primary else Color("#e0d1e8"))
-	button.add_theme_color_override("font_hover_color", Color("#ffffff"))
-	button.add_theme_color_override("font_pressed_color", Color("#fff0dc"))
-	button.add_theme_color_override("font_disabled_color", Color("#82788c"))
-	button.flat = false
-
-
-func _on_play() -> void:
-	play_requested.emit()
-
-func _on_reset() -> void:
-	if not _reset_armed:
-		_reset_armed = true
-		_reset_button.text = "✦  CONFIRM NEW JOURNEY  ✦"
-		_reset_button.add_theme_color_override("font_color", UITheme.DANGER)
-		return
-	GameState.reset_progress()
-	GameState.loaded_from_save = false
-	_reset_armed = false
-	_reset_button.text = "❖   NEW JOURNEY   ❖"
-	_reset_button.add_theme_color_override("font_color", UITheme.DANGER)
-	_build_party_showcase()
-	_refresh_summary()
-	_layout_party()
-	EventBus.toast_requested.emit("Journey reset. A new story begins.")
+func _on_quit() -> void:
+	quit_requested.emit()

@@ -64,7 +64,14 @@ func _run() -> void:
 		push_error("Gerald's idle breathing / coat sway did not produce continuous secondary motion")
 		get_tree().quit(1)
 		return
-	if absf(sprite.scale.y - idle_scale_start.y) < 0.001:
+	var max_idle_scale_delta := 0.0
+	# Gerald's breath is deliberately slow (1.45 rad/s); sample a full cycle
+	# instead of comparing arbitrary sine-wave phases near the sine's peak.
+	for _frame in range(270):
+		await get_tree().process_frame
+		max_idle_scale_delta = maxf(max_idle_scale_delta, absf(sprite.scale.y - idle_scale_start.y))
+	print("GERALD_IDLE_SCALE_DIAGNOSTIC max_delta=%.6f start=%.6f end=%.6f anim_time=%.4f state=%d" % [max_idle_scale_delta, idle_scale_start.y, sprite.scale.y, player.visual.anim_time, player.visual.animator.state])
+	if max_idle_scale_delta < 0.001:
 		push_error("Gerald's idle breathing did not produce a subtle anchored chest expansion")
 		get_tree().quit(1)
 		return
@@ -81,6 +88,9 @@ func _run() -> void:
 		get_tree().quit(1)
 		return
 	print("GERALD_IDLE_BREATHING_OK anchored_pose=PASS restrained_motion=PASS")
+	# This section drives directions directly; keep the live Player controller
+	# from replacing them with its stationary facing vector during physics ticks.
+	player.input_enabled = false
 	for direction in CharacterAnimator.ALL_DIRECTIONS:
 		player.visual.animator.set_direction(int(direction))
 		await get_tree().process_frame
@@ -118,8 +128,9 @@ func _run() -> void:
 		var expected_angle := PI * 0.5 - float(direction) * PI * 0.25
 		var expected_direction := Vector2.RIGHT.rotated(expected_angle).normalized()
 		var expected_origin := Vector2(0, -38) + expected_direction * 22.0
-		if not fx._attack_direction().is_equal_approx(expected_direction):
-			push_error("Gerald attack direction vector mismatch for direction %d" % direction)
+		var actual_attack_direction := fx._attack_direction()
+		if player.visual.animator.direction != direction or not actual_attack_direction.is_equal_approx(expected_direction):
+			push_error("Gerald attack direction mismatch requested=%d animator=%d expected=%s actual=%s" % [direction, player.visual.animator.direction, str(expected_direction), str(actual_attack_direction)])
 			get_tree().quit(1)
 			return
 		if not fx.slash_trail.position.is_equal_approx(expected_origin):

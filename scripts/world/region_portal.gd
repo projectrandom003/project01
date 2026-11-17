@@ -11,6 +11,8 @@ var target_region: String = ""
 var entry_point: String = ""
 var portal_label: String = "Travel"
 var target_region_name: String = ""
+var required_quest: String = ""
+var locked_message: String = ""
 
 var _sprite: Sprite2D
 var _light: PointLight2D
@@ -23,6 +25,8 @@ func setup(p_region_id: String, p_connection: Dictionary) -> void:
 	target_region = str(p_connection.get("to", ""))
 	entry_point = str(p_connection.get("entry", ""))
 	portal_label = str(p_connection.get("label", "Travel"))
+	required_quest = str(p_connection.get("requires_quest", ""))
+	locked_message = str(p_connection.get("locked_message", "The way remains sealed."))
 	target_region_name = _lookup_region_name(target_region)
 
 
@@ -30,6 +34,8 @@ func _ready() -> void:
 	super._ready()  # keeps this node in the "interactables" group
 	interaction_radius = 110.0
 	prompt = "Travel to " + portal_label
+	if not required_quest.is_empty() and not _requirement_met():
+		prompt = "Sealed: " + portal_label
 	if target_region_name.is_empty():
 		target_region_name = _lookup_region_name(target_region)
 	_build_visual()
@@ -73,8 +79,26 @@ func _build_visual() -> void:
 	_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
+func can_interact() -> bool:
+	_update_gate_prompt()
+	return enabled and visible
+
+
+func _update_gate_prompt() -> void:
+	prompt = "Travel to " + portal_label if _requirement_met() else "Sealed: " + portal_label
+	if _label != null:
+		_label.text = prompt
+
+
+func _requirement_met() -> bool:
+	return required_quest.is_empty() or GameState.quest_domain.quest_state(required_quest) == "complete"
+
+
 func interact() -> void:
 	if not can_interact():
+		return
+	if not _requirement_met():
+		EventBus.toast_requested.emit(locked_message)
 		return
 	EventBus.region_change_requested.emit(target_region, entry_point)
 	EventBus.toast_requested.emit("Travelling to " + target_region_name)

@@ -52,7 +52,7 @@ func configure_collectible(p_id: String, p_rewards: Dictionary, p_label: String 
 
 func _ready() -> void:
 	super._ready()  # adds this node to the "interactables" group
-	if not collectible_id.is_empty() and bool(GameState.flags.get("collectible:" + collectible_id, false)):
+	if not collectible_id.is_empty() and bool(GameState.quest_domain.flags.get("collectible:" + collectible_id, false)):
 		enabled = false
 		visible = false
 		set_process(false)
@@ -109,13 +109,13 @@ func interact() -> void:
 	activated.emit(self)
 	if not collectible_id.is_empty():
 		var flag_key := "collectible:" + collectible_id
-		if bool(GameState.flags.get(flag_key, false)):
+		if bool(GameState.quest_domain.flags.get(flag_key, false)):
 			enabled = false
 			visible = false
 			set_process(false)
 			return
-		GameState.flags[flag_key] = true
-		GameState.grant_reward_items(collectible_rewards)
+		GameState.quest_domain.flags[flag_key] = true
+		GameState.inventory_domain.grant_reward_items(collectible_rewards)
 		GameState.queue_save()
 		enabled = false
 		visible = false

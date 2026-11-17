@@ -4,6 +4,12 @@
 
 [node name="SummonRevealOverlay" type="Control"]
 z_index = 80
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 0
 
 [node name="Shade" type="ColorRect" parent="."]
@@ -39,6 +45,14 @@ theme_override_colors/font_color = Color(0.96, 0.82, 0.49, 1)
 text = "SUMMONING"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="CloseSummonButton" type="Button" parent="."]
+layout_mode = 1
+anchor_left = 0.80
+anchor_top = 0.035
+anchor_right = 0.97
+anchor_bottom = 0.105
+text = "CLOSE  ✕"
 
 [node name="Subtitle" type="Label" parent="."]
 layout_mode = 1

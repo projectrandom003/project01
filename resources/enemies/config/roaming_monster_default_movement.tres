@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="EnemyMovementConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_movement_config.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+move_speed = 26.0
+roam_radius = 70.0
+roam_interval_min = 2.0
+roam_interval_max = 5.0
+chase_speed_multiplier = 1.0
+retreat_speed_multiplier = 1.0
+follow_enabled = false
+navigation_enabled = false
+position_correction_enabled = true
+idle_enabled = true
+patrol_enabled = true
+chase_enabled = true
+return_enabled = true

@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/reverie_pack/reverie_piece.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/reverie_pack_v01/Royal_Gardens/Decorations/flower_pot_01.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/castle_pack_v02/effects/shadow_blob_64.png" id="3_shadow"]
+
+[node name="FlowerPot01" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_script")
+asset_id = "flower_pot_01"
+footprint_cells = Vector2i(1, 1)
+
+[node name="ContactShadow" type="Sprite2D" parent="."]
+texture_filter = 1
+z_index = -1
+centered = false
+offset = Vector2(-32, -16)
+modulate = Color(1, 1, 1, 0.32)
+texture = ExtResource("3_shadow")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture_filter = 1
+centered = false
+offset = Vector2(17, 38)
+texture = ExtResource("2_tex")
+

@@ -1,238 +1,350 @@
 {
-  "mossling": {
-    "name": "Mossling",
-    "element": "earth",
-    "rarity": "common",
-    "role": "Minion",
-    "base": {
-      "hp": 30,
-      "atk": 5,
-      "def": 3,
-      "spd": 12,
-      "crit": 0.03
-    },
-    "skills": [
-      "moss_slam"
-    ],
-    "ultimate": "",
-    "lore": "A clump of moss that grew a grudge. Harmless alone; the glade is never alone.",
-    "palette": {
-      "primary": "#4f6b3a",
-      "secondary": "#8fbf6a",
-      "accent": "#d9ff9f"
-    }
+ "mossling": {
+  "name": "Mossling",
+  "element": "earth",
+  "rarity": "common",
+  "role": "Minion",
+  "base": {
+   "hp": 30,
+   "atk": 5,
+   "def": 3,
+   "spd": 12,
+   "crit": 0.03
   },
-  "glade_wisp": {
-    "name": "Glade Wisp",
-    "element": "wind",
-    "rarity": "common",
-    "role": "Minion",
-    "base": {
-      "hp": 22,
-      "atk": 6,
-      "def": 2,
-      "spd": 16,
-      "crit": 0.05
-    },
-    "skills": [
-      "spark"
-    ],
-    "ultimate": "",
-    "lore": "A lost thought of the forest, still looking for the mind that made it.",
-    "palette": {
-      "primary": "#7fd9c4",
-      "secondary": "#b9f6ff",
-      "accent": "#ffffff"
-    }
-  },
-  "thornhound": {
-    "name": "Thornhound",
-    "element": "earth",
-    "rarity": "rare",
-    "role": "Hunter",
-    "base": {
-      "hp": 38,
-      "atk": 6,
-      "def": 4,
-      "spd": 14,
-      "crit": 0.08
-    },
-    "skills": [
-      "thorn_lash"
-    ],
-    "ultimate": "",
-    "lore": "A hound of briar and patience. It does not chase. It is simply already ahead of you.",
-    "palette": {
-      "primary": "#5a4a2e",
-      "secondary": "#8fbf6a",
-      "accent": "#ffd27a"
-    }
-  },
-  "fae_marauder": {
-    "name": "Fae Marauder",
-    "element": "dark",
-    "rarity": "rare",
-    "role": "Skirmisher",
-    "base": {
-      "hp": 32,
-      "atk": 7,
-      "def": 3,
-      "spd": 16,
-      "crit": 0.12
-    },
-    "skills": [
-      "shadow_feint"
-    ],
-    "ultimate": "",
-    "lore": "A courtless fae making a living from the edges of a dying story.",
-    "palette": {
-      "primary": "#3b1f4e",
-      "secondary": "#a87bd4",
-      "accent": "#ff6fae"
-    }
-  },
-  "corrupted_treant": {
-    "name": "The Hollowed Guardian",
-    "element": "earth",
-    "rarity": "epic",
-    "role": "Elite",
-    "base": {
-      "hp": 340,
-      "atk": 15,
-      "def": 11,
-      "spd": 10,
-      "crit": 0.06
-    },
-    "skills": [
-      "root_crush",
-      "bark_ward"
-    ],
-    "ultimate": "hollow_verdict",
-    "phases": [
-      {
-        "hp_below": 0.6,
-        "message": "The guardian's bark splits. Roots burst through the clearing and the heartwood begins to burn.",
-        "status": { "id": "atk_up", "turns": 99, "potency": 0.22 }
-      },
-      {
-        "hp_below": 0.25,
-        "message": "The Hollowed Guardian tears free of the earth. Its roots lash wildly as the heartwood is exposed.",
-        "status": { "id": "spd_up", "turns": 99, "potency": 0.25 }
-      }
-    ],
-    "lore": "Something hollow took root inside an old guardian. It still tries to protect the glade — from everything.",
-    "palette": {
-      "primary": "#4a4030",
-      "secondary": "#8fbf6a",
-      "accent": "#c8ff8f"
-    }
-  },
-  "elder_hollow": {
-    "name": "The Elder Hollow",
-    "element": "earth",
-    "rarity": "mythic",
-    "role": "World Boss",
-    "base": {
-      "hp": 680,
-      "atk": 18,
-      "def": 13,
-      "spd": 13,
-      "crit": 0.08
-    },
-    "skills": [
-      "root_crush",
-      "hollow_wail",
-      "bark_ward"
-    ],
-    "ultimate": "hollow_verdict",
-    "phases": [
-      {
-        "hp_below": 0.6,
-        "message": "The Elder Hollow splits its bark. Something inside is awake.",
-        "status": {
-          "id": "atk_up",
-          "turns": 99,
-          "potency": 0.35
-        }
-      },
-      {
-        "hp_below": 0.25,
-        "message": "The glade holds its breath. The Hollow stops pretending to be a tree.",
-        "status": {
-          "id": "spd_up",
-          "turns": 99,
-          "potency": 0.5
-        }
-      }
-    ],
-    "lore": "The first tree of Greenward, hollowed out by a grief older than the elves. It does not hate the living. It simply cannot remember how to let them go.",
-    "palette": {
-      "primary": "#2f3a28",
-      "secondary": "#8fbf6a",
-      "accent": "#e8ffb0"
-    }
-  },
-  "fallen_matron": {
-    "name": "The Fallen Matron",
-    "element": "dark",
-    "rarity": "mythic",
-    "role": "Boss",
-    "base": {
-      "hp": 1200,
-      "atk": 30,
-      "def": 18,
-      "spd": 15,
-      "crit": 0.12,
-      "crit_dmg": 1.7
-    },
-    "skills": [
-      "corruption_bolt",
-      "shadow_lash",
-      "soul_drain"
-    ],
-    "ultimate": "matron_verdict",
-    "phases": [
-      {
-        "hp_below": 0.66,
-        "message": "The Fallen Matron's silver hair ignites with purple fire. Her corruption deepens.",
-        "status": {
-          "id": "atk_up",
-          "turns": 99,
-          "potency": 0.25
-        }
-      },
-      {
-        "hp_below": 0.33,
-        "message": "The Matron screams. The ivory dress cracks, revealing the void beneath.",
-        "status": {
-          "id": "spd_up",
-          "turns": 99,
-          "potency": 0.4
-        }
-      }
-    ],
-    "lore": "Once a guardian of the glade, now consumed by the hollow corruption. Her silver hair once caught moonlight; now it burns with purple fire. The ivory dress she wore in life is cracked and stained with void energy.",
-    "palette": {
-      "hair": "#c8c8d8",
-      "skin": "#e8d8c8",
-      "primary": "#1a1a2e",
-      "secondary": "#f5f0e8",
-      "accent": "#9b59b6"
-    }
-  },
-  "moonpetal_sprite": {
-    "name": "Moonpetal Sprite",
-    "element": "wind",
-    "rarity": "rare",
-    "role": "Skirmisher",
-    "base": { "hp": 46, "atk": 8, "def": 3, "spd": 21, "crit": 0.1 },
-    "skills": ["spark"],
-    "ultimate": "",
-    "lore": "A quicksilver guardian of the Moonpetal glade. It darts between flowers and lashes out with condensed moonlight.",
-    "palette": {
-      "primary": "#486b83",
-      "secondary": "#a9e5e8",
-      "accent": "#f4d9ff"
-    }
+  "skills": [
+   "moss_slam"
+  ],
+  "ultimate": "",
+  "lore": "A clump of moss that grew a grudge. Harmless alone; the glade is never alone.",
+  "palette": {
+   "primary": "#4f6b3a",
+   "secondary": "#8fbf6a",
+   "accent": "#d9ff9f"
   }
+ },
+ "glade_wisp": {
+  "name": "Glade Wisp",
+  "element": "wind",
+  "rarity": "common",
+  "role": "Minion",
+  "base": {
+   "hp": 22,
+   "atk": 6,
+   "def": 2,
+   "spd": 16,
+   "crit": 0.05
+  },
+  "skills": [
+   "spark"
+  ],
+  "ultimate": "",
+  "lore": "A lost thought of the forest, still looking for the mind that made it.",
+  "palette": {
+   "primary": "#7fd9c4",
+   "secondary": "#b9f6ff",
+   "accent": "#ffffff"
+  }
+ },
+ "thornhound": {
+  "name": "Thornhound",
+  "element": "earth",
+  "rarity": "rare",
+  "role": "Hunter",
+  "base": {
+   "hp": 38,
+   "atk": 6,
+   "def": 4,
+   "spd": 14,
+   "crit": 0.08
+  },
+  "skills": [
+   "thorn_lash"
+  ],
+  "ultimate": "",
+  "lore": "A hound of briar and patience. It does not chase. It is simply already ahead of you.",
+  "palette": {
+   "primary": "#5a4a2e",
+   "secondary": "#8fbf6a",
+   "accent": "#ffd27a"
+  }
+ },
+ "fae_marauder": {
+  "name": "Fae Marauder",
+  "element": "dark",
+  "rarity": "rare",
+  "role": "Skirmisher",
+  "base": {
+   "hp": 32,
+   "atk": 7,
+   "def": 3,
+   "spd": 16,
+   "crit": 0.12
+  },
+  "skills": [
+   "shadow_feint"
+  ],
+  "ultimate": "",
+  "lore": "A courtless fae making a living from the edges of a dying story.",
+  "palette": {
+   "primary": "#3b1f4e",
+   "secondary": "#a87bd4",
+   "accent": "#ff6fae"
+  }
+ },
+ "corrupted_treant": {
+  "name": "The Hollowed Guardian",
+  "element": "earth",
+  "rarity": "epic",
+  "role": "Elite",
+  "base": {
+   "hp": 340,
+   "atk": 15,
+   "def": 11,
+   "spd": 10,
+   "crit": 0.06
+  },
+  "skills": [
+   "root_crush",
+   "bark_ward"
+  ],
+  "ultimate": "hollow_verdict",
+  "phases": [
+   {
+    "hp_below": 0.6,
+    "message": "The guardian's bark splits. Roots burst through the clearing and the heartwood begins to burn.",
+    "status": {
+     "id": "atk_up",
+     "turns": 99,
+     "potency": 0.22
+    }
+   },
+   {
+    "hp_below": 0.25,
+    "message": "The Hollowed Guardian tears free of the earth. Its roots lash wildly as the heartwood is exposed.",
+    "status": {
+     "id": "spd_up",
+     "turns": 99,
+     "potency": 0.25
+    }
+   }
+  ],
+  "lore": "Something hollow took root inside an old guardian. It still tries to protect the glade — from everything.",
+  "palette": {
+   "primary": "#4a4030",
+   "secondary": "#8fbf6a",
+   "accent": "#c8ff8f"
+  }
+ },
+ "elder_hollow": {
+  "name": "The Elder Hollow",
+  "element": "earth",
+  "rarity": "mythic",
+  "role": "World Boss",
+  "base": {
+   "hp": 680,
+   "atk": 18,
+   "def": 13,
+   "spd": 13,
+   "crit": 0.08
+  },
+  "skills": [
+   "root_crush",
+   "hollow_wail",
+   "bark_ward"
+  ],
+  "ultimate": "hollow_verdict",
+  "phases": [
+   {
+    "hp_below": 0.6,
+    "message": "The Elder Hollow splits its bark. Something inside is awake.",
+    "status": {
+     "id": "atk_up",
+     "turns": 99,
+     "potency": 0.35
+    }
+   },
+   {
+    "hp_below": 0.25,
+    "message": "The glade holds its breath. The Hollow stops pretending to be a tree.",
+    "status": {
+     "id": "spd_up",
+     "turns": 99,
+     "potency": 0.5
+    }
+   }
+  ],
+  "lore": "The first tree of Greenward, hollowed out by a grief older than the elves. It does not hate the living. It simply cannot remember how to let them go.",
+  "palette": {
+   "primary": "#2f3a28",
+   "secondary": "#8fbf6a",
+   "accent": "#e8ffb0"
+  }
+ },
+ "fallen_matron": {
+  "name": "The Fallen Matron",
+  "element": "dark",
+  "rarity": "mythic",
+  "role": "Boss",
+  "base": {
+   "hp": 1200,
+   "atk": 30,
+   "def": 18,
+   "spd": 15,
+   "crit": 0.12,
+   "crit_dmg": 1.7
+  },
+  "skills": [
+   "corruption_bolt",
+   "shadow_lash",
+   "soul_drain"
+  ],
+  "ultimate": "matron_verdict",
+  "phases": [
+   {
+    "hp_below": 0.66,
+    "message": "The Fallen Matron's silver hair ignites with purple fire. Her corruption deepens.",
+    "status": {
+     "id": "atk_up",
+     "turns": 99,
+     "potency": 0.25
+    }
+   },
+   {
+    "hp_below": 0.33,
+    "message": "The Matron screams. The ivory dress cracks, revealing the void beneath.",
+    "status": {
+     "id": "spd_up",
+     "turns": 99,
+     "potency": 0.4
+    }
+   }
+  ],
+  "lore": "Once a guardian of the glade, now consumed by the hollow corruption. Her silver hair once caught moonlight; now it burns with purple fire. The ivory dress she wore in life is cracked and stained with void energy.",
+  "palette": {
+   "hair": "#c8c8d8",
+   "skin": "#e8d8c8",
+   "primary": "#1a1a2e",
+   "secondary": "#f5f0e8",
+   "accent": "#9b59b6"
+  }
+ },
+ "moonpetal_sprite": {
+  "name": "Moonpetal Sprite",
+  "element": "wind",
+  "rarity": "rare",
+  "role": "Skirmisher",
+  "base": {
+   "hp": 46,
+   "atk": 8,
+   "def": 3,
+   "spd": 21,
+   "crit": 0.1
+  },
+  "skills": [
+   "spark"
+  ],
+  "ultimate": "",
+  "lore": "A quicksilver guardian of the Moonpetal glade. It darts between flowers and lashes out with condensed moonlight.",
+  "palette": {
+   "primary": "#486b83",
+   "secondary": "#a9e5e8",
+   "accent": "#f4d9ff"
+  }
+ },
+ "gothic_sentinel": {
+  "name": "Gothic Sentinel",
+  "element": "dark",
+  "rarity": "epic",
+  "role": "Elite",
+  "base": {
+   "hp": 420,
+   "atk": 24,
+   "def": 18,
+   "spd": 13,
+   "crit": 0.1,
+   "crit_dmg": 1.5
+  },
+  "skills": [
+   "shadow_lash",
+   "shield_bash",
+   "hollow_wail"
+  ],
+  "lore": "Stone armour animated by the castle seal, still guarding a road nobody walks.",
+  "palette": {
+   "primary": "#3a3558",
+   "secondary": "#8f96c4",
+   "accent": "#c4a2ff"
+  }
+ },
+ "blight_wisp": {
+  "name": "Blight Wisp",
+  "element": "dark",
+  "rarity": "rare",
+  "base": {
+   "hp": 180,
+   "atk": 16,
+   "def": 8,
+   "spd": 19,
+   "crit": 0.14
+  },
+  "skills": [
+   "corruption_bolt",
+   "lunar_wisp"
+  ],
+  "lore": "A drifting mote of the corruption that creeps along the royal road.",
+  "palette": {
+   "primary": "#3c2058",
+   "secondary": "#9b5fd0",
+   "accent": "#e0b0ff"
+  }
+ },
+ "baltoria": {
+  "name": "Baltoria, the Hollow Sovereign",
+  "element": "dark",
+  "rarity": "mythic",
+  "role": "Boss",
+  "base": {
+   "hp": 1800,
+   "atk": 38,
+   "def": 24,
+   "spd": 17,
+   "crit": 0.16,
+   "crit_dmg": 1.9
+  },
+  "skills": [
+   "corruption_bolt",
+   "shadow_lash",
+   "soul_drain",
+   "hollow_wail"
+  ],
+  "ultimate": "matron_verdict",
+  "phases": [
+   {
+    "hp_below": 0.66,
+    "message": "Baltoria rises: \"The garden was always mine.\"",
+    "status": {
+     "id": "atk_up",
+     "turns": 99,
+     "potency": 0.28
+    }
+   },
+   {
+    "hp_below": 0.33,
+    "message": "The throne cracks. Violet light floods the arena.",
+    "status": {
+     "id": "spd_up",
+     "turns": 99,
+     "potency": 0.35
+    }
+   }
+  ],
+  "lore": "The sovereign who claimed the ruined castle and turned its gardens to ash.",
+  "palette": {
+   "hair": "#d8cbe8",
+   "skin": "#c8b4d8",
+   "primary": "#26143c",
+   "secondary": "#7c4a9c",
+   "accent": "#e08cff"
+  }
+ }
 }

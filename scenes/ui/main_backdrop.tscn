@@ -1,0 +1,174 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/main_backdrop.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/ui/components/main_backdrop_presentation_component.gd" id="2_presentation"]
+[ext_resource type="Script" path="res://scripts/ui/components/main_backdrop_layout_component.gd" id="3_layout"]
+[ext_resource type="Script" path="res://scripts/ui/components/main_backdrop_animation_component.gd" id="4_animation"]
+[ext_resource type="Texture2D" path="res://assets/ui/backgrounds/main_menu_royal_garden.png" id="5_royal_garden"]
+
+[node name="MainBackdrop" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="SkyGradient" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0313726, 0.0313726, 0.0745098, 1)
+
+[node name="SkyGradientTexture" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 1
+
+[node name="RoyalGardenBackground" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("5_royal_garden")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MoonLayer" type="Node2D" parent="."]
+visible = false
+
+[node name="HaloOuter" type="Polygon2D" parent="MoonLayer"]
+color = Color(0.92, 0.18, 0.29, 0.045)
+
+[node name="HaloInner" type="Polygon2D" parent="MoonLayer"]
+color = Color(0.92, 0.18, 0.29, 0.09)
+
+[node name="BloodMoon" type="Polygon2D" parent="MoonLayer"]
+color = Color(0.788235, 0.360784, 0.407843, 1)
+
+[node name="MoonShadow" type="Polygon2D" parent="MoonLayer"]
+color = Color(0.14902, 0.0823529, 0.133333, 1)
+
+[node name="MoonArc" type="Line2D" parent="MoonLayer"]
+width = 2.0
+default_color = Color(1, 0.55, 0.58, 0.28)
+
+[node name="DistantMountains" type="Polygon2D" parent="."]
+visible = false
+color = Color(0.0627451, 0.0627451, 0.113725, 1)
+
+[node name="CityLayer" type="Node2D" parent="."]
+visible = false
+
+[node name="VillageLayer" type="Node2D" parent="."]
+visible = false
+
+[node name="FirstTree" type="Node2D" parent="."]
+visible = false
+
+[node name="Trunk" type="Polygon2D" parent="FirstTree"]
+color = Color(0.0666667, 0.101961, 0.109804, 1)
+
+[node name="Branches" type="Node2D" parent="FirstTree"]
+
+[node name="Roots" type="Node2D" parent="FirstTree"]
+
+[node name="StoneArch" type="Node2D" parent="."]
+visible = false
+
+[node name="LeftPillar" type="Line2D" parent="StoneArch"]
+width = 13.0
+default_color = Color(0.141176, 0.14902, 0.219608, 1)
+
+[node name="RightPillar" type="Line2D" parent="StoneArch"]
+width = 13.0
+default_color = Color(0.141176, 0.14902, 0.219608, 1)
+
+[node name="ArchCurve" type="Line2D" parent="StoneArch"]
+width = 12.0
+default_color = Color(0.188235, 0.188235, 0.266667, 1)
+
+[node name="LeftBreak" type="Line2D" parent="StoneArch"]
+width = 9.0
+default_color = Color(0.188235, 0.188235, 0.266667, 1)
+
+[node name="RightBreak" type="Line2D" parent="StoneArch"]
+width = 9.0
+default_color = Color(0.188235, 0.188235, 0.266667, 1)
+
+[node name="LeftBase" type="ColorRect" parent="StoneArch"]
+mouse_filter = 2
+color = Color(0.203922, 0.196078, 0.278431, 1)
+
+[node name="RightBase" type="ColorRect" parent="StoneArch"]
+mouse_filter = 2
+color = Color(0.203922, 0.196078, 0.278431, 1)
+
+[node name="StonePath" type="Node2D" parent="."]
+visible = false
+
+[node name="PathSurface" type="Polygon2D" parent="StonePath"]
+color = Color(0.12549, 0.141176, 0.2, 1)
+
+[node name="PathLines" type="Node2D" parent="StonePath"]
+
+[node name="MagicalSeal" type="Node2D" parent="."]
+visible = false
+
+[node name="OuterRing" type="Line2D" parent="MagicalSeal"]
+width = 2.0
+default_color = Color(0.62, 0.75, 0.88, 0.3)
+
+[node name="InnerRing" type="Line2D" parent="MagicalSeal"]
+width = 2.0
+default_color = Color(0.62, 0.75, 0.88, 0.3)
+
+[node name="Spokes" type="Node2D" parent="MagicalSeal"]
+
+[node name="ForegroundTrees" type="Node2D" parent="."]
+visible = false
+
+[node name="Atmosphere" type="Node2D" parent="."]
+
+[node name="FogLayer" type="Node2D" parent="Atmosphere"]
+
+[node name="FirefliesLayer" type="Node2D" parent="Atmosphere"]
+
+[node name="PetalsLayer" type="Node2D" parent="Atmosphere"]
+
+[node name="OverlayDraw" type="Node2D" parent="Atmosphere"]
+
+[node name="BottomVignette" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.93
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+color = Color(0.025, 0.018, 0.035, 0.54)
+
+[node name="Presentation" type="Node" parent="."]
+script = ExtResource("2_presentation")
+
+[node name="Layout" type="Node" parent="Presentation"]
+script = ExtResource("3_layout")
+
+[node name="Animation" type="Node" parent="Presentation"]
+script = ExtResource("4_animation")

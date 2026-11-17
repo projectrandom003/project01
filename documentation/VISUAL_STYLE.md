@@ -577,7 +577,7 @@ portrait, `GachaScreen` a rarity-tinted featured backdrop / premium result cards
 mythic (`ignis`) and 3 legendary (`seraphine`, `nyx`, `terra`) specs carry
 explicit premium `tier_note`s (ornate halo/crown, persistent aura, engraved
 frame). **These are code-driven `_draw()`/tween/theme effects** — see the
-"no visual testing" caveat below.
+"full visual QA" caveat below.
 
 ### The 12 specs, real-portrait seam and sprite registration
 
@@ -628,7 +628,7 @@ moonlit composition and a Greenward village-gate composition. 4 NEW prop kinds
   the ONE demonstration character is a TEMPORARY in-memory procedural
   `SpriteFrames` (`DemoCharacterFrames`, `loaded_from_disk == false`). No fake
   painted art was fabricated from polygons. **No audio** exists.
-- **NO visual testing was performed.** All verification is `--headless` with
+- **Full visual QA remains incomplete; selected live gameplay and overlay screens have been inspected.** All automated verification is `--headless` with
   Godot's dummy renderer: `_draw()` output, auras, borders, tints, silhouettes
   and tween pops are compile/build-safe and structurally asserted but were NOT
   visually inspected on screen; no shader compilation / appearance verification

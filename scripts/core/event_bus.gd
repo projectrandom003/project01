@@ -10,6 +10,7 @@ signal inventory_changed
 signal quest_updated(quest_id: String)
 signal dialogue_requested(dialogue_id: String)
 signal dialogue_finished(dialogue_id: String)
+signal shop_requested
 signal encounter_requested(enemy_group_id: String, source: Node)
 signal battle_requested(enemy_group_id: String)
 signal battle_finished(result: Dictionary)

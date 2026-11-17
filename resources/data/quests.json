@@ -1,98 +1,464 @@
 {
-  "glade_whisper": {
-    "name": "The Glade's Whisper",
-    "region": "greenward",
-    "summary": "Elder Maelin says the mosslings no longer sleep. Something under the roots is dreaming them awake.",
-    "steps": [
-      { "type": "talk", "target": "elder_maelin", "grid": [6, 7], "text": "Hear Elder Maelin's request" },
-      { "type": "kill", "target": "mossling", "count": 3, "grid": [4, 6], "text": "Calm corrupted mosslings" },
-      { "type": "talk", "target": "elder_maelin", "grid": [6, 7], "text": "Return to Elder Maelin" }
+ "glade_whisper": {
+  "name": "The Glade's Whisper",
+  "region": "greenward",
+  "summary": "Elder Maelin says the mosslings no longer sleep. Something under the roots is dreaming them awake.",
+  "steps": [
+   {
+    "type": "talk",
+    "target": "elder_maelin",
+    "grid": [
+     6,
+     7
     ],
-    "rewards": {
-      "gold": 300,
-      "crystals": 120,
-      "xp": 150,
-      "items": { "moonpetal": 3, "gladewood_bow": 1 }
-    }
-  },
-  "hollow_roots": {
-    "name": "What Sleeps Beneath",
-    "region": "greenward",
-    "summary": "The corruption has a source. Elder Maelin believes it is the Hollowed Guardian at the edge of the glade.",
-    "requires": "glade_whisper",
-    "steps": [
-      { "type": "kill", "target": "corrupted_treant", "count": 1, "grid": [26, 16], "text": "Defeat the Hollowed Guardian" },
-      { "type": "talk", "target": "elder_maelin", "grid": [6, 7], "text": "Tell Elder Maelin what you found" }
+    "text": "Hear Elder Maelin's request"
+   },
+   {
+    "type": "kill",
+    "target": "mossling",
+    "count": 3,
+    "grid": [
+     4,
+     6
     ],
-    "rewards": {
-      "gold": 700,
-      "crystals": 200,
-      "xp": 400,
-      "items": { "dew_of_awakening": 2, "hollow_heart": 1 }
-    }
-  },
-  "elder_memory": {
-    "name": "The First Tree Remembers",
-    "region": "greenward",
-    "summary": "The Hollowed Guardian's heart points toward the oldest tree in Greenward. Find the Elder Hollow and learn what began the corruption.",
-    "requires": "hollow_roots",
-    "steps": [
-      { "type": "kill", "target": "elder_hollow", "count": 1, "grid": [-88, 76], "text": "Defeat the Elder Hollow" },
-      { "type": "talk", "target": "elder_maelin", "grid": [6, 7], "text": "Return the First Tree's memory to Elder Maelin" }
+    "text": "Calm corrupted mosslings"
+   },
+   {
+    "type": "talk",
+    "target": "elder_maelin",
+    "grid": [
+     6,
+     7
     ],
-    "rewards": {
-      "gold": 1100,
-      "crystals": 350,
-      "xp": 800,
-      "items": { "ancient_coins": 2, "dew_of_awakening": 2 }
-    }
-  },
-  "matron_bloom": {
-    "name": "A Garden Without a Keeper",
-    "region": "greenward",
-    "summary": "The Elder Hollow reveals that the corruption has a will of its own. Follow the trail to the Fallen Matron.",
-    "requires": "elder_memory",
-    "steps": [
-      { "type": "kill", "target": "fallen_matron", "count": 1, "grid": [116, 78], "text": "Defeat the Fallen Matron" },
-      { "type": "talk", "target": "elder_maelin", "grid": [6, 7], "text": "Tell Elder Maelin the Matron has fallen" }
-    ],
-    "rewards": {
-      "gold": 2500,
-      "crystals": 600,
-      "xp": 1800,
-      "items": { "ancient_coins": 5, "dew_of_awakening": 4 }
-    }
-  },
-  "sera_caravan": {
-    "name": "A Merchant's Bad Luck",
-    "region": "greenward",
-    "summary": "Sera's supply cart was driven off the road by thornhounds. Clear the path so her caravan can move again.",
-    "steps": [
-      { "type": "talk", "target": "merchant_sera", "grid": [10, 7], "text": "Hear Sera's problem" },
-      { "type": "kill", "target": "thornhound", "count": 2, "grid": [13, 11], "text": "Drive off two thornhounds" },
-      { "type": "talk", "target": "merchant_sera", "grid": [10, 7], "text": "Report back to Sera" }
-    ],
-    "rewards": {
-      "gold": 450,
-      "crystals": 80,
-      "xp": 220,
-      "items": { "moonpetal": 2, "glade_sap": 3 }
-    }
-  },
-  "pip_whispers": {
-    "name": "Three Little Whispers",
-    "region": "greenward",
-    "summary": "Pip has heard three glade wisps calling from the reeds. Find them before they lure another traveler off the path.",
-    "steps": [
-      { "type": "talk", "target": "wanderer_pip", "grid": [8, 9], "text": "Ask Pip about the whispers" },
-      { "type": "kill", "target": "glade_wisp", "count": 3, "grid": [1, 15], "text": "Quiet three wandering wisps" },
-      { "type": "talk", "target": "wanderer_pip", "grid": [8, 9], "text": "Tell Pip the wisps are gone" }
-    ],
-    "rewards": {
-      "gold": 350,
-      "crystals": 70,
-      "xp": 180,
-      "items": { "glade_sap": 2, "dew_of_awakening": 1 }
-    }
+    "text": "Return to Elder Maelin"
+   }
+  ],
+  "rewards": {
+   "gold": 300,
+   "crystals": 120,
+   "xp": 150,
+   "items": {
+    "moonpetal": 3,
+    "gladewood_bow": 1
+   }
   }
+ },
+ "hollow_roots": {
+  "name": "What Sleeps Beneath",
+  "region": "greenward",
+  "summary": "The corruption has a source. Elder Maelin believes it is the Hollowed Guardian at the edge of the glade.",
+  "requires": "glade_whisper",
+  "steps": [
+   {
+    "type": "kill",
+    "target": "corrupted_treant",
+    "count": 1,
+    "grid": [
+     26,
+     16
+    ],
+    "text": "Defeat the Hollowed Guardian"
+   },
+   {
+    "type": "talk",
+    "target": "elder_maelin",
+    "grid": [
+     6,
+     7
+    ],
+    "text": "Tell Elder Maelin what you found"
+   }
+  ],
+  "rewards": {
+   "gold": 700,
+   "crystals": 200,
+   "xp": 400,
+   "items": {
+    "dew_of_awakening": 2,
+    "hollow_heart": 1
+   }
+  }
+ },
+ "elder_memory": {
+  "name": "The First Tree Remembers",
+  "region": "greenward",
+  "summary": "The Hollowed Guardian's heart points toward the oldest tree in Greenward. Find the Elder Hollow and learn what began the corruption.",
+  "requires": "hollow_roots",
+  "steps": [
+   {
+    "type": "kill",
+    "target": "elder_hollow",
+    "count": 1,
+    "grid": [
+     -88,
+     76
+    ],
+    "text": "Defeat the Elder Hollow"
+   },
+   {
+    "type": "talk",
+    "target": "elder_maelin",
+    "grid": [
+     6,
+     7
+    ],
+    "text": "Return the First Tree's memory to Elder Maelin"
+   }
+  ],
+  "rewards": {
+   "gold": 1100,
+   "crystals": 350,
+   "xp": 800,
+   "items": {
+    "ancient_coins": 2,
+    "dew_of_awakening": 2
+   }
+  }
+ },
+ "matron_bloom": {
+  "name": "A Garden Without a Keeper",
+  "region": "greenward",
+  "summary": "The Elder Hollow reveals that the corruption has a will of its own. Follow the trail to the Fallen Matron.",
+  "requires": "elder_memory",
+  "steps": [
+   {
+    "type": "kill",
+    "target": "fallen_matron",
+    "count": 1,
+    "grid": [
+     116,
+     78
+    ],
+    "text": "Defeat the Fallen Matron"
+   },
+   {
+    "type": "talk",
+    "target": "elder_maelin",
+    "grid": [
+     6,
+     7
+    ],
+    "text": "Tell Elder Maelin the Matron has fallen"
+   }
+  ],
+  "rewards": {
+   "gold": 2500,
+   "crystals": 600,
+   "xp": 1800,
+   "items": {
+    "ancient_coins": 5,
+    "dew_of_awakening": 4
+   }
+  }
+ },
+ "sera_caravan": {
+  "name": "A Merchant's Bad Luck",
+  "region": "greenward",
+  "summary": "Sera's supply cart was driven off the road by thornhounds. Clear the path so her caravan can move again.",
+  "steps": [
+   {
+    "type": "talk",
+    "target": "merchant_sera",
+    "grid": [
+     10,
+     7
+    ],
+    "text": "Hear Sera's problem"
+   },
+   {
+    "type": "kill",
+    "target": "thornhound",
+    "count": 2,
+    "grid": [
+     13,
+     11
+    ],
+    "text": "Drive off two thornhounds"
+   },
+   {
+    "type": "talk",
+    "target": "merchant_sera",
+    "grid": [
+     10,
+     7
+    ],
+    "text": "Report back to Sera"
+   }
+  ],
+  "rewards": {
+   "gold": 450,
+   "crystals": 80,
+   "xp": 220,
+   "items": {
+    "moonpetal": 2,
+    "glade_sap": 3
+   }
+  }
+ },
+ "pip_whispers": {
+  "name": "Three Little Whispers",
+  "region": "greenward",
+  "summary": "Pip has heard three glade wisps calling from the reeds. Find them before they lure another traveler off the path.",
+  "steps": [
+   {
+    "type": "talk",
+    "target": "wanderer_pip",
+    "grid": [
+     8,
+     9
+    ],
+    "text": "Ask Pip about the whispers"
+   },
+   {
+    "type": "kill",
+    "target": "glade_wisp",
+    "count": 3,
+    "grid": [
+     1,
+     15
+    ],
+    "text": "Quiet three wandering wisps"
+   },
+   {
+    "type": "talk",
+    "target": "wanderer_pip",
+    "grid": [
+     8,
+     9
+    ],
+    "text": "Tell Pip the wisps are gone"
+   }
+  ],
+  "rewards": {
+   "gold": 350,
+   "crystals": 70,
+   "xp": 180,
+   "items": {
+    "glade_sap": 2,
+    "dew_of_awakening": 1
+   }
+  }
+ },
+ "moonpetal_echoes": {
+  "name": "Echoes Beneath the Silver Pool",
+  "region": "moonpetal_hollow",
+  "summary": "The Silver Pool has gone quiet since the Matron fell. Help Moonkeeper Liora calm the echoes gathering beneath its surface.",
+  "requires": "matron_bloom",
+  "steps": [
+   {
+    "type": "talk",
+    "target": "moonkeeper_liora",
+    "grid": [
+     14,
+     10
+    ],
+    "text": "Ask Liora about the silent pool"
+   },
+   {
+    "type": "kill",
+    "target": "moonpetal_sprite",
+    "count": 3,
+    "grid": [
+     20,
+     18
+    ],
+    "text": "Calm three moonpetal sprites"
+   },
+   {
+    "type": "talk",
+    "target": "moonkeeper_liora",
+    "grid": [
+     14,
+     10
+    ],
+    "text": "Return to Liora with the pool's echo"
+   }
+  ],
+  "rewards": {
+   "gold": 900,
+   "crystals": 240,
+   "xp": 750,
+   "items": {
+    "moonpetal": 4,
+    "hollow_heart": 1
+   }
+  }
+ },
+ "royal_road_supplies": {
+  "name": "Supplies for the Royal Road",
+  "region": "gothic_castle_boss_zone",
+  "summary": "Warden Elowen needs the road cleared before the caravans can pass.",
+  "steps": [
+   {
+    "type": "talk",
+    "target": "road_warden",
+    "grid": [
+     2,
+     2
+    ],
+    "text": "Speak with Warden Elowen"
+   },
+   {
+    "type": "kill",
+    "target": "mossling",
+    "count": 2,
+    "grid": [
+     12,
+     0
+    ],
+    "text": "Clear two mosslings from the road"
+   },
+   {
+    "type": "talk",
+    "target": "road_warden",
+    "grid": [
+     2,
+     2
+    ],
+    "text": "Report back to Warden Elowen"
+   }
+  ],
+  "rewards": {
+   "gold": 400,
+   "xp": 300,
+   "crystals": 60,
+   "items": {
+    "glade_sap": 3,
+    "royal_seal": 1
+   }
+  }
+ },
+ "blight_purification": {
+  "name": "The Blight at the Grove",
+  "region": "gothic_castle_boss_zone",
+  "requires": "royal_road_supplies",
+  "summary": "Corvin cannot open the castle road while the withered grote festers.",
+  "steps": [
+   {
+    "type": "talk",
+    "target": "blight_warden",
+    "grid": [
+     30,
+     14
+    ],
+    "text": "Speak with Warden Corvin"
+   },
+   {
+    "type": "kill",
+    "target": "thornhound",
+    "count": 2,
+    "grid": [
+     38,
+     18
+    ],
+    "text": "Drive off the thornhounds"
+   },
+   {
+    "type": "talk",
+    "target": "blight_warden",
+    "grid": [
+     30,
+     14
+    ],
+    "text": "Report back to Warden Corvin"
+   }
+  ],
+  "rewards": {
+   "gold": 600,
+   "xp": 500,
+   "crystals": 90,
+   "items": {
+    "blight_resin": 3
+   }
+  }
+ },
+ "baltoria_summoning": {
+  "name": "The Hollow Sovereign",
+  "region": "gothic_castle_boss_zone",
+  "requires": "blight_purification",
+  "summary": "Break the seal at the arena and face Baltoria on the throne.",
+  "steps": [
+   {
+    "type": "talk",
+    "target": "arena_gatekeeper",
+    "grid": [
+     58,
+     2
+    ],
+    "text": "Speak with Gatekeeper Sable"
+   },
+   {
+    "type": "kill",
+    "target": "baltoria",
+    "count": 1,
+    "grid": [
+     63,
+     4
+    ],
+    "text": "Defeat Baltoria"
+   },
+   {
+    "type": "talk",
+    "target": "arena_gatekeeper",
+    "grid": [
+     58,
+     2
+    ],
+    "text": "Return to Sable with the news"
+   }
+  ],
+  "rewards": {
+   "gold": 2500,
+   "xp": 3500,
+   "crystals": 500,
+   "items": {
+    "ancient_coins": 6,
+    "gothic_shard": 5
+   }
+  }
+ },
+ "garden_shadows": {
+  "name": "Shadows in the Royal Garden",
+  "region": "castle_royal_gardens",
+  "summary": "The Royal Gardener has found the old garden sentinels moving again. Defeat the corrupted guardians and restore the promenade.",
+  "steps": [
+   {
+    "type": "talk",
+    "target": "royal_gardener",
+    "grid": [
+     19.5,
+     6.5
+    ],
+    "text": "Hear the Royal Gardener?s concern"
+   },
+   {
+    "type": "kill",
+    "target": "gothic_sentinel",
+    "count": 2,
+    "grid": [
+     22,
+     11
+    ],
+    "text": "Defeat two corrupted garden sentinels"
+   },
+   {
+    "type": "talk",
+    "target": "royal_gardener",
+    "grid": [
+     19.5,
+     6.5
+    ],
+    "text": "Report back to the Royal Gardener"
+   }
+  ],
+  "rewards": {
+   "gold": 520,
+   "crystals": 90,
+   "xp": 320,
+   "items": {
+    "gothic_shard": 2,
+    "royal_seal": 1
+   }
+  }
+ }
 }

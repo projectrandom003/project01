@@ -16,11 +16,11 @@ Expected:
 
 ```text
 ==================================================
-PROJECT FANTASY TESTS: 1484 passed, 0 failed
+PROJECT FANTASY TESTS: 2238 passed, 0 failed
 ==================================================
 ```
 
-The **236-test Phase 1 baseline is preserved**. Phase 5 closed at 1374 checks; subsequent integration work added protagonist-art runtime reporting, persistent exploration rewards, monster bonus-drop validation, exact reward preview/claim consistency, gear enhancement/save tests and enemy silhouette rendering hooks. The current suite is **1484 passed, 0 failed**; 1374 and 1478 are historical checkpoints, not the current total. Separate scene verifiers additionally exercise all three playable avatar sheets, the Fallen Matron phases and Verdict cinematic, map UI, arenas, menus, quests and turn timeline. Exit code is `0` on success, `1` on failure. `push_error` is used for failures, so CI logs show the failing assertion and its backtrace. `TESTING.md` is the single place the exact current total is documented.
+The **236-test Phase 1 baseline is preserved**. Phase 5 closed at 1374 checks; subsequent integration work added protagonist-art runtime reporting, persistent exploration rewards, monster bonus-drop validation, exact reward preview/claim consistency, gear enhancement/save tests, enemy silhouette rendering hooks and a tested crafting service/UI, merchant purchase/UI behavior and dialogue-to-shop overlay routing; settings tests cover staged rebind/cancel/default restoration and structured bindings across reopen; save tests cover repeated replacement, interrupted-write recovery and reset-artifact cleanup. The current suite is **2238 passed, 0 failed** (verified locally on 2026-11-17 in an isolated QA project with a separate cache and user-data identity); 1374, 1478, 1542 and 1564, 1578, 1582, 1603, 1612 and 1620 are historical checkpoints, not the current total. The final verbose run reports no GDScript/parse/engine errors and zero leaked instances, zero ObjectDB instances, zero resources still in use and zero RID allocations; only the expected malformed-save recovery warning appears. Full log: `artifacts/qa/chunk_region_layout_regression_2026-11-17.log`. A new regression group verifies roaming monsters stay passive on proximity and emit exactly one encounter request only after explicit interaction. The latest quest-navigation regression also exercises the dedicated territory resolver while retaining compatibility assertions on the public resolver facade. The player composition regression group verifies presentation-node setup, camera-rig look-ahead/recentering, nearest-interactable selection, prompt updates and rejection of disabled or out-of-range stale targets. Separate scene verifiers additionally exercise all three playable avatar sheets, the Fallen Matron phases and Verdict cinematic, map UI, arenas, menus, quests and turn timeline. Exit code is `0` on success, `1` on failure. `push_error` is used for failures, so CI logs show the failing assertion and its backtrace. `TESTING.md` is the single place the exact current total is documented.
 
 ### Content validator (standalone)
 
@@ -52,7 +52,7 @@ If a test crashes before restore, the save may be left in the test state. Keep a
 | Gacha | Ten-pull count, real character IDs, ten-pull Epic floor, hard pity, featured pity, counter resets |
 | Combat | Player/enemy construction, full deterministic battle, victory, event stream, element table, boss flag |
 | State | New game defaults, currency add/spend/overspend, item stack/remove/over-remove, duplicates/awakening, party cap, quest flow, rewards, save round-trip |
-| UI/scenes | Every overlay builds content, title menu builds, combat screen starts an engine, full game scene creates world/HUD/player |
+| UI/scenes | Every overlay builds content; shop purchase refreshes Gold/owned counts; dialogue shop request opens/closes the overlay and pauses/resumes the world; title menu builds; combat screen starts an engine; full game scene creates world/HUD/player |
 | Exploration rewards | Gathering nodes grant the configured items once, persist claim flags through save-data round-trip, and stay hidden after world recreation |
 | Bonus drops | Drop item/chance/amount references validate; precomputed victory rewards are exactly the same payload previewed and granted |
 | Playable avatar reporting | The assembled world reports Kael's disk-backed 72-animation sheet instead of a stale procedural-placeholder status |
@@ -134,10 +134,10 @@ preserved, bringing the suite to **`1374 passed, 0 failed`**:
 | World visual standards | `_test_world_visual_standards()` | 6 categories, `region_tint()`, `validate()`, 57 prop kinds, `visual_standards_report()` |
 | Asset status honesty | `_test_asset_status_honesty()` | ZERO final assets; both registries report FINAL 0; FINAL never hardcoded |
 
-### Current integration additions (post-Phase 5)
+### Post-Phase 5 integration additions (1564-test checkpoint)
 
-The Phase 5 count above is a historical checkpoint. The current suite is
-**1478 passed, 0 failed** and adds regression coverage for:
+The Phase 5 count above is a historical checkpoint. At this earlier integration
+checkpoint, the suite was **1564 passed, 0 failed** and added regression coverage for:
 - The three playable protagonists' imported art and the assembled player's live
   art report (the generic art registries remain separate from these avatar sets).
 - One-time gathering rewards, inventory grants, save-data round trips and
@@ -146,6 +146,42 @@ The Phase 5 count above is a historical checkpoint. The current suite is
   preview and the actual claim.
 - The Moonpetal Sprite preserving its own species visual rather than inheriting
   a randomized common-monster silhouette.
+- Roaming monsters remaining passive when approached and emitting one encounter
+  request only after explicit interaction.
+- The assembled GameScreen keyboard/controller action and authored mobile HUD
+  Interact button signal both opening the matching real combat encounter; the
+  latter is exercised headlessly, not by a physical touchscreen.
+- Crafting UI behavior: panel starts hidden, Crafting action opens it, all three recipes appear, affordability enables/disables the correct buttons, and a successful Wayfarer Charm craft consumes exact costs and grants the output.
+- Moonpetal Hollow story integration: Moonkeeper Liora and the Silver Pool encounter spawn in the region; the quest is locked until the Fallen Matron arc is complete, then its three-sprite objective and turn-in can be completed.
+- Sera's merchant shop unlocks after the caravan quest; the shop screen lists eight items, blocks purchases without enough Gold, and routes successful purchases into the inventory.
+- Responsive HUD layout behavior at a 390x844 portrait viewport: party panel and
+  desktop hint hide, minimap compacts to 170px, and the interaction prompt moves
+  above the touch controls. Returning to landscape restores the standard HUD.
+
+### Node-architecture regression additions (current suite)
+
+Later modularization work added structural and integration coverage for:
+- The authored Greenward builder hierarchy: River, Landmark, Route and Interaction
+  child Nodes share the owning world and validated composition resource.
+- Minimap marker collection and tracked-quest target resolution owned by the
+  authored `MarkerData` child; the parent retains drawing and interaction.
+- MainBackdrop layout/animation ownership, character animation specification
+  catalog parity, Greenward palette-family parity and deterministic `ChunkPropScatter`.
+- Focused content-validator domains, `CombatSkillResolver`, procedural monster
+  painter ownership, and the procedural prop painter family split.
+- World replacement/region separation, castle and Royal Gardens composition,
+  title-menu viewport bounds, player movement/camera and NPC/combat interaction
+  integration regressions.
+
+### Lifecycle and UI regression additions
+
+- Combat ownership: `CombatSkillResolver` keeps a weak owner reference; it no longer retains `CombatEngine`, and the owner reference clears on release.
+- Inventory layout: centered bounded columns and detail-panel containment within the overlay width are regression-tested.
+- Shared overlay shell: expand-fill sizing is asserted for every instantiated screen so short-content screens cannot collapse into bottom sheets.
+The current isolated verbose run is **2238 passed, 0 failed**. It reports no
+GDScript/parse/engine errors or ObjectDB/RID/resource cleanup diagnostics; only
+the expected malformed-save recovery warning appears. Full log:
+`artifacts/qa/chunk_region_layout_regression_2026-11-17.log`.
 
 Focused scene verifiers (run individually after editor import):
 - `verify_boss_actors.tscn` — boss visuals, Matron phase thresholds, Verdict
@@ -249,6 +285,13 @@ Run on desktop and at least one touch device before calling a milestone done.
 - [ ] Closing dialogue restores world control.
 - [ ] No input leaks through to movement while dialogue is open.
 
+### Moonpetal Hollow story
+
+- [ ] Complete *A Garden Without a Keeper* in Greenward.
+- [ ] Travel through Moonpetal Gate and speak with Moonkeeper Liora by the Silver Pool.
+- [ ] Start *Echoes Beneath the Silver Pool* and calm three moonpetal sprites.
+- [ ] Return to Liora and claim the quest rewards.
+
 ### Quests
 
 - [ ] Quest screen lists active quests and steps.
@@ -260,7 +303,8 @@ Run on desktop and at least one touch device before calling a milestone done.
 
 ### Combat
 
-- [ ] Touching a roaming monster starts a battle.
+- [ ] Roaming monsters remain passive when the player enters their proximity.
+- [ ] E / controller A / touch Interact starts combat only when explicitly pressed near a roaming monster.
 - [ ] Enemy and party cards show correct names, elements and HP.
 - [ ] Turn order preview matches actual turns.
 - [ ] Skill buttons disable when not the player's turn or not enough energy.
@@ -286,6 +330,15 @@ Run on desktop and at least one touch device before calling a milestone done.
 - [ ] Collection screen filters/sorts correctly.
 - [ ] Character detail shows stats, skills, lore and equipment.
 - [ ] Party changes persist and affect combat.
+
+### Merchant shop
+
+- [ ] After a purchase, verify the wallet total and owned count refresh immediately without closing the shop.
+
+- [ ] Complete Sera's caravan quest and speak with her again.
+- [ ] Open the caravan shop and confirm eight stock entries display.
+- [ ] Confirm purchases are disabled when Gold is insufficient.
+- [ ] Buy an item and verify the Gold balance and inventory update.
 
 ### Inventory and equipment
 

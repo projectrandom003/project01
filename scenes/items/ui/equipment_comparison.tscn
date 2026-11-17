@@ -1,0 +1,4 @@
+[gd_scene format=3]
+
+[node name="EquipmentComparison" type="VBoxContainer"]
+theme_override_constants/separation = 4

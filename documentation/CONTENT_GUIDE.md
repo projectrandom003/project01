@@ -204,7 +204,7 @@ premium visual tier. `CharacterArtSpec.validate_specs()` returns `[]`.
 **These are PREPARATION for future external art, not finished artwork.** ZERO
 final assets exist (see §16); no `.png/.webp/.jpg/.tres/.res` art file was
 created and no audio exists. All shipped visuals remain runtime procedural
-placeholder. **NO visual testing** was performed.
+placeholder. **Full visual QA remains incomplete; selected live gameplay and overlay screens have been inspected**.
 
 To read a spec: `CharacterArtSpec.for_id("lyra_vey")` → `.to_dict()` /
 `.prompt_for("full_body"|"portrait"|"sheet"|"vfx")` /
@@ -847,7 +847,7 @@ These are honest limitations of the current slice, not bugs to hide:
 - **Exactly TWO regions** (`greenward` + `moonpetal_hollow`) are bootstrapped; `greenward`'s village/NPC/landmark layout is partly HARDCODED while the second region is fully data-driven. No additional continents, no elevation/cliffs/water traversal rules, no seamless zone streaming, no fast-travel/map/fog-of-war, no mounts, no spawn directors/respawn timers and no world audio ambience; region transitions are validated and wired but cannot be interactively playtested headlessly.
 - **ZERO final assets; no audio.** All art is runtime procedural placeholder; `AssetManifest.status_report()` is **FINAL 0 / TEMPORARY 8 / MISSING 8** and `CharacterAssetRegistry.report()` is **FINAL 0 / TEMPORARY 120 / MISSING 120** (12 characters × 10 kinds). No `.png/.webp/.jpg/.tres/.res` art file exists anywhere, the only image is `icon.svg`, and the demo sheet is a TEMPORARY in-memory procedural `SpriteFrames`; no audio of any kind exists.
 - **The 12 character specs + generation prompts are PREPARATION, not art.** `CharacterArtSpec` / `assets/characters/<id>/SPEC.md` / `assets/GENERATION_PROMPTS.md` describe a FUTURE external art round; identity/gameplay data still comes from `characters.json` (UNCHANGED). No finished artwork and no external generation were produced.
-- **NO visual testing was performed.** All verification is `--headless` with Godot's dummy renderer; `_draw()` output, auras, borders, tints, silhouettes and tween pops are compile/build-safe and structurally asserted but were NOT visually inspected on screen; no shader compilation / appearance verification and no device profiling.
+- **Full visual QA remains incomplete; selected live gameplay and overlay screens have been inspected.** All automated verification is `--headless` with Godot's dummy renderer; `_draw()` output, auras, borders, tints, silhouettes and tween pops are compile/build-safe and structurally asserted but were NOT visually inspected on screen; no shader compilation / appearance verification and no device profiling.
 - **No threaded chunk generation.** `ChunkPreparer` is main-thread frame-sliced (NO threads); no device profiling has been performed (headless uses a dummy renderer).
 - Enemy `region` fields are informational.
 - Dialogue speaker race mapping is hardcoded for shipped speakers.

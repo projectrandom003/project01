@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[node name="ShopScreenLayout" type="VBoxContainer"]
+size_flags_vertical = 3
+
+[node name="WalletLabel" type="Label" parent="."]
+text = "Gold  0"
+
+[node name="StockScroll" type="ScrollContainer" parent="."]
+size_flags_vertical = 3
+size_flags_horizontal = 3
+
+[node name="StockList" type="VBoxContainer" parent="StockScroll"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 8

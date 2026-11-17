@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyStatsConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/components/enemy_stats_config.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+enemy_id = "elder_hollow"
+display_name = "The Elder Hollow"
+level = 6
+max_hp = 680.0
+attack = 18.0
+defense = 13.0
+speed = 13.0
+is_boss = true
+metadata = {"element":"earth","role":"World Boss"}

@@ -1,20 +1,23 @@
 class_name InventoryScreen
 extends OverlayScreen
-## Inventory and equipment management. Equipment is real: equipping removes one
-## copy from the bag, returns the previously equipped piece, and changes combat
-## stats through CombatFactory.
+## Inventory and equipment management refactored into reusable item/inventory/equipment modules.
+## GameState remains the authoritative source for inventory, equipment, upgrades, and saves.
 
-const ITEM_CARD_SCENE: PackedScene = preload("res://scenes/ui/components/inventory_item_card.tscn")
-const INVENTORY_ITEM_ICON_SCENE: PackedScene = preload("res://scenes/ui/components/inventory_item_icon.tscn")
-const EQUIPMENT_TARGET_PICKER_SCENE: PackedScene = preload("res://scenes/ui/components/equipment_target_picker.tscn")
 const INVENTORY_LAYOUT_SCENE: PackedScene = preload("res://scenes/ui/components/inventory_screen_layout.tscn")
+const ITEM_ACQUISITION_NOTIFICATION_SCENE: PackedScene = preload("res://scenes/items/ui/item_acquisition_notification.tscn")
+const _InventoryControllerScript = preload("res://scripts/items/inventory/inventory_controller.gd")
+const _ItemInteractionScript = preload("res://scripts/items/item_interaction.gd")
 
-var _grid: GridContainer
-var _detail: VBoxContainer
-var _cards: Dictionary = {}
-var _selected_item: String = ""
-var _filter: String = "all"
-var _equip_target_uid: String = ""
+var _controller = null
+var _notification = null
+var grid_component: InventoryGridComponent
+var crafting_component: InventoryCraftingComponent
+var _crafting_window: PanelContainer:
+	get:
+		return crafting_component._window if crafting_component != null else null
+var _crafting_list: VBoxContainer:
+	get:
+		return crafting_component._list if crafting_component != null else null
 
 
 func _init() -> void:
@@ -23,320 +26,87 @@ func _init() -> void:
 
 
 func _build_content() -> void:
+	_controller = _InventoryControllerScript.new()
+	add_child(_controller)
+	_controller.inventory_updated.connect(_refresh)
+
 	var layout := INVENTORY_LAYOUT_SCENE.instantiate() as VBoxContainer
 	layout.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	content.add_child(layout)
 
 	var wallet := layout.get_node("Wallet") as HBoxContainer
-	wallet.add_child(UIFactory.chip("Gold  " + UIFactory.number(GameState.currency("gold")), UITheme.GOLD))
-	wallet.add_child(UIFactory.chip("Crystals  " + UIFactory.number(GameState.currency("crystals")), UITheme.TEAL))
-	wallet.add_child(UIFactory.chip("Gems  " + UIFactory.number(GameState.currency("gems")), UITheme.VIOLET))
+	wallet.add_child(UIFactory.chip("Gold  " + UIFactory.number(GameState.inventory_domain.currency("gold")), UITheme.GOLD))
+	wallet.add_child(UIFactory.chip("Crystals  " + UIFactory.number(GameState.inventory_domain.currency("crystals")), UITheme.TEAL))
+	wallet.add_child(UIFactory.chip("Gems  " + UIFactory.number(GameState.inventory_domain.currency("gems")), UITheme.VIOLET))
 
-	var filters := layout.get_node("Filters") as HBoxContainer
-	var filter_buttons := {
-		"all": filters.get_node("AllButton") as Button,
-		"material": filters.get_node("MaterialsButton") as Button,
-		"equipment": filters.get_node("EquipmentButton") as Button,
-		"currency": filters.get_node("CurrenciesButton") as Button,
-	}
-	for filter_id in filter_buttons:
-		var button: Button = filter_buttons[filter_id]
-		button.add_theme_color_override("font_color", UITheme.TEXT_DIM)
-		button.add_theme_stylebox_override("normal", UITheme.style(Color("#111a2d"), UITheme.BORDER_SOFT, 8, 1, 8))
-		button.pressed.connect(func() -> void: _set_filter(str(filter_id)))
-	(filters.get_node("FilterHint") as Label).add_theme_color_override("font_color", UITheme.TEXT_FAINT)
+	grid_component = layout.get_node("GridComponent") as InventoryGridComponent
+	crafting_component = layout.get_node("CraftingComponent") as InventoryCraftingComponent
+	if grid_component != null:
+		grid_component.bind(self)
+		grid_component.build(layout)
+		grid_component.refresh()
+	if crafting_component != null:
+		crafting_component.bind(self)
+		crafting_component.build(layout.get_node("Filters") as HBoxContainer)
 
-	_grid = layout.get_node("Split/Left/GridScroll/ItemGrid") as GridContainer
-	_detail = layout.get_node("Split/DetailPanel/DetailScroll/DetailContent") as VBoxContainer
-
+	_notification = ITEM_ACQUISITION_NOTIFICATION_SCENE.instantiate() as ItemAcquisitionNotification
+	content.add_child(_notification)
+	_controller.notification_requested.connect(_notification.show_message)
 
 func _set_filter(value: String) -> void:
-	_filter = value
-	_rebuild_grid()
-
+	if grid_component != null:
+		grid_component.set_filter(value)
 
 func _refresh() -> void:
+	if grid_component != null:
+		grid_component.refresh()
+
+func _rebuild_grid() -> void:
+	if grid_component != null:
+		grid_component.rebuild_grid()
+
+func _collect_item_ids() -> Array[String]:
+	return grid_component.collect_item_ids() if grid_component != null else []
+
+func _make_card(item_id: String) -> PanelContainer:
+	return grid_component.make_card(item_id) if grid_component != null else PanelContainer.new()
+
+func _show_detail(item_id: String) -> void:
+	if grid_component != null:
+		grid_component.show_detail(item_id)
+
+func _equipped_by(item_id: String) -> Array:
+	return grid_component.equipped_by(item_id) if grid_component != null else []
+
+func _on_enhance_requested(uid: String, slot: String) -> void:
+	var result: Dictionary = _ItemInteractionScript.upgrade(uid, slot)
+	EventBus.toast_requested.emit(str(result.get("reason", "Equipment enhanced! Stats increased by 8%." if result.get("ok", false) else "Could not enhance equipment.")))
 	_rebuild_grid()
 
 
-func _rebuild_grid() -> void:
-	if _grid == null:
-		return
-	UIFactory.clear(_grid)
-	_cards.clear()
-	var ids: Array = []
-	match _filter:
-		"currency":
-			for currency_id in ["gold", "gems", "crystals", "guild_tokens", "ancient_coins", "event_tokens"]:
-				if GameState.currency(currency_id) > 0:
-					ids.append(currency_id)
-		_:
-			for item_id in GameState.inventory.keys():
-				if int(GameState.inventory[item_id]) <= 0:
-					continue
-				var item: Dictionary = ContentDB.get_item(str(item_id))
-				if item.is_empty():
-					continue
-				var category := str(item.get("category", "material"))
-				if _filter == "all" or category == _filter:
-					ids.append(str(item_id))
-	for instance in GameState.roster:
-		for slot in CharacterInstance.SLOTS:
-			var equipped_id: String = instance.equipped_item(slot)
-			if equipped_id.is_empty() or ids.has(equipped_id):
-				continue
-			var equipped_item: Dictionary = ContentDB.get_item(equipped_id)
-			if _filter == "all" or _filter == str(equipped_item.get("category", "")):
-				ids.append(equipped_id)
-	ids.sort_custom(func(a, b) -> bool:
-		var item_a: Dictionary = ContentDB.get_item(a)
-		var item_b: Dictionary = ContentDB.get_item(b)
-		var cat_a := str(item_a.get("category", ""))
-		var cat_b := str(item_b.get("category", ""))
-		if cat_a == cat_b:
-			return str(item_a.get("name", a)) < str(item_b.get("name", b))
-		return cat_a < cat_b
-	)
-	if ids.is_empty():
-		_grid.add_child(UIFactory.label("Nothing in this category.", 13, UITheme.TEXT_DIM))
-		_selected_item = ""
-		_show_detail("")
-		return
-	if _selected_item.is_empty() or not ids.has(_selected_item):
-		_selected_item = str(ids[0])
-	for item_id in ids:
-		_grid.add_child(_make_card(str(item_id)))
-	_show_detail(_selected_item)
+func _on_unequip_requested(uid: String, slot: String) -> void:
+	var result: Dictionary = _ItemInteractionScript.unequip(uid, slot)
+	EventBus.toast_requested.emit("Item unequipped." if bool(result.get("ok", false)) else str(result.get("reason", "Could not unequip that item.")))
+	_rebuild_grid()
 
 
-func _make_card(item_id: String) -> PanelContainer:
-	var item: Dictionary = ContentDB.get_item(item_id)
-	var color := Color(str(item.get("color", "#9aa8c2")))
-	var card := ITEM_CARD_SCENE.instantiate() as InventoryItemCard
-	var count := GameState.currency(item_id) if str(item.get("category", "")) == "currency" else GameState.item_count(item_id)
-	var equipped_count := _equipped_by(item_id).size() if str(item.get("category", "")) == "equipment" else 0
-	var count_text := "Equipped" if count <= 0 and equipped_count > 0 else "×%s  ·  E%d" % [UIFactory.number(count), equipped_count] if equipped_count > 0 else "×%s" % UIFactory.number(count)
-	card.setup(
-		item_id,
-		str(item.get("name", item_id)),
-		count_text,
-		color,
-		item_id == _selected_item
-	)
-	card.selected.connect(func(selected_id: String) -> void:
-		_selected_item = selected_id
-		_rebuild_grid()
-		_show_detail(selected_id)
-	)
-	_cards[item_id] = card
-	return card
-
-
-func _show_detail(item_id: String) -> void:
-	UIFactory.clear(_detail)
-	if item_id.is_empty():
-		_detail.add_child(UIFactory.label("No item selected.", 13, UITheme.TEXT_DIM))
-		return
-	var item: Dictionary = ContentDB.get_item(item_id)
-	if item.is_empty():
-		_detail.add_child(UIFactory.label("Unknown item.", 13, UITheme.DANGER))
-		return
-	var color := Color(str(item.get("color", "#9aa8c2")))
-	var category := str(item.get("category", "material"))
-	var rarity := str(item.get("rarity", "common"))
-
-	var icon_center := INVENTORY_ITEM_ICON_SCENE.instantiate() as CenterContainer
-	var icon_frame := icon_center.get_node("Frame") as PanelContainer
-	icon_frame.add_theme_stylebox_override("panel", UITheme.style(color.darkened(0.62), color, 12, 1, 10))
-	var letter := icon_center.get_node("Frame/Letter") as Label
-	letter.text = str(item.get("name", "?")).substr(0, 1).to_upper()
-	letter.add_theme_color_override("font_color", color)
-	_detail.add_child(icon_center)
-
-	var name_label := UIFactory.heading(str(item.get("name", item_id)), 22, UITheme.TEXT)
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_detail.add_child(name_label)
-
-	var chips := UIFactory.hbox(6)
-	chips.alignment = BoxContainer.ALIGNMENT_CENTER
-	chips.add_child(UIFactory.chip(category.capitalize(), UITheme.TEXT_DIM))
-	if category != "currency":
-		chips.add_child(UIFactory.rarity_chip(rarity))
-	if item.has("element"):
-		chips.add_child(UIFactory.element_chip(str(item.get("element", "neutral"))))
-	_detail.add_child(chips)
-
-	var amount := GameState.currency(item_id) if category == "currency" else GameState.item_count(item_id)
-	_detail.add_child(UIFactory.label("Owned: %s" % UIFactory.number(amount), 12, UITheme.TEXT_DIM))
-	_detail.add_child(UIFactory.wrapped(str(item.get("description", "")), 12, UITheme.TEXT_DIM))
-	_detail.add_child(UIFactory.separator())
-
-	var stats: Dictionary = item.get("stats", {})
-	if not stats.is_empty():
-		_detail.add_child(UIFactory.label("STAT BONUSES", 10, UITheme.TEXT_FAINT))
-		var stat_grid := UIFactory.grid(2, 4)
-		for key in stats.keys():
-			stat_grid.add_child(_stat_row(str(key).to_upper(), str(stats[key])))
-		_detail.add_child(stat_grid)
-
-	if category == "equipment":
-		var slot_id := str(item.get("slot", ""))
-		_detail.add_child(UIFactory.chip("SLOT  " + slot_id.capitalize(), UITheme.TEAL))
-		var equipped_by := _equipped_by(item_id)
-		if not equipped_by.is_empty():
-			_detail.add_child(UIFactory.label("Equipped by: " + ", ".join(equipped_by), 11, UITheme.TEAL))
-			for instance in GameState.roster:
-				var definition: CharacterDef = ContentDB.get_character(instance.char_id)
-				if definition == null:
-					continue
-				for slot in CharacterInstance.SLOTS:
-					if instance.equipped_item(slot) == item_id:
-						var unequip_button := UIFactory.small_button("Unequip from " + definition.display_name)
-						var uid: String = instance.uid
-						var slot_name: String = slot
-						unequip_button.pressed.connect(func() -> void: _unequip(uid, slot_name))
-						_detail.add_child(unequip_button)
-		var target_row := UIFactory.vbox(4)
-		target_row.add_child(UIFactory.label("Equip to", 11, UITheme.TEXT_FAINT))
-		var picker := EQUIPMENT_TARGET_PICKER_SCENE.instantiate() as OptionButton
-		var index := 0
-		for instance in GameState.roster:
-			var definition: CharacterDef = ContentDB.get_character(instance.char_id)
-			if definition == null:
-				continue
-			picker.add_item("%s  ·  Lv %d" % [definition.display_name, instance.level])
-			picker.set_item_metadata(index, instance.uid)
-			index += 1
-		if index == 0:
-			picker.disabled = true
-		else:
-			picker.item_selected.connect(func(selected: int) -> void:
-				_equip_target_uid = str(picker.get_item_metadata(selected))
-			)
-			_equip_target_uid = str(picker.get_item_metadata(0))
-			target_row.add_child(picker)
-			var comparison := _equipment_comparison(item, _equip_target_uid)
-			_detail.add_child(comparison)
-			var target_instance: CharacterInstance = null
-			for candidate in GameState.roster:
-				if candidate.uid == _equip_target_uid:
-					target_instance = candidate
-					break
-			if target_instance != null and target_instance.equipped_item(slot_id) == item_id:
-				var enhancement := GameState.gear_level(_equip_target_uid, slot_id)
-				_detail.add_child(UIFactory.label("ENHANCEMENT  +%d%% stats" % (enhancement * 8), 10, UITheme.GOLD))
-				var upgrade_info := GameState.gear_upgrade_info(_equip_target_uid, slot_id)
-				var upgrade_button := UIFactory.button(
-					"Enhance to +%d  ·  %d Gold  ·  %d Glade Sap" % [enhancement + 1, int(upgrade_info.get("gold", 0)), int(upgrade_info.get("sap", 0))], true
-				)
-				upgrade_button.disabled = not bool(upgrade_info.get("ok", false))
-				upgrade_button.tooltip_text = str(upgrade_info.get("reason", "Raises this gear's stats by 8% per level."))
-				upgrade_button.pressed.connect(func() -> void: _enhance(_equip_target_uid, slot_id))
-				_detail.add_child(upgrade_button)
-			picker.item_selected.connect(func(selected: int) -> void:
-				var old_comparison := _detail.get_node_or_null("EquipmentComparison")
-				if old_comparison != null:
-					old_comparison.queue_free()
-				var next_comparison := _equipment_comparison(item, str(picker.get_item_metadata(selected)))
-				next_comparison.name = "EquipmentComparison"
-				_detail.add_child(next_comparison)
-			)
-		var equip_button := UIFactory.button("Equip", true)
-		equip_button.disabled = amount <= 0 or index == 0
-		equip_button.pressed.connect(func() -> void: _equip(item_id))
-		target_row.add_child(equip_button)
-		_detail.add_child(target_row)
-	elif category == "material":
-		_detail.add_child(UIFactory.wrapped(
-			"Materials are used for ascension and future crafting. They are not consumed automatically.",
-			11,
-			UITheme.TEXT_FAINT
-		))
-
-
-func _equipment_comparison(item: Dictionary, uid: String) -> VBoxContainer:
-	var box := UIFactory.vbox(4)
-	box.name = "EquipmentComparison"
-	box.add_child(UIFactory.label("COMPARISON · CURRENTLY EQUIPPED", 9, UITheme.TEXT_FAINT))
-	var instance: CharacterInstance = null
-	for candidate in GameState.roster:
-		if candidate.uid == uid:
-			instance = candidate
-			break
-	if instance == null:
-		box.add_child(UIFactory.label("Select a character to compare gear.", 10, UITheme.TEXT_DIM))
-		return box
-	var slot := str(item.get("slot", ""))
-	var current_id := instance.equipped_item(slot)
-	var current: Dictionary = ContentDB.get_item(current_id) if not current_id.is_empty() else {}
-	box.add_child(UIFactory.label(
-		"Equipped: %s" % str(current.get("name", "Empty slot")), 11, UITheme.TEXT
-	))
-	var next_stats: Dictionary = item.get("stats", {})
-	var old_stats: Dictionary = current.get("stats", {})
-	var keys: Array = next_stats.keys()
-	for key in old_stats.keys():
-		if not keys.has(key):
-			keys.append(key)
-	for key in keys:
-		var delta := float(next_stats.get(key, 0.0)) - float(old_stats.get(key, 0.0))
-		var sign := "+" if delta > 0.0 else "" if delta == 0.0 else ""
-		var tint := UITheme.GREEN if delta > 0.0 else UITheme.DANGER if delta < 0.0 else UITheme.TEXT_DIM
-		box.add_child(UIFactory.label("%s  %s%s" % [str(key).to_upper(), sign, str(delta)], 10, tint))
-	if current_id == str(item.get("id", "")):
-		box.add_child(UIFactory.label("Already equipped in this slot.", 10, UITheme.TEXT_DIM))
-	return box
-
-
-func _stat_row(title: String, value: String) -> PanelContainer:
-	var row := UIFactory.panel(Color("#0d1524"), Color(0, 0, 0, 0), 6, 0, 6)
-	var box := UIFactory.hbox(8)
-	box.add_child(UIFactory.label(title, 11, UITheme.TEXT_FAINT))
-	box.add_child(UIFactory.spacer())
-	box.add_child(UIFactory.label("+" + value, 12, UITheme.GREEN))
-	row.add_child(box)
-	return row
-
-
-func _equipped_by(item_id: String) -> Array:
-	var result: Array = []
-	for instance in GameState.roster:
-		var definition: CharacterDef = ContentDB.get_character(instance.char_id)
-		if definition == null:
-			continue
-		for slot in CharacterInstance.SLOTS:
-			if instance.equipped_item(slot) == item_id:
-				result.append(definition.display_name)
-				break
-	return result
-
-
-func _enhance(uid: String, slot: String) -> void:
-	if GameState.enhance_gear(uid, slot):
-		EventBus.toast_requested.emit("Equipment enhanced! Stats increased by 8%.")
-		_rebuild_grid()
-		_show_detail(_selected_item)
-	else:
-		var info := GameState.gear_upgrade_info(uid, slot)
-		EventBus.toast_requested.emit(str(info.get("reason", "Could not enhance equipment.")))
-
-
-func _unequip(uid: String, slot: String) -> void:
-	if GameState.unequip_item(uid, slot):
-		EventBus.toast_requested.emit("Item unequipped.")
-		_rebuild_grid()
-		_show_detail(_selected_item)
-	else:
-		EventBus.toast_requested.emit("Could not unequip that item.")
-
-
-func _equip(item_id: String) -> void:
-	if _equip_target_uid.is_empty():
+func _on_equip_requested(item_id: String, uid: String) -> void:
+	if uid.is_empty():
 		EventBus.toast_requested.emit("Choose a character first.")
 		return
-	if GameState.equip_item(_equip_target_uid, item_id):
-		EventBus.toast_requested.emit("Equipment updated.")
-		_rebuild_grid()
-		_show_detail(item_id)
-	else:
-		EventBus.toast_requested.emit("Could not equip that item.")
+	var result: Dictionary = _ItemInteractionScript.equip(uid, item_id)
+	EventBus.toast_requested.emit("Equipment updated." if bool(result.get("ok", false)) else str(result.get("reason", "Could not equip that item.")))
+	_rebuild_grid()
+
+
+func _on_use_requested(item_id: String) -> void:
+	var result: Dictionary = _ItemInteractionScript.use(item_id)
+	EventBus.toast_requested.emit(str(result.get("reason", "Could not use item.")))
+	_rebuild_grid()
+
+
+
+func _refresh_crafting_window() -> void:
+	if crafting_component != null:
+		crafting_component.refresh()
+

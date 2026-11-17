@@ -27,16 +27,24 @@ func _ready() -> void:
 	theme = UITheme.build()
 	# Composition and layout are authored in opening_cinematic.tscn. Runtime
 	# code only binds story data, animation and the skip action to those nodes.
-	_character_layer = get_node("CharacterLayer") as Node2D
-	_caption = get_node("Caption") as Label
-	_skip_button = get_node("SkipButton") as Button
-	_timeline_progress = get_node("TimelineTrack/TimelineProgress") as ColorRect
-	_fade_overlay = get_node("CinematicFade") as ColorRect
-	_skip_button.pressed.connect(_finish)
+	if not _bind_authored_nodes():
+		return
 	_build_protagonists()
 	_update_caption()
 	resized.connect(_layout_protagonists)
 	_layout_protagonists()
+
+func _bind_authored_nodes() -> bool:
+	_character_layer = get_node_or_null("CharacterLayer") as Node2D
+	_caption = get_node_or_null("Caption") as Label
+	_skip_button = get_node_or_null("SkipButton") as Button
+	_timeline_progress = get_node_or_null("TimelineTrack/TimelineProgress") as ColorRect
+	_fade_overlay = get_node_or_null("CinematicFade") as ColorRect
+	if _character_layer == null or _caption == null or _skip_button == null or _timeline_progress == null or _fade_overlay == null:
+		push_error("OpeningCinematic is missing a required authored presentation node.")
+		return false
+	_skip_button.pressed.connect(_finish)
+	return true
 
 func _build_protagonists() -> void:
 	# Gerald and Lilith are pre-authored ActorVisual nodes. Their definitions
@@ -77,10 +85,12 @@ func _process(delta: float) -> void:
 	_update_caption()
 	_layout_protagonists()
 	_fade = clampf((_elapsed - (DURATION - 0.8)) / 0.8, 0.0, 1.0)
-	_timeline_progress.anchor_right = clampf(_elapsed / DURATION, 0.0, 1.0)
-	var fade_color := _fade_overlay.color
-	fade_color.a = _fade
-	_fade_overlay.color = fade_color
+	if _timeline_progress != null:
+		_timeline_progress.anchor_right = clampf(_elapsed / DURATION, 0.0, 1.0)
+	if _fade_overlay != null:
+		var fade_color := _fade_overlay.color
+		fade_color.a = _fade
+		_fade_overlay.color = fade_color
 	if _elapsed >= DURATION:
 		_finish()
 

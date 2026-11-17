@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/components/environment_presentation_root.gd" id="1_script"]
+
+[node name="EnvironmentPresentationRoot" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="DayNight" type="Node" parent="."]
+
+[node name="AmbientParticles" type="Node2D" parent="."]
+
+[node name="WeatherEffects" type="Node2D" parent="."]
+
+[node name="Fog" type="Node2D" parent="."]
+
+[node name="WaterPresentation" type="Node2D" parent="."]
+
+[node name="LocalizedLights" type="Node2D" parent="."]
+
+[node name="EnvironmentalSounds" type="Node2D" parent="."]

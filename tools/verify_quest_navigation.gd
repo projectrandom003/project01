@@ -337,7 +337,7 @@ func _test_quest_navigation_resolver() -> void:
 	_check("provider re-accepted when node back in tree", str(r_node_back.get("live_source")) == "node_live", "live=%s" % str(r_node_back.get("live_source")))
 
 	# A closer scene-scan monster must not override an explicit registered provider.
-	var nearby_monster := RoamingMonster.new()
+	var nearby_monster := preload("res://scenes/world/roaming_monster.tscn").instantiate() as RoamingMonster
 	nearby_monster.setup("mossling", player_pos + Vector2(1.0, 1.0), { "id": "mossling", "name": "Test Mossling" }, false)
 	add_child(nearby_monster)
 	resolver.invalidate()

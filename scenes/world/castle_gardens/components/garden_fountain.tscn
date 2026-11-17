@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/components/garden_fountain.gd" id="1"]
+
+[node name="GardenFountain" type="Node2D"]
+script = ExtResource("1")
+y_sort_enabled = true
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture_filter = 1
+centered = true
+
+[node name="Body" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]

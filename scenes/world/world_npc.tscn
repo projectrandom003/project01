@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/world_npc.gd" id="1_npc"]
 [ext_resource type="PackedScene" path="res://scenes/characters/actor_visual.tscn" id="2_visual"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" path="res://scenes/world/components/npc_subtitle_label.tscn" id="4_subtitle"]
 [ext_resource type="PackedScene" path="res://scenes/world/components/npc_interaction_ring.tscn" id="5_ring"]
 [ext_resource type="PackedScene" path="res://scenes/world/components/npc_quest_marker.tscn" id="6_marker"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_status_anchor.tscn" id="7_status"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_health_display_anchor.tscn" id="8_health"]
 
 [node name="WorldNPC" type="Node2D"]
 script = ExtResource("1_npc")
@@ -20,3 +22,7 @@ script = ExtResource("1_npc")
 
 [node name="QuestMarker" parent="." instance=ExtResource("6_marker")]
 position = Vector2(0, -105)
+
+[node name="StatusAnchor" parent="." instance=ExtResource("7_status")]
+
+[node name="HealthDisplayAnchor" parent="." instance=ExtResource("8_health")]

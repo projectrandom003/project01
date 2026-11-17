@@ -51,8 +51,8 @@ func _rebuild_list() -> void:
 	_cards.clear()
 	var quest_ids: Array = ContentDB.quests.keys()
 	quest_ids.sort_custom(func(a, b) -> bool:
-		var state_a := GameState.quest_state(a)
-		var state_b := GameState.quest_state(b)
+		var state_a := GameState.quest_domain.quest_state(a)
+		var state_b := GameState.quest_domain.quest_state(b)
 		var order := {"active": 0, "not_started": 1, "complete": 2}
 		var rank_a := int(order.get(state_a, 3))
 		var rank_b := int(order.get(state_b, 3))
@@ -73,11 +73,11 @@ func _rebuild_list() -> void:
 
 func _make_card(quest_id: String) -> PanelContainer:
 	var quest: Dictionary = ContentDB.get_quest(quest_id)
-	var state := GameState.quest_state(quest_id)
+	var state := GameState.quest_domain.quest_state(quest_id)
 	var state_color := UITheme.GOLD if state == "active" else (UITheme.GREEN if state == "complete" else UITheme.TEXT_DIM)
-	var step: Dictionary = GameState.quest_step(quest_id)
+	var step: Dictionary = GameState.quest_domain.quest_step(quest_id)
 	var step_text := str(step.get("text", "Complete" if state == "complete" else "Speak with the quest giver"))
-	var tracked := str(GameState.flags.get("tracked_quest", "")) == quest_id
+	var tracked := str(GameState.quest_domain.flags.get("tracked_quest", "")) == quest_id
 	var card := QUEST_CARD_SCENE.instantiate() as QuestListCard
 	card.setup(quest_id, str(quest.get("name", quest_id)), state.replace("_", " ").capitalize(), state_color, step_text, tracked)
 	card.selected.connect(func(selected_id: String) -> void:
@@ -120,7 +120,7 @@ func _show_detail(quest_id: String) -> void:
 		_detail_actions.visible = false
 		return
 
-	var state := GameState.quest_state(quest_id)
+	var state := GameState.quest_domain.quest_state(quest_id)
 	var state_color := UITheme.GOLD if state == "active" else (UITheme.GREEN if state == "complete" else UITheme.TEXT_DIM)
 	_detail_title.text = str(quest.get("name", quest_id))
 	_detail_title.add_theme_color_override("font_color", UITheme.TEXT)
@@ -135,7 +135,7 @@ func _show_detail(quest_id: String) -> void:
 	_detail_summary.text = str(quest.get("summary", ""))
 
 	var steps: Array = quest.get("steps", [])
-	var current := GameState.quest_step_index(quest_id)
+	var current := GameState.quest_domain.quest_step_index(quest_id)
 	for index in steps.size():
 		var step: Dictionary = steps[index]
 		var done := state == "complete" or index < current
@@ -144,7 +144,7 @@ func _show_detail(quest_id: String) -> void:
 		var color := UITheme.GREEN if done else (UITheme.GOLD if active else UITheme.TEXT_FAINT)
 		var objective_text := str(step.get("text", "Objective"))
 		if str(step.get("type", "")) == "kill":
-			var entry: Dictionary = GameState.quests.get(quest_id, {})
+			var entry: Dictionary = GameState.quest_domain.quests.get(quest_id, {})
 			var progress := int(entry.get("progress", 0)) if active else (int(step.get("count", 1)) if done else 0)
 			objective_text += "  (%d/%d)" % [progress, int(step.get("count", 1))]
 		var row := QUEST_OBJECTIVE_ROW_SCENE.instantiate() as QuestObjectiveRow
@@ -166,20 +166,20 @@ func _show_detail(quest_id: String) -> void:
 			UITheme.TEXT_DIM
 		))
 
-	var tracked := str(GameState.flags.get("tracked_quest", "")) == quest_id
+	var tracked := str(GameState.quest_domain.flags.get("tracked_quest", "")) == quest_id
 	var track_button := UIFactory.button("Untrack" if tracked else "Track on HUD", not tracked)
 	track_button.pressed.connect(func() -> void:
 		if tracked:
-			GameState.untrack_quest()
+			GameState.quest_domain.untrack_quest()
 		else:
-			GameState.set_tracked_quest(quest_id)
+			GameState.quest_domain.set_tracked_quest(quest_id)
 		_rebuild_list()
 		_show_detail(quest_id)
 	)
 	_detail_actions.add_child(track_button)
 	if state == "not_started":
 		var requires := str(quest.get("requires", ""))
-		if not requires.is_empty() and GameState.quest_state(requires) != "complete":
+		if not requires.is_empty() and GameState.quest_domain.quest_state(requires) != "complete":
 			_detail_actions.add_child(UIFactory.wrapped(
 				"Complete \"%s\" first." % str(ContentDB.get_quest(requires).get("name", requires)),
 				11,
@@ -197,5 +197,5 @@ func _show_detail(quest_id: String) -> void:
 				"wanderer_pip":
 					giver_name = "Pip"
 			_detail_actions.add_child(UIFactory.wrapped("Speak with %s to begin." % giver_name, 11, UITheme.TEXT_FAINT))
-	elif state == "active" and GameState.quest_ready(quest_id):
+	elif state == "active" and GameState.quest_domain.quest_ready(quest_id):
 		_detail_actions.add_child(UIFactory.wrapped("Ready to turn in. Return to the quest giver.", 11, UITheme.GREEN))

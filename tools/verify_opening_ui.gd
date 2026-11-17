@@ -1,9 +1,9 @@
 extends Node
 
-const IntroScript = preload("res://scripts/ui/opening_cinematic.gd")
+const INTRO_SCENE: PackedScene = preload("res://scenes/ui/opening_cinematic.tscn")
 
 func _ready() -> void:
-	var intro = IntroScript.new()
+	var intro = INTRO_SCENE.instantiate() as OpeningCinematic
 	intro.size = Vector2(1280, 720)
 	add_child(intro)
 	await get_tree().process_frame

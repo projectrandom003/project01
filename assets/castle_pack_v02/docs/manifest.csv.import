@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://cwjvwpoet1ox0"
+
+[deps]
+
+files=["res://assets/castle_pack_v02/docs/manifest.status.translation", "res://assets/castle_pack_v02/docs/manifest.file.translation", "res://assets/castle_pack_v02/docs/manifest.w.translation", "res://assets/castle_pack_v02/docs/manifest.h.translation", "res://assets/castle_pack_v02/docs/manifest.frames.translation", "res://assets/castle_pack_v02/docs/manifest.pivot.translation", "res://assets/castle_pack_v02/docs/manifest.pivot.translation", "res://assets/castle_pack_v02/docs/manifest.footprint.translation", "res://assets/castle_pack_v02/docs/manifest.use.translation", "res://assets/castle_pack_v02/docs/manifest.godot.translation"]
+
+source_file="res://assets/castle_pack_v02/docs/manifest.csv"
+dest_files=["res://assets/castle_pack_v02/docs/manifest.status.translation", "res://assets/castle_pack_v02/docs/manifest.file.translation", "res://assets/castle_pack_v02/docs/manifest.w.translation", "res://assets/castle_pack_v02/docs/manifest.h.translation", "res://assets/castle_pack_v02/docs/manifest.frames.translation", "res://assets/castle_pack_v02/docs/manifest.pivot.translation", "res://assets/castle_pack_v02/docs/manifest.pivot.translation", "res://assets/castle_pack_v02/docs/manifest.footprint.translation", "res://assets/castle_pack_v02/docs/manifest.use.translation", "res://assets/castle_pack_v02/docs/manifest.godot.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

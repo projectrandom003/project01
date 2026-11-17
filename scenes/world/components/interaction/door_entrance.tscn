@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/components/interaction/door_entrance.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_door"]
+size = Vector2(32, 40)
+
+[node name="DoorEntrance" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="DoorSprite" type="Sprite2D" parent="Visual"]
+centered = false
+texture_filter = 1
+
+[node name="Frame" type="Sprite2D" parent="Visual"]
+centered = false
+texture_filter = 1
+
+[node name="InteractionArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea"]
+shape = SubResource("RectangleShape2D_door")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

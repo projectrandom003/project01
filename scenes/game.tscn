@@ -1,6 +1,43 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/game/game_screen.gd" id="1_game"]
+[ext_resource type="PackedScene" path="res://scenes/ui/game_ui.tscn" id="2_ui"]
+[ext_resource type="Script" path="res://scripts/game/game_world_session_component.gd" id="3_world_session"]
+[ext_resource type="Script" path="res://scripts/game/game_overlay_router_component.gd" id="4_overlay_router"]
+[ext_resource type="Script" path="res://scripts/game/game_combat_router_component.gd" id="5_combat_router"]
+[ext_resource type="Script" path="res://scripts/game/game_input_router_component.gd" id="6_input_router"]
+[ext_resource type="Script" path="res://scripts/game/game_runtime_component.gd" id="7_runtime"]
+[ext_resource type="Script" path="res://scripts/game/game_world_transition_component.gd" id="8_transition"]
+[ext_resource type="Script" path="res://scripts/game/game_world_activation_component.gd" id="9_activation"]
+[ext_resource type="Script" path="res://scripts/game/game_world_persistence_component.gd" id="10_persistence"]
 
 [node name="Game" type="Node"]
 script = ExtResource("1_game")
+
+[node name="WorldHost" type="Node2D" parent="."]
+
+[node name="WorldSession" type="Node" parent="."]
+script = ExtResource("3_world_session")
+
+[node name="Transition" type="Node" parent="WorldSession"]
+script = ExtResource("8_transition")
+
+[node name="Activation" type="Node" parent="WorldSession"]
+script = ExtResource("9_activation")
+
+[node name="Persistence" type="Node" parent="WorldSession"]
+script = ExtResource("10_persistence")
+
+[node name="UI" parent="." instance=ExtResource("2_ui")]
+
+[node name="OverlayRouter" type="Node" parent="."]
+script = ExtResource("4_overlay_router")
+
+[node name="CombatRouter" type="Node" parent="."]
+script = ExtResource("5_combat_router")
+
+[node name="InputRouter" type="Node" parent="."]
+script = ExtResource("6_input_router")
+
+[node name="Runtime" type="Node" parent="."]
+script = ExtResource("7_runtime")

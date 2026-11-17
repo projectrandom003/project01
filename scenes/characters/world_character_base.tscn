@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/characters/actor_visual.tscn" id="1_visual"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_status_anchor.tscn" id="2_status"]
+[ext_resource type="PackedScene" path="res://scenes/characters/components/character_health_display_anchor.tscn" id="3_health"]
+
+[node name="WorldCharacterBase" type="Node2D"]
+
+[node name="ActorVisual" parent="." instance=ExtResource("1_visual")]
+
+[node name="StatusAnchor" parent="." instance=ExtResource("2_status")]
+
+[node name="HealthDisplayAnchor" parent="." instance=ExtResource("3_health")]

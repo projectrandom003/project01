@@ -5,7 +5,7 @@ extends Node
 var failures: int = 0
 
 func _ready() -> void:
-	var player := Player.new()
+	var player := preload("res://scenes/characters/player.tscn").instantiate() as Player
 	add_child(player)
 	await get_tree().process_frame
 	_check("player starts with responsive camera follow", is_equal_approx(player.camera.position_smoothing_speed, 12.0), str(player.camera.position_smoothing_speed))
@@ -13,7 +13,7 @@ func _ready() -> void:
 		player.set_avatar(character_id)
 		await get_tree().process_frame
 		_check("%s loads final sprite art" % character_id, player.avatar_id == character_id and not player.visual.using_temporary_art)
-		var expected_scale := float(player.AVATAR_HEIGHT_SCALE.get(character_id, 1.0))
+		var expected_scale := float(PlayerAvatarComponent.AVATAR_HEIGHT_SCALE.get(character_id, 1.0))
 		_check("%s uses lore-accurate height scale" % character_id, is_equal_approx(player.visual.visual_scale, expected_scale), "scale=%.3f expected=%.3f" % [player.visual.visual_scale, expected_scale])
 		var sprite := player.visual.get_node("FrameSprite") as Sprite2D
 		Input.action_press("move_right")
@@ -36,7 +36,7 @@ func _ready() -> void:
 		Input.action_release("move_right")
 		player.velocity = Vector2.ZERO
 		await get_tree().physics_frame
-		player.visual.animator.set_direction_from_vector(Vector2.LEFT)
+		player.facing_direction = Vector2.LEFT
 		await get_tree().create_timer(0.03).timeout
 		_check("%s updates to the LEFT directional animation" % character_id, player.visual.animator.direction == CharacterAnimator.Direction.LEFT, "direction=%d" % player.visual.animator.direction)
 		if character_id == "gerald":

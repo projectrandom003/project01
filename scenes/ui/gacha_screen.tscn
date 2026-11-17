@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/screens/gacha_screen.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/ui/backgrounds/reverie_summoning_chamber.jpg" id="2"]
+[ext_resource type="Texture2D" path="res://assets/ui/backgrounds/gothic_moonlit_summoning_cathedral.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/components/gacha_banner_content_component.tscn" id="3_banner_content"]
+[ext_resource type="Script" path="res://scripts/ui/components/gacha_summon_flow_component.gd" id="4_summon_flow"]
+[ext_resource type="PackedScene" path="res://scenes/ui/components/summoning_chamber_atmosphere.tscn" id="5_atmosphere"]
 
 [node name="GachaScreen" type="Control"]
 script = ExtResource("1")
@@ -18,3 +21,12 @@ mouse_filter = 2
 texture = ExtResource("2")
 expand_mode = 1
 stretch_mode = 6
+
+[node name="SummoningChamberAtmosphere" parent="." instance=ExtResource("5_atmosphere")]
+z_index = -1
+
+[node name="BannerContent" parent="." instance=ExtResource("3_banner_content")]
+
+[node name="SummonFlow" type="Control" parent="."]
+script = ExtResource("4_summon_flow")
+

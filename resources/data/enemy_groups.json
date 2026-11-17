@@ -1,152 +1,354 @@
 {
-  "glade_mossling_pack": {
-    "name": "Mossling Ambush",
-    "region": "greenward",
-    "level": 1,
-    "enemies": [
-      "mossling",
-      "mossling",
-      "glade_wisp"
-    ],
-    "rewards": {
-      "gold": 45,
-      "xp": 60,
-      "crystals": 10,
-      "items": {
-        "glade_sap": 1
-      }
-    },
-    "quest_kills": {
-      "mossling": 2,
-      "glade_wisp": 1
-    },
-    "drops": [
-      { "item": "glade_sap", "chance": 0.55, "min": 1, "max": 2 }
-    ]
+ "glade_mossling_pack": {
+  "name": "Mossling Ambush",
+  "region": "greenward",
+  "level": 1,
+  "enemies": [
+   "mossling",
+   "mossling",
+   "glade_wisp"
+  ],
+  "rewards": {
+   "gold": 45,
+   "xp": 60,
+   "crystals": 10,
+   "items": {
+    "glade_sap": 1
+   }
   },
-  "thornhound_hunt": {
-    "name": "Thornhound Hunt",
-    "region": "greenward",
-    "level": 2,
-    "enemies": [
-      "thornhound",
-      "mossling"
-    ],
-    "rewards": {
-      "gold": 60,
-      "xp": 80,
-      "crystals": 12,
-      "items": {
-        "moonpetal": 1
-      }
-    },
-    "quest_kills": {
-      "thornhound": 1,
-      "mossling": 1
-    },
-    "drops": [
-      { "item": "moonpetal", "chance": 0.35, "min": 1, "max": 1 },
-      { "item": "glade_sap", "chance": 0.45, "min": 1, "max": 2 }
-    ]
+  "quest_kills": {
+   "mossling": 2,
+   "glade_wisp": 1
   },
-  "fae_ambush": {
-    "name": "Fae Ambush",
-    "region": "greenward",
-    "level": 3,
-    "enemies": [
-      "fae_marauder",
-      "glade_wisp",
-      "glade_wisp"
-    ],
-    "rewards": {
-      "gold": 70,
-      "xp": 95,
-      "crystals": 15,
-      "items": {
-        "glade_sap": 2
-      }
-    },
-    "quest_kills": {
-      "fae_marauder": 1,
-      "glade_wisp": 2
-    }
+  "drops": [
+   {
+    "item": "glade_sap",
+    "chance": 0.55,
+    "min": 1,
+    "max": 2
+   }
+  ]
+ },
+ "thornhound_hunt": {
+  "name": "Thornhound Hunt",
+  "region": "greenward",
+  "level": 2,
+  "enemies": [
+   "thornhound",
+   "mossling"
+  ],
+  "rewards": {
+   "gold": 60,
+   "xp": 80,
+   "crystals": 12,
+   "items": {
+    "moonpetal": 1
+   }
   },
-  "corrupted_treant": {
-    "name": "The Hollowed Guardian",
-    "region": "greenward",
-    "level": 4,
-    "enemies": [
-      "corrupted_treant"
-    ],
-    "rewards": {
-      "gold": 180,
-      "xp": 220,
-      "crystals": 40,
-      "items": {
-        "dew_of_awakening": 1
-      }
-    },
-    "quest_kills": {
-      "corrupted_treant": 1
-    },
-    "elite": true
+  "quest_kills": {
+   "thornhound": 1,
+   "mossling": 1
   },
-  "elder_hollow": {
-    "name": "The Elder Hollow",
-    "region": "greenward",
-    "level": 6,
-    "enemies": [
-      "elder_hollow"
-    ],
-    "rewards": {
-      "gold": 500,
-      "xp": 650,
-      "crystals": 120,
-      "items": {
-        "ancient_coins": 2,
-        "dew_of_awakening": 2
-      }
-    },
-    "quest_kills": {
-      "elder_hollow": 1
-    },
-    "boss": true
+  "drops": [
+   {
+    "item": "moonpetal",
+    "chance": 0.35,
+    "min": 1,
+    "max": 1
+   },
+   {
+    "item": "glade_sap",
+    "chance": 0.45,
+    "min": 1,
+    "max": 2
+   }
+  ]
+ },
+ "fae_ambush": {
+  "name": "Fae Ambush",
+  "region": "greenward",
+  "level": 3,
+  "enemies": [
+   "fae_marauder",
+   "glade_wisp",
+   "glade_wisp"
+  ],
+  "rewards": {
+   "gold": 70,
+   "xp": 95,
+   "crystals": 15,
+   "items": {
+    "glade_sap": 2
+   }
   },
-  "moonpetal_sprite_pack": {
-    "name": "Moonpetal Sprite Skirmish",
-    "region": "greenward",
-    "level": 3,
-    "enemies": ["moonpetal_sprite", "glade_wisp"],
-    "rewards": {
-      "gold": 78,
-      "xp": 105,
-      "crystals": 16,
-      "items": { "glade_sap": 1 }
-    },
-    "quest_kills": { "moonpetal_sprite": 1, "glade_wisp": 1 },
-    "drops": [
-      { "item": "moonpetal", "chance": 0.45, "min": 1, "max": 2 }
-    ]
-  },
-  "fallen_matron_encounter": {
-    "name": "The Fallen Matron",
-    "boss": true,
-    "level": 8,
-    "enemies": [
-      "fallen_matron"
-    ],
-    "rewards": {
-      "gold": 1000,
-      "xp": 1500,
-      "crystals": 200,
-      "items": {
-        "ancient_coins": 3,
-        "dew_of_awakening": 3
-      }
-    },
-    "region": "greenward",
-    "quest_kills": {
-      "fallen_matron": 1
-    }
+  "quest_kills": {
+   "fae_marauder": 1,
+   "glade_wisp": 2
   }
+ },
+ "corrupted_treant": {
+  "name": "The Hollowed Guardian",
+  "region": "greenward",
+  "level": 4,
+  "enemies": [
+   "corrupted_treant"
+  ],
+  "rewards": {
+   "gold": 180,
+   "xp": 220,
+   "crystals": 40,
+   "items": {
+    "dew_of_awakening": 1
+   }
+  },
+  "quest_kills": {
+   "corrupted_treant": 1
+  },
+  "elite": true
+ },
+ "elder_hollow": {
+  "name": "The Elder Hollow",
+  "region": "greenward",
+  "level": 6,
+  "enemies": [
+   "elder_hollow"
+  ],
+  "rewards": {
+   "gold": 500,
+   "xp": 650,
+   "crystals": 120,
+   "items": {
+    "ancient_coins": 2,
+    "dew_of_awakening": 2
+   }
+  },
+  "quest_kills": {
+   "elder_hollow": 1
+  },
+  "boss": true
+ },
+ "moonpetal_sprite_pack": {
+  "name": "Moonpetal Sprite Skirmish",
+  "region": "greenward",
+  "level": 3,
+  "enemies": [
+   "moonpetal_sprite",
+   "glade_wisp"
+  ],
+  "rewards": {
+   "gold": 78,
+   "xp": 105,
+   "crystals": 16,
+   "items": {
+    "glade_sap": 1
+   }
+  },
+  "quest_kills": {
+   "moonpetal_sprite": 1,
+   "glade_wisp": 1
+  },
+  "drops": [
+   {
+    "item": "moonpetal",
+    "chance": 0.45,
+    "min": 1,
+    "max": 2
+   }
+  ]
+ },
+ "fallen_matron_encounter": {
+  "name": "The Fallen Matron",
+  "boss": true,
+  "level": 8,
+  "enemies": [
+   "fallen_matron"
+  ],
+  "rewards": {
+   "gold": 1000,
+   "xp": 1500,
+   "crystals": 200,
+   "items": {
+    "ancient_coins": 3,
+    "dew_of_awakening": 3
+   }
+  },
+  "region": "greenward",
+  "quest_kills": {
+   "fallen_matron": 1
+  }
+ },
+ "moonpetal_echoes_pack": {
+  "name": "Silver Pool Echoes",
+  "region": "moonpetal_hollow",
+  "level": 5,
+  "enemies": [
+   "moonpetal_sprite",
+   "moonpetal_sprite",
+   "glade_wisp"
+  ],
+  "rewards": {
+   "gold": 100,
+   "xp": 140,
+   "crystals": 20,
+   "items": {
+    "moonpetal": 1
+   }
+  },
+  "quest_kills": {
+   "moonpetal_sprite": 2,
+   "glade_wisp": 1
+  },
+  "drops": [
+   {
+    "item": "hollow_heart",
+    "chance": 0.08,
+    "min": 1,
+    "max": 1
+   },
+   {
+    "item": "moonpetal",
+    "chance": 0.5,
+    "min": 1,
+    "max": 2
+   }
+  ]
+ },
+ "royal_road_ambush": {
+  "name": "Roadside Ambush",
+  "region": "gothic_castle_boss_zone",
+  "level": 4,
+  "enemies": [
+   "mossling",
+   "mossling",
+   "glade_wisp"
+  ],
+  "rewards": {
+   "gold": 120,
+   "xp": 180,
+   "crystals": 25,
+   "items": {
+    "glade_sap": 2
+   }
+  },
+  "quest_kills": {
+   "mossling": 2
+  },
+  "drops": [
+   {
+    "item": "glade_sap",
+    "chance": 0.6,
+    "min": 1,
+    "max": 2
+   }
+  ]
+ },
+ "withered_grove_pack": {
+  "name": "Warden of the Withered Grove",
+  "region": "gothic_castle_boss_zone",
+  "level": 5,
+  "enemies": [
+   "thornhound",
+   "thornhound",
+   "blight_wisp"
+  ],
+  "rewards": {
+   "gold": 180,
+   "xp": 260,
+   "crystals": 35,
+   "items": {
+    "blight_resin": 2
+   }
+  },
+  "quest_kills": {
+   "thornhound": 2,
+   "blight_wisp": 1
+  },
+  "drops": [
+   {
+    "item": "blight_resin",
+    "chance": 0.55,
+    "min": 1,
+    "max": 2
+   }
+  ]
+ },
+ "fallen_aqueduct_sentinels": {
+  "name": "Aqueduct Sentinels",
+  "region": "gothic_castle_boss_zone",
+  "level": 6,
+  "enemies": [
+   "gothic_sentinel",
+   "gothic_sentinel",
+   "blight_wisp"
+  ],
+  "rewards": {
+   "gold": 260,
+   "xp": 360,
+   "crystals": 50,
+   "items": {
+    "gothic_shard": 2
+   }
+  },
+  "quest_kills": {
+   "gothic_sentinel": 2
+  },
+  "drops": [
+   {
+    "item": "gothic_shard",
+    "chance": 0.5,
+    "min": 1,
+    "max": 2
+   }
+  ]
+ },
+ "baltoria_encounter": {
+  "name": "Baltoria, the Hollow Sovereign",
+  "region": "gothic_castle_boss_zone",
+  "level": 10,
+  "boss": true,
+  "enemies": [
+   "baltoria"
+  ],
+  "rewards": {
+   "gold": 2000,
+   "xp": 3000,
+   "crystals": 400,
+   "items": {
+    "ancient_coins": 5,
+    "gothic_shard": 4
+   }
+  },
+  "quest_kills": {
+   "baltoria": 1
+  }
+ },
+ "castle_garden_sentinels": {
+  "name": "Sentinels of the Royal Gardens",
+  "region": "castle_royal_gardens",
+  "level": 3,
+  "enemies": [
+   "gothic_sentinel",
+   "gothic_sentinel",
+   "blight_wisp"
+  ],
+  "rewards": {
+   "gold": 140,
+   "xp": 190,
+   "crystals": 28,
+   "items": {
+    "gothic_shard": 1
+   }
+  },
+  "quest_kills": {
+   "gothic_sentinel": 2
+  },
+  "drops": [
+   {
+    "item": "gothic_shard",
+    "chance": 0.35,
+    "min": 1,
+    "max": 1
+   }
+  ]
+ }
 }

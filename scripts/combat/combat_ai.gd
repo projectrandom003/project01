@@ -25,6 +25,8 @@ static func choose(engine: CombatEngine, actor_index: int) -> Dictionary:
 		var skill: SkillDef = ContentDB.get_skill(skill_id)
 		if skill == null:
 			continue
+		if actor.is_skill_on_cooldown(skill.id):
+			continue
 		if skill.ultimate and not actor.ultimate_ready():
 			continue
 		var option := _evaluate(engine, actor, skill, enemies, allies, lowest_ally, lowest_enemy)
@@ -91,9 +93,9 @@ static func _damage_score(engine: CombatEngine, actor: Combatant, skill: SkillDe
 	if target == null:
 		return 0.0
 	var element := ElementTable.multiplier(skill.element, target.element)
-	var attack := actor.effective_atk()
+	var scaling_value := CombatSkillResolver.effective_scaling_value(actor, skill.scaling_stat)
 	var defense := engine.unit_defense(target)
-	var estimate := skill.power * (attack / (attack + defense)) * element
+	var estimate := skill.power * (scaling_value / (scaling_value + defense)) * element
 	estimate *= 1.0 + (1.0 - target.hp_ratio()) * 0.3
 	# Prefer finishing blows.
 	if estimate >= target.hp:

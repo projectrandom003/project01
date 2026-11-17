@@ -13,6 +13,7 @@ var content: VBoxContainer
 var header_actions: HBoxContainer
 var _shell: Control
 var _built: bool = false
+var _closing: bool = false
 
 
 func _ready() -> void:
@@ -36,6 +37,17 @@ func _ready() -> void:
 	title_label.text = screen_title
 	subtitle_label.text = screen_subtitle
 	subtitle_label.visible = not screen_subtitle.is_empty()
+	close_button.text = "Close  X"
+	close_button.tooltip_text = "Close"
+	close_button.custom_minimum_size = Vector2(116, 40)
+	close_button.focus_mode = Control.FOCUS_ALL
+	close_button.add_theme_font_size_override("font_size", 14)
+	close_button.add_theme_color_override("font_color", Color("#fff4d6"))
+	close_button.add_theme_color_override("font_hover_color", Color("#ffffff"))
+	close_button.add_theme_stylebox_override("normal", UITheme.style(Color("#2a2415"), UITheme.GOLD, 10, 1, 10))
+	close_button.add_theme_stylebox_override("hover", UITheme.style(Color("#3b311b"), UITheme.GOLD_BRIGHT, 10, 2, 10))
+	close_button.add_theme_stylebox_override("pressed", UITheme.style(Color("#1d180e"), UITheme.GOLD_BRIGHT, 10, 2, 10))
+	close_button.add_theme_stylebox_override("focus", UITheme.style(Color("#3b311b"), Color("#fff0bd"), 10, 2, 10))
 	close_button.pressed.connect(close_screen)
 
 	_build_content()
@@ -57,5 +69,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func close_screen() -> void:
+	if _closing or not is_inside_tree():
+		return
+	_closing = true
 	closed.emit()
 	queue_free()
