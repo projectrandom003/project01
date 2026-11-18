@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/reverie_pack_v01/Royal_Gardens/Architecture/royal_fence_x_2x1.png" id="1_fx"]
 [ext_resource type="Texture2D" path="res://assets/reverie_pack_v01/Royal_Gardens/Architecture/royal_fence_y_1x2.png" id="2_fy"]
 [ext_resource type="Texture2D" path="res://assets/reverie_pack_v01/Royal_Gardens/Architecture/royal_balustrade_x_2x1.png" id="3_bal"]
 [ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/reverie_fence_tileset_32.png" id="4_generated"]
 [ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/grand_ornate_gate.png" id="5_front_gate"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_side_gate_arches.tscn" id="6_side_arches"]
 
 [sub_resource type="AtlasTexture" id="FenceStraightA"]
 atlas = ExtResource("4_generated")
@@ -30,6 +31,7 @@ y_sort_enabled = true
 y_sort_enabled = true
 
 [node name="StonePathwayFenceSides" type="Node2D" parent="FenceRuns"]
+visible = false
 y_sort_enabled = true
 [node name="WestPathFence1" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
 texture = SubResource("FenceStraightA")
@@ -296,14 +298,6 @@ scale = Vector2(1.55, 1.55)
 texture = SubResource("FenceStraightB")
 position = Vector2(263, 1160)
 scale = Vector2(1.55, 1.55)
-[node name="FrontWestRail03" type="Sprite2D" parent="FrontPerimeterFence"]
-texture = SubResource("FenceStraightA")
-position = Vector2(311, 1160)
-scale = Vector2(1.55, 1.55)
-[node name="FrontWestRail04" type="Sprite2D" parent="FrontPerimeterFence"]
-texture = SubResource("FenceStraightB")
-position = Vector2(359, 1160)
-scale = Vector2(1.55, 1.55)
 [node name="FrontWestRail05" type="Sprite2D" parent="FrontPerimeterFence"]
 texture = SubResource("FenceStraightA")
 position = Vector2(407, 1160)
@@ -327,14 +321,6 @@ scale = Vector2(-1.55, 1.55)
 [node name="FrontEastRail03" type="Sprite2D" parent="FrontPerimeterFence"]
 texture = SubResource("FenceStraightA")
 position = Vector2(873, 1160)
-scale = Vector2(-1.55, 1.55)
-[node name="FrontEastRail04" type="Sprite2D" parent="FrontPerimeterFence"]
-texture = SubResource("FenceStraightB")
-position = Vector2(921, 1160)
-scale = Vector2(-1.55, 1.55)
-[node name="FrontEastRail05" type="Sprite2D" parent="FrontPerimeterFence"]
-texture = SubResource("FenceStraightA")
-position = Vector2(969, 1160)
 scale = Vector2(-1.55, 1.55)
 [node name="FrontEastRail06" type="Sprite2D" parent="FrontPerimeterFence"]
 texture = SubResource("FenceStraightB")
@@ -367,6 +353,8 @@ texture = ExtResource("5_front_gate")
 position = Vector2(640, 1160)
 scale = Vector2(0.9, 0.9)
 
+[node name="SideGateArchways" parent="FrontPerimeterFence" instance=ExtResource("6_side_arches")]
+
 [node name="OuterSideFenceRuns" type="Node2D" parent="."]
 y_sort_enabled = true
 
@@ -374,73 +362,73 @@ y_sort_enabled = true
 texture = SubResource("FenceStraightA")
 position = Vector2(60, 620)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterWestRail02" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(60, 680)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterWestRail03" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(60, 740)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterWestRail04" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(60, 800)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterWestRail05" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(60, 860)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterWestRail06" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(60, 920)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterWestRail07" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(60, 980)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 
 [node name="OuterEastRail01" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(1220, 620)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterEastRail02" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(1220, 680)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterEastRail03" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(1220, 740)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterEastRail04" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(1220, 800)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterEastRail05" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(1220, 860)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterEastRail06" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(1220, 920)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterEastRail07" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(1220, 980)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 
 [node name="OuterWestNorthPillar" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceRosePost")
@@ -469,43 +457,43 @@ y_sort_enabled = true
 [node name="NorthWestRail01" type="Sprite2D" parent="NorthPerimeterFence"]
 texture = SubResource("FenceStraightA")
 position = Vector2(100, 80)
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="NorthWestRail02" type="Sprite2D" parent="NorthPerimeterFence"]
 texture = SubResource("FenceStraightB")
 position = Vector2(160, 80)
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="NorthWestRail03" type="Sprite2D" parent="NorthPerimeterFence"]
 texture = SubResource("FenceStraightA")
 position = Vector2(220, 80)
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="NorthWestRail04" type="Sprite2D" parent="NorthPerimeterFence"]
 texture = SubResource("FenceStraightB")
 position = Vector2(280, 80)
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="NorthWestRail05" type="Sprite2D" parent="NorthPerimeterFence"]
 texture = SubResource("FenceStraightA")
 position = Vector2(340, 80)
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="NorthEastRail01" type="Sprite2D" parent="NorthPerimeterFence"]
 texture = SubResource("FenceStraightA")
 position = Vector2(940, 80)
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="NorthEastRail02" type="Sprite2D" parent="NorthPerimeterFence"]
 texture = SubResource("FenceStraightB")
 position = Vector2(1000, 80)
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="NorthEastRail03" type="Sprite2D" parent="NorthPerimeterFence"]
 texture = SubResource("FenceStraightA")
 position = Vector2(1060, 80)
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="NorthEastRail04" type="Sprite2D" parent="NorthPerimeterFence"]
 texture = SubResource("FenceStraightB")
 position = Vector2(1120, 80)
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="NorthEastRail05" type="Sprite2D" parent="NorthPerimeterFence"]
 texture = SubResource("FenceStraightA")
 position = Vector2(1180, 80)
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="NorthWestOuterPillar" type="Sprite2D" parent="NorthPerimeterFence"]
 texture = SubResource("FenceRosePost")
 position = Vector2(70, 80)
@@ -526,99 +514,99 @@ scale = Vector2(-1.55, 1.55)
 texture = SubResource("FenceStraightA")
 position = Vector2(60, 140)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterEastExtendedRail01" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(1220, 140)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterWestExtendedRail02" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(60, 200)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterEastExtendedRail02" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(1220, 200)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterWestExtendedRail03" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(60, 260)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterEastExtendedRail03" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(1220, 260)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterWestExtendedRail04" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(60, 320)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterEastExtendedRail04" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(1220, 320)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterWestExtendedRail05" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(60, 380)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterEastExtendedRail05" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(1220, 380)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterWestExtendedRail06" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(60, 440)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterEastExtendedRail06" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(1220, 440)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterWestExtendedRail07" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(60, 500)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterEastExtendedRail07" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(1220, 500)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterWestExtendedRail08" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(60, 560)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterEastExtendedRail08" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(1220, 560)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterWestExtendedRail09" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(60, 1040)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterEastExtendedRail09" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightA")
 position = Vector2(1220, 1040)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)
 [node name="OuterWestExtendedRail10" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(60, 1100)
 rotation = 1.570796
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.9, 1.55)
 [node name="OuterEastExtendedRail10" type="Sprite2D" parent="OuterSideFenceRuns"]
 texture = SubResource("FenceStraightB")
 position = Vector2(1220, 1100)
 rotation = -1.570796
-scale = Vector2(-1.55, 1.55)
+scale = Vector2(-1.9, 1.55)

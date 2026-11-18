@@ -2,11 +2,19 @@ class_name SettingsPersistenceComponent
 extends Node
 ## Owns staged settings, ConfigFile persistence and runtime audio/display application.
 
+const BUS_LAYOUT: AudioBusLayout = preload("res://resources/audio/reverie_audio_bus_layout.tres")
+
 var screen: SettingsScreen
 
 
 func bind(owner_screen: SettingsScreen) -> void:
 	screen = owner_screen
+	ensure_audio_buses()
+
+
+func ensure_audio_buses() -> void:
+	if AudioServer.get_bus_index("Music") < 0 or AudioServer.get_bus_index("SFX") < 0:
+		AudioServer.set_bus_layout(BUS_LAYOUT)
 
 func collect_working_from_ui() -> Dictionary:
 	var d := screen._working.duplicate(true)
@@ -53,6 +61,7 @@ func restore_defaults() -> void:
 
 
 func apply_runtime(settings: Dictionary, persist_controls: bool) -> void:
+	ensure_audio_buses()
 	var master := clampf(float(settings.get("master_volume", 1.0)), 0.0, 1.0)
 	var music := clampf(float(settings.get("music_volume", 1.0)), 0.0, 1.0)
 	var sfx := clampf(float(settings.get("sfx_volume", 1.0)), 0.0, 1.0)
@@ -77,8 +86,9 @@ func set_bus_volume(bus_name: String, linear: float) -> void:
 	var idx := AudioServer.get_bus_index(bus_name)
 	if idx < 0:
 		return
-	var db := linear_to_db(maxf(linear, 0.001))
+	var db := linear_to_db(maxf(linear, 0.001)) if linear > 0.0 else -80.0
 	AudioServer.set_bus_volume_db(idx, db)
+	AudioServer.set_bus_mute(idx, linear <= 0.0)
 
 
 

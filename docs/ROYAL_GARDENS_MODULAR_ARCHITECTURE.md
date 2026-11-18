@@ -143,3 +143,38 @@ The active Royal Gardens must remain asset-first. Do not reintroduce generic geo
 - The paired niches add eight architectural sprites and eight garden/furnishing sprites, framing the outer courts without blocking the central gate or promenade.
 - Added two low-energy warm lantern glows to the full-scene preview at the west/east cloister lantern positions; the fountain and promenade lighting remains unchanged.
 - Extended static asset QA to verify both cloister architecture groups and the two added preview lights.
+
+## Northern castle approach pass (2026-11-18)
+- Added `castle_north_approach_courts.tscn`, a paired west/east ceremonial approach assembly using the existing custom tower module, ornate wall segment, royal banners, lantern posts, guardian statues and flowering shrubs.
+- Each court is a separate y-sorted subassembly with seven purpose-built illustrated sprites; the central cobblestone promenade remains unobstructed.
+- Added two subtle warm approach lantern glows to the preview lighting scene, bringing the authored preview lights to nine.
+- Extended the static garden QA to verify both approach courts and their complete seven-sprite assemblies.
+- Added `NorthCastleThresholdApron` as a hand-authored, rounded static Polygon2D plaza using the same seamless custom cobblestone texture and UV mapping as the existing road assembly; it widens the central promenade into a ceremonial threshold immediately before the gate.
+- Increased the paired north approach spire, wall, banner and lantern sprite scales for stronger visual hierarchy while preserving left/right mirroring and keeping the central passage open.
+- Added paired `OuterGardenSeatingAlcoves` at the west/east outer garden edges. Each uses the custom flower bench, rose hedge block, distinct flowering shrubs and a lantern post; both are separate y-sorted assemblies.
+- Added two low-energy warm bench lantern glows to the preview lighting rig and extended static QA to verify all ten seating sprites and both light anchors.
+- Added `SouthOuterCloisterExtensions`, a paired west/east lower perimeter architecture pass using the existing wall segment and banner-wall art, with rose and white flowering accents. Mirrored placement extends the cloister rhythm down the garden sides without changing the central promenade.
+
+- Restored the six authored static cobblestone ribbons from the dedicated road-authoring scene: central promenade, west/east fountain loops, grand fountain parterre loop, and west/east parterre connectors. Each ribbon retains its explicit polygon UVs and the approved custom cobblestone texture; the assembly sits at z=-28 so the terrain and road-edge layer ordering remains deliberate.
+- Corrected the playable world's PathwayTiles parent z-index to 10. The road assembly's effective z becomes -18, just above the generated grass Terrain at -20; previously the child road layer could be sorted behind the production terrain even though the isolated preview showed it correctly.
+- Added tools/qa_royal_garden_road_ribbons.gd. It loads the playable world, verifies all six Polygon2D ribbons, confirms authored UV/texture assignments, and checks that the effective road z-order is above terrain.
+- Validation: playable world scene load, full preview scene load, baked isometric layer validation, and the new playable road-ribbon QA all pass in Godot 4.7.2. New QA reports six ribbons and effective road z=-18 above terrain z=-20.
+
+- Refined the road hierarchy once more: the central promenade now begins at the castle threshold instead of running behind the keep, and a dedicated NorthCastleThresholdApron widens the arrival court. The six garden ribbons plus the threshold apron are seven individually named Polygon2D nodes, all using the authored UV mapping and custom cobblestone texture.
+- Updated the road QA contract to require the seventh apron node. The enrichment suite now passes again with 7 road modules, 38 fountain-bed sprites, 11 preview lights, 45 hand-painted edge cells, and all existing pathside/upper-parterre/cloister/court/seating assemblies present.
+- Final road QA confirms seven Polygon2D modules, matching polygon/UV counts, the custom cobblestone asset, and playable effective z=-18 above terrain z=-20.
+
+## Thorough reference-composition refinement (2026-11-18)
+- Corrected the shared road/terrain draw order. The hand-painted transition tilemap now renders at absolute z=-19, between terrain (-20 in the playable world / -30 in the preview) and the cobblestone ribbons (-18 effective z in both). The preview PathwaySystem is aligned to z=10 so its road assembly matches the playable PathwayTiles ordering.
+- Re-authored the west and east fountain walkways as open U-shaped ribbons rather than closed self-intersecting loops. They now curve around the side fountains and open toward the central promenade.
+- Added width hierarchy to the static road modules: central avenue 96px, side fountain loops 68px, central fountain court 84px, parterre connectors 64px, lower gate walks 60px, and castle threshold apron 100px. All surfaces continue to use the custom royal_cobble_ribbon_96.png artwork and authored UVs.
+- Added two lower curved garden walks that connect the south parterre connectors to the new side entrances, bringing the static road assembly to nine named Polygon2D modules.
+- Added a modular castle_side_gate_arches.tscn using the custom gothic_archway artwork. Opened two matching gaps in the front perimeter fence, removed the four obstructing rail segments, and placed mirrored side arches at the new openings.
+- Increased the north and outer side fence rail segment scale to 1.9 so adjacent 32x32 custom fence pieces meet continuously instead of leaving visible gaps. The front fence retains its close-spaced rails and central ornate gate.
+- Enlarged the castle collection to 1.4x, the keep to 1.30x, and the gatehouse to 0.98x while keeping the keep centered and adjusting the gatehouse position to preserve the entrance alignment.
+- Hid the central rose gazebo from the shared garden composition so it no longer blocks the promenade to the main gate; the lower benches and the main entrance remain.
+- Added six existing custom blossom/wisteria trees in a mirrored outer woodland frame to soften the grass margins around the perimeter.
+- Reframed the full-scene preview camera to position (990, 800) and zoom 0.36. This is a preview-only framing change; it does not alter the gameplay camera.
+- Added/updated QA for open fountain ribbons, nine road modules, road/edge/terrain ordering in both preview and playable scenes, castle scale, side-gate arches, hidden central gazebo, and six outer woodland trees.
+- Godot 4.7.2 validation passed: production scene and full preview scene load; static asset QA, road ribbon QA, render-layer QA, castle/fence QA, and baked isometric layer validation all pass. Baked terrain remains ground=2929, variations=44, paths=133, water=12, flowers=6, layers=8, iso_projection=matched.
+- Latest visual review: artifacts/qa/royal_gardens_final_woodland_review_20261118.png. GitHub publishing was not part of this pass.

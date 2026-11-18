@@ -10,81 +10,89 @@ y_sort_enabled = true
 
 [node name="WestOuterPinkAccent" type="Sprite2D" parent="."]
 texture = ExtResource("1_pink")
-position = Vector2(205, 620)
+position = Vector2(130, 620)
 scale = Vector2(1.02, 1.02)
 
 [node name="WestOuterWhiteAccent" type="Sprite2D" parent="."]
 texture = ExtResource("2_white")
-position = Vector2(195, 700)
+position = Vector2(130, 730)
 scale = Vector2(0.98, 0.98)
 
 [node name="WestLoopVioletAccent" type="Sprite2D" parent="."]
 texture = ExtResource("3_violet")
-position = Vector2(260, 790)
+position = Vector2(170, 850)
 scale = Vector2(0.96, 0.96)
 
 [node name="WestLoopRoseAccent" type="Sprite2D" parent="."]
+visible = false
 texture = ExtResource("4_rose")
-position = Vector2(390, 840)
+position = Vector2(270, 900)
 scale = Vector2(1.02, 1.02)
 
 [node name="WestLoopWhiteAccent" type="Sprite2D" parent="."]
+visible = false
 texture = ExtResource("2_white")
-position = Vector2(475, 785)
+position = Vector2(450, 900)
 scale = Vector2(0.94, 0.94)
 
 [node name="EastOuterWhiteAccent" type="Sprite2D" parent="."]
 texture = ExtResource("2_white")
-position = Vector2(1075, 620)
+position = Vector2(1150, 620)
 scale = Vector2(1.02, 1.02)
 
 [node name="EastOuterPinkAccent" type="Sprite2D" parent="."]
 texture = ExtResource("1_pink")
-position = Vector2(1085, 700)
+position = Vector2(1150, 730)
 scale = Vector2(0.98, 0.98)
 
 [node name="EastLoopVioletAccent" type="Sprite2D" parent="."]
 texture = ExtResource("3_violet")
-position = Vector2(1020, 790)
+position = Vector2(1110, 850)
 scale = Vector2(0.96, 0.96)
 
 [node name="EastLoopRoseAccent" type="Sprite2D" parent="."]
+visible = false
 texture = ExtResource("4_rose")
-position = Vector2(890, 840)
+position = Vector2(1010, 900)
 scale = Vector2(1.02, 1.02)
 flip_h = true
 
 [node name="EastLoopPinkAccent" type="Sprite2D" parent="."]
+visible = false
 texture = ExtResource("1_pink")
-position = Vector2(805, 785)
+position = Vector2(830, 900)
 scale = Vector2(0.94, 0.94)
 
 [node name="CentralLowerVioletAccent" type="Sprite2D" parent="."]
+visible = false
 texture = ExtResource("3_violet")
-position = Vector2(470, 930)
+position = Vector2(430, 1000)
 scale = Vector2(0.94, 0.94)
 
 [node name="CentralLowerWhiteAccent" type="Sprite2D" parent="."]
+visible = false
 texture = ExtResource("2_white")
-position = Vector2(810, 930)
+position = Vector2(850, 1000)
 scale = Vector2(0.94, 0.94)
 
 [node name="WestNorthPinkAccent" type="Sprite2D" parent="."]
 texture = ExtResource("1_pink")
-position = Vector2(330, 570)
+position = Vector2(250, 510)
 scale = Vector2(0.92, 0.92)
 
 [node name="EastNorthWhiteAccent" type="Sprite2D" parent="."]
 texture = ExtResource("2_white")
-position = Vector2(950, 570)
+position = Vector2(1030, 510)
 scale = Vector2(0.92, 0.92)
 
 [node name="WestSouthWhiteAccent" type="Sprite2D" parent="."]
+visible = false
 texture = ExtResource("2_white")
-position = Vector2(330, 860)
+position = Vector2(240, 930)
 scale = Vector2(0.92, 0.92)
 
 [node name="EastSouthPinkAccent" type="Sprite2D" parent="."]
+visible = false
 texture = ExtResource("1_pink")
-position = Vector2(950, 860)
+position = Vector2(1040, 930)
 scale = Vector2(0.92, 0.92)

@@ -1,0 +1,67 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/flower_bench.png" id="1_bench"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/royal_lantern_post.png" id="2_lantern"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/rose_hedge_block.png" id="3_hedge"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/white_flower_shrub.png" id="4_white"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/violet_flower_shrub.png" id="5_violet"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/pink_flower_shrub.png" id="6_pink"]
+
+[node name="OuterGardenSeatingAlcoves" type="Node2D"]
+y_sort_enabled = true
+
+[node name="WestSeatingAlcove" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="WestRearHedge" type="Sprite2D" parent="WestSeatingAlcove"]
+texture = ExtResource("3_hedge")
+position = Vector2(195, 830)
+scale = Vector2(0.84, 0.84)
+
+[node name="WestWhiteBloom" type="Sprite2D" parent="WestSeatingAlcove"]
+texture = ExtResource("4_white")
+position = Vector2(145, 875)
+scale = Vector2(0.78, 0.78)
+
+[node name="WestPinkBloom" type="Sprite2D" parent="WestSeatingAlcove"]
+texture = ExtResource("6_pink")
+position = Vector2(245, 875)
+scale = Vector2(0.82, 0.82)
+
+[node name="WestGardenBench" type="Sprite2D" parent="WestSeatingAlcove"]
+texture = ExtResource("1_bench")
+position = Vector2(195, 905)
+scale = Vector2(0.88, 0.88)
+
+[node name="WestLanternPost" type="Sprite2D" parent="WestSeatingAlcove"]
+texture = ExtResource("2_lantern")
+position = Vector2(115, 900)
+scale = Vector2(0.72, 0.72)
+
+[node name="EastSeatingAlcove" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="EastRearHedge" type="Sprite2D" parent="EastSeatingAlcove"]
+texture = ExtResource("3_hedge")
+position = Vector2(1085, 830)
+scale = Vector2(0.84, 0.84)
+
+[node name="EastWhiteBloom" type="Sprite2D" parent="EastSeatingAlcove"]
+texture = ExtResource("4_white")
+position = Vector2(1135, 875)
+scale = Vector2(0.78, 0.78)
+
+[node name="EastVioletBloom" type="Sprite2D" parent="EastSeatingAlcove"]
+texture = ExtResource("5_violet")
+position = Vector2(1035, 875)
+scale = Vector2(0.82, 0.82)
+
+[node name="EastGardenBench" type="Sprite2D" parent="EastSeatingAlcove"]
+texture = ExtResource("1_bench")
+position = Vector2(1085, 905)
+scale = Vector2(-0.88, 0.88)
+
+[node name="EastLanternPost" type="Sprite2D" parent="EastSeatingAlcove"]
+texture = ExtResource("2_lantern")
+position = Vector2(1165, 900)
+scale = Vector2(-0.72, 0.72)

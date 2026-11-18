@@ -2,12 +2,12 @@ extends SceneTree
 
 const TEXTURE_PATH := "res://assets/reverie_custom/royal_gardens/production/royal_cobble_ribbon_96.png"
 const OUTPUT_PATH := "res://scenes/world/castle_gardens/components/castle_road_surface_assembly.tscn"
-const ROAD_HALF_WIDTH := 42.0
+
 
 func _initialize() -> void:
     call_deferred("_author")
 
-func _make_ribbon(points: PackedVector2Array) -> PackedVector2Array:
+func _make_ribbon(points: PackedVector2Array, half_width: float) -> PackedVector2Array:
     var left: PackedVector2Array = []
     var right: PackedVector2Array = []
     for i in range(points.size()):
@@ -15,8 +15,8 @@ func _make_ribbon(points: PackedVector2Array) -> PackedVector2Array:
         var following := points[mini(i + 1, points.size() - 1)]
         var tangent := (following - previous).normalized()
         var normal := Vector2(-tangent.y, tangent.x)
-        left.append(points[i] + normal * ROAD_HALF_WIDTH)
-        right.append(points[i] - normal * ROAD_HALF_WIDTH)
+        left.append(points[i] + normal * half_width)
+        right.append(points[i] - normal * half_width)
     var polygon := left.duplicate()
     for i in range(right.size() - 1, -1, -1):
         polygon.append(right[i])
@@ -33,34 +33,31 @@ func _author() -> void:
     assert(cobble != null, "Seamless custom cobblestone texture is missing")
     var branch_paths: Array[PackedVector2Array] = [
         PackedVector2Array([
-            Vector2(640, 240), Vector2(640, 320), Vector2(640, 400),
-            Vector2(640, 480), Vector2(640, 580), Vector2(640, 680),
+            Vector2(640, 510), Vector2(640, 580), Vector2(640, 680),
             Vector2(640, 780), Vector2(640, 880), Vector2(640, 980),
             Vector2(640, 1080), Vector2(640, 1180)
         ]),
         PackedVector2Array([
-            Vector2(575, 620), Vector2(550, 625), Vector2(525, 632),
-            Vector2(500, 642), Vector2(475, 655), Vector2(450, 672),
-            Vector2(428, 690), Vector2(405, 708), Vector2(380, 721),
-            Vector2(355, 729), Vector2(332, 730), Vector2(312, 723),
-            Vector2(295, 710), Vector2(283, 693), Vector2(278, 675),
-            Vector2(280, 657), Vector2(290, 640), Vector2(305, 625),
-            Vector2(325, 613), Vector2(348, 605), Vector2(375, 601),
-            Vector2(402, 600), Vector2(430, 602), Vector2(458, 605),
-            Vector2(486, 609), Vector2(515, 613), Vector2(545, 617),
-            Vector2(575, 620)
+            Vector2(575, 620), Vector2(545, 620), Vector2(515, 615),
+            Vector2(485, 608), Vector2(455, 602), Vector2(425, 598),
+            Vector2(395, 596), Vector2(365, 596), Vector2(335, 600),
+            Vector2(305, 610), Vector2(278, 626), Vector2(255, 646),
+            Vector2(240, 670), Vector2(236, 695), Vector2(242, 720),
+            Vector2(258, 742), Vector2(282, 760), Vector2(310, 774),
+            Vector2(340, 782), Vector2(370, 782), Vector2(400, 775),
+            Vector2(430, 762), Vector2(460, 744), Vector2(490, 724),
+            Vector2(520, 706), Vector2(548, 695), Vector2(575, 690)
         ]),
         PackedVector2Array([
-            Vector2(705, 620), Vector2(730, 625), Vector2(755, 632),
-            Vector2(780, 642), Vector2(805, 655), Vector2(830, 672),
-            Vector2(852, 690), Vector2(875, 708), Vector2(900, 721),
-            Vector2(925, 729), Vector2(948, 730), Vector2(968, 723),
-            Vector2(985, 710), Vector2(997, 693), Vector2(1002, 675),
-            Vector2(1000, 657), Vector2(990, 640), Vector2(975, 625),
-            Vector2(955, 613), Vector2(932, 605), Vector2(905, 601),
-            Vector2(878, 600), Vector2(850, 602), Vector2(822, 605),
-            Vector2(794, 609), Vector2(765, 613), Vector2(735, 617),
-            Vector2(705, 620)
+            Vector2(705, 620), Vector2(735, 620), Vector2(765, 615),
+            Vector2(795, 608), Vector2(825, 602), Vector2(855, 598),
+            Vector2(885, 596), Vector2(915, 596), Vector2(945, 600),
+            Vector2(975, 610), Vector2(1002, 626), Vector2(1025, 646),
+            Vector2(1040, 670), Vector2(1044, 695), Vector2(1038, 720),
+            Vector2(1022, 742), Vector2(998, 760), Vector2(970, 774),
+            Vector2(940, 782), Vector2(910, 782), Vector2(880, 775),
+            Vector2(850, 762), Vector2(820, 744), Vector2(790, 724),
+            Vector2(760, 706), Vector2(732, 695), Vector2(705, 690)
         ]),
         PackedVector2Array([
             Vector2(560, 790), Vector2(548, 805), Vector2(540, 825),
@@ -80,18 +77,36 @@ func _author() -> void:
         PackedVector2Array([
             Vector2(720, 790), Vector2(770, 785), Vector2(815, 790),
             Vector2(850, 810), Vector2(870, 840), Vector2(860, 875)
+        ]),
+        PackedVector2Array([
+            Vector2(420, 875), Vector2(405, 900), Vector2(385, 925),
+            Vector2(365, 950), Vector2(350, 975), Vector2(340, 1000),
+            Vector2(335, 1030), Vector2(335, 1060), Vector2(335, 1090),
+            Vector2(335, 1160)
+        ]),
+        PackedVector2Array([
+            Vector2(860, 875), Vector2(875, 900), Vector2(895, 925),
+            Vector2(915, 950), Vector2(930, 975), Vector2(940, 1000),
+            Vector2(945, 1030), Vector2(945, 1060), Vector2(945, 1090),
+            Vector2(945, 1160)
+        ]),
+        PackedVector2Array([
+            Vector2(535, 535), Vector2(560, 520), Vector2(585, 510),
+            Vector2(610, 504), Vector2(640, 502), Vector2(670, 504),
+            Vector2(695, 510), Vector2(720, 520), Vector2(745, 535)
         ])
     ]
+    var branch_widths: Array[float] = [48.0, 34.0, 34.0, 42.0, 32.0, 32.0, 30.0, 30.0, 50.0]
     var assembly := Node2D.new()
     assembly.name = "RoyalRoadSurfaceAssembly"
     assembly.z_index = -28
     for i in range(branch_paths.size()):
         var road := Polygon2D.new()
-        road.name = ["CentralGrandPromenade", "WestFountainGardenLoop", "EastFountainGardenLoop", "GrandFountainParterreLoop", "WestParterreConnector", "EastParterreConnector"][i]
+        road.name = ["CentralGrandPromenade", "WestFountainGardenLoop", "EastFountainGardenLoop", "GrandFountainParterreLoop", "WestParterreConnector", "EastParterreConnector", "WestLowerGateWalk", "EastLowerGateWalk", "NorthCastleThresholdApron"][i]
         road.texture = cobble
         road.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
         road.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-        road.polygon = _make_ribbon(branch_paths[i])
+        road.polygon = _make_ribbon(branch_paths[i], branch_widths[i])
         road.uv = _make_uv(road.polygon)
         assembly.add_child(road)
         road.owner = assembly
@@ -99,7 +114,7 @@ func _author() -> void:
     assert(packed.pack(assembly) == OK, "Could not pack static Royal Gardens road ribbons")
     assert(ResourceSaver.save(packed, OUTPUT_PATH) == OK, "Could not save static Royal Gardens road ribbons")
     print("STATIC_ROAD_RIBBONS=", branch_paths.size())
-    print("ROAD_HALF_WIDTH=", ROAD_HALF_WIDTH)
+    print("ROAD_HALF_WIDTHS=", branch_widths)
     print("COBBLE_TEXTURE=", TEXTURE_PATH)
     print("STATIC_BRANCH_SCENE_SAVED=", OUTPUT_PATH)
     quit()

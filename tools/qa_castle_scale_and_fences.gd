@@ -16,11 +16,12 @@ func _initialize():
   quit(1)
   return
  var count=fences.get_child_count()
+ var side_gates=pv.get_node_or_null("FenceSystem/GardenFences/FrontPerimeterFence/SideGateArchways")
  var keep=castle.get_node("CastleKeep")
  var gate=castle.get_node("GrandGatehouse")
  print("PREVIEW_FENCE_SPRITES=",count)
  print("KEEP_SCALE=",keep.scale," GATE_SCALE=",gate.scale)
- if count < 24 or keep.scale.x < 1.17 or gate.scale.x < 0.91:
+ if count < 24 or side_gates == null or side_gates.get_child_count() != 2 or keep.scale.x < 1.17 or gate.scale.x < 0.91:
   push_error("CASTLE_FENCE_LAYOUT_ASSERTION_FAILED")
   quit(1)
   return
@@ -28,7 +29,8 @@ func _initialize():
  root.add_child(world)
  await process_frame
  var playable_fences=world.get_node_or_null("GardenFences/FenceRuns")
- if playable_fences == null or playable_fences.get_child_count() < 24:
+ var playable_side_gates=world.get_node_or_null("GardenFences/FrontPerimeterFence/SideGateArchways")
+ if playable_fences == null or playable_fences.get_child_count() < 24 or playable_side_gates == null or playable_side_gates.get_child_count() != 2:
   push_error("PLAYABLE_FENCE_ASSEMBLY_MISSING")
   quit(1)
   return

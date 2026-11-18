@@ -31,6 +31,9 @@ SaveService="*res://scripts/core/save_service.gd"
 GameState="*res://scenes/core/game_state.tscn"
 AudioDirector="*res://scenes/core/audio_director.tscn"
 
+[audio]
+default_bus_layout="res://resources/audio/reverie_audio_bus_layout.tres"
+
 [display]
 
 window/size/viewport_width=1280

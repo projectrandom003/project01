@@ -21,6 +21,7 @@ y_sort_enabled = true
 
 [node name="PathwaySystem" type="Node2D" parent="."]
 y_sort_enabled = true
+z_index = 10
 [node name="RoyalPathways" parent="PathwaySystem" instance=ExtResource("6_paths")]
 
 [node name="CastleSystem" type="Node2D" parent="."]
@@ -49,8 +50,8 @@ y_sort_enabled = true
 color = Color(0.84, 0.82, 0.93, 1)
 
 [node name="PreviewCamera" type="Camera2D" parent="."]
-position = Vector2(800, 800)
-zoom = Vector2(0.32, 0.32)
+position = Vector2(640, 600)
+zoom = Vector2(0.62, 0.62)
 enabled = true
 
 [node name="PetalDrift" parent="." instance=ExtResource("9_petals")]

@@ -9,45 +9,45 @@
 
 [node name="ReverieRoyalGardensCastleCollection" type="Node2D"]
 y_sort_enabled = true
-position = Vector2(-192, -63)
-scale = Vector2(1.3, 1.3)
+position = Vector2(-416, -196)
+scale = Vector2(1.65, 1.65)
 
 [node name="CastleKeep" parent="." instance=ExtResource("5_keep")]
 position = Vector2(640, 252)
-scale = Vector2(1.22, 1.22)
+scale = Vector2(1.30, 1.30)
 
 [node name="WestFlankTower" parent="." instance=ExtResource("3_tower")]
 position = Vector2(374, 266)
-scale = Vector2(0.60, 0.60)
+scale = Vector2(0.64, 0.64)
 
 [node name="EastFlankTower" parent="." instance=ExtResource("3_tower")]
 position = Vector2(906, 266)
-scale = Vector2(0.60, 0.60)
+scale = Vector2(0.64, 0.64)
 
 [node name="WestCorner" parent="." instance=ExtResource("6_corner")]
 position = Vector2(420, 370)
-scale = Vector2(0.78, 0.78)
+scale = Vector2(0.82, 0.82)
 
 [node name="EastCorner" parent="." instance=ExtResource("6_corner")]
 position = Vector2(860, 370)
-scale = Vector2(-0.78, 0.78)
+scale = Vector2(-0.82, 0.82)
 
 [node name="NorthWestWall" parent="." instance=ExtResource("1_wx")]
 position = Vector2(520, 345)
-scale = Vector2(0.78, 0.78)
+scale = Vector2(0.82, 0.82)
 
 [node name="NorthEastWall" parent="." instance=ExtResource("1_wx")]
 position = Vector2(760, 345)
-scale = Vector2(0.78, 0.78)
+scale = Vector2(0.82, 0.82)
 
 [node name="WestSideWall" parent="." instance=ExtResource("2_wy")]
 position = Vector2(470, 398)
-scale = Vector2(0.78, 0.78)
+scale = Vector2(0.82, 0.82)
 
 [node name="EastSideWall" parent="." instance=ExtResource("2_wy")]
 position = Vector2(810, 398)
-scale = Vector2(0.78, 0.78)
+scale = Vector2(0.82, 0.82)
 
 [node name="GrandGatehouse" parent="." instance=ExtResource("4_gate")]
-position = Vector2(640, 448)
-scale = Vector2(0.92, 0.92)
+position = Vector2(640, 433)
+scale = Vector2(0.98, 0.98)

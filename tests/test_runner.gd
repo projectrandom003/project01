@@ -3456,19 +3456,10 @@ func _test_new_journey_castle_continue() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	check(first_game.current_region_id == "castle_royal_gardens", "New Journey resolves to Royal Gardens")
-	var perimeter = first_game.world.get_node_or_null("GardenPerimeterWalls") if first_game.world != null else null
-	check(perimeter is CastlePerimeterWallsComponent, "Castle map validates its authored perimeter wall assembly")
-	if perimeter is CastlePerimeterWallsComponent:
-		check(perimeter.get_child_count() == 4, "Castle perimeter is composed of four authored architectural wall-run scenes")
-		for wall_run in perimeter.get_children():
-			check(wall_run is CastlePerimeterWallRunComponent, "Perimeter segment uses the reusable wall-run component", str(wall_run.name))
-			check(wall_run.get_node_or_null("Facade") is Polygon2D and wall_run.get_node_or_null("Parapet") is Polygon2D and wall_run.get_node_or_null("Plinth") is Polygon2D and wall_run.get_node_or_null("Piers") is Node2D, "Perimeter wall owns authored architectural presentation layers", str(wall_run.name))
-			check(wall_run.get_node_or_null("WallCollision") is StaticBody2D, "Each perimeter wall run retains its authored collision barrier", str(wall_run.name))
-			var wall_shape := wall_run.get_node_or_null("WallCollision/CollisionShape2D") as CollisionShape2D
-			var wall_rect := wall_shape.shape as RectangleShape2D if wall_shape != null else null
-			check(wall_rect != null and is_equal_approx(wall_rect.size.x, wall_run.run_length) and is_equal_approx(wall_rect.size.y, 38.0), "Perimeter collision dimensions match the configured wall run", str(wall_run.name))
-			var expected_piers := int(floor(wall_run.run_length / wall_run.bay_width)) + 1
-			check(wall_run.get_node_or_null("Piers").get_child_count() == expected_piers, "Perimeter pier spacing is generated from the wall run's bay width", str(wall_run.name))
+	var garden_fences := first_game.world.get_node_or_null("GardenFences") as Node2D if first_game.world != null else null
+	check(garden_fences != null and garden_fences.get_node_or_null("FenceRuns") is Node2D and garden_fences.get_node_or_null("FrontPerimeterFence") is Node2D and garden_fences.get_node_or_null("NorthPerimeterFence") is Node2D and garden_fences.get_node_or_null("OuterSideFenceRuns") is Node2D, "Royal Gardens perimeter is composed from its authored fence-run assemblies")
+	var grand_gate := garden_fences.get_node_or_null("FrontPerimeterFence/GrandFrontEntranceGate") as Sprite2D if garden_fences != null else null
+	check(grand_gate != null and grand_gate.texture != null, "Royal Gardens keeps its authored grand front gate and open entrance approach")
 	check(first_game.world.get_node_or_null("PlayerSpawner") is CastlePlayerSpawnerComponent, "Castle player spawning is owned by an authored child component")
 	check(first_game.world.get_node_or_null("WorldRuntime") is CastleWorldRuntimeComponent, "Castle position persistence is owned by an authored runtime component")
 	check(first_game.world.get_node_or_null("Presentation") is CastleWorldPresentationComponent, "Castle visual reporting is owned by an authored presentation component")
@@ -3484,16 +3475,17 @@ func _test_new_journey_castle_continue() -> void:
 		for child in inspected.get_children():
 			royal_gardens_scan.append(child)
 	check(royal_gardens_gothic_textures.is_empty(), "Royal Gardens does not render Gothic Castle region textures", str(royal_gardens_gothic_textures))
-	check(first_game.world.get_node_or_null("GardenPerimeterWalls") is CastlePerimeterWallsComponent, "Royal Gardens keeps its own perimeter without a castle overlay")
+	check(first_game.world.get_node_or_null("GardenFences") is Node2D and first_game.world.get_node_or_null("GardenFences/FrontPerimeterFence") is Node2D and first_game.world.get_node_or_null("Bounds") is StaticBody2D, "Royal Gardens keeps its own authored fence perimeter and collision bounds without a Gothic Castle overlay")
 	check(first_game.world.get_node_or_null("Terrain/GrassDetails") is Node2D and first_game.world.get_node_or_null("Lighting") is Node2D and first_game.world.get_node_or_null("EnvironmentEffects") is Node2D, "Terrain and lighting layers are authored in the Royal Gardens scene")
 	var terrain_config := first_game.world.get_node_or_null("Terrain/Configuration") as Node2D
 	check(terrain_config != null and terrain_config.get_meta("ground_min", null) is Vector2i and terrain_config.get_meta("ground_max", null) is Vector2i and terrain_config.get_child_count() == 6, "Terrain bounds, tile metrics, seed and six grass detail placements are scene-authored")
-	check(first_game.world.get_node_or_null("PathwayTiles/RoyalPromenade") is Node2D and first_game.world.get_node_or_null("PathwayTiles/RoyalPromenade").get_child_count() == 105, "Royal Promenade is a reusable authored pathway assembly")
-	check(first_game.world.get_node_or_null("OuterRoad") is Node2D and first_game.world.get_node_or_null("OuterRoad").get_child_count() == 90, "Outer Road is a reusable authored road assembly")
-	check(first_game.world.get_node_or_null("Water/FountainCourt") is Node2D and first_game.world.get_node_or_null("Water/OuterPonds") is Node2D, "Water features are owned by a reusable water assembly")
-	check(first_game.world.get_node_or_null("Water") is CastleWaterComponent and first_game.world.get_node_or_null("Water/WaterZones/LeftPond") is Marker2D and first_game.world.is_water_world(IsoMath.grid_to_world(23.75, 10.31)), "Water interaction zones are owned by authored water markers and their component")
-	check(first_game.world.get_node_or_null("Flora/TreeAvenue") is Node2D and first_game.world.get_node_or_null("Flora/FlowerBorders") is Node2D and first_game.world.get_node_or_null("Flora/HedgesAndShrubs") is Node2D and first_game.world.get_node_or_null("Flora/WorldPerimeter") is Node2D, "Flora is organized into authored tree, flower, hedge and perimeter groups")
-	check(first_game.world.get_node_or_null("Props/Furniture") is Node2D and first_game.world.get_node_or_null("Props/Lighting") is Node2D and first_game.world.get_node_or_null("Props/Statues") is Node2D, "Props are organized into furniture, lighting and statue groups")
+	var road_surfaces := first_game.world.get_node_or_null("PathwayTiles/HandDesignedRoadSurfaces") as Node2D
+	check(road_surfaces != null and road_surfaces.get_node_or_null("CentralGrandPromenade") is Polygon2D and road_surfaces.get_node_or_null("GrandFountainParterreLoop") is Polygon2D and road_surfaces.get_child_count() >= 8, "Royal Promenade and fountain loops are authored as hand-designed stone road surfaces")
+	check(road_surfaces != null and road_surfaces.get_node_or_null("NorthCastleThresholdApron") is Polygon2D and road_surfaces.get_node_or_null("WestLowerGateWalk") is Polygon2D and road_surfaces.get_node_or_null("EastLowerGateWalk") is Polygon2D, "Outer approach roads and lower gate walks are authored as connected stone surface pieces")
+	check(first_game.world.get_node_or_null("Water/FountainCourt") is Node2D and first_game.world.get_node_or_null("Water/FountainCourt").get_child_count() >= 3, "Water features are owned by the authored fountain-court assembly")
+	check(first_game.world.get_node_or_null("Water") is CastleWaterComponent and first_game.world.get_node_or_null("Water/WaterZones/WestPondZone") is Marker2D and first_game.world.get_node_or_null("Water/WaterZones/EastPondZone") is Marker2D and first_game.world.is_water_world(IsoMath.grid_to_world(20.5, 17.25)), "Water interaction zones are owned by the two authored pond markers and their component")
+	check(first_game.world.get_node_or_null("Flora/SignatureTrees") is Node2D and first_game.world.get_node_or_null("Flora/RoseArchitecture") is Node2D and first_game.world.get_node_or_null("Flora/PathsidePlanting") is Node2D and first_game.world.get_node_or_null("Flora/OuterGardenEnrichment") is Node2D and first_game.world.get_node_or_null("Flora/OuterWoodlandFrame") is Node2D, "Flora is organized into authored signature-tree, rose-architecture, pathside and woodland assemblies")
+	check(first_game.world.get_node_or_null("Props/EntranceArchitecture") is Node2D and first_game.world.get_node_or_null("Props/LanternPosts") is Node2D and first_game.world.get_node_or_null("Props/GuardianStatues") is Node2D and first_game.world.get_node_or_null("Props/GardenSeating") is Node2D, "Props are organized into authored entrance, lantern, guardian-statue and garden-seating assemblies")
 	check(first_game.world.get_node_or_null("NPCPlacement") is NpcPlacement and first_game.world.get_node_or_null("MapSpawnPoints") is MapSpawnPoints, "NPC and player spawn markers are owned by reusable marker scenes")
 	var guard_marker := first_game.world.get_node_or_null("NPCPlacement/GuardLeft") as Marker2D
 	check(guard_marker != null and guard_marker.get_meta("npc_id", "") == "castle_guard_left" and guard_marker.get_meta("grid_position", null) is Vector2, "NPC identity and grid placement are authored on their marker")
@@ -3503,7 +3495,7 @@ func _test_new_journey_castle_continue() -> void:
 		for npc_marker in npc_markers.get_children():
 			check(npc_marker is Marker2D and npc_marker.has_meta("npc_id") and npc_marker.has_meta("display_name") and npc_marker.has_meta("dialogue_id") and npc_marker.has_meta("role") and npc_marker.has_meta("race") and npc_marker.get_meta("palette", null) is Dictionary and npc_marker.get_meta("grid_position", null) is Vector2, "NPC marker owns complete identity, palette and grid configuration", str(npc_marker.name))
 	var light_anchors := first_game.world.get_node_or_null("Lighting/Anchors") as Node2D
-	check(light_anchors != null and light_anchors.get_child_count() == 7, "Garden lighting positions are owned by seven authored anchor markers")
+	check(light_anchors != null and light_anchors.get_child_count() == 12, "Garden lighting positions are owned by twelve authored anchor markers")
 	check(light_anchors != null and light_anchors.get_node("Light01").has_meta("light_offset") and light_anchors.get_node("Shadow").has_meta("presentation_offset") and light_anchors.get_node("AmbientParticles").has_meta("presentation_offset"), "Light, shadow and ambient offsets are authored on their presentation markers")
 	check(first_game.world.get_node_or_null("WorldRuntime").get("save_position_interval") == 1.0, "World persistence cadence is configurable on its runtime node")
 	check(first_game.world.get_node_or_null("Bounds/Left") is CollisionShape2D and first_game.world.get_node_or_null("Bounds/Right") is CollisionShape2D and first_game.world.get_node_or_null("Bounds/Top") is CollisionShape2D and first_game.world.get_node_or_null("Bounds/Bottom") is CollisionShape2D, "World boundary collision is an authored reusable scene")
@@ -3511,7 +3503,7 @@ func _test_new_journey_castle_continue() -> void:
 	check(first_game.world.get_node_or_null("LightingBuilder") is CastleLightingComponent, "Castle map delegates lighting and ambient effects to its lighting component")
 	check(first_game.world.get_node_or_null("NPCSpawner") is CastleNPCSpawnerComponent, "Castle map delegates marker-based NPC creation to its spawner component")
 	var expansion := first_game.world.get_node_or_null("ExpansionBuilder")
-	check(expansion != null and expansion.get_node("ExpansionGround").get_child_count() == 7, "Authored ceremonial approach creates all seven path pieces")
+	check(expansion != null and expansion.get_node("ExpansionGround").get_child_count() == 0 and first_game.world.get_node_or_null("PathwayTiles/HandDesignedRoadSurfaces/CentralGrandPromenade") is Polygon2D, "Ceremonial approach uses the hand-designed road assembly without duplicate generated ground tiles")
 	check(expansion != null and expansion.get_node("ExpansionFlora").get_child_count() == 15, "Authored ceremonial approach creates all fifteen flora pieces")
 	check(expansion != null and expansion.get_node("ExpansionProps").get_child_count() >= 6, "All six authored approach props are present alongside any runtime cache props")
 	var wall_x_scene: PackedScene = load("res://scenes/world/castle_gardens/v02/architecture/castle_wall_x.tscn")
@@ -3598,7 +3590,7 @@ func _test_continue_exact_position_and_return_to_title() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	check(first_game.current_region_id == "castle_royal_gardens", "Continue regression: new journey starts in Royal Gardens", first_game.current_region_id)
-	var expected_position := Vector2(640.0, 620.0) # Clear authored PlayerSpawn tile; do not test persistence inside HedgeWestB collision.
+	var expected_position := Vector2(1100.0, 700.0) # Clear, collision-free garden tile used to verify exact save restoration.
 	var expected_facing := Vector2(-1.0, 0.0)
 	var first_player = first_game.world.get("player") if first_game.world != null else null
 	check(first_player != null, "Continue regression: Castle player exists")
@@ -5510,9 +5502,20 @@ func _test_settings_regressions() -> void:
 	var staged := load("res://scenes/ui/settings_screen.tscn").instantiate() as SettingsScreen
 	add_child(staged)
 	await get_tree().process_frame
+	var music_bus := AudioServer.get_bus_index("Music")
+	var sfx_bus := AudioServer.get_bus_index("SFX")
+	check(music_bus >= 0 and sfx_bus >= 0, "settings audio layout provides dedicated Music and SFX buses", "Music=%d SFX=%d" % [music_bus, sfx_bus])
 	check(staged._controls_component is SettingsControlsComponent and staged._controls_component.get_parent() == staged, "SettingsScreen binds its controls component")
 	check(staged._persistence_component is SettingsPersistenceComponent and staged._persistence_component.get_parent() == staged, "SettingsScreen binds its persistence component")
 	check(staged.content != null, "settings screen builds its controls panel")
+	if music_bus >= 0:
+		var music_slider := staged.content.find_child("MusicSlider", true, false) as HSlider
+		music_slider.value = 0.42
+		check(near(AudioServer.get_bus_volume_db(music_bus), linear_to_db(0.42), 0.01), "music slider previews through the dedicated Music bus immediately")
+	staged._apply_runtime(staged._saved, false)
+	if music_bus >= 0:
+		var expected_music := float(staged._saved.get("music_volume", 1.0))
+		check(near(AudioServer.get_bus_volume_db(music_bus), linear_to_db(maxf(expected_music, 0.001)), 0.01), "settings can restore the saved music bus level after preview")
 	var display_hint := staged.content.find_child("DisplayHint", true, false) as Label
 	var controls_hint := staged.content.find_child("ControlsHint", true, false) as Label
 	var general_hint := staged.content.find_child("GeneralHint", true, false) as Label
@@ -5657,7 +5660,7 @@ func _test_reverie_expansion() -> void:
 
 	var approach_scene := load("res://scenes/world/castle_gardens/components/castle_expansion_approach_placements.tscn") as PackedScene
 	var approach := approach_scene.instantiate() as Node2D if approach_scene != null else null
-	check(approach != null and approach.get_child_count() == 30, "Ceremonial approach and cache layout are authored as 30 placement markers")
+	check(approach != null and approach.get_child_count() == 23, "Ceremonial approach and cache layout are authored as 22 modular asset placements plus one collectible marker")
 	if approach != null:
 		for placement in approach.get_children():
 			if placement.name == "GardenerSealCache":

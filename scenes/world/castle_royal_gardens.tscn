@@ -11,7 +11,7 @@
 [ext_resource type="Script" uid="uid://c8e84l1tfolda" path="res://scripts/world/castle_gardens/components/castle_world_runtime_component.gd" id="30_world_runtime"]
 [ext_resource type="Script" uid="uid://c6cykooeopcan" path="res://scripts/world/castle_gardens/components/castle_world_presentation_component.gd" id="31_presentation"]
 
-[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/outer_road.tscn" id="34_outer_road"]
+
 [ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/npc_placement.tscn" id="35_npc_placement"]
 [ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/map_spawn_points.tscn" id="36_spawn_points"]
 [ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_world_bounds.tscn" id="37_world_bounds"]
@@ -20,7 +20,6 @@
 [ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_water_assembly.tscn" id="41_water"]
 [ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_flora_assembly.tscn" id="42_flora"]
 [ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_props_assembly.tscn" id="43_props"]
-[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_perimeter_assembly.tscn" id="44_walls"]
 [ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_lighting_anchors.tscn" id="45_lighting_anchors"]
 [ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_royal_gardens_castle_collection.tscn" id="47_royal_castle"]
 [ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_garden_fence_assembly.tscn" id="48_fences"]
@@ -45,6 +44,7 @@ day_length_seconds = 600.0
 script = ExtResource("25_npc_spawner")
 
 [node name="PathwayTiles" parent="." unique_id=183749207 instance=ExtResource("39_pathways")]
+z_index = 10
 
 [node name="Water" parent="." unique_id=183749209 instance=ExtResource("41_water")]
 
@@ -75,13 +75,10 @@ script = ExtResource("46_entity_spawner")
 
 [node name="Bounds" parent="." unique_id=183749205 instance=ExtResource("37_world_bounds")]
 
-[node name="GardenPerimeterWalls" parent="." unique_id=183749212 instance=ExtResource("44_walls")]
-
 [node name="RoyalCastleArchitecture" parent="." instance=ExtResource("47_royal_castle")]
 
 
-[node name="OuterRoad" parent="." unique_id=183749202 instance=ExtResource("34_outer_road")]
-z_index = -8
+
 
 [node name="ExpansionBuilder" parent="." unique_id=923902717 instance=ExtResource("26_expansion")]
 

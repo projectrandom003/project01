@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/gothic_archway.png" id="1_arch"]
+
+[node name="RoyalSideGateArchways" type="Node2D"]
+y_sort_enabled = true
+z_index = 1
+
+[node name="WestSideGateArch" type="Sprite2D" parent="."]
+texture = ExtResource("1_arch")
+position = Vector2(335, 1112)
+scale = Vector2(0.75, 0.75)
+
+[node name="EastSideGateArch" type="Sprite2D" parent="."]
+texture = ExtResource("1_arch")
+position = Vector2(945, 1112)
+scale = Vector2(0.75, 0.75)
+flip_h = true

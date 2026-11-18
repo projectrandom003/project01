@@ -69,3 +69,35 @@ energy = 0.24
 texture_scale = 2.4
 position = Vector2(925, 650)
 shadow_enabled = false
+
+[node name="WestNorthApproachGlow" type="PointLight2D" parent="."]
+texture = SubResource("FountainGlowTexture")
+color = Color(1, 0.78, 0.65, 1)
+energy = 0.20
+texture_scale = 2.1
+position = Vector2(475, 450)
+shadow_enabled = false
+
+[node name="EastNorthApproachGlow" type="PointLight2D" parent="."]
+texture = SubResource("FountainGlowTexture")
+color = Color(1, 0.78, 0.65, 1)
+energy = 0.20
+texture_scale = 2.1
+position = Vector2(805, 450)
+shadow_enabled = false
+
+[node name="WestGardenBenchGlow" type="PointLight2D" parent="."]
+texture = SubResource("FountainGlowTexture")
+color = Color(1, 0.82, 0.68, 1)
+energy = 0.14
+texture_scale = 1.8
+position = Vector2(115, 900)
+shadow_enabled = false
+
+[node name="EastGardenBenchGlow" type="PointLight2D" parent="."]
+texture = SubResource("FountainGlowTexture")
+color = Color(1, 0.82, 0.68, 1)
+energy = 0.14
+texture_scale = 1.8
+position = Vector2(1165, 900)
+shadow_enabled = false
