@@ -15,7 +15,7 @@ func bind(owner: Control) -> void:
 	host = owner
 
 func begin() -> void:
-	AudioDirector.play_main_theme()
+	AudioDirector.play_title_theme()
 	title = TITLE_SCENE.instantiate() as TitleScreen
 	if title == null:
 		push_error("[StartupFlow] Title screen failed to instantiate.")

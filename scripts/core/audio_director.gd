@@ -1,25 +1,35 @@
 extends Node
 ## Central music owner. Track selection stays explicit; scenes request a musical role.
+const BUS_LAYOUT: AudioBusLayout = preload("res://resources/audio/reverie_audio_bus_layout.tres")
 const TRACKS := {
 	"main_theme": "res://assets/audio/music/crown_of_ash_and_rose.mp3",
+	"title_screen": "res://assets/audio/music/the_frozen_kingdom.mp3",
 	"exploration": "res://assets/audio/music/the_frozen_kingdom.mp3",
-	"ravienne_cassie_story": "res://assets/audio/music/fading_into_the_void.mp3",
+	"kael_prologue": "res://assets/audio/music/fading_into_the_void.mp3",
 }
 
 @onready var _player: AudioStreamPlayer = $MusicPlayer
 var _current_track_id := ""
 var _fade_tween: Tween
 
+func _ready() -> void:
+	# Install the authored bus layout before any screen can adjust volume.
+	AudioServer.set_bus_layout(BUS_LAYOUT)
+	_player.bus = "Music"
+
 func play_main_theme(fade_duration: float = 1.8) -> bool:
 	return play_track("main_theme", fade_duration)
+
+func play_title_theme(fade_duration: float = 1.8) -> bool:
+	return play_track("title_screen", fade_duration)
+
+func play_kael_prologue(fade_duration: float = 1.5) -> bool:
+	return play_track("kael_prologue", fade_duration)
 
 func play_exploration_theme(fade_duration: float = 2.2) -> bool:
 	return play_track("exploration", fade_duration)
 
 ## Call this only from Ravienne/Cassie story scenes, not the Gerald/Lilith prologue.
-func play_ravienne_cassie_story(fade_duration: float = 1.5) -> bool:
-	return play_track("ravienne_cassie_story", fade_duration)
-
 func play_track(track_id: String, fade_duration: float = 1.8) -> bool:
 	if not TRACKS.has(track_id):
 		push_warning("[AudioDirector] Unknown music track: " + track_id)
