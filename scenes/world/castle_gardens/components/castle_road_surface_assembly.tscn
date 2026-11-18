@@ -9,8 +9,8 @@ z_index = -28
 texture_filter = 1
 texture_repeat = 2
 texture = ExtResource("1_byvo2")
-polygon = PackedVector2Array(606, 510, 598, 514, 592, 526, 592, 1184, 598, 1192, 606, 1200, 674, 1200, 682, 1192, 688, 1184, 688, 526, 682, 514, 674, 510)
-uv = PackedVector2Array(606, 510, 598, 514, 592, 526, 592, 1184, 598, 1192, 606, 1200, 674, 1200, 682, 1192, 688, 1184, 688, 526, 682, 514, 674, 510)
+polygon = PackedVector2Array(600, 510, 592, 514, 586, 526, 586, 1184, 592, 1192, 600, 1200, 680, 1200, 688, 1192, 694, 1184, 694, 526, 688, 514, 680, 510)
+uv = PackedVector2Array(600, 510, 592, 514, 586, 526, 586, 1184, 592, 1192, 600, 1200, 680, 1200, 688, 1192, 694, 1184, 694, 526, 688, 514, 680, 510)
 
 [node name="WestFountainGardenLoop" type="Polygon2D" parent="." unique_id=155099333]
 texture_filter = 1
