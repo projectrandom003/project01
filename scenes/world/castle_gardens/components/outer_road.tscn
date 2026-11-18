@@ -364,5 +364,3 @@ texture = ExtResource("1_path")
 [node name="RoadTile89" type="Sprite2D" parent="."]
 texture_filter = 1
 texture = ExtResource("1_path")
-
-

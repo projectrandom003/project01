@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/grand_ornate_gate.png" id="1_art"]
+
+[node name="RoyalGatehouse" type="Node2D"]
+y_sort_enabled = true
+
+[node name="GatehouseArtwork" type="Sprite2D" parent="."]
+texture = ExtResource("1_art")
+position = Vector2(0, -58)
+scale = Vector2(0.92, 0.92)
+
+[node name="CollisionBody" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Footprint" type="CollisionPolygon2D" parent="CollisionBody"]
+visible = false
+polygon = PackedVector2Array(-104, -18, 0, -66, 104, -18, 104, 30, 0, 78, -104, 30)

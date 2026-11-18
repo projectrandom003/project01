@@ -1,0 +1,90 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/pink_flower_shrub.png" id="1_pink"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/white_flower_shrub.png" id="2_white"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/violet_flower_shrub.png" id="3_violet"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/round_rose_shrub.png" id="4_rose"]
+
+[node name="RoyalPathsidePlanting" type="Node2D"]
+y_sort_enabled = true
+
+[node name="WestOuterPinkAccent" type="Sprite2D" parent="."]
+texture = ExtResource("1_pink")
+position = Vector2(205, 620)
+scale = Vector2(1.02, 1.02)
+
+[node name="WestOuterWhiteAccent" type="Sprite2D" parent="."]
+texture = ExtResource("2_white")
+position = Vector2(195, 700)
+scale = Vector2(0.98, 0.98)
+
+[node name="WestLoopVioletAccent" type="Sprite2D" parent="."]
+texture = ExtResource("3_violet")
+position = Vector2(260, 790)
+scale = Vector2(0.96, 0.96)
+
+[node name="WestLoopRoseAccent" type="Sprite2D" parent="."]
+texture = ExtResource("4_rose")
+position = Vector2(390, 840)
+scale = Vector2(1.02, 1.02)
+
+[node name="WestLoopWhiteAccent" type="Sprite2D" parent="."]
+texture = ExtResource("2_white")
+position = Vector2(475, 785)
+scale = Vector2(0.94, 0.94)
+
+[node name="EastOuterWhiteAccent" type="Sprite2D" parent="."]
+texture = ExtResource("2_white")
+position = Vector2(1075, 620)
+scale = Vector2(1.02, 1.02)
+
+[node name="EastOuterPinkAccent" type="Sprite2D" parent="."]
+texture = ExtResource("1_pink")
+position = Vector2(1085, 700)
+scale = Vector2(0.98, 0.98)
+
+[node name="EastLoopVioletAccent" type="Sprite2D" parent="."]
+texture = ExtResource("3_violet")
+position = Vector2(1020, 790)
+scale = Vector2(0.96, 0.96)
+
+[node name="EastLoopRoseAccent" type="Sprite2D" parent="."]
+texture = ExtResource("4_rose")
+position = Vector2(890, 840)
+scale = Vector2(1.02, 1.02)
+flip_h = true
+
+[node name="EastLoopPinkAccent" type="Sprite2D" parent="."]
+texture = ExtResource("1_pink")
+position = Vector2(805, 785)
+scale = Vector2(0.94, 0.94)
+
+[node name="CentralLowerVioletAccent" type="Sprite2D" parent="."]
+texture = ExtResource("3_violet")
+position = Vector2(470, 930)
+scale = Vector2(0.94, 0.94)
+
+[node name="CentralLowerWhiteAccent" type="Sprite2D" parent="."]
+texture = ExtResource("2_white")
+position = Vector2(810, 930)
+scale = Vector2(0.94, 0.94)
+
+[node name="WestNorthPinkAccent" type="Sprite2D" parent="."]
+texture = ExtResource("1_pink")
+position = Vector2(330, 570)
+scale = Vector2(0.92, 0.92)
+
+[node name="EastNorthWhiteAccent" type="Sprite2D" parent="."]
+texture = ExtResource("2_white")
+position = Vector2(950, 570)
+scale = Vector2(0.92, 0.92)
+
+[node name="WestSouthWhiteAccent" type="Sprite2D" parent="."]
+texture = ExtResource("2_white")
+position = Vector2(330, 860)
+scale = Vector2(0.92, 0.92)
+
+[node name="EastSouthPinkAccent" type="Sprite2D" parent="."]
+texture = ExtResource("1_pink")
+position = Vector2(950, 860)
+scale = Vector2(0.92, 0.92)

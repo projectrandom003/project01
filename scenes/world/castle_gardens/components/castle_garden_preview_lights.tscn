@@ -1,0 +1,71 @@
+[gd_scene load_steps=3 format=3]
+
+[sub_resource type="Gradient" id="FountainGlowGradient"]
+colors = PackedColorArray(1, 1, 1, 0.72, 1, 1, 1, 0)
+offsets = PackedFloat32Array(0, 1)
+
+[sub_resource type="GradientTexture2D" id="FountainGlowTexture"]
+gradient = SubResource("FountainGlowGradient")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0.02)
+
+[node name="RoyalGardenPreviewLights" type="Node2D"]
+
+[node name="WestFountainGlow" type="PointLight2D" parent="."]
+texture = SubResource("FountainGlowTexture")
+color = Color(1, 0.76, 0.66, 1)
+energy = 0.68
+texture_scale = 3.5
+position = Vector2(350, 690)
+shadow_enabled = false
+
+[node name="EastFountainGlow" type="PointLight2D" parent="."]
+texture = SubResource("FountainGlowTexture")
+color = Color(0.72, 0.8, 1, 1)
+energy = 0.62
+texture_scale = 3.5
+position = Vector2(930, 690)
+shadow_enabled = false
+
+[node name="GrandFountainGlow" type="PointLight2D" parent="."]
+texture = SubResource("FountainGlowTexture")
+color = Color(1, 0.84, 0.7, 1)
+energy = 0.72
+texture_scale = 3.8
+position = Vector2(640, 820)
+shadow_enabled = false
+
+[node name="WestPromenadeGlow" type="PointLight2D" parent="."]
+texture = SubResource("FountainGlowTexture")
+color = Color(1, 0.88, 0.72, 1)
+energy = 0.38
+texture_scale = 3
+position = Vector2(500, 610)
+shadow_enabled = false
+
+[node name="EastPromenadeGlow" type="PointLight2D" parent="."]
+texture = SubResource("FountainGlowTexture")
+color = Color(0.84, 0.8, 1, 1)
+energy = 0.38
+texture_scale = 3
+position = Vector2(780, 610)
+shadow_enabled = false
+
+[node name="WestCloisterLanternGlow" type="PointLight2D" parent="."]
+texture = SubResource("FountainGlowTexture")
+color = Color(1, 0.76, 0.62, 1)
+energy = 0.24
+texture_scale = 2.4
+position = Vector2(355, 650)
+shadow_enabled = false
+
+[node name="EastCloisterLanternGlow" type="PointLight2D" parent="."]
+texture = SubResource("FountainGlowTexture")
+color = Color(1, 0.76, 0.62, 1)
+energy = 0.24
+texture_scale = 2.4
+position = Vector2(925, 650)
+shadow_enabled = false

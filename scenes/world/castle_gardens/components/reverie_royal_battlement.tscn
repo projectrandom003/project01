@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/ornate_wall_segment.png" id="1_wall"]
+
+[node name="RoyalBattlementRun" type="Node2D"]
+y_sort_enabled = true
+
+[node name="BattlementArtwork" type="Sprite2D" parent="."]
+texture = ExtResource("1_wall")
+position = Vector2(0, -18)
+
+[node name="CollisionBody" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Footprint" type="CollisionPolygon2D" parent="CollisionBody"]
+visible = false
+polygon = PackedVector2Array(-78, 2, 0, -38, 78, 2, 78, 32, 0, 72, -78, 32)

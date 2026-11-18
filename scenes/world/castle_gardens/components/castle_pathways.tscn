@@ -1,7 +1,7 @@
 [gd_scene load_steps=2 format=3]
-[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/royal_promenade.tscn" id="1_promenade"]
+
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_road_surface_assembly.tscn" id="1_handdesigned_roads"]
 
 [node name="PathwayTiles" type="Node2D"]
-z_index = -10
 
-[node name="RoyalPromenade" parent="." instance=ExtResource("1_promenade")]
+[node name="HandDesignedRoadSurfaces" parent="." instance=ExtResource("1_handdesigned_roads")]

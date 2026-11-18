@@ -42,6 +42,7 @@ func _ready() -> void:
 		return
 	runtime_component.bind(self)
 	_build_world(GameState.session_domain.player_region, "")
+	AudioDirector.play_exploration_theme()
 	_build_ui()
 	overlay_router.overlay_closed.connect(_on_overlay_closed)
 	overlay_router.main_menu_requested.connect(_return_to_title)

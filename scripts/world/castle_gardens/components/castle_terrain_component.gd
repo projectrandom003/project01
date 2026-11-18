@@ -1,7 +1,7 @@
 class_name CastleTerrainComponent
 extends Node
-## Owns deterministic isometric ground generation; map-specific layout values
-## are authored on the Terrain/Configuration scene and its marker children.
+## Owns deterministic isometric ground generation and the reversible
+## editor-authored TileMapLayer migration seam.
 
 const GROUND_TILE_SCENE: PackedScene = preload("res://scenes/world/castle_gardens/components/castle_terrain_tile.tscn")
 const TERRAIN_DIAMOND_SCENE: PackedScene = preload("res://scenes/world/castle_gardens/components/castle_terrain_diamond.tscn")
@@ -20,9 +20,22 @@ func build() -> void:
 	var ground := world.get_node_or_null("Terrain/Ground") as Node2D
 	var grass_details := world.get_node_or_null("Terrain/GrassDetails") as Node2D
 	var config := world.get_node_or_null("Terrain/Configuration") as Node2D
+	var tilemap_candidate := world.get_node_or_null("Terrain/TilemapCandidate") as Node2D
 	if terrain == null or ground == null or grass_details == null or config == null:
 		push_error("CastleTerrainComponent requires authored Terrain, Ground, GrassDetails and Configuration nodes.")
 		return
+
+	# The baked TileMapLayer scene is mounted in the live composition but stays
+	# opt-in until visual QA approves the renderer swap. This keeps a one-flag,
+	# reversible migration path and preserves legacy nodes/contracts.
+	var use_baked_tilemap := bool(config.get_meta("use_baked_tilemap", false))
+	if tilemap_candidate != null:
+		tilemap_candidate.visible = use_baked_tilemap
+	ground.visible = not use_baked_tilemap
+	grass_details.visible = not use_baked_tilemap
+	if use_baked_tilemap:
+		return
+
 	var min_value: Variant = config.get_meta("ground_min", null)
 	var max_value: Variant = config.get_meta("ground_max", null)
 	if not (min_value is Vector2i) or not (max_value is Vector2i):

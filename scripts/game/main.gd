@@ -6,6 +6,7 @@ extends Control
 func _ready() -> void:
 	UIFactory.set_full_rect(self)
 	theme = UITheme.build()
+	AudioDirector.play_main_theme()
 	startup_flow.bind(self)
 	gameplay_flow.bind(self, startup_flow)
 	startup_flow.quit_requested.connect(_quit)

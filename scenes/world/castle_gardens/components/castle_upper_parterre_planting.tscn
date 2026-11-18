@@ -1,0 +1,50 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/pink_flower_shrub.png" id="1_pink"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/white_flower_shrub.png" id="2_white"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/violet_flower_shrub.png" id="3_violet"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/round_rose_shrub.png" id="4_rose"]
+
+[node name="UpperCastleParterrePlanting" type="Node2D"]
+y_sort_enabled = true
+
+[node name="WestOuterPink" type="Sprite2D" parent="."]
+texture = ExtResource("1_pink")
+position = Vector2(300, 420)
+scale = Vector2(1.08, 1.08)
+
+[node name="WestOuterWhite" type="Sprite2D" parent="."]
+texture = ExtResource("2_white")
+position = Vector2(360, 455)
+scale = Vector2(1.02, 1.02)
+
+[node name="WestInnerViolet" type="Sprite2D" parent="."]
+texture = ExtResource("3_violet")
+position = Vector2(430, 420)
+scale = Vector2(1.08, 1.08)
+
+[node name="WestInnerRose" type="Sprite2D" parent="."]
+texture = ExtResource("4_rose")
+position = Vector2(470, 470)
+scale = Vector2(1.02, 1.02)
+
+[node name="EastOuterWhite" type="Sprite2D" parent="."]
+texture = ExtResource("2_white")
+position = Vector2(980, 420)
+scale = Vector2(1.08, 1.08)
+
+[node name="EastOuterPink" type="Sprite2D" parent="."]
+texture = ExtResource("1_pink")
+position = Vector2(920, 455)
+scale = Vector2(1.02, 1.02)
+
+[node name="EastInnerViolet" type="Sprite2D" parent="."]
+texture = ExtResource("3_violet")
+position = Vector2(850, 420)
+scale = Vector2(1.08, 1.08)
+
+[node name="EastInnerRose" type="Sprite2D" parent="."]
+texture = ExtResource("4_rose")
+position = Vector2(810, 470)
+scale = Vector2(1.02, 1.02)
+flip_h = true

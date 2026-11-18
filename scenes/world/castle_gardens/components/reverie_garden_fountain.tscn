@@ -1,0 +1,22 @@
+[gd_scene format=3]
+[node name="MoonstoneFountain" type="Node2D"]
+y_sort_enabled = true
+[node name="BasinShadow" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-38, 8, 0, -10, 38, 8, 0, 28)
+color = Color(0.23, 0.25, 0.37, 1)
+[node name="BasinStone" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-32, 5, 0, -10, 32, 5, 0, 22)
+color = Color(0.75, 0.76, 0.83, 1)
+[node name="Water" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-24, 3, 0, -8, 24, 3, 0, 16)
+color = Color(0.37, 0.68, 0.73, 1)
+[node name="Pedestal" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-7, 0, 0, -30, 7, 0)
+color = Color(0.7, 0.71, 0.81, 1)
+[node name="TopBowl" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-15, -25, 0, -34, 15, -25, 0, -17)
+color = Color(0.85, 0.77, 0.83, 1)
+[node name="WaterJet" type="Line2D" parent="."]
+points = PackedVector2Array(0, -18, 0, -45)
+width = 3
+default_color = Color(0.63, 0.86, 0.87, 1)

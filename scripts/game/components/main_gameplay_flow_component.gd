@@ -12,6 +12,17 @@ var intro: Node
 func bind(owner: Control, startup: MainStartupFlowComponent) -> void:
 	host = owner
 	startup.main_menu_ready.connect(_on_menu_ready)
+	startup.new_journey_requested.connect(_start_new_journey)
+
+func _start_new_journey() -> void:
+	if menu != null and is_instance_valid(menu):
+		menu.queue_free()
+		menu = null
+	if host.has_node("OpeningCinematic") or loading != null:
+		return
+	GameState.session_domain.set_player_region("castle_royal_gardens")
+	GameState.session_domain.set_active_world("castle_royal_gardens")
+	_show_story_intro()
 
 func _on_menu_ready(ready_menu: MainMenu) -> void:
 	menu = ready_menu

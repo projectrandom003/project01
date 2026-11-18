@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[node name="RoyalGothicWindowModule" type="Node2D"]
+
+[node name="OuterStone" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-15, 12, -15, -8, 0, -29, 15, -8, 15, 12)
+color = Color(0.82, 0.8, 0.85, 1)
+
+[node name="DarkRecess" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-10, 10, -10, -7, 0, -22, 10, -7, 10, 10)
+color = Color(0.23, 0.2, 0.34, 1)
+
+[node name="Glass" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-6, 8, -6, -6, 0, -16, 6, -6, 6, 8)
+color = Color(0.55, 0.66, 0.76, 1)
+
+[node name="Mullion" type="Line2D" parent="."]
+points = PackedVector2Array(0, -16, 0, 9)
+width = 1.5
+default_color = Color(0.84, 0.68, 0.56, 1)

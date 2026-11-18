@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[node name="RoyalGardenStairModule" type="Node2D"]
+y_sort_enabled = true
+
+[node name="LowerShadow" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-48, 13, 0, -11, 48, 13, 48, 28, 0, 52, -48, 28)
+color = Color(0.15, 0.16, 0.24, 1)
+
+[node name="Step01" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-43, 4, 0, -17, 43, 4, 0, 25)
+color = Color(0.82, 0.8, 0.85, 1)
+
+[node name="Step02" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-34, -8, 0, -25, 34, -8, 0, 9)
+color = Color(0.72, 0.71, 0.79, 1)
+
+[node name="Step03" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-25, -20, 0, -33, 25, -20, 0, -3)
+color = Color(0.86, 0.83, 0.87, 1)
+
+[node name="Step04" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-16, -32, 0, -41, 16, -32, 0, -15)
+color = Color(0.76, 0.75, 0.82, 1)
+
+[node name="GoldNosings" type="Line2D" parent="."]
+points = PackedVector2Array(-43, 4, 0, 25, 43, 4)
+width = 1.5
+default_color = Color(0.82, 0.65, 0.52, 1)

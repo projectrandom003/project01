@@ -1,15 +1,55 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://scripts/world/castle_gardens/components/royal_garden.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_garden_flowers.tscn" id="1_flowers"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_garden_lantern.tscn" id="2_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_garden_shrub.tscn" id="3_shrub"]
 
 [node name="RoyalGarden" type="Node2D"]
-script = ExtResource("1")
 y_sort_enabled = true
 
 [node name="FlowerBeds" type="Node2D" parent="."]
 y_sort_enabled = true
 
+[node name="FlowerBedWestNorth" parent="FlowerBeds" instance=ExtResource("1_flowers")]
+position = Vector2(-140, 40)
+
+[node name="FlowerBedEastNorth" parent="FlowerBeds" instance=ExtResource("1_flowers")]
+position = Vector2(140, 40)
+
+[node name="FlowerBedWestSouth" parent="FlowerBeds" instance=ExtResource("1_flowers")]
+position = Vector2(-140, 120)
+
+[node name="FlowerBedEastSouth" parent="FlowerBeds" instance=ExtResource("1_flowers")]
+position = Vector2(140, 120)
+
+[node name="FlowerBedFarWest" parent="FlowerBeds" instance=ExtResource("1_flowers")]
+position = Vector2(-220, 80)
+
+[node name="FlowerBedFarEast" parent="FlowerBeds" instance=ExtResource("1_flowers")]
+position = Vector2(220, 80)
+
 [node name="UrnPlanters" type="Node2D" parent="."]
 y_sort_enabled = true
 
+[node name="UrnWestNorth" parent="UrnPlanters" instance=ExtResource("3_shrub")]
+position = Vector2(-80, 0)
+
+[node name="UrnEastNorth" parent="UrnPlanters" instance=ExtResource("3_shrub")]
+position = Vector2(80, 0)
+
+[node name="UrnWestSouth" parent="UrnPlanters" instance=ExtResource("3_shrub")]
+position = Vector2(-80, 160)
+
+[node name="UrnEastSouth" parent="UrnPlanters" instance=ExtResource("3_shrub")]
+position = Vector2(80, 160)
+
 [node name="Collisions" type="Node2D" parent="."]
+
+[node name="Lighting" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="WestLantern" parent="Lighting" instance=ExtResource("2_lantern")]
+position = Vector2(-190, 80)
+
+[node name="EastLantern" parent="Lighting" instance=ExtResource("2_lantern")]
+position = Vector2(190, 80)

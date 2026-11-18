@@ -1,0 +1,277 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_garden_fountain.tscn" id="1_fountain"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_garden_bench.tscn" id="2_bench"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_garden_lantern.tscn" id="3_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_garden_flowers.tscn" id="4_flowers"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_garden_shrub.tscn" id="5_bush"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_garden_hedge.tscn" id="6_hedge"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/royalgardenblossomtree.tscn" id="7_blossom"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/royalgardenbroadleaftree.tscn" id="8_broadleaf"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/royalgardenevergreentree.tscn" id="9_evergreen"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_royal_wall_x.tscn" id="10_wall_x"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_royal_wall_y.tscn" id="11_wall_y"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_royal_gatehouse.tscn" id="12_gate"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_royal_castle_facade.tscn" id="13_castle_entrance"]
+
+[node name="RoyalGardenCourtyardDecorations" type="Node2D"]
+y_sort_enabled = true
+
+[node name="Fountains" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="WestFountain" parent="Fountains" instance=ExtResource("1_fountain")]
+position = Vector2(416, 528)
+
+[node name="EastFountain" parent="Fountains" instance=ExtResource("1_fountain")]
+position = Vector2(832, 512)
+
+[node name="Seating" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="WestBench" parent="Seating" instance=ExtResource("2_bench")]
+position = Vector2(304, 720)
+
+[node name="EastBench" parent="Seating" instance=ExtResource("2_bench")]
+position = Vector2(944, 704)
+
+[node name="WestGardenBench" parent="Seating" instance=ExtResource("2_bench")]
+position = Vector2(496, 832)
+
+[node name="EastGardenBench" parent="Seating" instance=ExtResource("2_bench")]
+position = Vector2(752, 832)
+
+[node name="Lighting" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="PromenadeLampWestFront" parent="Lighting" instance=ExtResource("3_lantern")]
+position = Vector2(560, 320)
+
+[node name="PromenadeLampEastFront" parent="Lighting" instance=ExtResource("3_lantern")]
+position = Vector2(720, 320)
+
+[node name="PromenadeLampWestRear" parent="Lighting" instance=ExtResource("3_lantern")]
+position = Vector2(560, 640)
+
+[node name="PromenadeLampEastRear" parent="Lighting" instance=ExtResource("3_lantern")]
+position = Vector2(720, 640)
+
+[node name="WestFountainLamp" parent="Lighting" instance=ExtResource("3_lantern")]
+position = Vector2(256, 512)
+
+[node name="EastFountainLamp" parent="Lighting" instance=ExtResource("3_lantern")]
+position = Vector2(992, 512)
+
+[node name="Flowerbeds" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Flowerbed01" parent="Flowerbeds" instance=ExtResource("4_flowers")]
+position = Vector2(256, 320)
+
+[node name="Flowerbed02" parent="Flowerbeds" instance=ExtResource("4_flowers")]
+position = Vector2(384, 256)
+
+[node name="Flowerbed03" parent="Flowerbeds" instance=ExtResource("4_flowers")]
+position = Vector2(896, 256)
+
+[node name="Flowerbed04" parent="Flowerbeds" instance=ExtResource("4_flowers")]
+position = Vector2(1024, 320)
+
+[node name="Flowerbed05" parent="Flowerbeds" instance=ExtResource("4_flowers")]
+position = Vector2(192, 768)
+
+[node name="Flowerbed06" parent="Flowerbeds" instance=ExtResource("4_flowers")]
+position = Vector2(1088, 768)
+
+[node name="Flowerbed07" parent="Flowerbeds" instance=ExtResource("4_flowers")]
+position = Vector2(448, 864)
+
+[node name="Flowerbed08" parent="Flowerbeds" instance=ExtResource("4_flowers")]
+position = Vector2(832, 864)
+
+[node name="FloweringShrubs" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Shrub01" parent="FloweringShrubs" instance=ExtResource("5_bush")]
+position = Vector2(320, 448)
+
+[node name="Shrub02" parent="FloweringShrubs" instance=ExtResource("5_bush")]
+position = Vector2(512, 352)
+
+[node name="Shrub03" parent="FloweringShrubs" instance=ExtResource("5_bush")]
+position = Vector2(768, 352)
+
+[node name="Shrub04" parent="FloweringShrubs" instance=ExtResource("5_bush")]
+position = Vector2(960, 448)
+
+[node name="Shrub05" parent="FloweringShrubs" instance=ExtResource("5_bush")]
+position = Vector2(352, 896)
+
+[node name="Shrub06" parent="FloweringShrubs" instance=ExtResource("5_bush")]
+position = Vector2(928, 896)
+
+[node name="HedgeBorders" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="WestFountainHedge" parent="HedgeBorders" instance=ExtResource("6_hedge")]
+position = Vector2(320, 624)
+
+[node name="EastFountainHedge" parent="HedgeBorders" instance=ExtResource("6_hedge")]
+position = Vector2(928, 608)
+
+[node name="WestOuterHedge" parent="HedgeBorders" instance=ExtResource("6_hedge")]
+position = Vector2(192, 960)
+
+[node name="EastOuterHedge" parent="HedgeBorders" instance=ExtResource("6_hedge")]
+position = Vector2(1056, 960)
+
+[node name="Architecture" type="Node2D" parent="."]
+y_sort_enabled = true
+visible = false
+
+[node name="CastleEntrance" parent="Architecture" instance=ExtResource("13_castle_entrance")]
+position = Vector2(640, 256)
+
+[node name="NorthEastWall00" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(672, 96)
+
+[node name="NorthEastWall01" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(736, 128)
+
+[node name="NorthEastWall02" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(800, 160)
+
+[node name="NorthEastWall03" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(864, 192)
+
+[node name="NorthEastWall04" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(928, 224)
+
+[node name="NorthEastWall05" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(992, 256)
+
+[node name="NorthEastWall06" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(1056, 288)
+
+[node name="NorthEastWall07" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(1120, 320)
+
+[node name="NorthEastWall08" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(1184, 352)
+
+[node name="NorthEastWall09" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(1248, 384)
+
+[node name="SouthEastWall00" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(1248, 416)
+
+[node name="SouthEastWall01" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(1184, 448)
+
+[node name="SouthEastWall02" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(1120, 480)
+
+[node name="SouthEastWall03" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(1056, 512)
+
+[node name="SouthEastWall04" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(992, 544)
+
+[node name="SouthEastWall05" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(928, 576)
+
+[node name="SouthEastWall06" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(864, 608)
+
+[node name="SouthEastWall07" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(800, 640)
+
+[node name="SouthWestWall02" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(480, 640)
+
+[node name="SouthWestWall03" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(416, 608)
+
+[node name="SouthWestWall04" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(352, 576)
+
+[node name="SouthWestWall05" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(288, 544)
+
+[node name="SouthWestWall06" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(224, 512)
+
+[node name="SouthWestWall07" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(160, 480)
+
+[node name="SouthWestWall08" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(96, 448)
+
+[node name="SouthWestWall09" parent="Architecture" instance=ExtResource("10_wall_x")]
+position = Vector2(32, 416)
+
+[node name="NorthWestWall00" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(32, 384)
+
+[node name="NorthWestWall01" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(96, 352)
+
+[node name="NorthWestWall02" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(160, 320)
+
+[node name="NorthWestWall03" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(224, 288)
+
+[node name="NorthWestWall04" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(288, 256)
+
+[node name="NorthWestWall05" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(352, 224)
+
+[node name="NorthWestWall06" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(416, 192)
+
+[node name="NorthWestWall07" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(480, 160)
+
+[node name="NorthWestWall08" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(544, 128)
+
+[node name="NorthWestWall09" parent="Architecture" instance=ExtResource("11_wall_y")]
+position = Vector2(608, 96)
+
+[node name="SouthGate" parent="Architecture" instance=ExtResource("12_gate")]
+position = Vector2(640, 720)
+
+[node name="Trees" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="BlossomNorthWest" parent="Trees" instance=ExtResource("7_blossom")]
+position = Vector2(192, 160)
+
+[node name="BroadleafNorth" parent="Trees" instance=ExtResource("8_broadleaf")]
+position = Vector2(448, 128)
+
+[node name="BlossomNorthEast" parent="Trees" instance=ExtResource("7_blossom")]
+position = Vector2(1088, 160)
+
+[node name="BroadleafNorthEast" parent="Trees" instance=ExtResource("8_broadleaf")]
+position = Vector2(832, 128)
+
+[node name="EvergreenWest" parent="Trees" instance=ExtResource("9_evergreen")]
+position = Vector2(128, 480)
+
+[node name="BroadleafWest" parent="Trees" instance=ExtResource("8_broadleaf")]
+position = Vector2(192, 704)
+
+[node name="EvergreenEast" parent="Trees" instance=ExtResource("9_evergreen")]
+position = Vector2(1152, 480)
+
+[node name="BroadleafEast" parent="Trees" instance=ExtResource("8_broadleaf")]
+position = Vector2(1088, 704)
+
+[node name="BlossomSouthWest" parent="Trees" instance=ExtResource("7_blossom")]
+position = Vector2(320, 1008)
+
+[node name="BlossomSouthEast" parent="Trees" instance=ExtResource("7_blossom")]
+position = Vector2(960, 1008)

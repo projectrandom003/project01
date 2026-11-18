@@ -2,6 +2,7 @@ class_name MainStartupFlowComponent
 extends Node
 ## Owns Title -> Loading -> Main Menu transitions and save/new-game decisions.
 signal main_menu_ready(menu: MainMenu)
+signal new_journey_requested
 signal quit_requested
 const TITLE_SCENE: PackedScene = preload("res://scenes/ui/title_screen.tscn")
 const MENU_SCENE: PackedScene = preload("res://scenes/ui/main_menu.tscn")
@@ -14,6 +15,7 @@ func bind(owner: Control) -> void:
 	host = owner
 
 func begin() -> void:
+	AudioDirector.play_main_theme()
 	title = TITLE_SCENE.instantiate() as TitleScreen
 	if title == null:
 		push_error("[StartupFlow] Title screen failed to instantiate.")
@@ -31,7 +33,7 @@ func _on_title_action(action: String) -> void:
 		host.add_child(confirm)
 		confirm.confirmed.connect(func() -> void:
 			_prepare_new_journey()
-			_load_menu()
+			_launch_new_journey()
 			confirm.queue_free()
 		)
 		confirm.canceled.connect(confirm.queue_free)
@@ -39,12 +41,19 @@ func _on_title_action(action: String) -> void:
 		return
 	if action == "new":
 		_prepare_new_journey()
+		_launch_new_journey()
 	elif action in ["continue", "load"] and SaveService.has_save():
 		var data := SaveService.load_save()
 		if not data.is_empty():
 			GameState._load_from_dict(data)
 		GameState.session_domain.loaded_from_save = true
 	_load_menu()
+
+func _launch_new_journey() -> void:
+	if title != null and is_instance_valid(title):
+		title.queue_free()
+		title = null
+	new_journey_requested.emit()
 
 func _prepare_new_journey() -> void:
 	GameState.reset_progress()

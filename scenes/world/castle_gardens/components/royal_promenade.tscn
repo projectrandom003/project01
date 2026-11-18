@@ -529,5 +529,3 @@ texture = ExtResource("1_path")
 texture_filter = 1
 position = Vector2(647, 861)
 texture = ExtResource("1_path")
-
-

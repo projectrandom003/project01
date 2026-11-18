@@ -29,6 +29,7 @@ TouchInput="*res://scripts/player/touch_input.gd"
 ContentDB="*res://scripts/core/content_db.gd"
 SaveService="*res://scripts/core/save_service.gd"
 GameState="*res://scenes/core/game_state.tscn"
+AudioDirector="*res://scenes/core/audio_director.tscn"
 
 [display]
 
