@@ -6,6 +6,7 @@ metadata/ground_max = Vector2i(65, 45)
 metadata/tile_width = 64.0
 metadata/tile_height = 32.0
 metadata/random_seed = 9001
+metadata/use_baked_tilemap = false
 metadata/grass_texture_paths = PackedStringArray("res://assets/castle_pack_v02/environment/terrain/grass_01.png", "res://assets/castle_pack_v02/environment/terrain/grass_02.png", "res://assets/castle_pack_v02/environment/terrain/grass_03.png")
 
 [node name="GrassDetail01" type="Marker2D" parent="."]

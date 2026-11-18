@@ -81,7 +81,7 @@ func _show_events() -> void:
 	overlays.show_notice("Events", "Limited-time events will appear here.")
 
 func _show_calendar() -> void:
-	overlays.show_notice("Calendar", "Your daily and monthly schedule will appear here.")
+	overlays.open_daily_rewards()
 
 func _show_gifts() -> void:
 	overlays.show_notice("Gifts", "Claimable gifts will appear here.")

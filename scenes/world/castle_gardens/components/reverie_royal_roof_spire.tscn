@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[node name="LavenderRoofSpire" type="Node2D"]
+
+[node name="RoofShadow" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-27, 0, 0, -22, 27, 0, 0, 17)
+color = Color(0.24, 0.2, 0.35, 1)
+
+[node name="RoofLeft" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-23, -1, 0, -19, 0, 13)
+color = Color(0.57, 0.45, 0.67, 1)
+
+[node name="RoofRight" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -19, 23, -1, 0, 13)
+color = Color(0.38, 0.31, 0.52, 1)
+
+[node name="Ridge" type="Line2D" parent="."]
+points = PackedVector2Array(0, -19, 0, 13)
+width = 2
+default_color = Color(0.86, 0.69, 0.56, 1)
+
+[node name="Finial" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-4, -19, 0, -31, 4, -19)
+color = Color(0.86, 0.69, 0.56, 1)

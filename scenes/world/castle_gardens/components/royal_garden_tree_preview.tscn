@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/royalgardenblossomtree.tscn" id="1_blossom"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/royalgardenbroadleaftree.tscn" id="2_broadleaf"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/royalgardenevergreentree.tscn" id="3_evergreen"]
+
+[node name="RoyalGardenTreePreview" type="Node2D"]
+y_sort_enabled = true
+
+[node name="BlossomTree" parent="." instance=ExtResource("1_blossom")]
+position = Vector2(-128, 0)
+
+[node name="BroadleafTree" parent="." instance=ExtResource("2_broadleaf")]
+position = Vector2(0, 0)
+
+[node name="EvergreenTree" parent="." instance=ExtResource("3_evergreen")]
+position = Vector2(128, 0)

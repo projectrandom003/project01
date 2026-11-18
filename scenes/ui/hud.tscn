@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/minimap.tscn" id="2_minimap"]
@@ -7,6 +7,9 @@
 [ext_resource type="Script" path="res://scripts/ui/components/hud_party_component.gd" id="5_party"]
 [ext_resource type="Script" path="res://scripts/ui/components/hud_quest_component.gd" id="6_quest"]
 [ext_resource type="Script" path="res://scripts/ui/components/hud_toast_component.gd" id="7_toast"]
+[ext_resource type="Script" path="res://scripts/ui/components/hud_responsive_layout_component.gd" id="8_responsive_layout"]
+[ext_resource type="Script" path="res://scripts/ui/components/hud_navigation_component.gd" id="9_navigation"]
+[ext_resource type="Script" path="res://scripts/ui/components/hud_prompt_component.gd" id="10_prompt"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_party"]
 bg_color = Color(0.045, 0.065, 0.115, 0.78)
@@ -279,3 +282,12 @@ script = ExtResource("6_quest")
 
 [node name="Toast" type="Node" parent="."]
 script = ExtResource("7_toast")
+
+[node name="ResponsiveLayout" type="Node" parent="."]
+script = ExtResource("8_responsive_layout")
+
+[node name="Navigation" type="Node" parent="."]
+script = ExtResource("9_navigation")
+
+[node name="Prompt" type="Node" parent="."]
+script = ExtResource("10_prompt")

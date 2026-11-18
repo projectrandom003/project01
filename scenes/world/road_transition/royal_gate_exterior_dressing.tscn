@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Royal_Gardens/Decorations/lamp_post_gold.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Royal_Gardens/Decorations/lamp_post_gold.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Royal_Gardens/Decorations/urn_stone_01.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Royal_Gardens/Decorations/urn_stone_01.tscn" id="4"]
+
+[node name="royal_gate_exterior_dressing" type="Node2D"]
+y_sort_enabled = true
+
+[node name="WestRoyalLamp" parent="." instance=ExtResource("1")]
+position = Vector2(-132, 0)
+
+[node name="EastRoyalLamp" parent="." instance=ExtResource("2")]
+position = Vector2(132, 0)
+
+[node name="WestRoseUrn" parent="." instance=ExtResource("3")]
+position = Vector2(-88, 44)
+
+[node name="EastRoseUrn" parent="." instance=ExtResource("4")]
+position = Vector2(88, 44)

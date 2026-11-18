@@ -1,62 +1,38 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/water/fountain_tiered.tscn" id="1_fountain"]
-[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/water/water_tile_anim.tscn" id="2_water_tile"]
-[ext_resource type="Script" path="res://scripts/world/castle_gardens/components/castle_water_component.gd" id="3_water"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/angel_tiered_fountain.png" id="1_angel"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/blue_royal_fountain.png" id="2_blue"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/lotus_fountain.png" id="3_lotus"]
+[ext_resource type="Script" path="res://scripts/world/castle_gardens/components/castle_water_component.gd" id="4_water"]
 
 [node name="Water" type="Node2D"]
 y_sort_enabled = true
-script = ExtResource("3_water")
+script = ExtResource("4_water")
 
 [node name="WaterZones" type="Node2D" parent="."]
 
-[node name="LeftPond" type="Marker2D" parent="WaterZones"]
-metadata/grid_position = Vector2(23.75, 10.31)
+[node name="WestPondZone" type="Marker2D" parent="WaterZones"]
+metadata/grid_position = Vector2(20.5, 17.25)
 metadata/radius = 2.1
 
-[node name="RightPond" type="Marker2D" parent="WaterZones"]
-metadata/grid_position = Vector2(30.31, 3.75)
+[node name="EastPondZone" type="Marker2D" parent="WaterZones"]
+metadata/grid_position = Vector2(35.5, 17.25)
 metadata/radius = 2.1
 
 [node name="FountainCourt" type="Node2D" parent="."]
+position = Vector2(-140.8, 0)
+scale = Vector2(1.22, 1.0)
 y_sort_enabled = true
 
-[node name="Fountain" parent="FountainCourt" instance=ExtResource("1_fountain")]
-position = Vector2(235, 372)
+[node name="WestBlueRoyalFountain" type="Sprite2D" parent="FountainCourt"]
+texture = ExtResource("2_blue")
+position = Vector2(350, 690)
 
-[node name="OuterPonds" type="Node2D" parent="."]
-y_sort_enabled = true
+[node name="EastLotusFountain" type="Sprite2D" parent="FountainCourt"]
+texture = ExtResource("3_lotus")
+position = Vector2(930, 690)
 
-[node name="PondLeftTile0" parent="OuterPonds" instance=ExtResource("2_water_tile")]
-
-[node name="PondLeftTile1" parent="OuterPonds" instance=ExtResource("2_water_tile")]
-phase_offset = 1
-
-[node name="PondLeftTile2" parent="OuterPonds" instance=ExtResource("2_water_tile")]
-phase_offset = 2
-
-[node name="PondLeftTile3" parent="OuterPonds" instance=ExtResource("2_water_tile")]
-phase_offset = 3
-
-[node name="PondLeftTile4" parent="OuterPonds" instance=ExtResource("2_water_tile")]
-
-[node name="PondLeftTile5" parent="OuterPonds" instance=ExtResource("2_water_tile")]
-scale = Vector2(1.4375, 1)
-phase_offset = 1
-
-[node name="PondRightTile0" parent="OuterPonds" instance=ExtResource("2_water_tile")]
-phase_offset = 2
-
-[node name="PondRightTile1" parent="OuterPonds" instance=ExtResource("2_water_tile")]
-phase_offset = 3
-
-[node name="PondRightTile2" parent="OuterPonds" instance=ExtResource("2_water_tile")]
-
-[node name="PondRightTile3" parent="OuterPonds" instance=ExtResource("2_water_tile")]
-phase_offset = 1
-
-[node name="PondRightTile4" parent="OuterPonds" instance=ExtResource("2_water_tile")]
-phase_offset = 2
-
-[node name="PondRightTile5" parent="OuterPonds" instance=ExtResource("2_water_tile")]
-phase_offset = 3
+[node name="GrandAngelFountain" type="Sprite2D" parent="FountainCourt"]
+texture = ExtResource("1_angel")
+position = Vector2(640, 820)
+scale = Vector2(1.08, 1.08)

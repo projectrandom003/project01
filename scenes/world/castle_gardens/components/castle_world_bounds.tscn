@@ -1,31 +1,31 @@
 [gd_scene load_steps=5 format=3]
 
 [sub_resource type="RectangleShape2D" id="LeftShape"]
-size = Vector2(32, 1400)
+size = Vector2(32, 1800)
 
 [sub_resource type="RectangleShape2D" id="RightShape"]
-size = Vector2(32, 1400)
+size = Vector2(32, 1800)
 
 [sub_resource type="RectangleShape2D" id="TopShape"]
-size = Vector2(1600, 32)
+size = Vector2(2500, 32)
 
 [sub_resource type="RectangleShape2D" id="BottomShape"]
-size = Vector2(1600, 32)
+size = Vector2(2500, 32)
 
 [node name="Bounds" type="StaticBody2D"]
 
 [node name="Left" type="CollisionShape2D" parent="."]
-position = Vector2(-150, 350)
+position = Vector2(-480, 540)
 shape = SubResource("LeftShape")
 
 [node name="Right" type="CollisionShape2D" parent="."]
-position = Vector2(1320, 350)
+position = Vector2(1920, 540)
 shape = SubResource("RightShape")
 
 [node name="Top" type="CollisionShape2D" parent="."]
-position = Vector2(585, -220)
+position = Vector2(720, -360)
 shape = SubResource("TopShape")
 
 [node name="Bottom" type="CollisionShape2D" parent="."]
-position = Vector2(585, 920)
+position = Vector2(720, 1440)
 shape = SubResource("BottomShape")

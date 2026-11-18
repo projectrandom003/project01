@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://scripts/core/components/game_state_persistence_component.gd" id="6_persistence"]
 [ext_resource type="Script" path="res://scripts/core/components/game_profile_domain_component.gd" id="7_profile"]
 [ext_resource type="Script" path="res://scripts/core/components/game_session_domain_component.gd" id="8_session"]
+[ext_resource type="Script" path="res://scripts/core/components/game_state_lifecycle_component.gd" id="9_lifecycle"]
 
 [node name="GameState" type="Node"]
 script = ExtResource("1_state")
@@ -39,3 +40,6 @@ script = ExtResource("7_profile")
 
 [node name="SessionDomain" type="Node" parent="."]
 script = ExtResource("8_session")
+
+[node name="Lifecycle" type="Node" parent="."]
+script = ExtResource("9_lifecycle")

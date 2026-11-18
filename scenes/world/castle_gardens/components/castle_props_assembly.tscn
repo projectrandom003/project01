@@ -1,60 +1,172 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=7 format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/props/stone_bench.tscn" id="1_bench"]
-[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/props/lantern_post_gold.tscn" id="2_lantern_gold"]
-[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/props/lantern_post_arcane.tscn" id="3_lantern_arcane"]
-[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/v02/props/guardian_statue.tscn" id="4_statue"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/ornate_stone_bench.png" id="1_bench"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/robed_guardian_statue.png" id="2_statue"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/royal_banner.png" id="3_banner"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/royal_lantern_post.png" id="4_lantern"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/flower_bench.png" id="5_flower_bench"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/gothic_archway.png" id="6_arch"]
 
 [node name="Props" type="Node2D"]
 y_sort_enabled = true
 
-[node name="Furniture" type="Node2D" parent="."]
+[node name="EntranceArchitecture" type="Node2D" parent="."]
 y_sort_enabled = true
 
-[node name="Lighting" type="Node2D" parent="."]
+[node name="WestGothicArch" type="Sprite2D" parent="EntranceArchitecture"]
+texture = ExtResource("6_arch")
+position = Vector2(450, 470)
+scale = Vector2(0.82, 0.82)
+
+[node name="EastGothicArch" type="Sprite2D" parent="EntranceArchitecture"]
+texture = ExtResource("6_arch")
+position = Vector2(830, 470)
+scale = Vector2(0.82, 0.82)
+flip_h = true
+
+[node name="RoyalBanners" type="Node2D" parent="."]
 y_sort_enabled = true
 
-[node name="Statues" type="Node2D" parent="."]
+[node name="BannerWest" type="Sprite2D" parent="RoyalBanners"]
+texture = ExtResource("3_banner")
+position = Vector2(505, 350)
+
+[node name="BannerEast" type="Sprite2D" parent="RoyalBanners"]
+texture = ExtResource("3_banner")
+position = Vector2(775, 350)
+flip_h = true
+
+[node name="LanternPosts" type="Node2D" parent="."]
 y_sort_enabled = true
 
-[node name="BenchWestA" parent="Furniture" instance=ExtResource("1_bench")]
-position = Vector2(173, 449)
+[node name="LanternWestGate" type="Sprite2D" parent="LanternPosts"]
+texture = ExtResource("4_lantern")
+position = Vector2(555, 470)
 
-[node name="BenchWestB" parent="Furniture" instance=ExtResource("1_bench")]
-position = Vector2(105, 411)
+[node name="LanternEastGate" type="Sprite2D" parent="LanternPosts"]
+texture = ExtResource("4_lantern")
+position = Vector2(725, 470)
 
-[node name="BenchEastA" parent="Furniture" instance=ExtResource("1_bench")]
-position = Vector2(333, 319)
+[node name="LanternWestGarden" type="Sprite2D" parent="LanternPosts"]
+texture = ExtResource("4_lantern")
+position = Vector2(320, 690)
 
-[node name="LanternGoldA" parent="Lighting" instance=ExtResource("2_lantern_gold")]
-position = Vector2(548, 439)
+[node name="LanternEastGarden" type="Sprite2D" parent="LanternPosts"]
+texture = ExtResource("4_lantern")
+position = Vector2(960, 690)
 
-[node name="LanternGoldB" parent="Lighting" instance=ExtResource("2_lantern_gold")]
-position = Vector2(553, 341)
+[node name="GuardianStatues" type="Node2D" parent="."]
+y_sort_enabled = true
 
-[node name="LanternGoldC" parent="Lighting" instance=ExtResource("2_lantern_gold")]
-position = Vector2(680, 541)
+[node name="GuardianStatueWest" type="Sprite2D" parent="GuardianStatues"]
+texture = ExtResource("2_statue")
+position = Vector2(455, 740)
 
-[node name="LanternGoldD" parent="Lighting" instance=ExtResource("2_lantern_gold")]
-position = Vector2(674, 363)
+[node name="GuardianStatueEast" type="Sprite2D" parent="GuardianStatues"]
+texture = ExtResource("2_statue")
+position = Vector2(825, 740)
+flip_h = true
 
-[node name="LanternGoldE" parent="Lighting" instance=ExtResource("2_lantern_gold")]
-position = Vector2(544, 784)
+[node name="GardenSeating" type="Node2D" parent="."]
+y_sort_enabled = true
 
-[node name="LanternGoldF" parent="Lighting" instance=ExtResource("2_lantern_gold")]
-position = Vector2(682, 439)
+[node name="WestStoneBench" type="Sprite2D" parent="GardenSeating"]
+texture = ExtResource("1_bench")
+position = Vector2(360, 900)
 
-[node name="LanternArcaneA" parent="Lighting" instance=ExtResource("3_lantern_arcane")]
-position = Vector2(556, 612)
+[node name="EastStoneBench" type="Sprite2D" parent="GardenSeating"]
+texture = ExtResource("1_bench")
+position = Vector2(920, 900)
+flip_h = true
 
-[node name="LanternArcaneB" parent="Lighting" instance=ExtResource("3_lantern_arcane")]
-position = Vector2(677, 624)
+[node name="WestFlowerBench" type="Sprite2D" parent="GardenSeating"]
+visible = true
+texture = ExtResource("5_flower_bench")
+position = Vector2(480, 1010)
 
-[node name="LanternArcaneC" parent="Lighting" instance=ExtResource("3_lantern_arcane")]
-position = Vector2(679, 791)
+[node name="EastFlowerBench" type="Sprite2D" parent="GardenSeating"]
+visible = true
+texture = ExtResource("5_flower_bench")
+position = Vector2(800, 1010)
+flip_h = true
 
-[node name="StatueWest" parent="Statues" instance=ExtResource("4_statue")]
-position = Vector2(448, 256)
+[node name="SecondaryGardenFurnishings" type="Node2D" parent="."]
+visible = true
+y_sort_enabled = true
 
-[node name="StatueEast" parent="Statues" instance=ExtResource("4_statue")]
-position = Vector2(937, 520)
+[node name="LanternWestPromenadeNorth" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("4_lantern")
+position = Vector2(485, 590)
+scale = Vector2(0.82, 0.82)
+
+[node name="LanternEastPromenadeNorth" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("4_lantern")
+position = Vector2(795, 590)
+scale = Vector2(0.82, 0.82)
+flip_h = true
+
+[node name="LanternWestPromenadeSouth" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("4_lantern")
+position = Vector2(485, 850)
+scale = Vector2(0.82, 0.82)
+
+[node name="LanternEastPromenadeSouth" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("4_lantern")
+position = Vector2(795, 850)
+scale = Vector2(0.82, 0.82)
+flip_h = true
+
+[node name="LanternWestOuterCourt" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("4_lantern")
+position = Vector2(235, 700)
+scale = Vector2(0.78, 0.78)
+
+[node name="LanternEastOuterCourt" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("4_lantern")
+position = Vector2(1045, 700)
+scale = Vector2(0.78, 0.78)
+flip_h = true
+
+[node name="LanternWestSouthCourt" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("4_lantern")
+position = Vector2(330, 1110)
+scale = Vector2(0.78, 0.78)
+
+[node name="LanternEastSouthCourt" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("4_lantern")
+position = Vector2(950, 1110)
+scale = Vector2(0.78, 0.78)
+flip_h = true
+
+[node name="WestRestingBenchSeat" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("1_bench")
+position = Vector2(270, 455)
+scale = Vector2(0.84, 0.84)
+
+[node name="EastRestingBenchSeat" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("1_bench")
+position = Vector2(1010, 455)
+scale = Vector2(0.84, 0.84)
+flip_h = true
+
+[node name="WestGardenBenchSouthSeat" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("1_bench")
+position = Vector2(470, 1130)
+scale = Vector2(0.78, 0.78)
+
+[node name="EastGardenBenchSouthSeat" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("1_bench")
+position = Vector2(810, 1130)
+scale = Vector2(0.78, 0.78)
+flip_h = true
+
+[node name="WestGuardianOuterStatue" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("2_statue")
+position = Vector2(175, 700)
+scale = Vector2(0.78, 0.78)
+
+[node name="EastGuardianOuterStatue" type="Sprite2D" parent="SecondaryGardenFurnishings"]
+texture = ExtResource("2_statue")
+position = Vector2(1105, 700)
+scale = Vector2(0.78, 0.78)
+flip_h = true

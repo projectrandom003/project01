@@ -25,6 +25,11 @@
 [ext_resource type="Script" path="res://scripts/world/components/world_effect_follow_component.gd" id="23_effect_follow"]
 [ext_resource type="Script" path="res://scripts/world/components/world_presentation_config_component.gd" id="24_presentation_config"]
 [ext_resource type="Script" path="res://scripts/world/components/world_runtime_component.gd" id="26_runtime"]
+[ext_resource type="Script" path="res://scripts/world/components/world_chunk_runtime_component.gd" id="32_chunk_runtime"]
+[ext_resource type="Script" path="res://scripts/world/components/world_presentation_runtime_component.gd" id="33_presentation_runtime"]
+[ext_resource type="Script" path="res://scripts/world/components/world_session_persistence_component.gd" id="34_session_persistence"]
+[ext_resource type="Script" path="res://scripts/world/components/world_atmosphere_refresh_component.gd" id="35_atmosphere_refresh"]
+[ext_resource type="Script" path="res://scripts/world/components/world_diagnostics_component.gd" id="36_diagnostics"]
 [ext_resource type="Script" path="res://scripts/world/components/world_resource_setup_component.gd" id="27_resource_setup"]
 [ext_resource type="Resource" path="res://resources/world/greenward_composition.tres" id="25_composition"]
 [ext_resource type="Script" path="res://scripts/world/components/world_greenward_river_component.gd" id="28_greenward_river"]
@@ -138,5 +143,20 @@ script = ExtResource("24_presentation_config")
 [node name="WorldRuntime" type="Node" parent="."]
 script = ExtResource("26_runtime")
 
+[node name="ChunkRuntime" type="Node" parent="WorldRuntime"]
+script = ExtResource("32_chunk_runtime")
+
+[node name="PresentationRuntime" type="Node" parent="WorldRuntime"]
+script = ExtResource("33_presentation_runtime")
+
+[node name="SessionPersistence" type="Node" parent="WorldRuntime"]
+script = ExtResource("34_session_persistence")
+
+[node name="AtmosphereRefresh" type="Node" parent="WorldRuntime"]
+script = ExtResource("35_atmosphere_refresh")
+
 [node name="ResourceSetup" type="Node" parent="."]
 script = ExtResource("27_resource_setup")
+
+[node name="Diagnostics" type="Node" parent="."]
+script = ExtResource("36_diagnostics")

@@ -1,0 +1,58 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/royal_garden_isometric_layers_baked.tscn" id="1_terrain"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_royal_gardens_castle_collection.tscn" id="2_castle"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_flora_assembly.tscn" id="3_flora"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_props_assembly.tscn" id="4_props"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_water_assembly.tscn" id="5_water"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_pathways.tscn" id="6_paths"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_garden_preview_lights.tscn" id="7_lights"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_garden_ambient_particles.tscn" id="9_petals"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_garden_fence_assembly.tscn" id="10_fences"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_road_edge_transitions.tscn" id="11_edges"]
+
+[node name="ReverieRoyalGardensFullPreview" type="Node2D"]
+y_sort_enabled = true
+
+[node name="TerrainSystem" type="Node2D" parent="."]
+y_sort_enabled = true
+[node name="IsometricTerrainLayers" parent="TerrainSystem" instance=ExtResource("1_terrain")]
+[node name="RoadEdgeTransitions" parent="TerrainSystem" instance=ExtResource("11_edges")]
+
+[node name="PathwaySystem" type="Node2D" parent="."]
+y_sort_enabled = true
+z_index = 10
+[node name="RoyalPathways" parent="PathwaySystem" instance=ExtResource("6_paths")]
+
+[node name="CastleSystem" type="Node2D" parent="."]
+y_sort_enabled = true
+[node name="ModularCastleAssembly" parent="CastleSystem" instance=ExtResource("2_castle")]
+
+[node name="GardenFloraSystem" type="Node2D" parent="."]
+y_sort_enabled = true
+[node name="Flora" parent="GardenFloraSystem" instance=ExtResource("3_flora")]
+
+[node name="FenceSystem" type="Node2D" parent="."]
+y_sort_enabled = true
+[node name="GardenFences" parent="FenceSystem" instance=ExtResource("10_fences")]
+
+[node name="GardenPropsSystem" type="Node2D" parent="."]
+y_sort_enabled = true
+[node name="Props" parent="GardenPropsSystem" instance=ExtResource("4_props")]
+
+[node name="GardenWaterSystem" type="Node2D" parent="."]
+y_sort_enabled = true
+[node name="Water" parent="GardenWaterSystem" instance=ExtResource("5_water")]
+
+[node name="GardenAtmosphere" parent="." instance=ExtResource("7_lights")]
+
+[node name="AmbientColor" type="CanvasModulate" parent="."]
+color = Color(0.94, 0.91, 0.86, 1)
+
+[node name="PreviewCamera" type="Camera2D" parent="."]
+position = Vector2(640, 600)
+zoom = Vector2(0.62, 0.62)
+enabled = true
+
+[node name="PetalDrift" parent="." instance=ExtResource("9_petals")]
+position = Vector2(640, 640)

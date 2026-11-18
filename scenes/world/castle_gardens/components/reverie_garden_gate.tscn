@@ -1,0 +1,4 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_royal_gatehouse.tscn" id="1_gate"]
+[node name="GrandRoseGardenGate" type="Node2D"]
+[node name="Gatehouse" parent="." instance=ExtResource("1_gate")]

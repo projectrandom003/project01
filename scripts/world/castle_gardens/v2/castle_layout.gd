@@ -13,14 +13,14 @@ extends RefCounted
 ## down to the player spawn; the two cross axes are the garden avenues.
 
 ## Screen-space rect the ground covers (matches regions.json "map_bounds").
-const SCREEN_MIN := Vector2(-320, -240)
-const SCREEN_MAX := Vector2(1600, 1200)
+const SCREEN_MIN := Vector2(-480, -360)
+const SCREEN_MAX := Vector2(1920, 1440)
 
 ## The screen-vertical spine: constant (gx - gy). Castle gate -> spawn.
 const SPINE_DIFF := 20
 
 ## The screen-horizontal garden avenues: constant (gx + gy).
-const CROSS_SUMS: Array[int] = [26, 27, 31, 32]
+const CROSS_SUMS: Array[int] = [26, 27, 29, 30, 31, 32, 35, 36, 37]
 
 ## Castle enclosure in grid space (walls, towers, gatehouse, courtyard).
 const CASTLE_X := Vector2i(12, 21)
@@ -39,6 +39,13 @@ const POND_RIGHT: Array[Vector2i] = [
 ## Fountain cells (grid) and the paved plaza around it.
 const FOUNTAIN_CELLS: Array[Vector2i] = [
 	Vector2i(21, 1), Vector2i(22, 1), Vector2i(21, 2), Vector2i(22, 2),
+]
+
+## Hand-authored lower-side bypass around the west reflecting pond. The original
+## west approach stopped at the pond edge; these stepping-stone cells reconnect
+## it to the southern cross-avenue without paving across the water footprint.
+const WEST_POND_BYPASS: Array[Vector2i] = [
+	Vector2i(23, 12), Vector2i(25, 12), Vector2i(26, 12), Vector2i(26, 11),
 ]
 
 ## Grid bounds that can contain the authored screen rect.
@@ -68,6 +75,9 @@ static func in_castle(gx: int, gy: int) -> bool:
 static func is_path(gx: int, gy: int) -> bool:
 	if is_pond(gx, gy):
 		return false
+	var cell := Vector2i(gx, gy)
+	if WEST_POND_BYPASS.has(cell):
+		return true
 	var diff := gx - gy
 	var total := gx + gy
 	# The main royal promenade is deliberately broad enough for the player and
@@ -76,15 +86,13 @@ static func is_path(gx: int, gy: int) -> bool:
 		return true
 	# A single diagonal branch leaves the main promenade toward the west reflecting pond.
 	# It stops before the shoreline; the pond cells themselves remain water.
-	if total == 34 and diff >= 13 and diff < SPINE_DIFF:
+	if total in [33, 34, 35] and diff >= 13 and diff < SPINE_DIFF:
 		return true
 	if total in CROSS_SUMS and diff >= 10 and diff <= 30:
 		return true
-	# Two additional cross-garden avenues bypass the pond edges and connect
-	# both side gardens to the main gate-to-spawn promenade.
-	if total == 30 and diff >= 10 and diff <= 30:
-		return true
-	if total == 36 and diff >= 10 and diff <= 30:
+	# Paired cross-sums create a continuous-width cobblestone avenue rather than
+	# isolated diamond tips; the southern pair also skirts both pond shorelines.
+	if total in [29, 30, 31, 35, 36, 37] and diff >= 10 and diff <= 30:
 		return true
 	# Castle courtyard floor.
 	if gx >= CASTLE_X.x + 1 and gx <= CASTLE_X.y - 1 and gy >= CASTLE_Y.x + 1 and gy <= CASTLE_Y.y - 1:

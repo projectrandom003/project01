@@ -1,0 +1,146 @@
+{
+  "character": "lilith",
+  "state": "run",
+  "source_format": "PixelLab .pxo",
+  "source_frames": 17,
+  "source_fps": 6.0,
+  "game_frames": 16,
+  "game_fps": 16.0,
+  "loop": true,
+  "cell_size": [
+    96,
+    128
+  ],
+  "direction_order": [
+    "south",
+    "south-east",
+    "east",
+    "north-east",
+    "north",
+    "north-west",
+    "west",
+    "south-west"
+  ],
+  "sampled_source_frame_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "directions": [
+    {
+      "direction": "south",
+      "source_file": "southrun lilith.pxo",
+      "source_sha256": "5e246cd8c7c1a23a85c3928384ecf058f000556955f7eef1e10f48fd3e0a82ce",
+      "source_frame_count": 17,
+      "source_fps": 6.0,
+      "export_png": "source_run_png/south.png",
+      "strip_size": [
+        1632,
+        128
+      ]
+    },
+    {
+      "direction": "south-east",
+      "source_file": "south-eastrunlilith.pxo",
+      "source_sha256": "5a0434c1d9788c5aa209f9bbbe455416d3d9317d751bf918c2df26b59d630546",
+      "source_frame_count": 17,
+      "source_fps": 6.0,
+      "export_png": "source_run_png/south-east.png",
+      "strip_size": [
+        1632,
+        128
+      ]
+    },
+    {
+      "direction": "east",
+      "source_file": "eastrun lilith.pxo",
+      "source_sha256": "be31fa438e1dc651fee38d63322ee9b2bd448c6a90b49de6ced551aa8ba5f9c6",
+      "source_frame_count": 17,
+      "source_fps": 6.0,
+      "export_png": "source_run_png/east.png",
+      "strip_size": [
+        1632,
+        128
+      ]
+    },
+    {
+      "direction": "north-east",
+      "source_file": "north-eastrun lilith.pxo",
+      "source_sha256": "a8fa7cca08991c86b6cad375c7db0a5d3fbc8a08d19a14d7d976446c662e5d6b",
+      "source_frame_count": 17,
+      "source_fps": 6.0,
+      "export_png": "source_run_png/north-east.png",
+      "strip_size": [
+        1632,
+        128
+      ]
+    },
+    {
+      "direction": "north",
+      "source_file": "northrunlilith.pxo",
+      "source_sha256": "3c0439578ccfae6af8592ae4d403bafd63135986b3366f821b2a16b79b0baff4",
+      "source_frame_count": 17,
+      "source_fps": 6.0,
+      "export_png": "source_run_png/north.png",
+      "strip_size": [
+        1632,
+        128
+      ]
+    },
+    {
+      "direction": "north-west",
+      "source_file": "north-westrun lilith.pxo",
+      "source_sha256": "0aa386bda923fdb1b74fe2af2ad7c3063a95fc83a6c8c0436faeba131766e535",
+      "source_frame_count": 17,
+      "source_fps": 6.0,
+      "export_png": "source_run_png/north-west.png",
+      "strip_size": [
+        1632,
+        128
+      ]
+    },
+    {
+      "direction": "west",
+      "source_file": "westrunlilith.pxo",
+      "source_sha256": "715c7c4d4c50ee2471575c5520cd2265a5707ecf8185756b0f85374ebc72634e",
+      "source_frame_count": 17,
+      "source_fps": 6.0,
+      "export_png": "source_run_png/west.png",
+      "strip_size": [
+        1632,
+        128
+      ]
+    },
+    {
+      "direction": "south-west",
+      "source_file": "south-westrunlilith.pxo",
+      "source_sha256": "426fd97441f18c1796431f5423349b66da5126b56630fad8a8945329a5efb363",
+      "source_frame_count": 17,
+      "source_fps": 6.0,
+      "export_png": "source_run_png/south-west.png",
+      "strip_size": [
+        1632,
+        128
+      ]
+    }
+  ],
+  "atlas": "run_sheet.png",
+  "atlas_size": [
+    1536,
+    1024
+  ],
+  "validated_cells": 128
+}

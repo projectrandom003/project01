@@ -13,6 +13,8 @@ func refresh_currency() -> void:
 	UIFactory.clear(hud._currency_box)
 	add_currency_chip("Gold  " + UIFactory.number(GameState.inventory_domain.currency("gold")), UITheme.GOLD)
 	add_currency_chip("Crystals  " + UIFactory.number(GameState.inventory_domain.currency("crystals")), UITheme.TEAL)
+	if GameState.inventory_domain.currency("ancient_coins") > 0:
+		add_currency_chip("Ancient Coins  " + UIFactory.number(GameState.inventory_domain.currency("ancient_coins")), Color("#d9ff9f"))
 	if GameState.inventory_domain.currency("gems") > 0:
 		add_currency_chip("Gems  " + UIFactory.number(GameState.inventory_domain.currency("gems")), UITheme.VIOLET)
 

@@ -1,0 +1,6 @@
+[node name="CollisionBody" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Footprint" type="CollisionPolygon2D" parent="CollisionBody"]
+polygon = PackedVector2Array(-50, -10, 0, -36, 50, -10, 50, 7, 0, 33, -50, 7)

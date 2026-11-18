@@ -38,7 +38,6 @@ func build() -> void:
 			return
 		light.name = "GardenLight_%s" % marker.name
 		light.position = IsoMath.grid_to_world(grid_value.x, grid_value.y) + offset_value
-		light.texture = _make_radial_light_texture()
 		lighting.add_child(light)
 	_add_marker_effect(anchors, "Shadow", SHADOW_SCENE, lighting, "presentation_offset")
 	_add_marker_effect(anchors, "AmbientParticles", AMBIENT_SCENE, effects, "presentation_offset")
@@ -64,14 +63,3 @@ func _add_marker_effect(anchors: Node2D, marker_name: String, packed: PackedScen
 	elif effect is Control:
 		(effect as Control).position = effect_position
 	target.add_child(effect)
-
-
-func _make_radial_light_texture() -> Texture2D:
-	var image := Image.create(64, 64, false, Image.FORMAT_RGBA8)
-	var center := Vector2(32, 32)
-	for y in range(64):
-		for x in range(64):
-			var distance := Vector2(x, y).distance_to(center) / 32.0
-			var alpha := pow(clampf(1.0 - distance, 0.0, 1.0), 2.2)
-			image.set_pixel(x, y, Color(1, 1, 1, alpha))
-	return ImageTexture.create_from_image(image)

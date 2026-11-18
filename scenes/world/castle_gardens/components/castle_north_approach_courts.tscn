@@ -1,0 +1,94 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/tower_module_01.png" id="1_tower"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/ornate_wall_segment.png" id="2_wall"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/royal_banner.png" id="3_banner"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/royal_lantern_post.png" id="4_lantern"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/robed_guardian_statue.png" id="5_statue"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/pink_flower_shrub.png" id="6_pink"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/violet_flower_shrub.png" id="7_violet"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/white_flower_shrub.png" id="8_white"]
+
+[node name="NorthApproachCeremonialCourts" type="Node2D"]
+y_sort_enabled = true
+
+[node name="WestApproachCourt" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="WestApproachSpire" type="Sprite2D" parent="WestApproachCourt"]
+texture = ExtResource("1_tower")
+position = Vector2(430, 300)
+scale = Vector2(0.66, 0.66)
+z_index = -1
+
+[node name="WestOrnateWall" type="Sprite2D" parent="WestApproachCourt"]
+texture = ExtResource("2_wall")
+position = Vector2(445, 390)
+scale = Vector2(0.68, 0.68)
+z_index = -2
+
+[node name="WestApproachBanner" type="Sprite2D" parent="WestApproachCourt"]
+texture = ExtResource("3_banner")
+position = Vector2(520, 355)
+scale = Vector2(0.82, 0.82)
+
+[node name="WestApproachLantern" type="Sprite2D" parent="WestApproachCourt"]
+texture = ExtResource("4_lantern")
+position = Vector2(475, 450)
+scale = Vector2(0.78, 0.78)
+
+[node name="WestApproachGuardian" type="Sprite2D" parent="WestApproachCourt"]
+texture = ExtResource("5_statue")
+position = Vector2(430, 475)
+scale = Vector2(0.68, 0.68)
+
+[node name="WestApproachPinkShrub" type="Sprite2D" parent="WestApproachCourt"]
+texture = ExtResource("6_pink")
+position = Vector2(495, 455)
+scale = Vector2(0.82, 0.82)
+
+[node name="WestApproachVioletShrub" type="Sprite2D" parent="WestApproachCourt"]
+texture = ExtResource("7_violet")
+position = Vector2(535, 475)
+scale = Vector2(0.76, 0.76)
+
+[node name="EastApproachCourt" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="EastApproachSpire" type="Sprite2D" parent="EastApproachCourt"]
+texture = ExtResource("1_tower")
+position = Vector2(850, 300)
+scale = Vector2(-0.66, 0.66)
+z_index = -1
+
+[node name="EastOrnateWall" type="Sprite2D" parent="EastApproachCourt"]
+texture = ExtResource("2_wall")
+position = Vector2(835, 390)
+scale = Vector2(-0.68, 0.68)
+z_index = -2
+
+[node name="EastApproachBanner" type="Sprite2D" parent="EastApproachCourt"]
+texture = ExtResource("3_banner")
+position = Vector2(760, 355)
+scale = Vector2(0.82, 0.82)
+flip_h = true
+
+[node name="EastApproachLantern" type="Sprite2D" parent="EastApproachCourt"]
+texture = ExtResource("4_lantern")
+position = Vector2(805, 450)
+scale = Vector2(-0.78, 0.78)
+
+[node name="EastApproachGuardian" type="Sprite2D" parent="EastApproachCourt"]
+texture = ExtResource("5_statue")
+position = Vector2(850, 475)
+scale = Vector2(-0.68, 0.68)
+
+[node name="EastApproachWhiteShrub" type="Sprite2D" parent="EastApproachCourt"]
+texture = ExtResource("8_white")
+position = Vector2(785, 455)
+scale = Vector2(0.82, 0.82)
+
+[node name="EastApproachVioletShrub" type="Sprite2D" parent="EastApproachCourt"]
+texture = ExtResource("7_violet")
+position = Vector2(745, 475)
+scale = Vector2(0.76, 0.76)

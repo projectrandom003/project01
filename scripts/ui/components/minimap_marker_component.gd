@@ -8,6 +8,31 @@ var boss_markers: Array = []
 var interactable_markers: Array = []
 var quest_marker: Vector2 = Vector2.ZERO
 var has_quest_marker: bool = false
+var minimap: Minimap
+var _update_timer: float = 0.0
+
+
+func bind(owner: Minimap) -> void:
+	minimap = owner
+
+
+func _process(delta: float) -> void:
+	if minimap == null or minimap._collapsed:
+		return
+	_update_timer += delta
+	if _update_timer < 0.1:
+		return
+	_update_timer = 0.0
+	if minimap._world == null or not is_instance_valid(minimap._world):
+		minimap._find_world()
+	var player := get_tree().get_first_node_in_group("player")
+	if player != null and is_instance_valid(player):
+		minimap._player_grid = IsoMath.world_to_grid(player.global_position)
+		if "velocity" in player and player.velocity.length_squared() > 1.0:
+			minimap._player_facing = player.velocity.angle()
+	minimap._update_markers()
+	if minimap._canvas != null:
+		minimap._canvas.queue_redraw()
 
 
 ## NPCs and roaming monsters have dedicated marker layers; avoid drawing them

@@ -1,0 +1,123 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/wall_segment_01.png" id="1_wall"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/banner_wall_segment.png" id="2_banner_wall"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/corner_spire_tower.png" id="3_spire"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/flower_bench.png" id="4_bench"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/royal_lantern_post.png" id="5_lantern"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/pink_flower_shrub.png" id="6_pink"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/violet_flower_shrub.png" id="7_violet"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/white_flower_shrub.png" id="8_white"]
+
+[node name="OuterCloisterGardenNiches" type="Node2D"]
+y_sort_enabled = true
+
+[node name="WestCloisterArchitecture" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="WestWallSegment" type="Sprite2D" parent="WestCloisterArchitecture"]
+texture = ExtResource("1_wall")
+position = Vector2(175, 500)
+scale = Vector2(0.78, 0.78)
+z_index = -2
+
+[node name="WestBannerWall" type="Sprite2D" parent="WestCloisterArchitecture"]
+texture = ExtResource("2_banner_wall")
+position = Vector2(300, 565)
+scale = Vector2(0.72, 0.72)
+z_index = -2
+
+[node name="WestNorthSpire" type="Sprite2D" parent="WestCloisterArchitecture"]
+texture = ExtResource("3_spire")
+position = Vector2(110, 470)
+scale = Vector2(0.68, 0.68)
+z_index = -1
+
+[node name="WestSouthSpire" type="Sprite2D" parent="WestCloisterArchitecture"]
+texture = ExtResource("3_spire")
+position = Vector2(370, 600)
+scale = Vector2(0.68, 0.68)
+z_index = -1
+
+[node name="EastCloisterArchitecture" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="EastWallSegment" type="Sprite2D" parent="EastCloisterArchitecture"]
+texture = ExtResource("1_wall")
+position = Vector2(1105, 500)
+scale = Vector2(-0.78, 0.78)
+z_index = -2
+
+[node name="EastBannerWall" type="Sprite2D" parent="EastCloisterArchitecture"]
+texture = ExtResource("2_banner_wall")
+position = Vector2(980, 565)
+scale = Vector2(-0.72, 0.72)
+z_index = -2
+
+[node name="EastNorthSpire" type="Sprite2D" parent="EastCloisterArchitecture"]
+texture = ExtResource("3_spire")
+position = Vector2(1170, 470)
+scale = Vector2(-0.68, 0.68)
+z_index = -1
+
+[node name="EastSouthSpire" type="Sprite2D" parent="EastCloisterArchitecture"]
+texture = ExtResource("3_spire")
+position = Vector2(910, 600)
+scale = Vector2(-0.68, 0.68)
+z_index = -1
+
+[node name="WestCloisterGardenDetails" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="WestFlowerBench" type="Sprite2D" parent="WestCloisterGardenDetails"]
+texture = ExtResource("4_bench")
+position = Vector2(235, 630)
+scale = Vector2(0.82, 0.82)
+
+[node name="WestLantern" type="Sprite2D" parent="WestCloisterGardenDetails"]
+texture = ExtResource("5_lantern")
+position = Vector2(355, 650)
+scale = Vector2(0.72, 0.72)
+
+[node name="WestPinkBorder" type="Sprite2D" parent="WestCloisterGardenDetails"]
+texture = ExtResource("6_pink")
+position = Vector2(145, 610)
+scale = Vector2(0.78, 0.78)
+
+[node name="WestVioletBorder" type="Sprite2D" parent="WestCloisterGardenDetails"]
+texture = ExtResource("7_violet")
+position = Vector2(315, 680)
+scale = Vector2(0.76, 0.76)
+
+[node name="WestWhiteBorder" type="Sprite2D" parent="WestCloisterGardenDetails"]
+texture = ExtResource("8_white")
+position = Vector2(395, 650)
+scale = Vector2(0.72, 0.72)
+
+[node name="EastCloisterGardenDetails" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="EastFlowerBench" type="Sprite2D" parent="EastCloisterGardenDetails"]
+texture = ExtResource("4_bench")
+position = Vector2(1045, 630)
+scale = Vector2(-0.82, 0.82)
+
+[node name="EastLantern" type="Sprite2D" parent="EastCloisterGardenDetails"]
+texture = ExtResource("5_lantern")
+position = Vector2(925, 650)
+scale = Vector2(-0.72, 0.72)
+
+[node name="EastPinkBorder" type="Sprite2D" parent="EastCloisterGardenDetails"]
+texture = ExtResource("6_pink")
+position = Vector2(1135, 610)
+scale = Vector2(0.78, 0.78)
+
+[node name="EastVioletBorder" type="Sprite2D" parent="EastCloisterGardenDetails"]
+texture = ExtResource("7_violet")
+position = Vector2(965, 680)
+scale = Vector2(0.76, 0.76)
+
+[node name="EastWhiteBorder" type="Sprite2D" parent="EastCloisterGardenDetails"]
+texture = ExtResource("8_white")
+position = Vector2(885, 650)
+scale = Vector2(0.72, 0.72)

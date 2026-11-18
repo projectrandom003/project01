@@ -1,0 +1,53 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/wall_segment_01.png" id="1_wall"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/banner_wall_segment.png" id="2_banner"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/round_rose_shrub.png" id="3_rose"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/white_flower_shrub.png" id="4_white"]
+
+[node name="SouthOuterCloisterExtensions" type="Node2D"]
+y_sort_enabled = true
+
+[node name="WestSouthWall" type="Sprite2D" parent="."]
+texture = ExtResource("1_wall")
+position = Vector2(175, 755)
+scale = Vector2(0.72, 0.72)
+z_index = -2
+
+[node name="WestSouthBannerWall" type="Sprite2D" parent="."]
+texture = ExtResource("2_banner")
+position = Vector2(120, 790)
+scale = Vector2(0.68, 0.68)
+z_index = -2
+
+[node name="WestSouthRose" type="Sprite2D" parent="."]
+texture = ExtResource("3_rose")
+position = Vector2(155, 845)
+scale = Vector2(0.78, 0.78)
+
+[node name="WestSouthWhite" type="Sprite2D" parent="."]
+texture = ExtResource("4_white")
+position = Vector2(350, 850)
+scale = Vector2(0.74, 0.74)
+
+[node name="EastSouthWall" type="Sprite2D" parent="."]
+texture = ExtResource("1_wall")
+position = Vector2(1105, 755)
+scale = Vector2(-0.72, 0.72)
+z_index = -2
+
+[node name="EastSouthBannerWall" type="Sprite2D" parent="."]
+texture = ExtResource("2_banner")
+position = Vector2(1160, 790)
+scale = Vector2(-0.68, 0.68)
+z_index = -2
+
+[node name="EastSouthRose" type="Sprite2D" parent="."]
+texture = ExtResource("3_rose")
+position = Vector2(1125, 845)
+scale = Vector2(0.78, 0.78)
+
+[node name="EastSouthWhite" type="Sprite2D" parent="."]
+texture = ExtResource("4_white")
+position = Vector2(930, 850)
+scale = Vector2(0.74, 0.74)

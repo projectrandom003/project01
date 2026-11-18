@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/audio_director.gd" id="1_audio_director"]
+
+[node name="AudioDirector" type="Node"]
+script = ExtResource("1_audio_director")
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
+bus = "Music"
+volume_db = -5.0

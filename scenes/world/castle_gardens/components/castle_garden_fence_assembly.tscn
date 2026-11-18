@@ -1,0 +1,623 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/reverie_pack_v01/Royal_Gardens/Architecture/royal_fence_x_2x1.png" id="1_fx"]
+[ext_resource type="Texture2D" path="res://assets/reverie_pack_v01/Royal_Gardens/Architecture/royal_fence_y_1x2.png" id="2_fy"]
+[ext_resource type="Texture2D" path="res://assets/reverie_pack_v01/Royal_Gardens/Architecture/royal_balustrade_x_2x1.png" id="3_bal"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/reverie_fence_tileset_32.png" id="4_generated"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/grand_ornate_gate.png" id="5_front_gate"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_side_gate_arches.tscn" id="6_side_arches"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/fences/fence_ornate_straight_a_32x32.png" id="7_fence_a"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/fences/fence_ornate_straight_b_32x32.png" id="8_fence_b"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/fences/fence_rose_post_32x32.png" id="9_fence_rose"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/fences/fence_flower_post_32x32.png" id="10_fence_flower"]
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/fences/fence_banner_marker_32x32.png" id="11_fence_banner"]
+
+[sub_resource type="AtlasTexture" id="FenceStraightA"]
+atlas = ExtResource("4_generated")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="FenceStraightB"]
+atlas = ExtResource("4_generated")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="FenceRosePost"]
+atlas = ExtResource("4_generated")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="FenceFlowerPost"]
+atlas = ExtResource("4_generated")
+region = Rect2(32, 32, 32, 32)
+
+
+[node name="CastleGardenFences" type="Node2D"]
+y_sort_enabled = true
+
+[node name="FenceRuns" type="Node2D" parent="."]
+position = Vector2(-140.8, 0)
+scale = Vector2(1.22, 1.0)
+y_sort_enabled = true
+
+[node name="StonePathwayFenceSides" type="Node2D" parent="FenceRuns"]
+visible = true
+y_sort_enabled = true
+[node name="WestPathFence1" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("7_fence_a")
+position = Vector2(455, 548)
+rotation = 1.570796
+scale = Vector2(1.55, 1.55)
+z_index = -1
+[node name="WestPathFence2" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("8_fence_b")
+position = Vector2(455, 602)
+rotation = 1.570796
+scale = Vector2(1.55, 1.55)
+z_index = -1
+[node name="WestPathFence3" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("7_fence_a")
+position = Vector2(455, 656)
+rotation = 1.570796
+scale = Vector2(1.55, 1.55)
+z_index = -1
+[node name="WestPathFence4" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("8_fence_b")
+position = Vector2(455, 710)
+rotation = 1.570796
+scale = Vector2(1.55, 1.55)
+z_index = -1
+[node name="WestPathFence5" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("7_fence_a")
+position = Vector2(455, 764)
+rotation = 1.570796
+scale = Vector2(1.55, 1.55)
+z_index = -1
+[node name="WestPathFence6" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("8_fence_b")
+position = Vector2(455, 916)
+rotation = 1.570796
+scale = Vector2(1.55, 1.55)
+z_index = -1
+[node name="WestPathFence7" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("7_fence_a")
+position = Vector2(455, 970)
+rotation = 1.570796
+scale = Vector2(1.55, 1.55)
+z_index = -1
+[node name="WestPathFence8" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("8_fence_b")
+position = Vector2(455, 1024)
+rotation = 1.570796
+scale = Vector2(1.55, 1.55)
+z_index = -1
+[node name="WestUpperRosePillar" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("9_fence_rose")
+position = Vector2(455, 520)
+rotation = 1.570796
+scale = Vector2(1.55, 1.55)
+z_index = -1
+[node name="WestFountainRosePillar" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("10_fence_flower")
+position = Vector2(455, 790)
+rotation = 1.570796
+scale = Vector2(1.55, 1.55)
+z_index = -1
+[node name="WestLowerRosePillar" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("9_fence_rose")
+position = Vector2(455, 1070)
+rotation = 1.570796
+scale = Vector2(1.55, 1.55)
+z_index = -1
+[node name="EastPathFence1" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("7_fence_a")
+position = Vector2(825, 548)
+rotation = -1.570796
+scale = Vector2(-1.55, 1.55)
+z_index = -1
+[node name="EastPathFence2" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("8_fence_b")
+position = Vector2(825, 602)
+rotation = -1.570796
+scale = Vector2(-1.55, 1.55)
+z_index = -1
+[node name="EastPathFence3" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("7_fence_a")
+position = Vector2(825, 656)
+rotation = -1.570796
+scale = Vector2(-1.55, 1.55)
+z_index = -1
+[node name="EastPathFence4" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("8_fence_b")
+position = Vector2(825, 710)
+rotation = -1.570796
+scale = Vector2(-1.55, 1.55)
+z_index = -1
+[node name="EastPathFence5" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("7_fence_a")
+position = Vector2(825, 764)
+rotation = -1.570796
+scale = Vector2(-1.55, 1.55)
+z_index = -1
+[node name="EastPathFence6" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("8_fence_b")
+position = Vector2(825, 916)
+rotation = -1.570796
+scale = Vector2(-1.55, 1.55)
+z_index = -1
+[node name="EastPathFence7" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("7_fence_a")
+position = Vector2(825, 970)
+rotation = -1.570796
+scale = Vector2(-1.55, 1.55)
+z_index = -1
+[node name="EastPathFence8" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("8_fence_b")
+position = Vector2(825, 1024)
+rotation = -1.570796
+scale = Vector2(-1.55, 1.55)
+z_index = -1
+[node name="EastUpperRosePillar" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("9_fence_rose")
+position = Vector2(825, 520)
+rotation = -1.570796
+scale = Vector2(-1.55, 1.55)
+z_index = -1
+[node name="EastFountainRosePillar" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("10_fence_flower")
+position = Vector2(825, 790)
+rotation = -1.570796
+scale = Vector2(-1.55, 1.55)
+z_index = -1
+[node name="EastLowerRosePillar" type="Sprite2D" parent="FenceRuns/StonePathwayFenceSides"]
+texture = ExtResource("9_fence_rose")
+position = Vector2(825, 1070)
+rotation = -1.570796
+scale = Vector2(-1.55, 1.55)
+z_index = -1
+[node name="WestCourtNorthRail1" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("1_fx")
+position = Vector2(250, 590)
+scale = Vector2(0.95, 0.95)
+z_index = 0
+[node name="WestCourtNorthRail2" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("1_fx")
+position = Vector2(315, 625)
+scale = Vector2(0.95, 0.95)
+z_index = 0
+[node name="WestCourtNorthRail3" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("1_fx")
+position = Vector2(380, 660)
+scale = Vector2(0.95, 0.95)
+z_index = 0
+[node name="WestCourtNorthRail4" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("1_fx")
+position = Vector2(445, 695)
+scale = Vector2(0.95, 0.95)
+z_index = 0
+[node name="WestCourtWestRail1" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("2_fy")
+position = Vector2(235, 665)
+scale = Vector2(0.95, 0.95)
+z_index = 0
+[node name="WestCourtWestRail2" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("2_fy")
+position = Vector2(285, 730)
+scale = Vector2(0.95, 0.95)
+z_index = 0
+[node name="WestCourtWestRail3" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("2_fy")
+position = Vector2(335, 795)
+scale = Vector2(0.95, 0.95)
+z_index = 0
+[node name="WestCourtSouthRail1" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("1_fx")
+position = Vector2(385, 790)
+scale = Vector2(-0.92, 0.92)
+z_index = 0
+[node name="WestCourtSouthRail2" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("1_fx")
+position = Vector2(440, 745)
+scale = Vector2(-0.92, 0.92)
+z_index = 0
+[node name="EastCourtNorthRail1" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("1_fx")
+position = Vector2(1030, 590)
+scale = Vector2(-0.95, 0.95)
+z_index = 0
+[node name="EastCourtNorthRail2" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("1_fx")
+position = Vector2(965, 625)
+scale = Vector2(-0.95, 0.95)
+z_index = 0
+[node name="EastCourtNorthRail3" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("1_fx")
+position = Vector2(900, 660)
+scale = Vector2(-0.95, 0.95)
+z_index = 0
+[node name="EastCourtNorthRail4" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("1_fx")
+position = Vector2(835, 695)
+scale = Vector2(-0.95, 0.95)
+z_index = 0
+[node name="EastCourtEastRail1" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("2_fy")
+position = Vector2(1045, 665)
+scale = Vector2(-0.95, 0.95)
+z_index = 0
+[node name="EastCourtEastRail2" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("2_fy")
+position = Vector2(995, 730)
+scale = Vector2(-0.95, 0.95)
+z_index = 0
+[node name="EastCourtEastRail3" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("2_fy")
+position = Vector2(945, 795)
+scale = Vector2(-0.95, 0.95)
+z_index = 0
+[node name="EastCourtSouthRail1" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("1_fx")
+position = Vector2(895, 790)
+scale = Vector2(0.92, 0.92)
+z_index = 0
+[node name="EastCourtSouthRail2" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("1_fx")
+position = Vector2(840, 745)
+scale = Vector2(0.92, 0.92)
+z_index = 0
+[node name="WestPromenadeBalustrade1" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("3_bal")
+position = Vector2(485, 880)
+scale = Vector2(0.92, 0.92)
+z_index = -1
+[node name="WestPromenadeBalustrade2" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("3_bal")
+position = Vector2(485, 950)
+scale = Vector2(0.92, 0.92)
+z_index = -1
+[node name="WestPromenadeBalustrade3" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("3_bal")
+position = Vector2(485, 1020)
+scale = Vector2(0.92, 0.92)
+z_index = -1
+[node name="EastPromenadeBalustrade1" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("3_bal")
+position = Vector2(795, 880)
+scale = Vector2(-0.92, 0.92)
+z_index = -1
+[node name="EastPromenadeBalustrade2" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("3_bal")
+position = Vector2(795, 950)
+scale = Vector2(-0.92, 0.92)
+z_index = -1
+[node name="EastPromenadeBalustrade3" type="Sprite2D" parent="FenceRuns"]
+texture = ExtResource("3_bal")
+position = Vector2(795, 1020)
+scale = Vector2(-0.92, 0.92)
+z_index = -1
+
+[node name="FrontPerimeterFence" type="Node2D" parent="."]
+z_index = 71
+y_sort_enabled = true
+
+[node name="FrontWestRail01" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("7_fence_a")
+position = Vector2(215, 1160)
+scale = Vector2(1.55, 1.55)
+[node name="FrontWestRail02" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("8_fence_b")
+position = Vector2(263, 1160)
+scale = Vector2(1.55, 1.55)
+[node name="FrontWestRail05" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("7_fence_a")
+position = Vector2(407, 1160)
+scale = Vector2(1.55, 1.55)
+[node name="FrontWestRail06" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("8_fence_b")
+position = Vector2(455, 1160)
+scale = Vector2(1.55, 1.55)
+[node name="FrontWestRail07" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("7_fence_a")
+position = Vector2(503, 1160)
+scale = Vector2(1.55, 1.55)
+[node name="FrontEastRail01" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("7_fence_a")
+position = Vector2(777, 1160)
+scale = Vector2(-1.55, 1.55)
+[node name="FrontEastRail02" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("8_fence_b")
+position = Vector2(825, 1160)
+scale = Vector2(-1.55, 1.55)
+[node name="FrontEastRail03" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("7_fence_a")
+position = Vector2(873, 1160)
+scale = Vector2(-1.55, 1.55)
+[node name="FrontEastRail06" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("8_fence_b")
+position = Vector2(1017, 1160)
+scale = Vector2(-1.55, 1.55)
+[node name="FrontEastRail07" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("7_fence_a")
+position = Vector2(1065, 1160)
+scale = Vector2(-1.55, 1.55)
+
+[node name="FrontWestGatePillar" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("9_fence_rose")
+position = Vector2(185, 1160)
+scale = Vector2(1.55, 1.55)
+[node name="FrontWestInnerPillar" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("10_fence_flower")
+position = Vector2(545, 1160)
+scale = Vector2(1.55, 1.55)
+[node name="FrontEastInnerPillar" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("10_fence_flower")
+position = Vector2(735, 1160)
+scale = Vector2(-1.55, 1.55)
+[node name="FrontEastGatePillar" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("9_fence_rose")
+position = Vector2(1095, 1160)
+scale = Vector2(-1.55, 1.55)
+
+[node name="GrandFrontEntranceGate" type="Sprite2D" parent="FrontPerimeterFence"]
+texture = ExtResource("5_front_gate")
+position = Vector2(640, 1160)
+scale = Vector2(1.02, 1.02)
+
+[node name="SideGateArchways" parent="FrontPerimeterFence" instance=ExtResource("6_side_arches")]
+
+[node name="OuterSideFenceRuns" type="Node2D" parent="."]
+position = Vector2(-166.4, 0)
+scale = Vector2(1.26, 1.0)
+y_sort_enabled = true
+
+[node name="OuterWestRail01" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(60, 620)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterWestRail02" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(60, 680)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterWestRail03" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(60, 740)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterWestRail04" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(60, 800)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterWestRail05" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(60, 860)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterWestRail06" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(60, 920)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterWestRail07" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(60, 980)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+
+[node name="OuterEastRail01" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(1220, 620)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterEastRail02" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(1220, 680)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterEastRail03" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(1220, 740)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterEastRail04" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(1220, 800)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterEastRail05" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(1220, 860)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterEastRail06" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(1220, 920)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterEastRail07" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(1220, 980)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+
+[node name="OuterWestNorthPillar" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("9_fence_rose")
+position = Vector2(60, 585)
+rotation = 1.570796
+scale = Vector2(1.55, 1.55)
+[node name="OuterWestSouthPillar" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("9_fence_rose")
+position = Vector2(60, 1020)
+rotation = 1.570796
+scale = Vector2(1.55, 1.55)
+[node name="OuterEastNorthPillar" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("9_fence_rose")
+position = Vector2(1220, 585)
+rotation = -1.570796
+scale = Vector2(-1.55, 1.55)
+[node name="OuterEastSouthPillar" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("9_fence_rose")
+position = Vector2(1220, 1020)
+rotation = -1.570796
+scale = Vector2(-1.55, 1.55)
+
+[node name="NorthPerimeterFence" type="Node2D" parent="."]
+position = Vector2(-166.4, 0)
+scale = Vector2(1.26, 1.0)
+y_sort_enabled = true
+
+[node name="NorthWestRail01" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("7_fence_a")
+position = Vector2(100, 80)
+scale = Vector2(1.9, 1.55)
+[node name="NorthWestRail02" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("8_fence_b")
+position = Vector2(160, 80)
+scale = Vector2(1.9, 1.55)
+[node name="NorthWestRail03" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("7_fence_a")
+position = Vector2(220, 80)
+scale = Vector2(1.9, 1.55)
+[node name="NorthWestRail04" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("8_fence_b")
+position = Vector2(280, 80)
+scale = Vector2(1.9, 1.55)
+[node name="NorthWestRail05" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("7_fence_a")
+position = Vector2(340, 80)
+scale = Vector2(1.9, 1.55)
+[node name="NorthEastRail01" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("7_fence_a")
+position = Vector2(940, 80)
+scale = Vector2(-1.9, 1.55)
+[node name="NorthEastRail02" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("8_fence_b")
+position = Vector2(1000, 80)
+scale = Vector2(-1.9, 1.55)
+[node name="NorthEastRail03" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("7_fence_a")
+position = Vector2(1060, 80)
+scale = Vector2(-1.9, 1.55)
+[node name="NorthEastRail04" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("8_fence_b")
+position = Vector2(1120, 80)
+scale = Vector2(-1.9, 1.55)
+[node name="NorthEastRail05" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("7_fence_a")
+position = Vector2(1180, 80)
+scale = Vector2(-1.9, 1.55)
+[node name="NorthWestOuterPillar" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("9_fence_rose")
+position = Vector2(70, 80)
+scale = Vector2(1.55, 1.55)
+[node name="NorthWestInnerPillar" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("10_fence_flower")
+position = Vector2(400, 80)
+scale = Vector2(1.55, 1.55)
+[node name="NorthEastInnerPillar" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("10_fence_flower")
+position = Vector2(880, 80)
+scale = Vector2(-1.55, 1.55)
+[node name="NorthEastOuterPillar" type="Sprite2D" parent="NorthPerimeterFence"]
+texture = ExtResource("9_fence_rose")
+position = Vector2(1210, 80)
+scale = Vector2(-1.55, 1.55)
+[node name="OuterWestExtendedRail01" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(60, 140)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterEastExtendedRail01" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(1220, 140)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterWestExtendedRail02" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(60, 200)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterEastExtendedRail02" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(1220, 200)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterWestExtendedRail03" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(60, 260)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterEastExtendedRail03" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(1220, 260)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterWestExtendedRail04" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(60, 320)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterEastExtendedRail04" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(1220, 320)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterWestExtendedRail05" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(60, 380)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterEastExtendedRail05" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(1220, 380)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterWestExtendedRail06" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(60, 440)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterEastExtendedRail06" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(1220, 440)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterWestExtendedRail07" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(60, 500)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterEastExtendedRail07" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(1220, 500)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterWestExtendedRail08" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(60, 560)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterEastExtendedRail08" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(1220, 560)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterWestExtendedRail09" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(60, 1040)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterEastExtendedRail09" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("7_fence_a")
+position = Vector2(1220, 1040)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)
+[node name="OuterWestExtendedRail10" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(60, 1100)
+rotation = 1.570796
+scale = Vector2(1.9, 1.55)
+[node name="OuterEastExtendedRail10" type="Sprite2D" parent="OuterSideFenceRuns"]
+texture = ExtResource("8_fence_b")
+position = Vector2(1220, 1100)
+rotation = -1.570796
+scale = Vector2(-1.9, 1.55)

@@ -15,8 +15,6 @@ var _world: Node = null
 @onready var marker_component: MinimapMarkerComponent = get_node("MarkerData") as MinimapMarkerComponent
 ## Shared resolver injected by GameScreen through HUD; keeps compass, map and beacon aligned.
 var quest_resolver: QuestNavigationResolver = null
-var _update_timer: float = 0.0
-
 var _player_grid: Vector2 = Vector2.ZERO
 var _player_facing: float = 0.0
 var _npc_markers: Array:
@@ -46,29 +44,13 @@ func _ready() -> void:
 	_expand_button.pressed.connect(_request_full_map)
 	_collapse_button.pressed.connect(_toggle_collapse)
 	_find_world()
+	if marker_component != null:
+		marker_component.bind(self)
 
 
 func _find_world() -> void:
 	if is_inside_tree():
 		_world = get_tree().get_first_node_in_group("world")
-
-
-func _process(delta: float) -> void:
-	if _collapsed:
-		return
-	_update_timer += delta
-	if _update_timer < 0.1:
-		return
-	_update_timer = 0.0
-	if _world == null or not is_instance_valid(_world):
-		_find_world()
-	var player := get_tree().get_first_node_in_group("player")
-	if player != null and is_instance_valid(player):
-		_player_grid = IsoMath.world_to_grid(player.global_position)
-		if "velocity" in player and player.velocity.length_squared() > 1.0:
-			_player_facing = player.velocity.angle()
-	_update_markers()
-	_canvas.queue_redraw()
 
 
 func _update_markers() -> void:

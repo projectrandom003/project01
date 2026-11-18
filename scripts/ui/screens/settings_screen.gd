@@ -107,9 +107,18 @@ func _build_content() -> void:
 	_fullscreen_check.button_pressed = bool(_working.get("fullscreen", false))
 	_populate_resolutions(str(_working.get("resolution", _current_resolution_string())))
 
-	_master_slider.value_changed.connect(func(_v: float) -> void: _mark_dirty())
-	_music_slider.value_changed.connect(func(_v: float) -> void: _mark_dirty())
-	_sfx_slider.value_changed.connect(func(_v: float) -> void: _mark_dirty())
+	_master_slider.value_changed.connect(func(v: float) -> void:
+		_set_bus_volume("Master", v)
+		_mark_dirty()
+	)
+	_music_slider.value_changed.connect(func(v: float) -> void:
+		_set_bus_volume("Music", v)
+		_mark_dirty()
+	)
+	_sfx_slider.value_changed.connect(func(v: float) -> void:
+		_set_bus_volume("SFX", v)
+		_mark_dirty()
+	)
 	_fullscreen_check.toggled.connect(func(v: bool) -> void:
 		_working["fullscreen"] = v
 		_mark_dirty()

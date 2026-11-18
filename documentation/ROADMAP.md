@@ -149,20 +149,20 @@ Implemented in the current progression pass:
 - [x] Species-specific procedural combat silhouettes for Mossling and Moonpetal Sprite, plus subtle elemental ground sigils for enemies and larger boss sigils.
 - [x] Enemy action telegraphs: chosen enemy skill announced before execution, enemy intent label shown, threatened party highlighted during a reaction window.
 - [x] Two additional one-time Greenward gathering locations: Shrine Wisp (Moonpetal) and Grove Shard (Glade Sap).
+- [x] **Equipment set bonuses (2026-11-18):** `gladewood_bow`, `mossweave_vest`, and `wayfarer_charm` are tagged as the `greenward_wayfarer` set. Two pieces grant +40 HP and +4 DEF; all three grant an additional +5 SPD and +0.02 CRIT. `EquipmentStatModifiers.set_bonus_for_character()` calculates thresholds from equipped item data, and `CombatFactory` applies the bonuses to battle stats. Regression checks cover the two-piece threshold, three-piece threshold, and combat integration.
+- [x] **Daily blessings (2026-11-18):** seven-day daily reward cycle exposed through the Main Menu Calendar button. Local calendar date prevents repeat claims on the same day; missed days do not reset cycle progress. Rewards grant Gold, Summoning Crystals, Ancient Coins, Glade Sap, Gothic Shards and Moonpetals. Claim date and cycle position persist in local save data; dedicated authored `daily_rewards_panel.tscn` presents all seven rewards and claim state. Regression checks cover first claim, duplicate-claim rejection, reward amount and save serialization.
+- [x] **Currency roles (2026-11-18):** Gold remains the everyday merchant/enhancement currency; Summoning Crystals remain earnable summon currency; Ancient Coins are now a distinct wallet currency awarded directly by major boss encounters and the seventh daily blessing. Ancient Coins appear in the HUD after the first acquisition, inventory currency filter, daily reward preview and battle victory preview. Glade Sap, Gothic Shards and Moonpetals remain progression materials, not wallet currencies. Gems, Guild Tokens and Event Tokens remain reserved until their compliant purchase, guild and event systems exist.
 
 Still to build:
-- Set bonuses and stat rerolling.
-- Crafting recipes, crafting UI and material conversion.
+- Stat rerolling and additional equipment-set families/thresholds.
+- Expanded material conversion and recipe progression beyond the three current recipes and inventory crafting panel.
 - Talent trees or skill nodes per character.
 - Character ascension/awakening content beyond the slice.
 - Account-level progression and collection milestones.
 - Resource sinks and catch-up mechanics.
 - Economy simulation and faucet/sink dashboards.
 
-**Current verification:** `1484 passed, 0 failed`; focused boss, avatar, arena,
-map, menu, opening, quest and turn-timeline verifiers pass; content validation
-passes; the Linux/X11 export pack builds successfully (31.5 MB). This confirms
-headless build/runtime safety, not rendered visual quality or device frame rate.
+**Current verification (2026-11-18):** restored the missing `AudioDirector` autoload in `project.godot` (`res://scenes/core/audio_director.tscn`). `GameScreen`, title startup and Kael cinematic scripts referenced this singleton, but the autoload entry was absent; this prevented `GameScreen` and dependent scenes from compiling in the test runner, cascading into the two gathering-node assertions and other world/UI test script errors. Added an application-composition regression check that verifies the autoload and its authored `MusicPlayer`. Full Godot test runner now exits `0`: **2544 passed, 0 failed**, including the new AudioDirector autoload regression check. The previous two gathering-node assertions pass, including hidden-state persistence after world recreation. The focused Royal Gardens smoke test also exits `0`. The run still emits the intentional malformed-save recovery warning from `_test_state` and one ObjectDB leak warning at test shutdown; no test assertions fail. The older `1484 passed, 0 failed` and 31.5 MB Linux/X11 export are historical checkpoints, not current verification.
 
 **Exit:** a 30-day progression curve is modeled, tested and does not require gacha to progress the main story.
 

@@ -22,8 +22,10 @@ func to_dict() -> Dictionary:
 		"inventory": state.inventory,
 		"quests": state.quests,
 		"pity": state.pity,
+		"daily_rewards": state.daily_rewards.duplicate(true),
 		"flags": state.flags,
 		"gear_levels": state.gear_levels.duplicate(true),
+		"gear_rerolls": state.gear_rerolls.duplicate(true),
 		"position": {"x": state.player_position.x, "y": state.player_position.y},
 		"has_position": state.has_player_position,
 		"player_facing": {"x": state.player_facing.x, "y": state.player_facing.y},
@@ -79,9 +81,13 @@ func load_from_dict(data: Dictionary) -> void:
 		state.inventory[item_id] = int(state.inventory.get(item_id, 0)) + int(refunded_items[item_id])
 	state.quests = data.get("quests", {})
 	state.pity = data.get("pity", {})
+	var saved_daily_rewards: Variant = data.get("daily_rewards", {})
+	state.daily_rewards = saved_daily_rewards.duplicate(true) if typeof(saved_daily_rewards) == TYPE_DICTIONARY else {}
 	state.flags = data.get("flags", {})
 	var saved_gear_levels: Variant = data.get("gear_levels", {})
 	state.gear_levels = saved_gear_levels.duplicate(true) if typeof(saved_gear_levels) == TYPE_DICTIONARY else {}
+	var saved_gear_rerolls: Variant = data.get("gear_rerolls", {})
+	state.gear_rerolls = saved_gear_rerolls.duplicate(true) if typeof(saved_gear_rerolls) == TYPE_DICTIONARY else {}
 	var pos: Dictionary = data.get("position", {})
 	state.player_position = Vector2(float(pos.get("x", 0.0)), float(pos.get("y", 0.0)))
 	state.has_player_position = bool(data.get("has_position", false))

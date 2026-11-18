@@ -1,0 +1,101 @@
+{
+  "title": "Kael — The Weight of Those He Could Not Save",
+  "shots": [
+    {
+      "image": "res://assets/cinematics/kael_prologue/images/02_kael_slumber.png",
+      "caption": "For a little while, Kael knows only the quiet of sleep. His face is peaceful. His hands are still.",
+      "duration": 6.0,
+      "zoom": 1.025,
+      "pan_x": 2,
+      "pan_y": -1
+    },
+    {
+      "image": "res://assets/cinematics/kael_prologue/images/03_infernal_citadel.png",
+      "caption": "Then the dream opens onto a kingdom in flames. A thousand lives are being torn apart beneath the crimson sky.",
+      "duration": 6.0,
+      "zoom": 1.055,
+      "pan_x": -10,
+      "pan_y": 1
+    },
+    {
+      "image": "res://assets/cinematics/kael_prologue/images/09_crimson_clash.png",
+      "caption": "Steel crashes against steel. Every cry for help disappears beneath the violence. There is no one left to answer them.",
+      "duration": 6.0,
+      "zoom": 1.065,
+      "pan_x": -6,
+      "pan_y": -1
+    },
+    {
+      "image": "res://assets/cinematics/kael_prologue/images/01_kael_dreamscape.png",
+      "caption": "In his bed, Kael shifts beneath the covers. He is still asleep—but the suffering in the dream is no longer distant.",
+      "duration": 6.0,
+      "zoom": 1.055,
+      "pan_x": -5,
+      "pan_y": 1
+    },
+    {
+      "image": "res://assets/cinematics/kael_prologue/images/10_knights_last_stand.png",
+      "caption": "The defenders refuse to fall back. They fight for the people behind them, even when hope has almost run out.",
+      "duration": 6.0,
+      "zoom": 1.06,
+      "pan_x": 5,
+      "pan_y": 0
+    },
+    {
+      "image": "res://assets/cinematics/kael_prologue/images/13_mothers_last_embrace.png",
+      "caption": "A mother shields her child with the last thing she has left: her own arms. The sight leaves a wound the dream cannot close.",
+      "duration": 6.5,
+      "zoom": 1.055,
+      "pan_x": -3,
+      "pan_y": 0
+    },
+    {
+      "image": "res://assets/cinematics/kael_prologue/images/15_kael_pained_sleep.png",
+      "caption": "Kael's brow knots. His fingers clutch the sheets as if he could reach through the dream—and pull someone to safety.",
+      "duration": 6.5,
+      "zoom": 1.075,
+      "pan_x": -2,
+      "pan_y": 0
+    },
+    {
+      "image": "res://assets/cinematics/kael_prologue/images/12_fallen_battlefield.png",
+      "caption": "The fighting ends. The fallen are left behind. Their pain settles over him, heavy and intimate, though he cannot explain why.",
+      "duration": 6.0,
+      "zoom": 1.06,
+      "pan_x": 7,
+      "pan_y": 0
+    },
+    {
+      "image": "res://assets/cinematics/kael_prologue/images/14_tragic_embrace.png",
+      "caption": "A child will never wake in their mother's arms again. Kael feels the loss as if it were his to bear—and the guilt follows.",
+      "duration": 6.5,
+      "zoom": 1.065,
+      "pan_x": 2,
+      "pan_y": -2
+    },
+    {
+      "image": "res://assets/cinematics/kael_prologue/images/11_last_stand_sunset.png",
+      "caption": "The banners lie still. The voices are gone. In the silence, one terrible thought remains: he should have been able to save them.",
+      "duration": 6.0,
+      "zoom": 1.055,
+      "pan_x": -7,
+      "pan_y": 0
+    },
+    {
+      "image": "res://assets/cinematics/kael_prologue/images/18_kael_tearful_closeup.png",
+      "caption": "Still asleep, Kael trembles. Tears slip down his face. He carries their pain, their grief—and a guilt he cannot yet put into words.",
+      "duration": 7.0,
+      "zoom": 1.055,
+      "pan_x": 0,
+      "pan_y": 0
+    },
+    {
+      "image": "res://assets/cinematics/kael_prologue/images/19_kael_awakening.png",
+      "caption": "Kael jolts awake, gasping for air. His body is safe in the quiet room, but the pain is still there. He remembers no names—only the unbearable feeling that he failed them.",
+      "duration": 8.0,
+      "zoom": 1.035,
+      "pan_x": 0,
+      "pan_y": 0
+    }
+  ]
+}

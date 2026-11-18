@@ -1,17 +1,25 @@
 class_name WorldRuntimeComponent
 extends Node
-## Owns the active-world frame loop: chunk movement, ambient following,
-## weather simulation, periodic position persistence and atmosphere refresh.
+## Composition root for active-world frame updates.
+## Dedicated child nodes own chunk movement, presentation, persistence and refresh cadence.
 
-const SAVE_INTERVAL := 1.0
-const ATMOSPHERE_INTERVAL := 0.25
+@onready var chunk_runtime: Node = get_node_or_null("ChunkRuntime")
+@onready var presentation_runtime: Node = get_node_or_null("PresentationRuntime")
+@onready var session_persistence: Node = get_node_or_null("SessionPersistence")
+@onready var atmosphere_refresh: Node = get_node_or_null("AtmosphereRefresh")
 
 var world: GreenwardWorld
-var _save_accumulator := 0.0
-var _atmosphere_accumulator := 0.0
+
 
 func configure(owner_world: GreenwardWorld) -> void:
 	world = owner_world
+	var components: Array = [chunk_runtime, presentation_runtime, session_persistence, atmosphere_refresh]
+	for component in components:
+		if component == null:
+			push_error("WorldRuntime is missing an authored runtime child component")
+			return
+		component.configure(world)
+
 
 func tick(delta: float) -> void:
 	if world == null or not is_instance_valid(world):
@@ -19,25 +27,15 @@ func tick(delta: float) -> void:
 	var player := world.player
 	if player == null or not is_instance_valid(player):
 		return
-	var grid := IsoMath.world_to_grid(player.position)
-	var center := world.streamer.center_chunk(grid)
-	if center != world.current_center:
-		world.current_center = center
-		world._update_streaming(grid)
-	if world.effect_follow_component != null:
-		world.effect_follow_component.follow_player(player.position)
-	if world.weather_component != null:
-		world.weather_component.tick(delta)
-	_save_accumulator += delta
-	if _save_accumulator >= SAVE_INTERVAL:
-		_save_accumulator = 0.0
-		GameState.session_domain.set_player_position(player.position)
-		GameState.session_domain.set_region_position(world.region_id, player.position)
-	_atmosphere_accumulator += delta
-	if _atmosphere_accumulator >= ATMOSPHERE_INTERVAL:
-		_atmosphere_accumulator = 0.0
-		world._apply_atmosphere()
-	if world.day_night_presentation_component != null:
-		world.day_night_presentation_component.gate_animated_props()
-	if world.chunk_streaming_component != null:
-		world.chunk_streaming_component.prepare_one_chunk(grid)
+
+	var player_position := player.position
+	var player_grid := IsoMath.world_to_grid(player_position)
+
+	# Preserve the established update order while keeping each responsibility in
+	# its own editor-visible node.
+	chunk_runtime.update_player_chunk(player_grid)
+	presentation_runtime.follow_player_and_tick_weather(player_position, delta)
+	session_persistence.tick(delta, player_position)
+	atmosphere_refresh.tick(delta)
+	presentation_runtime.update_nearby_animated_props()
+	chunk_runtime.prepare_next_chunk(player_grid)

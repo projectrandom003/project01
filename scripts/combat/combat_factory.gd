@@ -70,6 +70,13 @@ static func _apply_equipment(unit: Combatant, instance: CharacterInstance) -> vo
 			var element := str(item.get("element", ""))
 			if not element.is_empty() and element != "neutral":
 				unit.equipment_element = element
+	var set_bonus: Dictionary = EquipmentStatModifiers.set_bonus_for_character(instance.uid)
+	unit.max_hp += float(set_bonus.get("hp", 0.0))
+	unit.atk += float(set_bonus.get("atk", 0.0))
+	unit.defense += float(set_bonus.get("def", 0.0))
+	unit.speed += float(set_bonus.get("spd", 0.0))
+	unit.crit_chance += float(set_bonus.get("crit", 0.0))
+	unit.crit_mult += float(set_bonus.get("crit_dmg", 0.0))
 
 
 static func enemy_units(group_id: String) -> Array:

@@ -1,0 +1,590 @@
+[
+  {
+    "asset": "grand_royal_palace",
+    "folder": "castle",
+    "file": "castle/grand_royal_palace.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      32,
+      150,
+      560,
+      435
+    ],
+    "width": 528,
+    "height": 285
+  },
+  {
+    "asset": "tower_module_01",
+    "folder": "towers",
+    "file": "towers/tower_module_01.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      470,
+      25,
+      610,
+      315
+    ],
+    "width": 140,
+    "height": 290
+  },
+  {
+    "asset": "tower_module_02",
+    "folder": "towers",
+    "file": "towers/tower_module_02.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      600,
+      25,
+      755,
+      315
+    ],
+    "width": 155,
+    "height": 290
+  },
+  {
+    "asset": "tower_module_03",
+    "folder": "towers",
+    "file": "towers/tower_module_03.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      750,
+      25,
+      900,
+      315
+    ],
+    "width": 150,
+    "height": 290
+  },
+  {
+    "asset": "tower_module_04",
+    "folder": "towers",
+    "file": "towers/tower_module_04.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      900,
+      25,
+      1075,
+      315
+    ],
+    "width": 175,
+    "height": 290
+  },
+  {
+    "asset": "roofed_wall_module_01",
+    "folder": "towers",
+    "file": "towers/roofed_wall_module_01.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      590,
+      285,
+      760,
+      440
+    ],
+    "width": 170,
+    "height": 155
+  },
+  {
+    "asset": "roofed_wall_module_02",
+    "folder": "towers",
+    "file": "towers/roofed_wall_module_02.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      760,
+      285,
+      920,
+      440
+    ],
+    "width": 160,
+    "height": 155
+  },
+  {
+    "asset": "wall_segment_01",
+    "folder": "walls",
+    "file": "walls/wall_segment_01.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      30,
+      445,
+      225,
+      640
+    ],
+    "width": 195,
+    "height": 195
+  },
+  {
+    "asset": "wall_segment_02",
+    "folder": "walls",
+    "file": "walls/wall_segment_02.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      225,
+      445,
+      410,
+      640
+    ],
+    "width": 185,
+    "height": 195
+  },
+  {
+    "asset": "wall_segment_03",
+    "folder": "walls",
+    "file": "walls/wall_segment_03.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      410,
+      445,
+      595,
+      640
+    ],
+    "width": 185,
+    "height": 195
+  },
+  {
+    "asset": "wall_segment_04",
+    "folder": "walls",
+    "file": "walls/wall_segment_04.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      595,
+      445,
+      790,
+      640
+    ],
+    "width": 195,
+    "height": 195
+  },
+  {
+    "asset": "corner_tower_01",
+    "folder": "walls",
+    "file": "walls/corner_tower_01.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      820,
+      445,
+      960,
+      640
+    ],
+    "width": 140,
+    "height": 195
+  },
+  {
+    "asset": "corner_tower_02",
+    "folder": "walls",
+    "file": "walls/corner_tower_02.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      960,
+      445,
+      1100,
+      640
+    ],
+    "width": 140,
+    "height": 195
+  },
+  {
+    "asset": "corner_spire_tower_01",
+    "folder": "walls",
+    "file": "walls/corner_spire_tower_01.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1100,
+      445,
+      1240,
+      640
+    ],
+    "width": 140,
+    "height": 195
+  },
+  {
+    "asset": "corner_spire_tower_02",
+    "folder": "walls",
+    "file": "walls/corner_spire_tower_02.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1240,
+      445,
+      1380,
+      640
+    ],
+    "width": 140,
+    "height": 195
+  },
+  {
+    "asset": "wall_corner_module",
+    "folder": "walls",
+    "file": "walls/wall_corner_module.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1380,
+      445,
+      1520,
+      640
+    ],
+    "width": 140,
+    "height": 195
+  },
+  {
+    "asset": "grand_ornate_gate",
+    "folder": "gates",
+    "file": "gates/grand_ornate_gate.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      25,
+      645,
+      310,
+      825
+    ],
+    "width": 285,
+    "height": 180
+  },
+  {
+    "asset": "ornate_iron_gate",
+    "folder": "gates",
+    "file": "gates/ornate_iron_gate.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      310,
+      645,
+      455,
+      825
+    ],
+    "width": 145,
+    "height": 180
+  },
+  {
+    "asset": "gothic_archway",
+    "folder": "gates",
+    "file": "gates/gothic_archway.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      455,
+      645,
+      580,
+      825
+    ],
+    "width": 125,
+    "height": 180
+  },
+  {
+    "asset": "gate_lantern_post",
+    "folder": "gates",
+    "file": "gates/gate_lantern_post.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      580,
+      645,
+      655,
+      825
+    ],
+    "width": 75,
+    "height": 180
+  },
+  {
+    "asset": "rose_arch",
+    "folder": "garden_structures",
+    "file": "garden_structures/rose_arch.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      730,
+      645,
+      900,
+      825
+    ],
+    "width": 170,
+    "height": 180
+  },
+  {
+    "asset": "rose_gazebo",
+    "folder": "garden_structures",
+    "file": "garden_structures/rose_gazebo.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      900,
+      645,
+      1065,
+      825
+    ],
+    "width": 165,
+    "height": 180
+  },
+  {
+    "asset": "robed_statue",
+    "folder": "garden_structures",
+    "file": "garden_structures/robed_statue.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1065,
+      645,
+      1150,
+      825
+    ],
+    "width": 85,
+    "height": 180
+  },
+  {
+    "asset": "flower_pedestal",
+    "folder": "garden_structures",
+    "file": "garden_structures/flower_pedestal.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1150,
+      645,
+      1225,
+      825
+    ],
+    "width": 75,
+    "height": 180
+  },
+  {
+    "asset": "ornate_stone_bench",
+    "folder": "benches",
+    "file": "benches/ornate_stone_bench.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1225,
+      645,
+      1360,
+      735
+    ],
+    "width": 135,
+    "height": 90
+  },
+  {
+    "asset": "rose_bench",
+    "folder": "benches",
+    "file": "benches/rose_bench.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1360,
+      645,
+      1450,
+      735
+    ],
+    "width": 90,
+    "height": 90
+  },
+  {
+    "asset": "stone_bench",
+    "folder": "benches",
+    "file": "benches/stone_bench.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1225,
+      735,
+      1360,
+      825
+    ],
+    "width": 135,
+    "height": 90
+  },
+  {
+    "asset": "flower_bench",
+    "folder": "benches",
+    "file": "benches/flower_bench.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1360,
+      735,
+      1450,
+      825
+    ],
+    "width": 90,
+    "height": 90
+  },
+  {
+    "asset": "royal_banner",
+    "folder": "gates",
+    "file": "gates/royal_banner.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1450,
+      645,
+      1525,
+      825
+    ],
+    "width": 75,
+    "height": 180
+  },
+  {
+    "asset": "angel_tiered_fountain",
+    "folder": "fountains",
+    "file": "fountains/angel_tiered_fountain.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      25,
+      835,
+      175,
+      1010
+    ],
+    "width": 150,
+    "height": 175
+  },
+  {
+    "asset": "blue_royal_fountain",
+    "folder": "fountains",
+    "file": "fountains/blue_royal_fountain.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      175,
+      835,
+      305,
+      1010
+    ],
+    "width": 130,
+    "height": 175
+  },
+  {
+    "asset": "lotus_fountain",
+    "folder": "fountains",
+    "file": "fountains/lotus_fountain.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      305,
+      835,
+      435,
+      1010
+    ],
+    "width": 130,
+    "height": 175
+  },
+  {
+    "asset": "hedge_block_rose",
+    "folder": "vegetation",
+    "file": "vegetation/hedge_block_rose.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      700,
+      835,
+      820,
+      945
+    ],
+    "width": 120,
+    "height": 110
+  },
+  {
+    "asset": "pink_flower_shrub",
+    "folder": "vegetation",
+    "file": "vegetation/pink_flower_shrub.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      820,
+      835,
+      930,
+      945
+    ],
+    "width": 110,
+    "height": 110
+  },
+  {
+    "asset": "round_rose_shrub",
+    "folder": "vegetation",
+    "file": "vegetation/round_rose_shrub.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      930,
+      835,
+      1040,
+      945
+    ],
+    "width": 110,
+    "height": 110
+  },
+  {
+    "asset": "white_flower_shrub",
+    "folder": "vegetation",
+    "file": "vegetation/white_flower_shrub.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      700,
+      945,
+      820,
+      1018
+    ],
+    "width": 120,
+    "height": 73
+  },
+  {
+    "asset": "purple_flower_shrub",
+    "folder": "vegetation",
+    "file": "vegetation/purple_flower_shrub.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      820,
+      945,
+      930,
+      1018
+    ],
+    "width": 110,
+    "height": 73
+  },
+  {
+    "asset": "violet_flower_shrub",
+    "folder": "vegetation",
+    "file": "vegetation/violet_flower_shrub.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      930,
+      945,
+      1040,
+      1018
+    ],
+    "width": 110,
+    "height": 73
+  },
+  {
+    "asset": "pink_blossom_tree",
+    "folder": "trees",
+    "file": "trees/pink_blossom_tree.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1100,
+      835,
+      1210,
+      1018
+    ],
+    "width": 110,
+    "height": 183
+  },
+  {
+    "asset": "white_blossom_tree",
+    "folder": "trees",
+    "file": "trees/white_blossom_tree.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1210,
+      835,
+      1320,
+      1018
+    ],
+    "width": 110,
+    "height": 183
+  },
+  {
+    "asset": "purple_wisteria_tree",
+    "folder": "trees",
+    "file": "trees/purple_wisteria_tree.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1320,
+      835,
+      1425,
+      1018
+    ],
+    "width": 105,
+    "height": 183
+  },
+  {
+    "asset": "royal_cypress_tree",
+    "folder": "trees",
+    "file": "trees/royal_cypress_tree.png",
+    "source_sheet": "REVERIE Royal Gardens - Castle Collection",
+    "source_rect": [
+      1425,
+      835,
+      1535,
+      1018
+    ],
+    "width": 110,
+    "height": 183
+  }
+]

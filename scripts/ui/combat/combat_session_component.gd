@@ -56,3 +56,20 @@ func start_battle() -> void:
 	screen._build_roster(party_units)
 	screen._log("[color=#e8c27a]Battle begins.[/color]")
 	await screen._process_events(screen.engine.start())
+
+
+## Executes a validated player or AI choice through the same presentation path.
+## The engine resolves outcomes; this component coordinates the screen-facing
+## action lifecycle so manual, enemy and auto turns cannot drift apart.
+func execute_action(skill_id: String, targets: Array) -> void:
+	if screen == null or not is_instance_valid(screen) or screen.engine == null or screen._resolved:
+		return
+	var actor: Combatant = screen.engine.current_actor()
+	if actor == null:
+		return
+	var played_skill: SkillDef = ContentDB.get_skill(skill_id)
+	if played_skill != null and played_skill.ultimate:
+		screen._show_banner(played_skill.display_name)
+	screen._cancel_targeting()
+	var events := screen.engine.execute(screen.engine.current_actor_index, skill_id, targets)
+	await screen._process_events(events)

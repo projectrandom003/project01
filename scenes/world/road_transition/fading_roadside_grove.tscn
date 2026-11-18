@@ -1,0 +1,25 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Royal_Gardens/Vegetation/tree_oak_02.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Vegetation/tree_dead_01.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Royal_Gardens/Vegetation/tree_blossom_01.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Vegetation/bush_dead_01.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Gothic_Castle/Decorations/lantern_gothic_post.tscn" id="5"]
+
+[node name="fading_roadside_grove" type="Node2D"]
+y_sort_enabled = true
+
+[node name="WestOak" parent="." instance=ExtResource("1")]
+position = Vector2(-150, -12)
+
+[node name="WestWitheredTree" parent="." instance=ExtResource("2")]
+position = Vector2(-220, 80)
+
+[node name="EastBlossomTree" parent="." instance=ExtResource("3")]
+position = Vector2(165, -20)
+
+[node name="EastDeadBush" parent="." instance=ExtResource("4")]
+position = Vector2(225, 88)
+
+[node name="ColdLantern" parent="." instance=ExtResource("5")]
+position = Vector2(0, 150)

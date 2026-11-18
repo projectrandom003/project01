@@ -117,8 +117,8 @@
    "gold": 500,
    "xp": 650,
    "crystals": 120,
+   "ancient_coins": 2,
    "items": {
-    "ancient_coins": 2,
     "dew_of_awakening": 2
    }
   },
@@ -167,8 +167,8 @@
    "gold": 1000,
    "xp": 1500,
    "crystals": 200,
+   "ancient_coins": 3,
    "items": {
-    "ancient_coins": 3,
     "dew_of_awakening": 3
    }
   },
@@ -313,8 +313,8 @@
    "gold": 2000,
    "xp": 3000,
    "crystals": 400,
+   "ancient_coins": 5,
    "items": {
-    "ancient_coins": 5,
     "gothic_shard": 4
    }
   },

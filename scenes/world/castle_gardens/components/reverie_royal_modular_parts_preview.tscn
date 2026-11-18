@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_royal_wall_cap.tscn" id="1_cap"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_royal_buttress.tscn" id="2_buttress"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_royal_stair_module.tscn" id="3_stairs"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_royal_window_module.tscn" id="4_window"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_royal_roof_spire.tscn" id="5_spire"]
+
+[node name="RoyalCastleModularPartsPreview" type="Node2D"]
+y_sort_enabled = true
+
+[node name="WallEndCap" parent="." instance=ExtResource("1_cap")]
+position = Vector2(0, 0)
+
+[node name="Buttress" parent="." instance=ExtResource("2_buttress")]
+position = Vector2(128, 0)
+
+[node name="StairModule" parent="." instance=ExtResource("3_stairs")]
+position = Vector2(256, 8)
+
+[node name="GothicWindow" parent="." instance=ExtResource("4_window")]
+position = Vector2(384, -8)
+scale = Vector2(1.3, 1.3)
+
+[node name="RoofSpire" parent="." instance=ExtResource("5_spire")]
+position = Vector2(512, -8)
+scale = Vector2(1.3, 1.3)

@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/reverie_custom/royal_gardens/production/ornate_wall_segment.png" id="1_art"]
+
+[node name="RoyalWallY" type="Node2D"]
+y_sort_enabled = true
+
+[node name="WallArtwork" type="Sprite2D" parent="."]
+texture = ExtResource("1_art")
+rotation = 1.570796
+
+[node name="CollisionBody" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Footprint" type="CollisionPolygon2D" parent="CollisionBody"]
+visible = false
+polygon = PackedVector2Array(-24, -76, 24, -76, 76, 0, 24, 76, -24, 76, -76, 0)

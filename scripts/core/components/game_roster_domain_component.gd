@@ -9,6 +9,7 @@ const MAX_PROFILE_LEVEL := 60
 var roster: Array = []
 var party: Array = []
 var gear_levels: Dictionary = {}
+var gear_rerolls: Dictionary = {}
 
 var _uid_counter: int = 0
 
@@ -271,6 +272,53 @@ func unequip_item(uid: String, slot: String) -> bool:
 	EventBus.roster_changed.emit()
 	GameState.queue_save()
 	return true
+
+
+func gear_reroll_info(uid: String, slot: String) -> Dictionary:
+	var instance := _find_instance(uid)
+	if instance == null or not CharacterInstance.SLOTS.has(slot):
+		return {"ok": false, "reason": "Invalid character or equipment slot."}
+	var item_id := instance.equipped_item(slot)
+	if item_id.is_empty():
+		return {"ok": false, "reason": "Equip an item in this slot first."}
+	var stats: Dictionary = ContentDB.get_item(item_id).get("stats", {})
+	var candidates: Array[String] = []
+	for stat in ["hp", "atk", "def", "spd", "crit", "crit_dmg"]:
+		if float(stats.get(stat, 0.0)) > 0.0:
+			candidates.append(stat)
+	if candidates.is_empty():
+		return {"ok": false, "reason": "This equipment has no rerollable stats."}
+	if GameState.inventory_domain.currency("gold") < 120:
+		return {"ok": false, "reason": "Need 120 gold."}
+	if GameState.inventory_domain.item_count("gothic_shard") < 1:
+		return {"ok": false, "reason": "Need 1 Gothic Shard."}
+	return {"ok": true, "gold": 120, "shards": 1, "item_id": item_id, "candidates": candidates}
+
+
+func reroll_gear(uid: String, slot: String) -> Dictionary:
+	var info := gear_reroll_info(uid, slot)
+	if not bool(info.get("ok", false)):
+		return {"ok": false, "reason": str(info.get("reason", "Cannot reroll this equipment."))}
+	var key := uid + "|" + slot
+	var old_roll: Dictionary = gear_rerolls.get(key, {})
+	var candidates: Array = info.get("candidates", [])
+	if candidates.size() > 1 and not old_roll.is_empty():
+		var previous_stat := str(old_roll.get("stat", ""))
+		var alternatives: Array = candidates.filter(func(stat): return str(stat) != previous_stat)
+		if not alternatives.is_empty():
+			candidates = alternatives
+	var chosen := str(candidates[randi_range(0, candidates.size() - 1)])
+	var base_stats: Dictionary = ContentDB.get_item(str(info.item_id)).get("stats", {})
+	var amount := maxf(1.0, float(base_stats.get(chosen, 0.0)) * 0.10)
+	if not GameState.inventory_domain.spend_currency("gold", int(info.gold)):
+		return {"ok": false, "reason": "Gold balance changed; reroll cancelled."}
+	if not GameState.inventory_domain.remove_item("gothic_shard", int(info.shards)):
+		GameState.inventory_domain.add_currency("gold", int(info.gold))
+		return {"ok": false, "reason": "Gothic Shard unavailable; gold returned."}
+	gear_rerolls[key] = {"stat": chosen, "value": amount}
+	EventBus.roster_changed.emit()
+	GameState.queue_save()
+	return {"ok": true, "stat": chosen, "value": amount, "previous": old_roll.duplicate(true)}
 
 
 func gear_level(uid: String, slot: String) -> int:

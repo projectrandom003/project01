@@ -1,4 +1,5 @@
 [gd_scene load_steps=3 format=3]
+
 [ext_resource type="Script" path="res://scripts/world/castle_gardens/components/castle_perimeter_walls_component.gd" id="1_wall_validator"]
 [ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_perimeter_wall_run.tscn" id="2_wall_run"]
 
@@ -24,5 +25,10 @@ run_length = 1340.0
 
 [node name="SouthWall" parent="." instance=ExtResource("2_wall_run")]
 z_index = 70
-position = Vector2(640, 1160)
-run_length = 1440.0
+position = Vector2(232, 1160)
+run_length = 624.0
+
+[node name="SouthWallEast" parent="." instance=ExtResource("2_wall_run")]
+z_index = 70
+position = Vector2(1048, 1160)
+run_length = 624.0

@@ -60,6 +60,7 @@ var pity: Dictionary:
 	set(value):
 		if reward_domain != null:
 			reward_domain.pity = value
+var daily_rewards: Dictionary = {}
 ## Persistent per-character gear enhancement levels, keyed by "uid|slot".
 var gear_levels: Dictionary:
 	get:
@@ -67,6 +68,12 @@ var gear_levels: Dictionary:
 	set(value):
 		if roster_domain != null:
 			roster_domain.gear_levels = value
+var gear_rerolls: Dictionary:
+	get:
+		return roster_domain.gear_rerolls if roster_domain != null else {}
+	set(value):
+		if roster_domain != null:
+			roster_domain.gear_rerolls = value
 # Session state remains available through these compatibility-facing properties.
 var player_position: Vector2:
 	get:
@@ -111,6 +118,8 @@ var region_positions: Dictionary:
 		if session_domain != null:
 			session_domain.region_positions = value
 
+@onready var lifecycle_component: GameStateLifecycleComponent = get_node("Lifecycle") as GameStateLifecycleComponent
+# Compatibility references; lifecycle ownership lives in GameStateLifecycleComponent.
 @onready var _save_timer: Timer = $SaveTimer
 @onready var _autosave_timer: Timer = $AutosaveTimer
 @onready var inventory_domain: GameInventoryDomainComponent = get_node("InventoryDomain") as GameInventoryDomainComponent
@@ -124,78 +133,26 @@ var region_positions: Dictionary:
 
 func _ready() -> void:
 	persistence_component.bind(self)
-	_save_timer.timeout.connect(save_now)
-	_autosave_timer.timeout.connect(save_now)
-	_autosave_timer.start()
-	if SaveService.has_save():
-		var data := SaveService.load_save()
-		if not data.is_empty():
-			_load_from_dict(data)
-			loaded_from_save = true
-	if profile.is_empty():
-		new_game()
-	print("[GameState] %s — %d characters, %d in party." % [
-		"loaded save" if loaded_from_save else "new journey",
-		roster.size(), party.size()
-	])
+	lifecycle_component.configure(self)
+	lifecycle_component.initialize()
 
 
 # ---------------------------------------------------------------- lifecycle
 
 func new_game(player_name: String = "Wanderer") -> void:
-	# A deliberate reset/new journey must not be mistaken for a resumed save;
-	# Main uses this flag to decide whether to show the opening cinematic.
-	loaded_from_save = false
-	profile = {
-		"name": player_name,
-		"level": 1,
-		"xp": 0,
-		"gold": 500,
-		"gems": 0,
-		"crystals": 1500,
-		"guild_tokens": 0,
-		"ancient_coins": 0,
-		"event_tokens": 0,
-		"created_at": Time.get_unix_time_from_system(),
-	}
-	roster.clear()
-	party.clear()
-	inventory = { "glade_sap": 3, "mossweave_vest": 1 }
-	quests = {}
-	pity = {}
-	flags = {}
-	player_position = Vector2.ZERO
-	has_player_position = false
-	player_facing = Vector2(0.0, 1.0)
-	# Bootstrap defaults to Greenward for compatibility; actual new journeys
-	# enter Royal Gardens through GameScreen's gameplay flow while
-	# preserving legacy-save migration behavior in _load_from_dict().
-	player_region = "greenward"
-	active_world_id = "greenward"
-	region_positions = {}
-	roster_domain.reset_uid_counter()
-	for character_id in STARTING_CHARACTERS:
-		add_character(character_id)
-	save_now()
-	EventBus.roster_changed.emit()
-	EventBus.party_changed.emit()
-	EventBus.currency_changed.emit()
+	lifecycle_component.new_game(player_name)
 
 
 func save_now() -> void:
-	if profile.is_empty():
-		return
-	SaveService.write_save(_to_dict())
+	lifecycle_component.save_now()
 
 
 func queue_save() -> void:
-	if _save_timer != null:
-		_save_timer.start()
+	lifecycle_component.queue_save()
 
 
 func reset_progress() -> void:
-	SaveService.delete_save()
-	new_game()
+	lifecycle_component.reset_progress()
 
 
 func _to_dict() -> Dictionary:
@@ -324,7 +281,7 @@ func add_party_xp(amount: int) -> void:
 
 
 func add_profile_xp(amount: int) -> void:
-	roster_domain.add_profile_xp(amount)
+	profile_domain.add_xp(amount)
 
 
 func ascension_info(uid: String) -> Dictionary:
@@ -365,6 +322,14 @@ func unequip_item(uid: String, slot: String) -> bool:
 
 func gear_level(uid: String, slot: String) -> int:
 	return roster_domain.gear_level(uid, slot)
+
+
+func gear_reroll_info(uid: String, slot: String) -> Dictionary:
+	return roster_domain.gear_reroll_info(uid, slot)
+
+
+func reroll_gear(uid: String, slot: String) -> Dictionary:
+	return roster_domain.reroll_gear(uid, slot)
 
 
 func gear_upgrade_info(uid: String, slot: String) -> Dictionary:
@@ -457,6 +422,14 @@ func check_condition(condition: String) -> bool:
 
 func pull_banner(banner_id: String, count: int) -> Dictionary:
 	return reward_domain.pull_banner(banner_id, count)
+
+
+func daily_reward_status() -> Dictionary:
+	return reward_domain.daily_reward_status()
+
+
+func claim_daily_reward() -> Dictionary:
+	return reward_domain.claim_daily_reward()
 
 
 # ------------------------------------------------------------------- battle

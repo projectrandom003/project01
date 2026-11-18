@@ -66,11 +66,6 @@ func _ready() -> void:
 		interaction_component.interactable_changed.connect(_on_interactable_changed)
 	set_avatar("kael")
 
-func _physics_process(delta: float) -> void:
-	if locomotion_component != null:
-		locomotion_component.physics_step(delta)
-
-
 # ------------------------------------------------------------ avatar switching
 
 ## The Tab cycle has a deliberate story order, independent of party/save order.

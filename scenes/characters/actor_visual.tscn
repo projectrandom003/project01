@@ -1,10 +1,11 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/actor_visual.gd" id="1_actor_visual"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/directional_equipment/directional_equipment_layers.tscn" id="2_directional"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/character_effects.tscn" id="3_effects"]
 [ext_resource type="AnimationLibrary" path="res://resources/characters/animations/character_locomotion.tres" id="4_locomotion"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/character_animation_component.tscn" id="5_anim_component"]
+[ext_resource type="Script" path="res://scripts/world/components/actor_animation_runtime_component.gd" id="14_animation_runtime"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/combat_attachment_points.tscn" id="6_combat_points"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/vfx_attachment_points.tscn" id="7_vfx_points"]
 [ext_resource type="PackedScene" path="res://scenes/characters/components/character_status_anchor.tscn" id="8_status_anchor"]
@@ -32,6 +33,9 @@ libraries = {
 
 [node name="CharacterAnimationComponent" parent="." instance=ExtResource("5_anim_component")]
 animation_player_path = NodePath("../AnimationPlayer")
+
+[node name="AnimationRuntime" type="Node" parent="."]
+script = ExtResource("14_animation_runtime")
 
 [node name="CombatAttachmentPoints" parent="." instance=ExtResource("6_combat_points")]
 

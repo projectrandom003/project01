@@ -37,6 +37,9 @@ func spawn_player() -> Player:
 		actor.position = world.get_spawn_position("PlayerSpawn")
 	var spawn := actor.position
 	world.entities.add_child(actor)
+	var camera_rig := actor.get_node_or_null("Camera2D") as PlayerCameraRig
+	if camera_rig != null:
+		camera_rig.set_base_zoom(0.8 / maxf(world.global_scale.x, 0.001))
 	actor.global_position = world.entities.to_global(spawn)
 	if actor.has_method("reset_physics_interpolation"):
 		actor.reset_physics_interpolation()

@@ -21,6 +21,10 @@ boot_splash/bg_color=Color(0.035, 0.045, 0.09, 1)
 boot_splash/show_image=false
 config/icon="res://assets/ui/reverie_icon.svg"
 
+[audio]
+
+default_bus_layout="res://resources/audio/reverie_audio_bus_layout.tres"
+
 [autoload]
 
 EventBus="*res://scripts/core/event_bus.gd"
@@ -29,6 +33,7 @@ TouchInput="*res://scripts/player/touch_input.gd"
 ContentDB="*res://scripts/core/content_db.gd"
 SaveService="*res://scripts/core/save_service.gd"
 GameState="*res://scenes/core/game_state.tscn"
+AudioDirector="*res://scenes/core/audio_director.tscn"
 
 [display]
 

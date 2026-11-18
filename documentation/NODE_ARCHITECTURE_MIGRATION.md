@@ -1,4 +1,4 @@
-﻿# Reverie Ã¢â‚¬â€ Node Architecture Migration
+# Reverie Ã¢â‚¬â€ Node Architecture Migration
 
 ## Goal
 
@@ -933,3 +933,153 @@ This section supersedes the older residual-debt notes above where the same syste
 
 Latest verified baseline remains **2,238 passed / 0 failed** with a fresh isolated Godot 4.7.2 editor import and full regression (see `artifacts/qa/responsibility_audit_regression_2026-11-17.log`). This audit did not change runtime code. Manual GUI QA and replacing explicitly temporary art remain separate release/content tasks; neither is claimed complete by this architecture audit.
 
+
+### World runtime responsibility split - 2026-11-18
+
+- [x] Converted `WorldRuntimeComponent` into a small composition root with four authored child nodes in `scenes/world/greenward_world.tscn`.
+- [x] `ChunkRuntime` owns player-to-chunk tracking and bounded prefetch requests.
+- [x] `PresentationRuntime` coordinates player-follow effects, weather ticking and nearby animated-prop activation.
+- [x] `SessionPersistence` owns the one-second player/region position save cadence.
+- [x] `AtmosphereRefresh` owns the quarter-second atmosphere refresh cadence.
+- [x] Preserved the original frame-update ordering and kept existing streaming, weather, effect-follow, day/night and persistence systems as their own owners.
+- [x] Godot 4.7.2 headless editor import registered all four new global classes successfully.
+- [x] Full project regression: **2,512 passed, 0 failed**, exit code 0. The existing intentional malformed-save recovery warning appeared; Godot also reported one ObjectDB instance leaked at test-runner exit.
+- [ ] Manual in-game verification of long-session chunk transitions and weather/atmosphere behavior remains separate from the automated regression.
+- This change adds behavior-owning scene nodes only; no generated art, placeholder visuals or procedural assets were introduced.
+
+### HUD responsive-layout node extraction - 2026-11-18
+
+- [x] Added authored `HUDResponsiveLayout` child node to `scenes/ui/hud.tscn`.
+- [x] Moved compact-portrait/landscape viewport adaptation out of `HUD` into `HUDResponsiveLayoutComponent`: party panel and keyboard hint visibility, minimap sizing, and interaction prompt positioning.
+- [x] Kept `HUD._apply_responsive_layout()` as a compatibility delegate so existing callers and responsive behavior remain unchanged.
+- [x] Added regression assertion for direct authored component ownership; existing portrait/landscape geometry checks remain active.
+- [x] Godot 4.7.2 editor import registered the new component without parse errors.
+- [x] Full project regression: **2,513 passed, 0 failed**, exit code 0. The intentional malformed-save recovery warning appeared; Godot reported 3 ObjectDB instances and 1 resource still in use at test-runner exit.
+- [ ] Manual device verification across portrait and landscape remains outstanding.
+
+
+### HUD navigation ownership extraction - 2026-11-18
+
+- [x] Added authored `Navigation` child node backed by `HUDNavigationComponent`.
+- [x] Moved navigation button styling, screen/menu intent connections, and save-and-return confirmation into the navigation owner.
+- [x] Kept `HUD` responsible for authored UI binding and touch-input signal wiring; navigation still emits the same HUD intent signals.
+- [x] Added structural regression coverage for the authored navigation node and its ownership.
+- [x] Godot 4.7.2 headless editor import completed with exit code 0.
+- [x] Full project regression: **2,514 passed, 0 failed**, exit code 0 (57 seconds). The intentional malformed-save recovery warning appeared; Godot reported 3 ObjectDB instances and 1 resource still in use at test-runner exit.
+- [ ] Manual verification of navigation buttons and save-and-return confirmation in the live game window remains outstanding.
+
+### Chunk lifecycle ownership refinement - 2026-11-18
+
+- [x] Moved Greenward village tree suppression policy out of `GreenwardWorld` and into the authored `WorldChunkLifecycleComponent`, where streamed prop materialization is owned.
+- [x] Kept the existing 520px authored-village clearing boundary and tree-kind whitelist unchanged.
+- [x] Added regression coverage for eligible trees, unaffected foliage, and non-Greenward regions.
+- [x] Godot 4.7.2 headless editor import completed with exit code 0.
+- [x] Full project regression: **2,517 passed, 0 failed**, exit code 0 (60.48 seconds). The intentional malformed-save recovery warning appeared; Godot reported 1 ObjectDB instance still in use at test-runner exit.
+
+### Architecture audit snapshot - 2026-11-18
+
+- The project is already substantially scene/component-based: Player, HUD, CombatScreen, GameScreen, world streaming, world presentation, and region composition have authored component ownership.
+- The remaining work is not a blanket conversion of every script into a Node. Pure deterministic/domain services (for example `CombatEngine`, content validators, registries, and data catalogs) should remain lightweight non-Node services unless they need scene-tree lifecycle or editor-authored ownership.
+- Priority audit targets are the large world composition/facade (`GreenwardWorld`), persistent domain facade (`GameState`), and art/asset pipeline services. Procedural art systems are excluded from visual redesign; existing bespoke asset scenes and resources remain the source of presentation.
+
+
+### World diagnostics ownership extraction - 2026-11-18
+
+- [x] Added authored `Diagnostics` child backed by `WorldDiagnosticsComponent`.
+- [x] Moved read-only `visual_style_report()` construction into the diagnostics owner while preserving the world's public compatibility method and report keys.
+- [x] Added regression coverage for diagnostics ownership and binding.
+- [x] Godot 4.7.2 headless editor import completed with exit code 0.
+- [x] Full project regression: **2,518 passed, 0 failed**, exit code 0 (60.02 seconds). The intentional malformed-save recovery warning appeared; Godot reported 3 ObjectDB instances and 1 resource still in use at test-runner exit.
+
+### World diagnostics ownership extraction - 2026-11-18
+
+- [x] Added authored `Diagnostics` child backed by `WorldDiagnosticsComponent`.
+- [x] Moved read-only `visual_style_report()` construction into the diagnostics owner while preserving the world's public compatibility method and every report key.
+- [x] Added regression coverage for diagnostics ownership and binding.
+- [x] Godot 4.7.2 headless editor import completed with exit code 0.\r\n- [x] Full project regression: **2,528 passed, 0 failed**, exit code 0 (48.88 seconds). The intentional malformed-save recovery warning appeared; Godot reported 1 ObjectDB instance leaked at test-runner exit.\r\n- [x] `git diff --check` completed with exit code 0 (only existing LF/CRLF normalization warnings).
+
+
+### GameState lifecycle ownership extraction - 2026-11-18
+
+- [x] Added authored `Lifecycle` child backed by `GameStateLifecycleComponent`.
+- [x] Moved startup/save loading, autosave cadence, new-game bootstrap, save scheduling and progress reset into the lifecycle owner.
+- [x] Preserved the existing GameState public methods as compatibility delegates and kept persistence serialization in `GameStatePersistenceComponent`.
+- [x] Godot 4.7.2 headless editor import completed with exit code 0.
+- [x] Full project regression: **2,520 passed, 0 failed**, exit code 0 (63.51 seconds). The intentional malformed-save recovery warning appeared; Godot reported 3 ObjectDB instances and 1 resource still in use at test-runner exit.
+
+### Profile progression ownership correction - 2026-11-18
+
+- [x] Routed the public `GameState.add_profile_xp()` compatibility method directly to `ProfileDomain.add_xp()` instead of passing through the roster domain.
+- [x] Kept party XP orchestration in `RosterDomain` while profile-level progression remains owned by `ProfileDomain`.
+- [x] Godot 4.7.2 headless editor import completed with exit code 0.
+- [x] Full project regression: **2,520 passed, 0 failed**, exit code 0 (60.56 seconds). The intentional malformed-save recovery warning appeared; Godot reported 3 ObjectDB instances and 1 resource still in use at test-runner exit.
+
+
+### Combat turn lifecycle extraction - 2026-11-18
+
+- [x] Extracted actor turn-start effects from `CombatEngine` into the pure `CombatTurnLifecycleResolver`: cooldown-ready events, burn/poison ticks, regeneration, status-duration decrement, stun skips and death events.
+- [x] Kept `CombatEngine` as the deterministic battle lifecycle owner; it still schedules turns, appends battle-log entries and decides when the battle ends.
+- [x] Kept the resolver scene-independent and stateless. It is a `RefCounted` domain service, not an artificial Node, because it owns no scene-tree lifecycle or persistent runtime state.
+- [x] Added regression coverage for status ordering, emitted events, duration decrement and stun skipping.
+- [x] Godot 4.7.2 headless editor import completed with exit code 0 and registered `CombatTurnLifecycleResolver`.
+- [x] Full project regression: **2,524 passed, 0 failed**, exit code 0 (60.13 seconds). The intentional malformed-save recovery warning appeared; Godot reported 3 ObjectDB instances and 1 resource still in use at test-runner exit.
+- [x] `git diff --check` completed with exit code 0.
+- [ ] Full live combat choreography and visual timing still require hands-on in-game QA.
+
+
+### Combat action orchestration consolidation - 2026-11-18
+
+- [x] Moved the shared player-action execution path from the `CombatScreen` root into its authored `CombatSessionComponent`.
+- [x] Routed enemy and auto-player choices from `CombatTurnFlowComponent` through the same session method. Manual, enemy and auto actions now share ultimate-banner handling, target-cancellation, engine execution and event presentation.
+- [x] Kept AI decision-making and reaction-window timing in `CombatTurnFlowComponent`; kept battle initialization/staging and screen-facing action orchestration in `CombatSessionComponent`.
+- [x] Added composition assertions for the session action API and authored turn-flow node.
+- [x] Godot 4.7.2 headless editor import completed with exit code 0.
+- [x] Full project regression: **2,526 passed, 0 failed**, exit code 0 (58.14 seconds). The intentional malformed-save recovery warning appeared; Godot reported 3 ObjectDB instances and 1 resource still in use at test-runner exit.
+- [ ] Manual in-game verification of enemy telegraph timing, auto-play and ultimate banners remains outstanding.
+
+### Quest-navigation session ownership - 2026-11-18
+
+- [x] Added the authored `QuestNavigation` child to `scenes/game.tscn`, backed by `GameQuestNavigationComponent`.
+- [x] Moved lifetime ownership of the live-target registry and resolver cache from an inline `GameScreen` constructor to the gameplay scene tree.
+- [x] Kept `QuestNavigationResolver` as a pure `RefCounted` domain service; the new Node owns its session lifetime and clears registered live providers on teardown.
+- [x] Preserved `GameScreen.quest_resolver` as the same resolver reference injected into the HUD and consumed by the map/world marker; no consumer API or navigation rules changed.
+- [x] Added regression assertions for authored ownership and single-instance injection.
+- [x] Godot 4.7.2 headless editor import completed with exit code 0.\r\n- [x] Full project regression: **2,528 passed, 0 failed**, exit code 0 (48.88 seconds). The intentional malformed-save recovery warning appeared; Godot reported 1 ObjectDB instance leaked at test-runner exit.\r\n- [x] `git diff --check` completed with exit code 0 (only existing LF/CRLF normalization warnings).
+- No visual assets, procedural art, generated placeholders or unrelated scene content were changed.- [x] Added behavioral lifecycle checks proving the component retains a registered provider while alive and clears the registry on `_exit_tree()`.
+- [x] Re-ran the complete suite after adding lifecycle coverage: **2,530 passed, 0 failed**, exit code 0 (56.24 seconds). The expected malformed-save recovery warning appeared; one ObjectDB instance remains reported at shutdown.
+
+## Actor animation runtime ownership
+
+- Added the authored `AnimationRuntime` child to `scenes/characters/actor_visual.tscn`.
+- Added `ActorAnimationRuntimeComponent` to own the per-frame animation cadence and invoke the actor's existing animation tick.
+- `ActorVisual` retains its public animation API and state-machine compatibility; `CharacterAnimator` remains a pure deterministic `RefCounted` state machine.
+- This is a lifecycle/scene ownership extraction, not a change to animation timing, sprite assets, or rendering behavior.
+
+## Player locomotion lifecycle ownership - 2026-11-18
+
+- Moved the physics-frame callback into the authored `PlayerLocomotionComponent` node; it now drives its own `_physics_process` and calls the existing deterministic movement step.
+- Removed the Player facade's `_physics_process` forwarding callback. The root retains the stable public API while the locomotion node owns its actual simulation cadence.
+- Preserved movement math, input sources, water slowdown, animation updates, camera look-ahead, and facing persistence without changing any visual assets or scene art.
+- Added structural regression assertions that the locomotion component is actively physics-processing and the Player facade no longer owns that callback.
+
+
+## HUD interaction-prompt lifecycle ownership - 2026-11-18
+
+- Added an authored `Prompt` child to `scenes/ui/hud.tscn`, backed by `HUDPromptComponent`.
+- Moved the throttled interaction-prompt polling and periodic quest-label refresh cadence out of the HUD facade and into that scene-owned component.
+- Kept the HUD as the presentation/API surface; the component binds to the HUD's authored controls and calls its existing quest-refresh API. Prompt wording, touch-button visibility, and refresh intervals are unchanged.
+- Added scene-composition and runtime binding assertions; updated integration tests to exercise the owning component's lifecycle callback directly.
+
+
+## Minimap live-update lifecycle ownership - 2026-11-18
+
+- Moved the minimap's 10 Hz player-position, facing, world reacquisition, marker refresh and redraw cadence into its authored `MarkerData` component.
+- The component now owns both marker collection and the update lifecycle; `Minimap` remains responsible for drawing, controls and presentation state.
+- Kept the existing update interval, collapsed-map pause behavior, marker rules and shared quest resolver injection unchanged.
+- Added runtime assertions for component processing ownership and the facade's removal of its `_process` callback.
+
+
+## Audio playback teardown ownership - 2026-11-18
+
+- Added explicit `AudioDirector` teardown for its active fade tween, `AudioStreamPlayer` playback and stream reference.
+- The player now stops and releases its stream during `_exit_tree()`, preventing the autoload from retaining the title/exploration MP3 playback resource at application shutdown.

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/game/game_screen.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/ui/game_ui.tscn" id="2_ui"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/game/game_combat_router_component.gd" id="5_combat_router"]
 [ext_resource type="Script" path="res://scripts/game/game_input_router_component.gd" id="6_input_router"]
 [ext_resource type="Script" path="res://scripts/game/game_runtime_component.gd" id="7_runtime"]
+[ext_resource type="Script" path="res://scripts/game/game_quest_navigation_component.gd" id="11_quest_navigation"]
 [ext_resource type="Script" path="res://scripts/game/game_world_transition_component.gd" id="8_transition"]
 [ext_resource type="Script" path="res://scripts/game/game_world_activation_component.gd" id="9_activation"]
 [ext_resource type="Script" path="res://scripts/game/game_world_persistence_component.gd" id="10_persistence"]
@@ -41,3 +42,6 @@ script = ExtResource("6_input_router")
 
 [node name="Runtime" type="Node" parent="."]
 script = ExtResource("7_runtime")
+
+[node name="QuestNavigation" type="Node" parent="."]
+script = ExtResource("11_quest_navigation")

@@ -29,3 +29,23 @@ metadata/presentation_offset = Vector2(-120, -10)
 [node name="AmbientParticles" type="Marker2D" parent="."]
 metadata/grid_position = Vector2(23, 4)
 metadata/presentation_offset = Vector2(0, 0)
+ 
+[node name="FountainWest" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(27.03, 16.09)
+metadata/light_offset = Vector2(0, -16)
+
+[node name="FountainEast" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(36.09, 7.03)
+metadata/light_offset = Vector2(0, -16)
+
+[node name="FountainCenter" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(35.63, 15.63)
+metadata/light_offset = Vector2(0, -22)
+
+[node name="WestGardenBranch" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(29.0, 15.0)
+metadata/light_offset = Vector2(0, -18)
+
+[node name="EastGardenBranch" type="Marker2D" parent="."]
+metadata/grid_position = Vector2(34.0, 10.0)
+metadata/light_offset = Vector2(0, -18)

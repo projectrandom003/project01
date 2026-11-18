@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_road_edge_transitions.tscn" id="3_road_edges"]
 
 [ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/castle_terrain_configuration.tscn" id="1_config"]
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/royal_garden_isometric_layers_baked.tscn" id="2_tilemap_candidate"]
 
 [node name="Terrain" type="Node2D"]
 z_index = -20
@@ -8,7 +11,11 @@ z_index = -20
 [node name="GrassDetails" type="Node2D" parent="."]
 
 [node name="TerrainTransitions" type="Node2D" parent="."]
+[node name="RoadEdgeTransitions" parent="TerrainTransitions" instance=ExtResource("3_road_edges")]
 
 [node name="Ground" type="Node2D" parent="."]
+
+[node name="TilemapCandidate" parent="." instance=ExtResource("2_tilemap_candidate")]
+visible = false
 
 [node name="Configuration" parent="." instance=ExtResource("1_config")]

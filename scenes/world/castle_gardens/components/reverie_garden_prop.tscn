@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/castle_gardens/components/reverie_garden_flowers.tscn" id="1_flowers"]
+
+[node name="ReverieGardenProp" type="Node2D"]
+y_sort_enabled = true
+
+[node name="Visuals" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="FlowerAccent" parent="Visuals" instance=ExtResource("1_flowers")]
