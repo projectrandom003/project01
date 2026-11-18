@@ -39,6 +39,10 @@ func _avatar_id() -> String:
 	return str(body.get("avatar_id")) if body != null else "kael"
 
 
+func _physics_process(delta: float) -> void:
+	physics_step(delta)
+
+
 func physics_step(delta: float) -> void:
 	if body == null or not is_instance_valid(body):
 		return

@@ -5,6 +5,7 @@ extends Node
 const SUMMON_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/gacha_screen.tscn")
 const INVENTORY_SCREEN_SCENE: PackedScene = preload("res://scenes/ui/inventory_screen.tscn")
 const WORLD_MAP_SCENE: PackedScene = preload("res://scenes/ui/map_screen.tscn")
+const DAILY_REWARDS_SCENE: PackedScene = preload("res://scenes/ui/components/daily_rewards_panel.tscn")
 var menu: Control
 
 func bind(owner: Control) -> void:
@@ -18,6 +19,9 @@ func open_inventory() -> void:
 
 func open_world_map() -> void:
 	open_scene(WORLD_MAP_SCENE, "WorldMapOverlay")
+
+func open_daily_rewards() -> void:
+	open_scene(DAILY_REWARDS_SCENE, "DailyRewardsOverlay")
 
 func open_settings() -> void:
 	open_path("res://scenes/ui/settings_screen.tscn", "SettingsOverlay")

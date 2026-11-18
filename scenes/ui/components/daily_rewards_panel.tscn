@@ -1,0 +1,54 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/components/daily_rewards_panel_component.gd" id="1_script"]
+
+[node name="DailyRewardsPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(620, 500)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -310.0
+offset_top = -250.0
+offset_right = 310.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Body" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Body"]
+layout_mode = 2
+text = "DAILY BLESSINGS"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 26
+
+[node name="Subtitle" type="Label" parent="Body"]
+layout_mode = 2
+text = "A gift awaits each day you return to Reverie."
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+
+[node name="CycleLabel" type="Label" parent="Body"]
+layout_mode = 2
+text = "DAY 1 OF 7"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 17
+
+[node name="RewardList" type="VBoxContainer" parent="Body"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 7
+
+[node name="ClaimButton" type="Button" parent="Body"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "CLAIM TODAY'S REWARD"
+
+[node name="CloseButton" type="Button" parent="Body"]
+layout_mode = 2
+text = "Close"

@@ -15,13 +15,14 @@ var overlay_router: GameOverlayRouterComponent
 var combat_router: GameCombatRouterComponent
 var input_router: GameInputRouterComponent
 var runtime_component: GameRuntimeComponent
+var quest_navigation_component: GameQuestNavigationComponent
 var ui_layer: CanvasLayer
 var hud: HUD
 var dialogue: DialogueBox
 
 ## Single shared quest navigation resolver owned by GameScreen and injected into
 ## HUD (and later consumers). Do not instantiate separate resolvers per consumer.
-var quest_resolver: QuestNavigationResolver = QuestNavigationResolver.new()
+var quest_resolver: QuestNavigationResolver
 
 var active_overlay: OverlayScreen = null
 var active_combat: CombatScreen = null
@@ -34,10 +35,12 @@ func _ready() -> void:
 	world_host = get_node_or_null("WorldHost") as Node2D
 	world_session = get_node_or_null("WorldSession") as GameWorldSessionComponent
 	runtime_component = get_node_or_null("Runtime") as GameRuntimeComponent
+	quest_navigation_component = get_node_or_null("QuestNavigation") as GameQuestNavigationComponent
+	quest_resolver = quest_navigation_component.resolver if quest_navigation_component != null else null
 	overlay_router = get_node_or_null("OverlayRouter") as GameOverlayRouterComponent
 	combat_router = get_node_or_null("CombatRouter") as GameCombatRouterComponent
 	input_router = get_node_or_null("InputRouter") as GameInputRouterComponent
-	if world_host == null or world_session == null or runtime_component == null or overlay_router == null or combat_router == null or input_router == null:
+	if world_host == null or world_session == null or runtime_component == null or quest_navigation_component == null or quest_resolver == null or overlay_router == null or combat_router == null or input_router == null:
 		push_error("GameScreen scene is missing a required authored composition child")
 		return
 	runtime_component.bind(self)

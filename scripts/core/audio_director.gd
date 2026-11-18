@@ -79,3 +79,16 @@ func _start_track(track_id: String, fade_duration: float) -> void:
 func _stop_player() -> void:
 	_player.stop()
 	_current_track_id = ""
+
+
+func _exit_tree() -> void:
+	# AudioStreamPlayer can retain its active AudioStreamPlayback (and the
+	# underlying MP3 resource) after stop() during application teardown.
+	# Explicitly release both the playback and stream while the player exists.
+	if _fade_tween != null and _fade_tween.is_running():
+		_fade_tween.kill()
+	if _player != null:
+		_player.stop()
+		_player.stream = null
+	_current_track_id = ""
+	_fade_tween = null

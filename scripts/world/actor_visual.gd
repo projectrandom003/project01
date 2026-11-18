@@ -62,6 +62,7 @@ var character_effects_component: ActorCharacterEffectsComponent
 var pose_component: ActorPoseComponent
 var sprite_component: ActorSpriteComponent
 var animation_component: CharacterAnimationComponent
+var animation_runtime_component: ActorAnimationRuntimeComponent
 var _sprite_active: bool = false
 var _last_sprite_key: int = -1
 var _custom_source: bool = false
@@ -108,13 +109,15 @@ func _ready() -> void:
 	_refresh_colors()
 	_init_animator()
 	animation_component = get_node_or_null("CharacterAnimationComponent") as CharacterAnimationComponent
+	animation_runtime_component = get_node_or_null("AnimationRuntime") as ActorAnimationRuntimeComponent
 	procedural_renderer = get_node_or_null("ProceduralRenderer") as ActorProceduralRendererComponent
 	character_effects_component = get_node_or_null("CharacterEffects") as ActorCharacterEffectsComponent
 	pose_component = get_node_or_null("Pose") as ActorPoseComponent
 	sprite_component = get_node_or_null("SpritePresentation") as ActorSpriteComponent
-	if animation_component == null or procedural_renderer == null or character_effects_component == null or pose_component == null or sprite_component == null:
-		push_error("ActorVisual requires its authored CharacterAnimationComponent, ProceduralRenderer, Pose and SpritePresentation children.")
+	if animation_component == null or animation_runtime_component == null or procedural_renderer == null or character_effects_component == null or pose_component == null or sprite_component == null:
+		push_error("ActorVisual requires its authored AnimationRuntime, CharacterAnimationComponent, ProceduralRenderer, Pose and SpritePresentation children.")
 		return
+	animation_runtime_component.bind(self)
 	procedural_renderer.bind(self)
 	character_effects_component.bind(self)
 	pose_component.bind(self)
@@ -351,7 +354,8 @@ func _on_one_shot_finished(state: int) -> void:
 
 # ------------------------------------------------------------------ process
 
-func _process(delta: float) -> void:
+func tick_animation(delta: float) -> void:
+	# Called by the authored AnimationRuntime child; that component owns the frame cadence.
 	# anim_time keeps advancing (existing _draw() uses it for smooth bob).
 	anim_time += delta
 	hit_flash = maxf(0.0, hit_flash - delta * 3.0)

@@ -648,12 +648,12 @@
   "standalone": true,
   "map_bounds": {
    "min": [
-    -320,
-    -240
+    -480,
+    -360
    ],
    "max": [
-    1600,
-    1200
+    1920,
+    1440
    ]
   },
   "clearing_radius": 8

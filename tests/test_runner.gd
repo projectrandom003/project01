@@ -36,6 +36,44 @@ func _on_test_roaming_encounter(_group_id: String, _source: Node) -> void:
 	_roaming_encounter_count += 1
 
 
+func _test_daily_rewards() -> void:
+	var original_rewards: Dictionary = GameState.daily_rewards.duplicate(true)
+	var original_gold := GameState.currency("gold")
+	var original_crystals := GameState.currency("crystals")
+	GameState.daily_rewards = {}
+	var status := GameState.daily_reward_status()
+	check(bool(status.get("can_claim", false)) and int(status.get("day", 0)) == 1, "Daily rewards begin with an available day-one claim")
+	var first := GameState.claim_daily_reward()
+	check(bool(first.get("ok", false)) and int(first.get("day", 0)) == 1, "Daily reward day one can be claimed")
+	check(GameState.currency("gold") == original_gold + 300, "Daily reward grants the configured Gold amount")
+	var duplicate := GameState.claim_daily_reward()
+	check(not bool(duplicate.get("ok", false)), "Daily reward cannot be claimed twice on the same local date")
+	check(GameState.currency("gold") == original_gold + 300, "Duplicate daily claim grants no additional currency")
+	var serialized := GameState._to_dict()
+	check(serialized.get("daily_rewards", {}).get("last_claim_date", "") == str(status.get("today", "")), "Daily claim date is included in save data")
+	check(int(serialized.get("daily_rewards", {}).get("cycle_day", 0)) == 2, "Daily cycle advances and persists after claiming")
+	var original_coins := GameState.currency("ancient_coins")
+	GameState.daily_rewards = {"cycle_day": 7}
+	var final_day := GameState.claim_daily_reward()
+	check(bool(final_day.get("ok", false)) and int(final_day.get("day", 0)) == 7, "Seventh daily blessing can be claimed")
+	check(GameState.currency("ancient_coins") == original_coins + 1, "Seventh daily blessing grants one Ancient Coin")
+	GameState.daily_rewards = original_rewards
+	GameState.profile["gold"] = original_gold
+	GameState.profile["crystals"] = original_crystals
+	GameState.profile["ancient_coins"] = original_coins
+
+
+func _test_ancient_coin_economy() -> void:
+	var original_coins := GameState.currency("ancient_coins")
+	var boss_rewards := GameState.reward_domain.build_battle_rewards("elder_hollow", false)
+	check(int(boss_rewards.get("ancient_coins", 0)) == 2, "Elder Hollow awards two Ancient Coins as wallet currency")
+	check(not boss_rewards.get("items", {}).has("ancient_coins"), "Ancient Coins are not duplicated as inventory materials")
+	var applied := GameState.reward_domain.apply_battle_result("elder_hollow", true, boss_rewards)
+	check(bool(applied.get("applied", false)), "Boss currency reward applies through the battle reward domain")
+	check(GameState.currency("ancient_coins") == original_coins + 2, "Boss victory deposits Ancient Coins into the persistent wallet")
+	GameState.profile["ancient_coins"] = original_coins
+
+
 func _ready() -> void:
 	call_deferred("_run")
 
@@ -56,6 +94,7 @@ func _run() -> void:
 	_test_passive_battle_hooks()
 	_test_equipment_bonuses()
 	_test_gear_enhancement()
+	_test_equipment_set_bonuses()
 	_test_crafting_service()
 	_test_shop_service()
 	_test_invalid_json()
@@ -107,6 +146,8 @@ func _run() -> void:
 	await _test_world_visual_standards()
 	_test_asset_status_honesty()
 	_test_state()
+	_test_daily_rewards()
+	_test_ancient_coin_economy()
 	await _test_ui()
 	_test_minimap_marker_filtering()
 	# --- Phase 6 Round 3A: character progression ---
@@ -145,7 +186,7 @@ func check(condition: bool, label: String, detail: String = "") -> void:
 		passed += 1
 		return
 	failed += 1
-	var message := label if detail.is_empty() else "%s — %s" % [label, detail]
+	var message := label if detail.is_empty() else "%s â€” %s" % [label, detail]
 	failures.append(message)
 	push_error("[TEST] " + message)
 
@@ -275,6 +316,8 @@ func _test_player_node_composition() -> void:
 	check(player.get_node_or_null("WaterSurface") is Sprite2D, "Player scene authors the water surface")
 	check(player.get_node_or_null("PersonalGlow") is PlayerPersonalLightComponent, "Player scene authors the personal light")
 	check(player.locomotion_component != null and player.locomotion_component.body == player, "Locomotion component binds to its owning Player")
+	check(player.locomotion_component != null and player.locomotion_component.is_physics_processing() and player.locomotion_component.has_method("_physics_process"), "Locomotion component owns its physics update lifecycle")
+	check(not player.has_method("_physics_process"), "Player facade no longer owns the locomotion physics callback")
 	var kael_motion := PlayerLocomotionComponent.movement_profile("kael")
 	var gerald_motion := PlayerLocomotionComponent.movement_profile("gerald")
 	var lilith_motion := PlayerLocomotionComponent.movement_profile("lilith")
@@ -345,9 +388,10 @@ func _test_application_scene_composition() -> void:
 	check(GameState.quest_domain.quest_state("the_first_path") == GameState.quest_state("the_first_path"), "QuestDomain is the direct quest API while GameState keeps its compatibility wrapper")
 	check(GameState.reward_domain.has_method("apply_battle_result"), "RewardDomain directly owns battle reward application")
 	check(GameState.persistence_component is GameStatePersistenceComponent and GameState.persistence_component.get_parent() == GameState, "GameState binds its authored persistence component")
+	check(GameState.lifecycle_component is GameStateLifecycleComponent and GameState.lifecycle_component.get_parent() == GameState and GameState.lifecycle_component.state == GameState, "GameState delegates startup and save lifecycle to its authored lifecycle component")
 	check(GameState._save_timer is Timer and GameState._save_timer.get_parent() == GameState, "GameState binds its authored save timer")
 	check(GameState._autosave_timer is Timer and GameState._autosave_timer.get_parent() == GameState, "GameState binds its authored autosave timer")
-	check(GameState.get_child_count() == 9, "GameState owns only its nine authored domain, persistence and timer children", str(GameState.get_child_count()))
+	check(GameState.get_child_count() == 10, "GameState owns its ten authored domain, lifecycle, persistence and timer children", str(GameState.get_child_count()))
 	check(GameState.inventory_domain.inventory == GameState.inventory, "InventoryDomain owns inventory data behind the GameState compatibility property")
 	check(GameState.roster_domain.roster == GameState.roster and GameState.roster_domain.party == GameState.party, "RosterDomain owns roster and party data behind compatibility properties")
 	check(GameState.roster_domain.gear_levels == GameState.gear_levels, "RosterDomain owns gear progression data behind the compatibility property")
@@ -369,6 +413,7 @@ func _test_application_scene_composition() -> void:
 		check(state_nodes.has("RosterDomain"), "Persistent GameState authors a roster-domain node")
 		check(state_nodes.has("RewardDomain"), "Persistent GameState authors a reward-domain node")
 		check(state_nodes.has("Persistence"), "Persistent GameState authors its persistence component")
+		check(state_nodes.has("Lifecycle"), "Persistent GameState authors its lifecycle component")
 		check(state_nodes.has("SaveTimer"), "Persistent GameState authors its debounce-save timer")
 		check(state_nodes.has("AutosaveTimer"), "Persistent GameState authors its periodic autosave timer")
 		check(state_nodes.has("ProfileDomain"), "Persistent GameState authors a profile domain")
@@ -433,6 +478,7 @@ func _test_application_scene_composition() -> void:
 		check(actor_visual_nodes.has("CharacterEffects"), "ActorVisual scene authors its character-specific effects component")
 		check(actor_visual_nodes.has("Pose"), "ActorVisual scene authors its locomotion-pose component")
 		check(actor_visual_nodes.has("SpritePresentation"), "ActorVisual scene authors its frame-source and sprite-presentation component")
+		check(actor_visual_nodes.has("AnimationRuntime"), "ActorVisual scene authors its animation runtime lifecycle component")
 	var hud_scene := load("res://scenes/ui/hud.tscn") as PackedScene
 	check(hud_scene != null, "HUD scene loads")
 	if hud_scene != null:
@@ -444,6 +490,7 @@ func _test_application_scene_composition() -> void:
 		check(hud_nodes.has("Party"), "HUD scene authors its party component")
 		check(hud_nodes.has("Quest"), "HUD scene authors its quest component")
 		check(hud_nodes.has("Toast"), "HUD scene authors its toast component")
+		check(hud_nodes.has("Prompt"), "HUD scene authors its interaction-prompt lifecycle component")
 	var settings_scene := load("res://scenes/ui/settings_screen.tscn") as PackedScene
 	check(settings_scene != null, "Settings screen scene loads")
 	if settings_scene != null:
@@ -499,6 +546,7 @@ func _test_application_scene_composition() -> void:
 		check(world_nodes.has("Navigation"), "World scene authors its navigation component")
 		check(world_nodes.has("PlayerSpawn"), "World scene authors its player-spawn component")
 		check(world_nodes.has("Entities"), "World scene authors its entity-spawner component")
+	check(is_instance_valid(AudioDirector) and AudioDirector.get_node_or_null("MusicPlayer") is AudioStreamPlayer, "AudioDirector autoload owns the authored MusicPlayer")
 	var main_scene := load("res://scenes/main.tscn") as PackedScene
 	check(main_scene != null, "Main application scene loads")
 	if main_scene != null:
@@ -894,6 +942,17 @@ func _test_combat_engine_ownership() -> void:
 	engine = null
 	check(engine_ref.get_ref() == null, "Combat skill resolver does not retain the engine strongly")
 	check(resolver.engine == null, "Combat skill resolver weak owner clears after engine release")
+	var lifecycle_actor := _unit("turn_lifecycle_actor")
+	lifecycle_actor.hp = 500.0
+	lifecycle_actor.apply_status("burn", 2, 0.1)
+	lifecycle_actor.apply_status("regen", 2, 0.05)
+	var turn_result := CombatTurnLifecycleResolver.begin_actor_turn(lifecycle_actor)
+	check(lifecycle_actor.hp == 450.0, "Turn lifecycle resolver applies burn and regeneration in authored status order", str(lifecycle_actor.hp))
+	check(turn_result.events.size() == 2 and str(turn_result.events[0].get("type", "")) == "status_tick" and str(turn_result.events[1].get("type", "")) == "heal", "Turn lifecycle resolver emits status and healing events")
+	check(int(lifecycle_actor.statuses[0].get("turns", 0)) == 1 and int(lifecycle_actor.statuses[1].get("turns", 0)) == 1, "Turn lifecycle resolver decrements each active status exactly once")
+	lifecycle_actor.apply_status("stun", 2, 1.0)
+	var stunned_result := CombatTurnLifecycleResolver.begin_actor_turn(lifecycle_actor)
+	check(bool(stunned_result.skipped) and str(stunned_result.events[0].get("type", "")) == "skip", "Turn lifecycle resolver preserves stunned-turn skipping")
 	resolver = null
 
 # --------------------------------------------------------------------- state
@@ -1151,6 +1210,8 @@ func _test_ui() -> void:
 	check(combat != null and combat._hud_component is CombatHudComponent and combat._hud_component.get_parent() == combat, "CombatScreen binds its HUD/roster component")
 	check(combat != null and combat._layout_component is CombatLayoutComponent and combat._layout_component.get_parent() == combat, "CombatScreen binds its authored layout component")
 	check(combat != null and combat._session_component is CombatSessionComponent and combat._session_component.get_parent() == combat, "CombatScreen binds its authored battle-session component")
+	check(combat != null and combat._session_component.has_method("execute_action"), "Combat session owns the shared player/enemy/auto action execution path")
+	check(combat != null and combat._turn_flow is CombatTurnFlowComponent and combat._turn_flow.get_parent() == combat, "CombatScreen binds its authored turn-flow component")
 	check(combat != null and combat._input_component is CombatInputComponent and combat._input_component.get_parent() == combat, "CombatScreen binds its authored input component")
 	check(combat != null and combat._battlefield != null and combat._battlefield._layout_component is BattlefieldLayoutComponent and combat._battlefield._layout_component.get_parent() == combat._battlefield, "Battlefield binds its authored layout/actor component")
 	check(combat != null and combat._battlefield != null and combat._battlefield._effects_component is BattlefieldEffectsComponent and combat._battlefield._effects_component.get_parent() == combat._battlefield, "Battlefield binds its authored combat-effects component")
@@ -1206,6 +1267,9 @@ func _test_ui() -> void:
 		check(game.hud._party_component is HUDPartyComponent and game.hud._party_component.get_parent() == game.hud, "HUD binds its party component")
 		check(game.hud._quest_component is HUDQuestComponent and game.hud._quest_component.get_parent() == game.hud, "HUD binds its quest component")
 		check(game.hud._toast_component is HUDToastComponent and game.hud._toast_component.get_parent() == game.hud, "HUD binds its toast component")
+		check(game.hud._responsive_layout_component is HUDResponsiveLayoutComponent and game.hud._responsive_layout_component.get_parent() == game.hud, "HUD delegates viewport adaptation to its authored responsive-layout node")
+		check(game.hud._navigation_component is HUDNavigationComponent and game.hud._navigation_component.get_parent() == game.hud, "HUD delegates navigation styling and intent wiring to its authored navigation node")
+		check(game.hud._prompt_component is HUDPromptComponent and game.hud._prompt_component.get_parent() == game.hud, "HUD delegates prompt and quest-refresh cadence to its authored lifecycle node")
 		check(game.input_router is GameInputRouterComponent and game.input_router.get_parent() == game, "GameScreen binds its authored input router")
 		check(game.runtime_component is GameRuntimeComponent and game.runtime_component.get_parent() == game, "GameScreen delegates HUD refresh and suspended-world recovery to its runtime component")
 		check(game.world.player != null, "World creates a player")
@@ -1573,6 +1637,33 @@ func _test_gear_enhancement() -> void:
 		GameState.inventory.erase("gladewood_bow")
 	if previous_level > 0:
 		GameState.gear_levels[uid + "|weapon"] = previous_level
+
+
+func _test_equipment_set_bonuses() -> void:
+	if GameState.roster.is_empty():
+		check(false, "equipment set bonus test has a roster character")
+		return
+	var instance: CharacterInstance = GameState.roster[0]
+	var uid := instance.uid
+	var previous: Dictionary = {}
+	for slot in CharacterInstance.SLOTS:
+		previous[slot] = instance.equipped_item(slot)
+	instance.equip("gladewood_bow", "weapon")
+	instance.equip("mossweave_vest", "armor")
+	var two_piece := EquipmentStatModifiers.set_bonus_for_character(uid)
+	check(near(float(two_piece.get("hp", 0.0)), 40.0) and near(float(two_piece.get("def", 0.0)), 4.0), "Greenward Wayfarer two-piece bonus grants HP and defense", str(two_piece))
+	check(near(float(two_piece.get("spd", 0.0)), 0.0) and near(float(two_piece.get("crit", 0.0)), 0.0), "Greenward Wayfarer three-piece bonus stays locked at two pieces", str(two_piece))
+	instance.equip("wayfarer_charm", "accessory")
+	var three_piece := EquipmentStatModifiers.set_bonus_for_character(uid)
+	check(near(float(three_piece.get("spd", 0.0)), 5.0) and near(float(three_piece.get("crit", 0.0)), 0.02), "Greenward Wayfarer three-piece bonus activates at full set", str(three_piece))
+	var battle_unit := CombatFactory.build_from_character(instance, 1.0)
+	check(battle_unit != null and battle_unit.max_hp > 40.0 and battle_unit.defense > 4.0 and battle_unit.speed >= 5.0, "equipment set bonuses are applied to combat stats")
+	for slot in CharacterInstance.SLOTS:
+		var old_item := str(previous.get(slot, ""))
+		if old_item.is_empty():
+			instance.unequip(slot)
+		else:
+			instance.equip(old_item, slot)
 
 
 # --------------------------------------------- Phase 2: invalid JSON parse path
@@ -2013,7 +2104,7 @@ func _test_visual_style() -> void:
 # ------------------------------------------- Phase 3: character animator (pure)
 ## CharacterAnimator is a pure, deterministic 8x8 state machine. Exercises
 ## validation, play()/priority, 8-way direction mapping, looping and one-shot
-## ticking, snapshot round-trips and determinism — with no SceneTree needed.
+## ticking, snapshot round-trips and determinism â€” with no SceneTree needed.
 func _test_character_animator() -> void:
 	check(CharacterAnimator.ALL_STATES == CharacterAnimationSpecCatalog.ALL_STATES, "CharacterAnimator state ids delegate to the immutable spec catalog")
 	check(CharacterAnimator.ALL_DIRECTIONS == CharacterAnimationSpecCatalog.ALL_DIRECTIONS, "CharacterAnimator direction ids delegate to the immutable spec catalog")
@@ -2377,6 +2468,13 @@ func _test_chunk_visual_quality() -> void:
 		check(QuestNavigationResolver._in_territory("greenward", elder_world, "elder_hollow"), "Elder Hollow territory membership is recognized")
 		check(QuestNavigationTerritoryResolver.territory_for("greenward", elder_world, {}) == "elder_hollow", "Dedicated territory resolver classifies Elder Hollow")
 		check(not QuestNavigationResolver._in_territory("greenward", elder_world, "withered_estate"), "Elder Hollow is not classified as the Matron territory")
+		var navigation_owner := GameQuestNavigationComponent.new()
+		add_child(navigation_owner)
+		navigation_owner.register_nav_target("lifecycle_probe", {"local_pos": Vector2(12, 24)})
+		check(navigation_owner.resolver._registry.has("lifecycle_probe"), "quest navigation component retains registered live targets during its scene lifetime")
+		remove_child(navigation_owner)
+		check(navigation_owner.resolver._registry.is_empty(), "quest navigation component clears live target providers when its scene exits")
+		navigation_owner.free()
 	var seed := int(region.get("noise_seed", 1337))
 	var elevation := FastNoiseLite.new()
 	elevation.seed = seed
@@ -2878,6 +2976,8 @@ func _test_world_visual_integration() -> void:
 		game.hud._minimap._find_world()
 		game.hud._minimap._update_markers()
 		check(game.hud._minimap.marker_component.active_world == game.world, "Minimap marker component binds the active world before collecting markers")
+		check(game.hud._minimap.marker_component.is_processing() and game.hud._minimap.marker_component.has_method("_process"), "Minimap marker component owns its live-update cadence")
+		check(not game.hud._minimap.has_method("_process"), "Minimap facade no longer owns marker polling cadence")
 	var portrait_prompt := game.hud.get_node_or_null("PromptCenter") as Control
 	check(portrait_prompt != null and is_equal_approx(portrait_prompt.offset_top, -523.28) and is_equal_approx(portrait_prompt.offset_bottom, -455.76), "portrait HUD moves interaction prompt above touch controls")
 	game.hud._apply_responsive_layout(Vector2(1280, 720))
@@ -2892,6 +2992,12 @@ func _test_world_visual_integration() -> void:
 	check(game.world.chunk_streaming_component.get_parent() == game.world, "chunk streaming component is owned by the world")
 	check(game.world.chunk_lifecycle_component is WorldChunkLifecycleComponent, "assembled world wires its chunk lifecycle component")
 	check(game.world.chunk_lifecycle_component.get_parent() == game.world and game.world.chunk_lifecycle_component.world == game.world, "chunk lifecycle component is owned and configured by the world")
+	check(game.world.chunk_lifecycle_component.should_suppress_streamed_tree("glade_tree", IsoMath.grid_to_world(8.0, 8.0)), "chunk lifecycle suppresses streamed trees inside the authored Greenward village clearing")
+	check(not game.world.chunk_lifecycle_component.should_suppress_streamed_tree("fern", IsoMath.grid_to_world(8.0, 8.0)), "chunk lifecycle preserves non-tree foliage inside the authored village clearing")
+	var original_region_id: String = game.world.region_id
+	game.world.region_id = "moonpetal_hollow"
+	check(not game.world.chunk_lifecycle_component.should_suppress_streamed_tree("glade_tree", IsoMath.grid_to_world(8.0, 8.0)), "chunk lifecycle keeps streamed trees in non-Greenward regions")
+	game.world.region_id = original_region_id
 	check(game.world.region_builder_component is WorldRegionBuilderComponent, "assembled world wires its data-driven region builder")
 	check(game.world.region_builder_component.get_parent() == game.world and game.world.region_builder_component.world == game.world, "region builder component is owned and configured by the world")
 	check(game.world.greenward_builder_component is WorldGreenwardBuilderComponent, "assembled world wires its Greenward composition builder")
@@ -2930,6 +3036,7 @@ func _test_world_visual_integration() -> void:
 	pv.set_move_direction(Vector2(1, 0))
 	check(pv.animator.state == CharacterAnimator.State.ATTACK, "visual.play(ATTACK) updates the animator state")
 	check(pv.animator.direction == CharacterAnimator.Direction.RIGHT, "visual.set_move_direction((1,0)) sets RIGHT")
+	check(game.world.diagnostics_component is WorldDiagnosticsComponent and game.world.diagnostics_component.get_parent() == game.world and game.world.diagnostics_component.world == game.world, "world diagnostics report is owned by its authored diagnostics component")
 	var report: Dictionary = game.world.visual_style_report()
 	check(not report.is_empty(), "visual_style_report() returns a non-empty Dictionary")
 	var reported_player_art: Dictionary = report.get("character_art", {})
@@ -2949,7 +3056,7 @@ func _test_world_visual_integration() -> void:
 	check(not encounter_probe.engaged and game.active_combat == null, "assembled world does not start combat from proximity")
 	var previous_touch_mode := TouchInput.using_touch
 	TouchInput.using_touch = true
-	game.hud._process(0.13)
+	game.hud._prompt_component._process(0.13)
 	check(game.hud._touch_interact != null and game.hud._touch_interact.visible, "mobile HUD reveals Interact button for a nearby monster")
 	TouchInput.using_touch = previous_touch_mode
 	var interact_event := InputEventAction.new()
@@ -2985,7 +3092,7 @@ func _test_world_visual_integration() -> void:
 	touch_game.world.player._scan_for_interactable()
 	var touch_previous_mode := TouchInput.using_touch
 	TouchInput.using_touch = true
-	touch_game.hud._process(0.13)
+	touch_game.hud._prompt_component._process(0.13)
 	check(touch_game.hud._touch_interact != null, "touch integration exposes the authored Interact control")
 	check(not touch_probe.engaged and touch_game.active_combat == null, "touch integration remains passive before button press")
 	if touch_game.hud._touch_interact != null:
@@ -3897,6 +4004,10 @@ func _test_asset_loading_fallbacks() -> void:
 	var av := actor_visual_scene.instantiate() as ActorVisual
 	add_child(av)
 	await get_tree().process_frame
+	check(av.animation_runtime_component is ActorAnimationRuntimeComponent and av.animation_runtime_component.get_parent() == av and av.animation_runtime_component.visual == av, "ActorVisual owns and binds its animation runtime component")
+	var animation_time_before_runtime_tick := av.anim_time
+	av.animation_runtime_component._process(0.125)
+	check(is_equal_approx(av.anim_time, animation_time_before_runtime_tick + 0.125), "authored animation runtime component advances ActorVisual animation cadence")
 	check(av.procedural_renderer is ActorProceduralRendererComponent and av.procedural_renderer.get_parent() == av, "ActorVisual owns and binds its procedural renderer component")
 	check(av.procedural_renderer.monster_painter is ProceduralMonsterPainter and av.procedural_renderer.monster_painter.renderer == av.procedural_renderer and av.procedural_renderer.monster_painter.visual == av, "procedural renderer owns and binds its species painter")
 	check(av.character_effects_component is ActorCharacterEffectsComponent and av.character_effects_component.get_parent() == av and av.character_effects_component.visual == av, "ActorVisual owns and binds its character-specific effects component")
@@ -5016,6 +5127,8 @@ func _test_world_visual_standards() -> void:
 		check(game.get_node_or_null("OverlayRouter") is GameOverlayRouterComponent and game.get_node("OverlayRouter").get_parent() == game, "GameScreen uses its authored overlay router")
 		check(game.get_node_or_null("CombatRouter") is GameCombatRouterComponent and game.get_node("CombatRouter").get_parent() == game, "GameScreen uses its authored combat router")
 		check(game.get_node_or_null("InputRouter") is GameInputRouterComponent and game.get_node("InputRouter").get_parent() == game, "GameScreen uses its authored input router")
+		check(game.get_node_or_null("QuestNavigation") is GameQuestNavigationComponent and game.get_node("QuestNavigation").get_parent() == game, "GameScreen owns quest navigation session state in its authored component")
+		check(game.quest_resolver == game.quest_navigation_component.resolver, "GameScreen injects the session-owned resolver without creating per-consumer instances")
 		if game.world != null:
 			if game.world is GreenwardWorld:
 				var world_node := game.world as GreenwardWorld

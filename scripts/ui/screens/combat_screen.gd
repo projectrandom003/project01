@@ -171,19 +171,8 @@ func _animate_attack(attacker: BattlefieldActor, target: BattlefieldActor, skill
 		_event_presentation_component.animate_attack(attacker, target, skill_id, ultimate)
 
 func _execute_current(skill_id: String, targets: Array) -> void:
-	if engine == null or _resolved:
-		return
-	var actor: Combatant = engine.current_actor()
-	if actor == null:
-		return
-	# Purely presentational: ULTIMATE skills get a short animated name banner.
-	# Turn order, targeting, event processing and battle resolution are untouched.
-	var played_skill: SkillDef = ContentDB.get_skill(skill_id)
-	if played_skill != null and played_skill.ultimate:
-		_show_banner(played_skill.display_name)
-	_cancel_targeting()
-	var events := engine.execute(engine.current_actor_index, skill_id, targets)
-	await _process_events(events)
+	if _session_component != null:
+		await _session_component.execute_action(skill_id, targets)
 
 
 func _cancel_targeting() -> void:

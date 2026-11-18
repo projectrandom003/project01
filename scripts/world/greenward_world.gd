@@ -34,6 +34,7 @@ extends Node2D
 @onready var chunk_streaming_component: WorldChunkStreamingComponent = get_node_or_null("ChunkStreaming") as WorldChunkStreamingComponent
 @onready var chunk_lifecycle_component: WorldChunkLifecycleComponent = get_node_or_null("ChunkLifecycle") as WorldChunkLifecycleComponent
 @onready var runtime_component: WorldRuntimeComponent = get_node_or_null("WorldRuntime") as WorldRuntimeComponent
+@onready var diagnostics_component: WorldDiagnosticsComponent = get_node_or_null("Diagnostics") as WorldDiagnosticsComponent
 @onready var resource_setup_component: WorldResourceSetupComponent = get_node_or_null("ResourceSetup") as WorldResourceSetupComponent
 @onready var region_builder_component: WorldRegionBuilderComponent = get_node_or_null("RegionBuilder") as WorldRegionBuilderComponent
 var greenward_builder_component: WorldGreenwardBuilderComponent
@@ -260,6 +261,7 @@ func _setup_layers() -> void:
 	atmosphere_component.configure(self)
 	prop_factory_component.configure(self)
 	visual_standards_component.configure(self)
+	diagnostics_component.configure(self)
 
 func _integrate_village_depth_sort() -> void:
 	# Share one world Y-sort container (Entities) so village-authored depth objects
@@ -404,22 +406,6 @@ func can_add_interactive_prop() -> bool:
 func register_portal(portal: RegionPortal) -> void:
 	if portal != null and not _portals.has(portal):
 		_portals.append(portal)
-
-const VILLAGE_TREE_KINDS := {
-	"glade_tree": true, "ancient_tree": true, "willow_tree": true, "birch_tree": true,
-	"pine_tree": true, "blossom_tree": true, "dead_tree": true,
-}
-
-
-func _suppress_streamed_village_tree(kind: String, world_pos: Vector2) -> bool:
-	if region_id != DEFAULT_REGION_ID:
-		return false
-	if not VILLAGE_TREE_KINDS.has(kind):
-		return false
-	# Authored village composition replaces streamed trees in the village design area
-	# (center ~spawn 8,8 => (0,256), radius tuned to cover perimeter groups/clearing).
-	var village_center := IsoMath.grid_to_world(8.0, 8.0)
-	return world_pos.distance_to(village_center) <= 520.0
 
 func _record_texture(kind: String, variant: int) -> void:
 	if prop_factory_component != null:
@@ -612,43 +598,7 @@ func day_phase() -> String:
 	return day_night_presentation_component.day_phase() if day_night_presentation_component != null else (day_night.phase_at(day_night.time_of_day) if day_night != null else "Day")
 
 func visual_style_report() -> Dictionary:
-	var prop_total := 0
-	for key in _prop_kind_counts.keys():
-		prop_total += int(_prop_kind_counts[key])
-	var player_art: Dictionary = {}
-	if player != null and is_instance_valid(player) and player.visual != null:
-		player_art = player.visual.character_art_report()
-	return {
-		"phase": day_phase(),
-		"weather_state": weather.current_state if weather != null else WeatherDirector.CLEAR,
-		"weather_state_name": WeatherDirector.state_name(weather.current_state) if weather != null else "clear",
-		"weather_intensity": weather.intensity if weather != null else 0.0,
-		"performance_tier": GreenwardStyle.performance_tier(),
-		"prop_kind_counts": _prop_kind_counts.duplicate(),
-		"prop_total": prop_total,
-		"cached_textures": _texture_keys.size(),
-		"chunks_loaded": loaded_chunks.size(),
-		"animated_props": _animated_props.size(),
-		"interactive_props": _interactive_props.size(),
-		"light_count": _lights.size(),
-		"fog_enabled": fog_quad != null and fog_quad.visible,
-		"rain_amount": rain.amount if rain != null else 0,
-		"particle_cap": GreenwardStyle.MAX_PARTICLES,
-		"prop_cap": GreenwardStyle.MAX_PROPS_PER_CHUNK,
-		"region_id": region_id,
-		"region_name": region_display_name(),
-		"zone": current_zone(),
-		"entry_points": region.get("entry_points", {}),
-		"connections": region.get("connections", []),
-		"world_origin": region.get("world_origin", [0, 0]),
-		"portals": _portals.size(),
-		"prepared_chunks": _preparer.stats() if _preparer != null else { "pending": 0, "cached": 0, "capacity": 0 },
-		# ---- PART 5 (World Presentation): additive reporting keys ----
-		"visual_standards": visual_standards_report(),
-		"visual_standards_valid": _visual_standards_valid,
-		"character_art": player_art,
-		"prop_kind_total": ProceduralArt.prop_kinds().size(),
-	}
+	return diagnostics_component.visual_style_report() if diagnostics_component != null else {}
 
 
 # =============================================== PART 5: World Presentation

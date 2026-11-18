@@ -30,7 +30,7 @@
  "ancient_coins": {
   "name": "Ancient Coins",
   "category": "currency",
-  "description": "Relics of a kingdom older than the six regions.",
+  "description": "A sovereign minting from the old kingdom. Awarded for defeating major bosses and claiming rare blessings.",
   "icon": "ancient_coin",
   "color": "#d9ff9f"
  },
@@ -65,6 +65,7 @@
  "gladewood_bow": {
   "name": "Gladewood Bow",
   "category": "equipment",
+  "set_id": "greenward_wayfarer",
   "slot": "weapon",
   "rarity": "epic",
   "level": 2,
@@ -79,6 +80,7 @@
  "mossweave_vest": {
   "name": "Mossweave Vest",
   "category": "equipment",
+  "set_id": "greenward_wayfarer",
   "slot": "armor",
   "rarity": "rare",
   "level": 1,
@@ -92,6 +94,7 @@
  "wayfarer_charm": {
   "name": "Wayfarer Charm",
   "category": "equipment",
+  "set_id": "greenward_wayfarer",
   "slot": "accessory",
   "rarity": "rare",
   "level": 1,

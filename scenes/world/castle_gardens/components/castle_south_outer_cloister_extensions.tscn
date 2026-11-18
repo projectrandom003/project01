@@ -16,13 +16,13 @@ z_index = -2
 
 [node name="WestSouthBannerWall" type="Sprite2D" parent="."]
 texture = ExtResource("2_banner")
-position = Vector2(300, 790)
+position = Vector2(120, 790)
 scale = Vector2(0.68, 0.68)
 z_index = -2
 
 [node name="WestSouthRose" type="Sprite2D" parent="."]
 texture = ExtResource("3_rose")
-position = Vector2(245, 845)
+position = Vector2(155, 845)
 scale = Vector2(0.78, 0.78)
 
 [node name="WestSouthWhite" type="Sprite2D" parent="."]
@@ -38,13 +38,13 @@ z_index = -2
 
 [node name="EastSouthBannerWall" type="Sprite2D" parent="."]
 texture = ExtResource("2_banner")
-position = Vector2(980, 790)
+position = Vector2(1160, 790)
 scale = Vector2(-0.68, 0.68)
 z_index = -2
 
 [node name="EastSouthRose" type="Sprite2D" parent="."]
 texture = ExtResource("3_rose")
-position = Vector2(1035, 845)
+position = Vector2(1125, 845)
 scale = Vector2(0.78, 0.78)
 
 [node name="EastSouthWhite" type="Sprite2D" parent="."]

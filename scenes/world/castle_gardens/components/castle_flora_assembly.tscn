@@ -25,17 +25,29 @@
 y_sort_enabled = true
 
 [node name="PathsidePlanting" parent="." instance=ExtResource("14_pathside")]
+position = Vector2(-51.2, 0)
+scale = Vector2(1.08, 1.0)
 visible = true
 [node name="UpperParterrePlanting" parent="." instance=ExtResource("15_upper_parterre")]
-visible = false
+position = Vector2(-51.2, 0)
+scale = Vector2(1.08, 1.0)
+visible = true
 [node name="OuterCloisterNiches" parent="." instance=ExtResource("16_cloisters")]
-visible = false
+position = Vector2(-51.2, 0)
+scale = Vector2(1.08, 1.0)
+visible = true
 [node name="NorthApproachCeremonialCourts" parent="." instance=ExtResource("17_north_courts")]
-visible = false
+position = Vector2(-51.2, 0)
+scale = Vector2(1.08, 1.0)
+visible = true
 [node name="OuterGardenSeatingAlcoves" parent="." instance=ExtResource("18_seating")]
-visible = false
+position = Vector2(-51.2, 0)
+scale = Vector2(1.08, 1.0)
+visible = true
 [node name="SouthOuterCloisterExtensions" parent="." instance=ExtResource("19_south_cloisters")]
-visible = false
+position = Vector2(-51.2, 0)
+scale = Vector2(1.08, 1.0)
+visible = true
 
 [node name="SignatureTrees" type="Node2D" parent="."]
 y_sort_enabled = true
@@ -49,7 +61,7 @@ y_sort_origin = 82
 [node name="PinkBlossomEast" type="Sprite2D" parent="SignatureTrees"]
 texture = ExtResource("1_pink")
 position = Vector2(980, 240)
-scale = Vector2(1.06, 1.06)
+scale = Vector2(0.94, 0.94)
 y_sort_origin = 82
 
 [node name="WisteriaNorthWest" type="Sprite2D" parent="SignatureTrees"]
@@ -61,7 +73,7 @@ y_sort_origin = 68
 [node name="WisteriaNorthEast" type="Sprite2D" parent="SignatureTrees"]
 texture = ExtResource("2_wisteria")
 position = Vector2(1030, 20)
-scale = Vector2(0.94, 0.94)
+scale = Vector2(1.04, 1.04)
 y_sort_origin = 68
 
 [node name="WhiteBlossomSouthWest" type="Sprite2D" parent="SignatureTrees"]
@@ -73,7 +85,7 @@ y_sort_origin = 63
 [node name="WhiteBlossomSouthEast" type="Sprite2D" parent="SignatureTrees"]
 texture = ExtResource("3_white")
 position = Vector2(1060, 690)
-scale = Vector2(1.06, 1.06)
+scale = Vector2(0.92, 0.92)
 y_sort_origin = 63
 
 [node name="CypressWest" type="Sprite2D" parent="SignatureTrees"]
@@ -85,7 +97,7 @@ y_sort_origin = 83
 [node name="CypressEast" type="Sprite2D" parent="SignatureTrees"]
 texture = ExtResource("4_cypress")
 position = Vector2(1160, 390)
-scale = Vector2(0.94, 0.94)
+scale = Vector2(1.04, 1.04)
 y_sort_origin = 83
 
 [node name="RoseArchitecture" type="Node2D" parent="."]
@@ -102,7 +114,7 @@ position = Vector2(910, 475)
 [node name="RoyalGazebo" type="Sprite2D" parent="RoseArchitecture"]
 texture = ExtResource("6_gazebo")
 position = Vector2(640, 1030)
-visible = false
+visible = true
 
 [node name="FlowerPedestalWest" type="Sprite2D" parent="RoseArchitecture"]
 texture = ExtResource("7_pedestal")
@@ -169,7 +181,7 @@ position = Vector2(760, 620)
 
 
 [node name="PromenadeFlowerBorders" type="Node2D" parent="."]
-visible = false
+visible = true
 y_sort_enabled = true
 
 [node name="WestPromenadeRose01" type="Sprite2D" parent="PromenadeFlowerBorders"]
@@ -215,7 +227,7 @@ scale = Vector2(0.9, 0.9)
 [node name="PeripheralWhiteBlossomWest" type="Sprite2D" parent="SignatureTrees"]
 texture = ExtResource("3_white")
 position = Vector2(145, 610)
-scale = Vector2(0.78, 0.78)
+scale = Vector2(0.82, 0.82)
 y_sort_origin = 63
 
 [node name="PeripheralWhiteBlossomEast" type="Sprite2D" parent="SignatureTrees"]
@@ -239,28 +251,28 @@ scale = Vector2(0.92, 0.92)
 y_sort_origin = 34
 
 [node name="WestOuterRoseParterre" type="Sprite2D" parent="ParterreFlowering"]
-visible = false
+visible = true
 texture = ExtResource("10_hedge")
 position = Vector2(255, 870)
 scale = Vector2(0.88, 0.88)
 y_sort_origin = 30
 
 [node name="EastOuterRoseParterre" type="Sprite2D" parent="ParterreFlowering"]
-visible = false
+visible = true
 texture = ExtResource("10_hedge")
 position = Vector2(1025, 870)
 scale = Vector2(0.88, 0.88)
 y_sort_origin = 30
 
 [node name="WestVioletParterre" type="Sprite2D" parent="ParterreFlowering"]
-visible = false
+visible = true
 texture = ExtResource("9_purple_shrub")
 position = Vector2(285, 975)
 scale = Vector2(0.9, 0.9)
 y_sort_origin = 32
 
 [node name="EastVioletParterre" type="Sprite2D" parent="ParterreFlowering"]
-visible = false
+visible = true
 texture = ExtResource("9_purple_shrub")
 position = Vector2(995, 975)
 scale = Vector2(0.9, 0.9)
@@ -286,25 +298,25 @@ visible = true
 y_sort_enabled = true
 
 [node name="WBedHedgeNW" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(245, 620)
 scale = Vector2(0.78, 0.78)
 
 [node name="WBedHedgeSW" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(255, 755)
 scale = Vector2(0.78, 0.78)
 
 [node name="WBedHedgeS" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(350, 805)
 scale = Vector2(0.72, 0.72)
 
 [node name="WBedHedgeNE" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(470, 560)
 scale = Vector2(0.72, 0.72)
@@ -320,13 +332,13 @@ position = Vector2(220, 690)
 scale = Vector2(0.95, 0.95)
 
 [node name="WBedPinkS" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("8_pink_shrub")
 position = Vector2(310, 790)
 scale = Vector2(0.9, 0.9)
 
 [node name="WBedPinkSE" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("8_pink_shrub")
 position = Vector2(355, 840)
 scale = Vector2(0.86, 0.86)
@@ -359,31 +371,31 @@ position = Vector2(245, 665)
 scale = Vector2(0.92, 0.92)
 
 [node name="WBedRoseS" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("10_hedge")
 position = Vector2(380, 820)
 scale = Vector2(0.88, 0.88)
 
 [node name="EBedHedgeNW" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(1035, 620)
 scale = Vector2(0.78, 0.78)
 
 [node name="EBedHedgeSW" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(1025, 755)
 scale = Vector2(0.78, 0.78)
 
 [node name="EBedHedgeS" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(930, 805)
 scale = Vector2(0.72, 0.72)
 
 [node name="EBedHedgeNE" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(810, 560)
 scale = Vector2(0.72, 0.72)
@@ -399,13 +411,13 @@ position = Vector2(1060, 690)
 scale = Vector2(0.95, 0.95)
 
 [node name="EBedPinkS" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("8_pink_shrub")
 position = Vector2(970, 790)
 scale = Vector2(0.9, 0.9)
 
 [node name="EBedPinkSE" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("8_pink_shrub")
 position = Vector2(925, 840)
 scale = Vector2(0.86, 0.86)
@@ -438,31 +450,31 @@ position = Vector2(1035, 665)
 scale = Vector2(0.92, 0.92)
 
 [node name="EBedRoseS" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("10_hedge")
 position = Vector2(900, 820)
 scale = Vector2(0.88, 0.88)
 
 [node name="CenterBedHedgeNW" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(490, 790)
 scale = Vector2(0.68, 0.68)
 
 [node name="CenterBedHedgeSW" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(500, 900)
 scale = Vector2(0.68, 0.68)
 
 [node name="CenterBedHedgeNE" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(790, 790)
 scale = Vector2(0.68, 0.68)
 
 [node name="CenterBedHedgeSE" type="Sprite2D" parent="FountainFlowerbeds"]
-visible = false
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(780, 900)
 scale = Vector2(0.68, 0.68)
@@ -499,591 +511,683 @@ texture = ExtResource("11_white_shrub")
 position = Vector2(745, 755)
 scale = Vector2(0.78, 0.78)
 
+[node name="OuterGardenBorderAccents" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="OuterGardenParterreBeds" type="Node2D" parent="."]
+y_sort_enabled = true
+
 [node name="OuterGardenEnrichment" type="Node2D" parent="."]
-visible = false
+visible = true
 y_sort_enabled = true
 
 [node name="OuterWestPink01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("8_pink_shrub")
 position = Vector2(175, 475)
-scale = Vector2(0.88, 0.88)
+scale = Vector2(0.9, 0.9)
 
 [node name="OuterWestViolet01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("13_violet_shrub")
 position = Vector2(225, 520)
 scale = Vector2(0.82, 0.82)
 
 [node name="OuterWestWhite01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("11_white_shrub")
 position = Vector2(155, 555)
 scale = Vector2(0.78, 0.78)
 
 [node name="OuterWestRose01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("10_hedge")
 position = Vector2(265, 555)
 scale = Vector2(0.84, 0.84)
 
 [node name="OuterEastPink01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("8_pink_shrub")
 position = Vector2(1105, 475)
 scale = Vector2(0.9, 0.9)
 
 [node name="OuterEastViolet01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("13_violet_shrub")
 position = Vector2(1055, 520)
 scale = Vector2(0.82, 0.82)
 
 [node name="OuterEastWhite01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("11_white_shrub")
 position = Vector2(1125, 555)
 scale = Vector2(0.78, 0.78)
 
 [node name="OuterEastRose01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("10_hedge")
 position = Vector2(1015, 555)
 scale = Vector2(0.84, 0.84)
 
 [node name="NorthWestPink01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(360, 305)
 scale = Vector2(0.82, 0.82)
 
 [node name="NorthWestWhite01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(420, 335)
 scale = Vector2(0.72, 0.72)
 
 [node name="NorthEastViolet01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("13_violet_shrub")
 position = Vector2(920, 305)
 scale = Vector2(0.84, 0.84)
 
 [node name="NorthEastPink01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(860, 335)
 scale = Vector2(0.76, 0.76)
 
 [node name="WestPathPink01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(300, 635)
 scale = Vector2(0.72, 0.72)
 
 [node name="WestPathWhite01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(280, 780)
 scale = Vector2(0.78, 0.78)
 
 [node name="WestPathViolet01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("13_violet_shrub")
 position = Vector2(405, 765)
 scale = Vector2(0.76, 0.76)
 
 [node name="EastPathPink01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(980, 635)
 scale = Vector2(0.72, 0.72)
 
 [node name="EastPathWhite01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(1000, 780)
 scale = Vector2(0.78, 0.78)
 
 [node name="EastPathViolet01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("13_violet_shrub")
 position = Vector2(875, 765)
 scale = Vector2(0.76, 0.76)
 
 [node name="CentralWestPink02" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(445, 980)
 scale = Vector2(0.72, 0.72)
 
 [node name="CentralWestWhite02" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(390, 1030)
 scale = Vector2(0.78, 0.78)
 
 [node name="CentralEastViolet02" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("13_violet_shrub")
 position = Vector2(835, 980)
 scale = Vector2(0.72, 0.72)
 
 [node name="CentralEastWhite02" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(890, 1030)
 scale = Vector2(0.78, 0.78)
 
 [node name="SouthWestPink01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("8_pink_shrub")
 position = Vector2(205, 990)
 scale = Vector2(0.8, 0.8)
 
 [node name="SouthWestViolet01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("13_violet_shrub")
 position = Vector2(255, 1050)
 scale = Vector2(0.74, 0.74)
 
 [node name="SouthEastPink01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("8_pink_shrub")
 position = Vector2(1075, 990)
 scale = Vector2(0.8, 0.8)
 
 [node name="SouthEastWhite01" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("11_white_shrub")
 position = Vector2(1025, 1050)
 scale = Vector2(0.74, 0.74)
 
 [node name="WestParterreHedge02" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(190, 865)
 scale = Vector2(0.72, 0.72)
 
 [node name="WestParterreHedge03" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(315, 925)
 scale = Vector2(0.62, 0.62)
 
 [node name="EastParterreHedge02" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(1090, 865)
 scale = Vector2(0.72, 0.72)
 
 [node name="EastParterreHedge03" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("12_rose_hedge")
 position = Vector2(965, 925)
 scale = Vector2(0.62, 0.62)
 
 [node name="WestWisteriaCanopy" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("2_wisteria")
 position = Vector2(150, 310)
-scale = Vector2(0.78, 0.78)
+scale = Vector2(0.8, 0.8)
 
 [node name="EastWisteriaCanopy" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("2_wisteria")
 position = Vector2(1130, 310)
 scale = Vector2(0.8, 0.8)
 
-[node name="WestBlossomCanopy02" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestBlossomCanopy02" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("1_pink")
 position = Vector2(155, 840)
-scale = Vector2(0.72, 0.72)
+scale = Vector2(0.74, 0.74)
 
-[node name="EastBlossomCanopy02" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastBlossomCanopy02" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("1_pink")
 position = Vector2(1125, 840)
 scale = Vector2(0.74, 0.74)
 
 [node name="NorthGardenWhiteTree" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("3_white")
 position = Vector2(500, 175)
 scale = Vector2(0.66, 0.66)
 
 [node name="NorthGardenPinkTree" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("1_pink")
 position = Vector2(780, 175)
 scale = Vector2(0.66, 0.66)
 
-[node name="WestCypressAccent" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestCypressAccent" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("4_cypress")
 position = Vector2(90, 790)
 scale = Vector2(0.72, 0.72)
 
-[node name="EastCypressAccent" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastCypressAccent" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("4_cypress")
 position = Vector2(1190, 790)
 scale = Vector2(0.72, 0.72)
 
-[node name="WestParterreOuterHedge01" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestParterreOuterHedge01" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("12_rose_hedge")
 position = Vector2(120, 470)
 scale = Vector2(0.66, 0.66)
 
-[node name="WestParterreOuterHedge02" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestParterreOuterHedge02" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("12_rose_hedge")
 position = Vector2(220, 470)
 scale = Vector2(0.66, 0.66)
 
-[node name="WestParterreOuterHedge03" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestParterreOuterHedge03" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("12_rose_hedge")
 position = Vector2(320, 470)
 scale = Vector2(0.66, 0.66)
 
-[node name="WestParterreOuterHedge04" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestParterreOuterHedge04" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("12_rose_hedge")
 position = Vector2(120, 700)
 scale = Vector2(0.66, 0.66)
 
-[node name="WestParterreOuterHedge05" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestParterreOuterHedge05" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("12_rose_hedge")
 position = Vector2(320, 700)
 scale = Vector2(0.66, 0.66)
 
-[node name="WestParterreOuterPink" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestParterreOuterPink" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("8_pink_shrub")
 position = Vector2(220, 535)
 scale = Vector2(0.82, 0.82)
 
-[node name="WestParterreOuterWhite" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestParterreOuterWhite" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("11_white_shrub")
 position = Vector2(160, 620)
 scale = Vector2(0.76, 0.76)
 
-[node name="WestParterreOuterViolet" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestParterreOuterViolet" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("13_violet_shrub")
 position = Vector2(280, 625)
 scale = Vector2(0.78, 0.78)
 
-[node name="EastParterreOuterHedge01" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastParterreOuterHedge01" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("12_rose_hedge")
 position = Vector2(1160, 470)
 scale = Vector2(0.66, 0.66)
 
-[node name="EastParterreOuterHedge02" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastParterreOuterHedge02" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("12_rose_hedge")
 position = Vector2(1060, 470)
 scale = Vector2(0.66, 0.66)
 
-[node name="EastParterreOuterHedge03" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastParterreOuterHedge03" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("12_rose_hedge")
 position = Vector2(960, 470)
 scale = Vector2(0.66, 0.66)
 
-[node name="EastParterreOuterHedge04" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastParterreOuterHedge04" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("12_rose_hedge")
 position = Vector2(1160, 700)
 scale = Vector2(0.66, 0.66)
 
-[node name="EastParterreOuterHedge05" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastParterreOuterHedge05" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("12_rose_hedge")
 position = Vector2(960, 700)
 scale = Vector2(0.66, 0.66)
 
-[node name="EastParterreOuterPink" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastParterreOuterPink" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("8_pink_shrub")
 position = Vector2(1060, 535)
 scale = Vector2(0.82, 0.82)
 
-[node name="EastParterreOuterWhite" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastParterreOuterWhite" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("11_white_shrub")
 position = Vector2(1120, 620)
 scale = Vector2(0.76, 0.76)
 
-[node name="EastParterreOuterViolet" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastParterreOuterViolet" type="Sprite2D" parent="OuterGardenParterreBeds"]
 texture = ExtResource("13_violet_shrub")
 position = Vector2(1000, 625)
 scale = Vector2(0.78, 0.78)
 
 [node name="WestSouthBorderPink" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(130, 930)
 scale = Vector2(0.8, 0.8)
 
 [node name="WestSouthBorderViolet" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("13_violet_shrub")
 position = Vector2(210, 1000)
 scale = Vector2(0.78, 0.78)
 
 [node name="WestSouthBorderWhite" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(300, 1040)
 scale = Vector2(0.8, 0.8)
 
 [node name="EastSouthBorderPink" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(1150, 930)
 scale = Vector2(0.8, 0.8)
 
 [node name="EastSouthBorderViolet" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("13_violet_shrub")
 position = Vector2(1070, 1000)
 scale = Vector2(0.78, 0.78)
 
 [node name="EastSouthBorderWhite" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(980, 1040)
 scale = Vector2(0.8, 0.8)
 
 [node name="WestNorthBorderWhite" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(260, 250)
 scale = Vector2(0.72, 0.72)
 
 [node name="EastNorthBorderPink" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(1020, 250)
 scale = Vector2(0.74, 0.74)
 
-[node name="NorthWestWisteriaGrove" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="NorthWestWisteriaGrove" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("2_wisteria")
 position = Vector2(90, 170)
 scale = Vector2(0.64, 0.64)
 
-[node name="NorthEastWisteriaGrove" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="NorthEastWisteriaGrove" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("2_wisteria")
 position = Vector2(1190, 170)
 scale = Vector2(0.64, 0.64)
 
-[node name="WestOuterBlossomGrove" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestOuterBlossomGrove" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("3_white")
 position = Vector2(90, 410)
 scale = Vector2(0.72, 0.72)
 
-[node name="EastOuterBlossomGrove" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastOuterBlossomGrove" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("1_pink")
 position = Vector2(1190, 410)
 scale = Vector2(0.72, 0.72)
 
-[node name="WestMidPinkCanopy" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestMidPinkCanopy" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("1_pink")
 position = Vector2(115, 930)
 scale = Vector2(0.68, 0.68)
 
-[node name="EastMidWhiteCanopy" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastMidWhiteCanopy" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("3_white")
 position = Vector2(1165, 930)
 scale = Vector2(0.68, 0.68)
 
-[node name="WestLowerCypressGrove" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestLowerCypressGrove" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("4_cypress")
 position = Vector2(90, 1080)
 scale = Vector2(0.62, 0.62)
 
-[node name="EastLowerCypressGrove" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastLowerCypressGrove" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("4_cypress")
 position = Vector2(1190, 1080)
 scale = Vector2(0.62, 0.62)
 
 [node name="NorthWestGardenViolet" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("13_violet_shrub")
 position = Vector2(360, 220)
 scale = Vector2(0.72, 0.72)
 
 [node name="NorthWestGardenWhite" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(420, 270)
 scale = Vector2(0.68, 0.68)
 
 [node name="NorthEastGardenPink" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(920, 220)
 scale = Vector2(0.72, 0.72)
 
 [node name="NorthEastGardenWhite" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(860, 270)
 scale = Vector2(0.68, 0.68)
 
-[node name="WestOuterPinkCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestOuterPinkCluster" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("8_pink_shrub")
 position = Vector2(105, 575)
 scale = Vector2(0.72, 0.72)
 
-[node name="WestOuterVioletCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestOuterVioletCluster" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("13_violet_shrub")
 position = Vector2(190, 635)
 scale = Vector2(0.72, 0.72)
 
-[node name="EastOuterPinkCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastOuterPinkCluster" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("8_pink_shrub")
 position = Vector2(1175, 575)
 scale = Vector2(0.72, 0.72)
 
-[node name="EastOuterVioletCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="EastOuterVioletCluster" type="Sprite2D" parent="OuterGardenBorderAccents"]
 texture = ExtResource("13_violet_shrub")
 position = Vector2(1090, 635)
 scale = Vector2(0.72, 0.72)
 
 [node name="WestSouthWhiteCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(120, 1120)
 scale = Vector2(0.72, 0.72)
 
 [node name="WestSouthPinkCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(220, 1150)
 scale = Vector2(0.72, 0.72)
 
 [node name="EastSouthWhiteCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(1160, 1120)
 scale = Vector2(0.72, 0.72)
 
 [node name="EastSouthPinkCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(1060, 1150)
 scale = Vector2(0.72, 0.72)
 
 [node name="WestOuterRoseCourtArch" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("5_arch")
 position = Vector2(250, 900)
 scale = Vector2(0.72, 0.72)
 
 [node name="EastOuterRoseCourtArch" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("5_arch")
 position = Vector2(1030, 900)
 scale = Vector2(0.72, 0.72)
 
 [node name="WestOuterFlowerPedestal" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("7_pedestal")
 position = Vector2(185, 820)
 scale = Vector2(0.82, 0.82)
 
 [node name="EastOuterFlowerPedestal" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("7_pedestal")
 position = Vector2(1095, 820)
 scale = Vector2(0.82, 0.82)
 
 [node name="WestRoseCourtPink" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("8_pink_shrub")
 position = Vector2(210, 960)
 scale = Vector2(0.74, 0.74)
 
 [node name="WestRoseCourtViolet" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("13_violet_shrub")
 position = Vector2(300, 985)
 scale = Vector2(0.72, 0.72)
 
 [node name="EastRoseCourtPink" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("8_pink_shrub")
 position = Vector2(1070, 960)
 scale = Vector2(0.74, 0.74)
 
 [node name="EastRoseCourtWhite" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("11_white_shrub")
 position = Vector2(980, 985)
 scale = Vector2(0.72, 0.72)
 
 [node name="WestLoopGardenPinkCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("8_pink_shrub")
 position = Vector2(125, 760)
 scale = Vector2(0.82, 0.82)
 
 [node name="WestLoopGardenVioletCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("13_violet_shrub")
 position = Vector2(215, 870)
 scale = Vector2(0.72, 0.72)
 
 [node name="WestLoopGardenWhiteCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(365, 915)
 scale = Vector2(0.76, 0.76)
 
 [node name="WestLoopGardenRoseCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("10_hedge")
 position = Vector2(480, 875)
 scale = Vector2(0.82, 0.82)
 
 [node name="EastLoopGardenWhiteCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("11_white_shrub")
 position = Vector2(1155, 760)
 scale = Vector2(0.82, 0.82)
 
 [node name="EastLoopGardenVioletCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = true
 texture = ExtResource("13_violet_shrub")
 position = Vector2(1065, 870)
 scale = Vector2(0.72, 0.72)
 
 [node name="EastLoopGardenPinkCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(915, 915)
 scale = Vector2(0.76, 0.76)
 
 [node name="EastLoopGardenRoseCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("10_hedge")
 position = Vector2(800, 875)
 scale = Vector2(0.82, 0.82)
 
 [node name="NorthWestOuterPinkCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(150, 275)
 scale = Vector2(0.72, 0.72)
 
 [node name="NorthWestOuterWhiteCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(220, 325)
 scale = Vector2(0.66, 0.66)
 
 [node name="NorthWestOuterVioletCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("13_violet_shrub")
 position = Vector2(405, 315)
 scale = Vector2(0.70, 0.70)
 
 [node name="NorthWestOuterRoseCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("10_hedge")
 position = Vector2(470, 365)
 scale = Vector2(0.68, 0.68)
 
 [node name="NorthEastOuterPinkCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(1130, 275)
 scale = Vector2(0.72, 0.72)
 
 [node name="NorthEastOuterWhiteCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(1060, 325)
 scale = Vector2(0.66, 0.66)
 
 [node name="NorthEastOuterVioletCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("13_violet_shrub")
 position = Vector2(875, 315)
 scale = Vector2(0.70, 0.70)
 
 [node name="NorthEastOuterRoseCluster" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("10_hedge")
 position = Vector2(810, 365)
 scale = Vector2(0.68, 0.68)
 
-[node name="WestOuterRoseNorth" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestOuterRoseNorth" type="Sprite2D" parent="OuterGardenBorderAccents"]
+visible = true
 texture = ExtResource("10_hedge")
 position = Vector2(150, 560)
 scale = Vector2(0.84, 0.84)
 
-[node name="WestOuterWhiteMid" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestOuterWhiteMid" type="Sprite2D" parent="OuterGardenBorderAccents"]
+visible = true
 texture = ExtResource("11_white_shrub")
 position = Vector2(130, 760)
 scale = Vector2(0.88, 0.88)
 
-[node name="WestOuterVioletSouth" type="Sprite2D" parent="OuterGardenEnrichment"]
+[node name="WestOuterVioletSouth" type="Sprite2D" parent="OuterGardenBorderAccents"]
+visible = true
 texture = ExtResource("13_violet_shrub")
 position = Vector2(220, 910)
 scale = Vector2(0.78, 0.78)
 
 [node name="WestOuterPinkLower" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("8_pink_shrub")
 position = Vector2(420, 960)
 scale = Vector2(0.82, 0.82)
 
 [node name="WestOuterWhiteUpper" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("11_white_shrub")
 position = Vector2(250, 480)
 scale = Vector2(0.78, 0.78)
 
-[node name="EastOuterWhiteNorth" type="Sprite2D" parent="OuterGardenEnrichment"]
-texture = ExtResource("11_white_shrub")
+[node name="EastOuterWhiteNorth" type="Sprite2D" parent="OuterGardenBorderAccents"]
+visible = true
+texture = ExtResource("10_hedge")
 position = Vector2(1130, 560)
 scale = Vector2(0.84, 0.84)
-
-[node name="EastOuterRoseMid" type="Sprite2D" parent="OuterGardenEnrichment"]
-texture = ExtResource("10_hedge")
+flip_h = true
+[node name="EastOuterRoseMid" type="Sprite2D" parent="OuterGardenBorderAccents"]
+visible = true
+texture = ExtResource("11_white_shrub")
 position = Vector2(1150, 760)
 scale = Vector2(0.88, 0.88)
-
-[node name="EastOuterPinkSouth" type="Sprite2D" parent="OuterGardenEnrichment"]
-texture = ExtResource("8_pink_shrub")
+flip_h = true
+[node name="EastOuterPinkSouth" type="Sprite2D" parent="OuterGardenBorderAccents"]
+visible = true
+texture = ExtResource("13_violet_shrub")
 position = Vector2(1060, 910)
 scale = Vector2(0.78, 0.78)
-
+flip_h = true
 [node name="EastOuterVioletLower" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("13_violet_shrub")
 position = Vector2(860, 960)
 scale = Vector2(0.82, 0.82)
 
 [node name="EastOuterPurpleUpper" type="Sprite2D" parent="OuterGardenEnrichment"]
+visible = false
 texture = ExtResource("9_purple_shrub")
 position = Vector2(1030, 480)
 scale = Vector2(0.78, 0.78)
 
 [node name="OuterWoodlandFrame" type="Node2D" parent="."]
+position = Vector2(-89.6, 0)
+scale = Vector2(1.14, 1.0)
 visible = true
 y_sort_enabled = true
 

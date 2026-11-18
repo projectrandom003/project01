@@ -4,9 +4,24 @@ extends Node
 
 var world: GreenwardWorld
 
+const VILLAGE_TREE_KINDS := {
+	"glade_tree": true, "ancient_tree": true, "willow_tree": true, "birch_tree": true,
+	"pine_tree": true, "blossom_tree": true, "dead_tree": true,
+}
+
 
 func configure(owner_world: GreenwardWorld) -> void:
 	world = owner_world
+
+
+func should_suppress_streamed_tree(kind: String, world_position: Vector2) -> bool:
+	if world == null or world.region_id != GreenwardWorld.DEFAULT_REGION_ID:
+		return false
+	if not VILLAGE_TREE_KINDS.has(kind):
+		return false
+	# Authored village composition replaces streamed trees in its designed clearing.
+	var village_center := IsoMath.grid_to_world(8.0, 8.0)
+	return world_position.distance_to(village_center) <= 520.0
 
 
 func load_chunk(coord: Vector2i) -> void:
@@ -60,7 +75,7 @@ func load_chunk(coord: Vector2i) -> void:
 		if bool(entry.get("detail", false)):
 			scale_value *= 0.88
 		var kind_str := str(entry.type)
-		if world._suppress_streamed_village_tree(kind_str, entry.position):
+		if should_suppress_streamed_tree(kind_str, entry.position):
 			continue
 		var prop_node: Node2D = null
 		if use_ground_prototype and kind_str == "glade_tree" and GreenwardWorld.FOREST_TREE_SCENE != null:

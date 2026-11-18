@@ -120,71 +120,13 @@ func advance_turn() -> Array:
 
 
 func _begin_actor_turn(actor: Combatant) -> Dictionary:
-	var events: Array = []
-	for ready_skill_id in actor.tick_skill_cooldowns():
-		events.append({
-			"type": "cooldown_ready",
-			"actor_uid": actor.uid,
-			"skill_id": ready_skill_id,
-		})
-	var was_stunned := actor.has_status("stun")
-	if was_stunned:
-		events.append({
-			"type": "skip",
-			"actor_uid": actor.uid,
-			"actor_name": actor.display_name,
-			"reason": "stunned",
-		})
-		_append_log("%s is stunned and loses the turn." % actor.display_name)
-	else:
-		events.append_array(_tick_statuses(actor))
-	# Status durations tick once per actor turn.
-	_tick_durations(actor)
-	if not actor.is_alive():
-		events.append({ "type": "death", "target_uid": actor.uid, "target_name": actor.display_name })
-	return { "events": events, "skipped": was_stunned or not actor.is_alive() }
-
-
-func _tick_statuses(actor: Combatant) -> Array:
-	var events: Array = []
-	for status in actor.statuses:
-		var status_id := str(status.get("id", ""))
-		var potency := float(status.get("potency", 0.0))
-		if status_id in ["burn", "poison"]:
-			var amount := maxf(1.0, roundf(actor.max_hp * potency))
-			var result := actor.take_damage(amount)
-			events.append({
-				"type": "status_tick",
-				"status": status_id,
-				"target_uid": actor.uid,
-				"target_name": actor.display_name,
-				"amount": int(round(result.damage)),
-			})
-			_append_log("%s suffers %d %s damage." % [actor.display_name, int(round(result.damage)), status_id])
-			if result.dead:
-				events.append({ "type": "death", "target_uid": actor.uid, "target_name": actor.display_name })
-				break
-		elif status_id == "regen":
-			var healed := actor.heal(actor.max_hp * potency)
-			if healed > 0.5:
-				events.append({
-					"type": "heal",
-					"status": "regen",
-					"target_uid": actor.uid,
-					"target_name": actor.display_name,
-					"amount": int(round(healed)),
-				})
-	return events
-
-
-func _tick_durations(actor: Combatant) -> void:
-	var kept: Array = []
-	for status in actor.statuses:
-		status.turns = int(status.get("turns", 0)) - 1
-		if int(status.turns) > 0:
-			kept.append(status)
-	actor.statuses = kept
-
+	var result := CombatTurnLifecycleResolver.begin_actor_turn(actor)
+	for message in result.get("log_messages", []):
+		_append_log(str(message))
+	return {
+		"events": result.get("events", []),
+		"skipped": bool(result.get("skipped", true)),
+	}
 
 func execute(actor_index: int, skill_id: String, target_indices: Array = []) -> Array:
 	var events: Array = []

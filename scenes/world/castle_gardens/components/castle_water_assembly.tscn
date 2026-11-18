@@ -20,6 +20,8 @@ metadata/grid_position = Vector2(35.5, 17.25)
 metadata/radius = 2.1
 
 [node name="FountainCourt" type="Node2D" parent="."]
+position = Vector2(-140.8, 0)
+scale = Vector2(1.22, 1.0)
 y_sort_enabled = true
 
 [node name="WestBlueRoyalFountain" type="Sprite2D" parent="FountainCourt"]

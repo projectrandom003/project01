@@ -1,0 +1,29 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Vegetation/tree_corrupted_01.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Vegetation/tree_corrupted_02.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Structures/broken_statue_01.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Structures/rubble_pile_02.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Structures/corrupted_brazier.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Effects/purple_glow_soft.tscn" id="6"]
+
+[node name="corrupted_roadside_ruins" type="Node2D"]
+y_sort_enabled = true
+
+[node name="WestCorruptTree" parent="." instance=ExtResource("1")]
+position = Vector2(-190, -10)
+
+[node name="EastCorruptTree" parent="." instance=ExtResource("2")]
+position = Vector2(190, -6)
+
+[node name="WestBrokenStatue" parent="." instance=ExtResource("3")]
+position = Vector2(-120, 125)
+
+[node name="EastRubble" parent="." instance=ExtResource("4")]
+position = Vector2(135, 130)
+
+[node name="VioletBrazier" parent="." instance=ExtResource("5")]
+position = Vector2(0, 190)
+
+[node name="VioletGlow" parent="." instance=ExtResource("6")]
+position = Vector2(0, 160)

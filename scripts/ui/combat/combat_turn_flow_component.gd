@@ -41,8 +41,7 @@ func schedule_enemy_turn() -> void:
 	if current == null or current.team != CombatEngine.ENEMY_TEAM:
 		return
 	screen._hint_label.text = ""
-	var events := screen.engine.execute(screen.engine.current_actor_index, skill_id, decision.get("targets", []))
-	await screen._process_events(events)
+	await screen._session_component.execute_action(skill_id, decision.get("targets", []))
 
 
 func schedule_auto_player() -> void:
@@ -68,5 +67,4 @@ func schedule_auto_player() -> void:
 	if skill_id.is_empty():
 		screen._log("[color=#ffbf69]Auto could not find a usable skill for %s.[/color]" % actor.display_name)
 		return
-	var events := screen.engine.execute(screen.engine.current_actor_index, skill_id, decision.get("targets", []))
-	await screen._process_events(events)
+	await screen._session_component.execute_action(skill_id, decision.get("targets", []))

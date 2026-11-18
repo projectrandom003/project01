@@ -14,40 +14,40 @@ scale = Vector2(1.65, 1.65)
 
 [node name="CastleKeep" parent="." instance=ExtResource("5_keep")]
 position = Vector2(640, 252)
-scale = Vector2(1.30, 1.30)
+scale = Vector2(1.42, 1.42)
 
 [node name="WestFlankTower" parent="." instance=ExtResource("3_tower")]
-position = Vector2(374, 266)
-scale = Vector2(0.64, 0.64)
+position = Vector2(349, 266)
+scale = Vector2(0.78, 0.78)
 
 [node name="EastFlankTower" parent="." instance=ExtResource("3_tower")]
-position = Vector2(906, 266)
-scale = Vector2(0.64, 0.64)
+position = Vector2(931, 266)
+scale = Vector2(0.78, 0.78)
 
 [node name="WestCorner" parent="." instance=ExtResource("6_corner")]
-position = Vector2(420, 370)
-scale = Vector2(0.82, 0.82)
+position = Vector2(400, 370)
+scale = Vector2(0.88, 0.88)
 
 [node name="EastCorner" parent="." instance=ExtResource("6_corner")]
-position = Vector2(860, 370)
-scale = Vector2(-0.82, 0.82)
+position = Vector2(880, 370)
+scale = Vector2(-0.88, 0.88)
 
 [node name="NorthWestWall" parent="." instance=ExtResource("1_wx")]
-position = Vector2(520, 345)
-scale = Vector2(0.82, 0.82)
+position = Vector2(505, 345)
+scale = Vector2(0.88, 0.88)
 
 [node name="NorthEastWall" parent="." instance=ExtResource("1_wx")]
-position = Vector2(760, 345)
-scale = Vector2(0.82, 0.82)
+position = Vector2(775, 345)
+scale = Vector2(0.88, 0.88)
 
 [node name="WestSideWall" parent="." instance=ExtResource("2_wy")]
-position = Vector2(470, 398)
-scale = Vector2(0.82, 0.82)
+position = Vector2(450, 398)
+scale = Vector2(0.88, 0.88)
 
 [node name="EastSideWall" parent="." instance=ExtResource("2_wy")]
-position = Vector2(810, 398)
-scale = Vector2(0.82, 0.82)
+position = Vector2(830, 398)
+scale = Vector2(0.88, 0.88)
 
 [node name="GrandGatehouse" parent="." instance=ExtResource("4_gate")]
 position = Vector2(640, 433)
-scale = Vector2(0.98, 0.98)
+scale = Vector2(1.06, 1.06)

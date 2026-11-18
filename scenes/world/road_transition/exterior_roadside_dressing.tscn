@@ -1,0 +1,73 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Royal_Gardens/Vegetation/tree_oak_02.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Royal_Gardens/Vegetation/tree_blossom_01.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Royal_Gardens/Decorations/lamp_post_gold.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Royal_Gardens/Decorations/lamp_post_gold.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Royal_Gardens/Vegetation/tree_oak_01.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Vegetation/tree_dead_01.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Vegetation/bush_dead_01.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Vegetation/bush_dead_01.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Vegetation/tree_corrupted_01.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Vegetation/tree_corrupted_02.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Structures/broken_statue_01.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Structures/rubble_pile_02.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Vegetation/corruption_growth_01.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Vegetation/corruption_growth_02.tscn" id="14"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Corrupted_Environment/Structures/corrupted_brazier.tscn" id="15"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Gothic_Castle/Decorations/lantern_gothic_post.tscn" id="16"]
+[ext_resource type="PackedScene" path="res://scenes/world/reverie_pack/Gothic_Castle/Decorations/lantern_gothic_post.tscn" id="17"]
+
+[node name="ExteriorRoadsideDressing" type="Node2D"]
+y_sort_enabled = true
+
+[node name="RoyalOakWest" parent="." instance=ExtResource("1")]
+position = Vector2(400, 1370)
+
+[node name="RoyalBlossomEast" parent="." instance=ExtResource("2")]
+position = Vector2(900, 1450)
+
+[node name="RoyalLampWest" parent="." instance=ExtResource("3")]
+position = Vector2(500, 1330)
+
+[node name="RoyalLampEast" parent="." instance=ExtResource("4")]
+position = Vector2(780, 1430)
+
+[node name="WitheringOakWest" parent="." instance=ExtResource("5")]
+position = Vector2(360, 1600)
+
+[node name="DeadTreeEast" parent="." instance=ExtResource("6")]
+position = Vector2(940, 1630)
+
+[node name="DeadBushWest" parent="." instance=ExtResource("7")]
+position = Vector2(440, 1740)
+
+[node name="DeadBushEast" parent="." instance=ExtResource("8")]
+position = Vector2(850, 1780)
+
+[node name="CorruptTreeWest" parent="." instance=ExtResource("9")]
+position = Vector2(380, 1900)
+
+[node name="CorruptTreeEast" parent="." instance=ExtResource("10")]
+position = Vector2(920, 1940)
+
+[node name="BrokenStatueWest" parent="." instance=ExtResource("11")]
+position = Vector2(500, 2010)
+
+[node name="RubbleEast" parent="." instance=ExtResource("12")]
+position = Vector2(800, 2070)
+
+[node name="CorruptGrowthWest" parent="." instance=ExtResource("13")]
+position = Vector2(460, 2160)
+
+[node name="CorruptGrowthEast" parent="." instance=ExtResource("14")]
+position = Vector2(820, 2160)
+
+[node name="TowerBrazier" parent="." instance=ExtResource("15")]
+position = Vector2(640, 2110)
+
+[node name="TowerLanternWest" parent="." instance=ExtResource("16")]
+position = Vector2(470, 2240)
+
+[node name="TowerLanternEast" parent="." instance=ExtResource("17")]
+position = Vector2(810, 2240)

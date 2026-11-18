@@ -33,14 +33,14 @@ var _currency_component: HUDCurrencyComponent
 var _party_component: HUDPartyComponent
 var _quest_component: HUDQuestComponent
 var _toast_component: HUDToastComponent
+var _responsive_layout_component: HUDResponsiveLayoutComponent
+var _navigation_component: HUDNavigationComponent
+var _prompt_component: HUDPromptComponent
 
 ## Shared quest navigation resolver injected by the owner (GameScreen).
 ## A single instance must be reused across consumers; HUD must not create its own.
 var quest_resolver: QuestNavigationResolver = null
 
-var _prompt_timer: float = 0.0
-var _refresh_timer: float = 0.0
-var _last_prompt: String = ""
 var _toasts: Array = []
 
 
@@ -71,45 +71,25 @@ func _bind_components() -> bool:
 	_party_component = get_node_or_null("Party") as HUDPartyComponent
 	_quest_component = get_node_or_null("Quest") as HUDQuestComponent
 	_toast_component = get_node_or_null("Toast") as HUDToastComponent
-	if _currency_component == null or _party_component == null or _quest_component == null or _toast_component == null:
-		push_error("HUD requires authored Currency, Party, Quest and Toast component children.")
+	_responsive_layout_component = get_node_or_null("ResponsiveLayout") as HUDResponsiveLayoutComponent
+	_navigation_component = get_node_or_null("Navigation") as HUDNavigationComponent
+	_prompt_component = get_node_or_null("Prompt") as HUDPromptComponent
+	if _currency_component == null or _party_component == null or _quest_component == null or _toast_component == null or _responsive_layout_component == null or _navigation_component == null or _prompt_component == null:
+		push_error("HUD requires its authored presentation, responsive-layout, navigation and prompt component children.")
 		return false
 	_currency_component.bind(self)
 	_party_component.bind(self)
 	_quest_component.bind(self)
 	_toast_component.bind(self)
+	_responsive_layout_component.bind(self)
+	_navigation_component.bind(self)
+	_prompt_component.bind(self)
+	_navigation_component.configure()
 	return true
 
 func _apply_responsive_layout(viewport_size: Vector2 = Vector2.ZERO) -> void:
-	if not is_inside_tree():
-		return
-	if viewport_size == Vector2.ZERO:
-		viewport_size = get_viewport_rect().size
-	var compact_portrait := viewport_size.x < 540.0 and viewport_size.y > viewport_size.x
-	var party_panel := get_node_or_null("PartyPanel") as Control
-	if party_panel != null:
-		party_panel.visible = not compact_portrait
-	if _hint_label != null:
-		_hint_label.visible = not compact_portrait
-	if _minimap != null:
-		if compact_portrait:
-			_minimap.offset_left = -188.0
-			_minimap.offset_top = 90.0
-			_minimap.offset_right = -18.0
-			_minimap.offset_bottom = 260.0
-		else:
-			_minimap.offset_left = -244.0
-			_minimap.offset_top = 90.0
-			_minimap.offset_right = -20.0
-			_minimap.offset_bottom = 314.0
-	var prompt_center := get_node_or_null("PromptCenter") as Control
-	if prompt_center != null:
-		if compact_portrait:
-			prompt_center.offset_top = -viewport_size.y * 0.62
-			prompt_center.offset_bottom = -viewport_size.y * 0.54
-		else:
-			prompt_center.offset_top = -104.0
-			prompt_center.offset_bottom = -34.0
+	if _responsive_layout_component != null:
+		_responsive_layout_component.apply(viewport_size)
 
 
 func set_quest_resolver(resolver: QuestNavigationResolver) -> void:
@@ -117,32 +97,6 @@ func set_quest_resolver(resolver: QuestNavigationResolver) -> void:
 	if _minimap != null:
 		_minimap.quest_resolver = resolver
 	refresh_quest()
-
-
-func _process(delta: float) -> void:
-	_prompt_timer += delta
-	_refresh_timer += delta
-	if _refresh_timer >= 0.5:
-		_refresh_timer = 0.0
-		refresh_quest()
-	if _prompt_timer < 0.12:
-		return
-	_prompt_timer = 0.0
-	var prompt := ""
-	var player := get_tree().get_first_node_in_group("player")
-	if player != null and player.has_method("current_prompt"):
-		var text: String = player.current_prompt()
-		if not text.is_empty():
-			var target := "target"
-			if player.nearby_interactable != null and "display_name" in player.nearby_interactable:
-				target = str(player.nearby_interactable.display_name)
-			prompt = "[E]  %s  %s" % [text, target]
-	if prompt != _last_prompt:
-		_last_prompt = prompt
-		_prompt_label.text = prompt
-		_prompt_panel.visible = not prompt.is_empty()
-		if _touch_interact != null:
-			_touch_interact.visible = TouchInput.using_touch and not prompt.is_empty()
 
 
 func set_world_info(area_name: String, phase_name: String) -> void:
@@ -179,37 +133,6 @@ func _on_quest_updated(_quest_id: String) -> void:
 	refresh_quest()
 
 
-func _confirm_return_to_title() -> void:
-	var confirmation := ConfirmationDialog.new()
-	confirmation.title = "Return to Main Menu?"
-	confirmation.dialog_text = "Your current journey will be saved before returning to the title screen."
-	confirmation.ok_button_text = "Save & Return"
-	confirmation.cancel_button_text = "Stay in World"
-	confirmation.confirmed.connect(func() -> void:
-		return_to_title_requested.emit()
-		confirmation.queue_free()
-	)
-	confirmation.canceled.connect(confirmation.queue_free)
-	add_child(confirmation)
-	confirmation.popup_centered()
-
-
-func _style_navigation_button(button: Button, accent: Color, primary: bool = false) -> void:
-	button.custom_minimum_size = Vector2(138.0, 40.0)
-	button.add_theme_font_size_override("font_size", 11)
-	button.add_theme_color_override("font_color", Color("#e9e5f0"))
-	button.add_theme_color_override("font_hover_color", Color.WHITE)
-	button.add_theme_color_override("font_pressed_color", accent.lightened(0.22))
-	button.add_theme_color_override("font_disabled_color", UITheme.TEXT_FAINT)
-	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	button.add_theme_stylebox_override("normal", UITheme.style(Color("#090d19").lerp(accent, 0.055 if primary else 0.025), Color(accent.r, accent.g, accent.b, 0.68), 9, 1, 12, true))
-	button.add_theme_stylebox_override("hover", UITheme.style(Color("#1a2034").lerp(accent, 0.12), accent.lightened(0.16), 9, 2, 12, true))
-	button.add_theme_stylebox_override("pressed", UITheme.style(Color("#080b15").lerp(accent, 0.16), accent, 9, 2, 12))
-	button.add_theme_stylebox_override("disabled", UITheme.style(Color("#0b0e18"), UITheme.BORDER_SOFT, 9, 1, 12))
-	button.add_theme_stylebox_override("focus", UITheme.style(Color("#171b2b"), UITheme.GOLD_BRIGHT, 9, 2, 12, true))
-	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-
-
 # ----------------------------------------------------------- authored bindings
 
 func _bind_authored_ui() -> bool:
@@ -234,42 +157,6 @@ func _bind_authored_ui() -> bool:
 
 	if _minimap != null:
 		_minimap.quest_resolver = quest_resolver
-	var summon_btn := get_node_or_null("ActionStack/SummonButton") as Button
-	if summon_btn:
-		summon_btn.text = "✦  SUMMON"
-		_style_navigation_button(summon_btn, UITheme.GOLD_BRIGHT, true)
-		summon_btn.pressed.connect(func() -> void: screen_requested.emit("gacha"))
-	var roster_btn := get_node_or_null("ActionStack/RosterButton") as Button
-	if roster_btn:
-		roster_btn.text = "♜  ROSTER"
-		_style_navigation_button(roster_btn, UITheme.VIOLET)
-		roster_btn.pressed.connect(func() -> void: screen_requested.emit("collection"))
-	var inv_btn := get_node_or_null("ActionStack/InventoryButton") as Button
-	if inv_btn:
-		inv_btn.text = "▤  INVENTORY"
-		_style_navigation_button(inv_btn, UITheme.TEAL)
-		inv_btn.pressed.connect(func() -> void: screen_requested.emit("inventory"))
-	var quests_btn := get_node_or_null("ActionStack/QuestsButton") as Button
-	if quests_btn:
-		quests_btn.text = "✧  QUESTS"
-		_style_navigation_button(quests_btn, UITheme.GOLD)
-		quests_btn.pressed.connect(func() -> void: screen_requested.emit("quests"))
-	var map_btn := get_node_or_null("ActionStack/MapButton") as Button
-	if map_btn:
-		map_btn.text = "⌖  WORLD MAP"
-		_style_navigation_button(map_btn, UITheme.TEAL_DIM)
-		map_btn.pressed.connect(func() -> void: screen_requested.emit("map"))
-	var menu_btn := get_node_or_null("ActionStack/MenuButton") as Button
-	if menu_btn:
-		menu_btn.text = "☰  MENU"
-		_style_navigation_button(menu_btn, UITheme.DANGER)
-		menu_btn.pressed.connect(func() -> void: menu_requested.emit())
-	var main_menu_btn := get_node_or_null("TopBar/TopRow/MainMenuButton") as Button
-	if main_menu_btn:
-		_style_navigation_button(main_menu_btn, UITheme.GOLD_BRIGHT, true)
-		main_menu_btn.custom_minimum_size = Vector2(132, 42)
-		main_menu_btn.tooltip_text = "Save your journey and return to the title screen"
-		main_menu_btn.pressed.connect(_confirm_return_to_title)
 	if _touch_interact:
 		_touch_interact.pressed.connect(func() -> void: interact_requested.emit())
 	if _touch_switch:

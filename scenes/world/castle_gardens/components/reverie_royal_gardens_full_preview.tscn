@@ -47,7 +47,7 @@ y_sort_enabled = true
 [node name="GardenAtmosphere" parent="." instance=ExtResource("7_lights")]
 
 [node name="AmbientColor" type="CanvasModulate" parent="."]
-color = Color(0.84, 0.82, 0.93, 1)
+color = Color(0.94, 0.91, 0.86, 1)
 
 [node name="PreviewCamera" type="Camera2D" parent="."]
 position = Vector2(640, 600)

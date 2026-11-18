@@ -64,6 +64,8 @@ func show_result(victory: bool) -> void:
 		rewards_caption.add_theme_color_override("font_color", UITheme.TEXT_FAINT)
 		rewards_row.add_child(UIFactory.chip("+%s Gold" % UIFactory.number(int(screen._pending_rewards.get("gold", 0))), UITheme.GOLD))
 		rewards_row.add_child(UIFactory.chip("+%s Crystals" % UIFactory.number(int(screen._pending_rewards.get("crystals", 0))), UITheme.TEAL))
+		if int(screen._pending_rewards.get("ancient_coins", 0)) > 0:
+			rewards_row.add_child(UIFactory.chip("+%s Ancient Coins" % UIFactory.number(int(screen._pending_rewards.get("ancient_coins", 0))), Color("#d9ff9f")))
 		rewards_row.add_child(UIFactory.chip("+%s XP" % UIFactory.number(int(screen._pending_rewards.get("xp", 0))), UITheme.GREEN))
 		for item_id in screen._pending_rewards.get("items", {}).keys():
 			var item: Dictionary = ContentDB.get_item(str(item_id))
